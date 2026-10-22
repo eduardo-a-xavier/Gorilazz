@@ -1,0 +1,22 @@
+The Gorillaz band (phase 7)
+Fonte: https://sketchfab.com/3d-models/the-gorillaz-band-phase-7-77d8602771c44a9e879cdc623258a650
+Publicado por: Redtricity — https://sketchfab.com/nnastav49
+A descrição da publicação atribui os modelos originais ao Gorillaz.
+Licença exibida na fonte: Creative Commons Attribution 4.0 International
+https://creativecommons.org/licenses/by/4.0/
+https://creativecommons.org/licenses/by/4.0/legalcode
+
+Pacote original the-gorillaz-band-phase-7.zip fornecido pelo usuário.
+Adaptações para o projeto acadêmico Gorilazz — A estrada:
+- Reconexão das quatro texturas PNG originais de 2048 x 2048.
+- Ajuste dos braços de 2-D, Murdoc e Noodle por seus rigs.
+- Aplicação das poses e conversão das malhas avaliadas de FBX para GLB.
+- O GLB distribuído usa poses estáticas, sem armatures ou clipes de animação.
+- Separação e identificação dos quatro integrantes em raízes independentes.
+- Centralização e alinhamento ao chão; escala e orientação em execução.
+- Transparência por recorte (MASK, 0.5) para cabelos e bordas das texturas.
+- Retratos PNG renderizados dos mesmos modelos para galeria e fichas.
+- Movimento leve dos grupos em execução; o movimento reduzido o desativa.
+
+Créditos, links e alterações também estão na página e em REFERENCES.md.
+A publicação e os autores não endossam este projeto acadêmico independente.

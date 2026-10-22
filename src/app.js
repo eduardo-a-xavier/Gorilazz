@@ -5,6 +5,8 @@ const members = [
   { name: 'Noodle', role: 'Guitarra', skin: '#e2d8c0', hair: '#141414', shirt: '#3a68d8', position: MEMBER_STOPS[2], description: 'Noodle é a guitarrista japonesa da banda. Sua trajetória atravessa as eras visuais de Gorillaz, combinando mistério, independência e energia.', song: 'DARE' },
   { name: 'Russel', role: 'Bateria', skin: '#986b50', hair: '#141414', shirt: '#e2d8c0', position: MEMBER_STOPS[3], description: 'Russel Hobbs é o baterista. Sua conexão com o hip-hop e o sobrenatural faz parte da narrativa da banda.', song: 'Clint Eastwood' },
 ];
+const memberKeys = ['twod', 'murdoc', 'noodle', 'russel'];
+function memberPhoto(index) { return `<img src="/assets/portraits/phase7-${memberKeys[index]}.png" alt="" loading="lazy">`; }
 function portrait(member, index) {
   return `<svg viewBox="0 0 70 110" aria-hidden="true"><path d="M22 76 18 108M47 76l5 32" stroke="#141414" stroke-width="10"/><path d="M${index === 3 ? 10 : 17} 79V54Q35 36 ${index === 3 ? 60 : 53} 54v25Z" fill="${member.shirt}" stroke="#141414" stroke-width="3"/><path d="M18 55 8 80m45-25 9 25" stroke="${member.skin}" stroke-width="8"/><ellipse cx="35" cy="28" rx="${index === 3 ? 24 : 19}" ry="24" fill="${member.skin}" stroke="#141414" stroke-width="3"/><path d="M15 24 13 7 26 9 34 0 41 9 56 5 54 30 44 15 34 21 26 15Z" fill="${member.hair}"/><g fill="#141414"><ellipse cx="27" cy="29" rx="4" ry="5"/><ellipse cx="43" cy="29" rx="4" ry="5"/></g><path d="m28 42 15-2" stroke="#141414" stroke-width="2"/></svg>`;
 }
@@ -42,6 +44,16 @@ const bandToggle = document.querySelector("#band-toggle");
 function setShowcase(value) { showcase = value; bandToggle.setAttribute("aria-pressed", String(value)); }
 bandToggle.addEventListener("click", () => { setTour(false); destination = null; setShowcase(!showcase); });
 let world = null;
+const cameraTools = document.querySelector('.camera-tools');
+const cameraMenuToggle = document.querySelector('#camera-menu-toggle');
+function setCameraMenu(value) {
+  cameraTools.dataset.expanded = String(value); cameraMenuToggle.setAttribute('aria-expanded', String(value));
+  cameraMenuToggle.setAttribute('aria-label', value ? 'Fechar controles da câmera' : 'Abrir controles da câmera');
+}
+cameraMenuToggle.addEventListener('click', () => setCameraMenu(cameraTools.dataset.expanded !== 'true'));
+document.addEventListener('pointerdown', event => { if (!cameraTools.contains(event.target)) setCameraMenu(false); });
+document.addEventListener('keydown', event => { if (event.key === 'Escape') setCameraMenu(false); });
+
 document.querySelector('#zoom-in').addEventListener('click', () => world?.zoomBy(-.15));
 document.querySelector('#zoom-out').addEventListener('click', () => world?.zoomBy(.15));
 document.querySelector('#reset-camera').addEventListener('click', () => { world?.resetCamera(); overview = false; landmarkView = false; syncCameraModes(); });
@@ -76,7 +88,7 @@ document.querySelector('#camera-toggle').addEventListener('click', event => {
 import('./scene.js').then(({createWorld}) => {
   world = createWorld(document.querySelector('#world'), index => openMember(index));
   document.querySelector('.world-shell').classList.add('has-3d');
-  document.querySelector('#render-status').textContent = '3D EM TEMPO REAL / ARTE AUTORAL';
+  document.querySelector('#render-status').textContent = '3D EM TEMPO REAL / THE ROAD';
 }).catch(error => {
   console.warn('Modo 2D ativado:', error.message);
   document.querySelector('#render-status').textContent = 'MODO 2D / WebGL indisponível';
@@ -104,7 +116,8 @@ function openMember(index, collision = false) {
   const member = members[index];
   dialog.dataset.collision = String(collision);
   stop(); setTour(false); destination = null; previousFocus = document.activeElement;
-  document.querySelector('#portrait').innerHTML = portrait(member, index);
+  document.querySelector('#portrait').innerHTML = memberPhoto(index);
+  document.querySelector('#portrait img').addEventListener('error', () => { document.querySelector('#portrait').innerHTML = portrait(member, index); }, {once:true});
   document.querySelector('#character-name').textContent = member.name;
   document.querySelector('#character-role').textContent = member.role;
   document.querySelector('#character-description').textContent = member.description;
@@ -194,8 +207,8 @@ const stops = [
   ['Álbuns', 'Uma discografia em movimento.', '<ul class="albums">' + [['Gorillaz',2001],['Demon Days',2005],['Plastic Beach',2010],['The Fall',2010],['Humanz',2017],['The Now Now',2018],['Song Machine, Season One',2020],['Cracker Island',2023]].map(([name, year]) => `<li>${name}<small>${year}</small></li>`).join('') + '</ul><p>Recorte inicial até 2023. Este conteúdo precisa de revisão e atualização para incluir lançamentos posteriores.</p>'],
   ['Ao vivo', 'Do desenho ao palco.', '<p>Nos shows, músicos reais e convidados dão vida ao repertório. Projeções e imagens dos personagens conectam a performance ao universo visual da banda, em formatos que variam entre turnês.</p>'],
   ['Temas', 'O mundo no retrovisor.', '<p>Solidão, consumo, tecnologia e meio ambiente atravessam o universo da banda. Plastic Beach, por exemplo, usa a imagem de uma ilha de resíduos para abordar questões ambientais e o consumo.</p>'],
-  ['Projeto', 'Uma estrada feita por nós.', '<p>Projeto acadêmico de <strong>Eduardo Alves Xavier</strong>, <strong>Gedson de Souza Mancio Júnior</strong> e <strong>Rafael Machado Colnaghi</strong>.</p><p>A estrada conecta nove paradas temáticas. O circuito e as figuras esquemáticas são interpretações autorais. O veículo é o Geep de shabaev, sob CC BY 4.0, adaptado para o circuito.</p>'],
-  ['Fontes', 'Respeito às origens.', '<p>Geep de <a href="https://sketchfab.com/3d-models/gorrilaz-car-blockbench-d1ac8116d1ab4ad7b612921425aa827a" target="_blank" rel="noopener noreferrer">shabaev</a>, sob CC BY 4.0. O SUV alternativo é do Kenney Car Kit, sob CC0. Consulte os <a href="#modelos">modelos incluídos para download</a> e as <a href="#referencias">referências Sketchfab selecionadas</a>.</p><p>Crédito ao universo criado por Jamie Hewlett e Damon Albarn. Consulte o <a href="https://www.gorillaz.com/" target="_blank" rel="noopener noreferrer">site oficial de Gorillaz ↗</a>.</p><p>Projeto acadêmico independente, sem vínculo oficial. As figuras deste protótipo são esquemáticas e autorais; os textos são introdutórios e devem ser revisados para uso acadêmico final.</p>'],
+  ['Projeto', 'Uma estrada feita por nós.', '<p>Projeto acadêmico de <strong>Eduardo Alves Xavier</strong>, <strong>Gedson de Souza Mancio Júnior</strong> e <strong>Rafael Machado Colnaghi</strong>.</p><p>A estrada conecta nove paradas temáticas. O circuito e o moinho provisório são autorais. Os personagens Phase 7 vêm do pacote publicado por Redtricity, que atribui os modelos ao Gorillaz, com CC BY 4.0 indicada na fonte. O veículo é o Geep de shabaev, sob CC BY 4.0, adaptado para o circuito.</p>'],
+  ['Fontes', 'Respeito às origens.', '<p>Geep de <a href="https://sketchfab.com/3d-models/gorrilaz-car-blockbench-d1ac8116d1ab4ad7b612921425aa827a" target="_blank" rel="noopener noreferrer">shabaev</a>, sob CC BY 4.0. O SUV alternativo é do Kenney Car Kit, sob CC0. Consulte os <a href="#modelos">modelos incluídos para download</a> e as <a href="#referencias">referências Sketchfab selecionadas</a>.</p><p>Crédito ao universo criado por Jamie Hewlett e Damon Albarn. Consulte o <a href="https://www.gorillaz.com/" target="_blank" rel="noopener noreferrer">site oficial de Gorillaz ↗</a>.</p><p>Projeto acadêmico independente, sem vínculo oficial. As autorias e adaptações dos modelos externos estão creditadas na página; os textos são introdutórios e devem ser revisados para uso acadêmico final.</p>'],
 ];
 const menu = document.querySelector('#stop-menu');
 const panel = document.querySelector('#panel');
@@ -258,13 +271,15 @@ document.querySelector('#play-track').addEventListener('click', () => {
 });
 members.forEach((member, index) => {
   const button = document.createElement('button'); button.type = 'button'; button.className = 'band-card';
-  button.innerHTML = `<div class="band-portrait">${portrait(member, index)}</div><span class="eyebrow">0${index + 1} / ${member.role.toUpperCase()}</span><strong>${member.name}</strong><span>CONHEÇA A HISTÓRIA ↗</span>`;
+  button.innerHTML = `<div class="band-portrait">${memberPhoto(index)}</div><span class="eyebrow">0${index + 1} / ${member.role.toUpperCase()}</span><strong>${member.name}</strong><span>CONHEÇA A HISTÓRIA ↗</span>`;
+  button.querySelector('img').addEventListener('error', () => { button.querySelector('.band-portrait').innerHTML = portrait(member, index); }, {once:true});
   button.addEventListener('click', () => openMember(index)); document.querySelector('#band-grid').append(button);
 });
 setTrack(0);
 
 const selectedModels = {
   car: { uid: 'd1ac8116d1ab4ad7b612921425aa827a', name: 'Gorrilaz Car BlockBench', author: 'shabaev', license: 'CC BY 4.0', url: 'https://sketchfab.com/3d-models/gorrilaz-car-blockbench-d1ac8116d1ab4ad7b612921425aa827a' },
+  phase7: { uid: '77d8602771c44a9e879cdc623258a650', name: 'The Gorillaz band (phase 7)', author: 'Gorillaz / publicação Redtricity', license: 'CC BY 4.0 indicada na fonte', url: 'https://sketchfab.com/3d-models/the-gorillaz-band-phase-7-77d8602771c44a9e879cdc623258a650' },
   band: { uid: 'b693d0e95a634674b5fe5744dd3392cb', name: 'Gorillaz — Papercraft', author: 'Dudi Julianto', license: 'licença de reutilização não informada · referência visual', url: 'https://sketchfab.com/3d-models/gorillaz-b693d0e95a634674b5fe5744dd3392cb' },
   windmill: { uid: '0e72abda7e8b4ec5a8eaa6bf9d25603b', name: 'Flying windmill', author: 'zeee7', license: 'Standard · referência visual', url: 'https://sketchfab.com/3d-models/flying-windmill-0e72abda7e8b4ec5a8eaa6bf9d25603b' },
 };

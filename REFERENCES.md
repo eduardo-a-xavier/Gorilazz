@@ -46,7 +46,7 @@ Os metadados públicos foram consultados em 22/10/2026 via API oficial e resumid
 - Fonte: https://sketchfab.com/3d-models/gorillaz-b693d0e95a634674b5fe5744dd3392cb
 - O autor descreve o modelo como uma encomenda de papercraft.
 - API: `isDownloadable: false`, campo `license` vazio na consulta. Não foi encontrada licença pública de reutilização; o arquivo não está incluído nem foi extraído do visualizador.
-- Mantido apenas como referência visual com autoria e link. Os integrantes do circuito continuam sendo interpretações geométricas próprias.
+- Mantido apenas como referência visual com autoria e link. Os integrantes em uso são os do pacote Phase 7 fornecido separadamente.
 
 As prévias abrem em iframes apenas após clique e são removidas ao fechar. A tentativa real de iframe no Chromium apresentou erro de rede; testes de interface usaram respostas externas simuladas. A presença da prévia não implica download ou incorporação ao WebGL local.
 
@@ -59,4 +59,21 @@ As prévias abrem em iframes apenas após clique e são removidas ao fechar. A t
 
 ## Circuito
 
-Trajeto autoral circular de raio 58 unidades. As nove paradas têm posições distintas `i / 9`; o Geep segue a tangente e a câmera acompanha. A emenda é contínua em ambos os sentidos e a navegação por paradas escolhe o menor arco. O moinho e os personagens provisórios são gerados localmente.
+Trajeto autoral circular de raio 58 unidades. As nove paradas têm posições distintas `i / 9`; o Geep segue a tangente e a câmera acompanha. A emenda é contínua em ambos os sentidos e a navegação por paradas escolhe o menor arco. O moinho provisório e as figuras alternativas são gerados localmente; os modelos Phase 7 e o Geep usam os arquivos creditados acima.
+
+## Banda Phase 7 em uso
+
+- Título: **The Gorillaz band (phase 7)**.
+- Fonte: https://sketchfab.com/3d-models/the-gorillaz-band-phase-7-77d8602771c44a9e879cdc623258a650
+- Publicação: **Redtricity**, https://sketchfab.com/nnastav49
+- A descrição da publicação atribui os modelos originais ao **Gorillaz**. Essa atribuição foi mantida; não se apresenta o publicador como criador original.
+- Licença exibida pela API da fonte: **Creative Commons Attribution 4.0**, https://creativecommons.org/licenses/by/4.0/
+- `isDownloadable: true`. Arquivo fornecido pelo usuário: `the-gorillaz-band-phase-7.zip`, contendo `source/Gorillazband(phase 7).fbx` e quatro PNG.
+- Crédito adicional na aplicação: `assets/models/PHASE7-CREDITS.txt`.
+- Adaptações: reconexão das quatro texturas originais, pose dos braços em três rigs, aplicação das malhas avaliadas, agrupamento por integrante, alinhamento ao chão, exportação GLB estática e transparência por recorte. Sem redução de malha; sem rigs ou clipes no GLB final. Escala, orientação e movimento dos grupos são aplicados em execução.
+- Os retratos `assets/portraits/phase7-*.png` são renderizações derivadas dos mesmos modelos, geradas no Blender para galeria e fichas.
+- Não há vínculo ou endosso do publicador ou dos autores ao projeto acadêmico.
+
+SHA-256 do ZIP fornecido: `5a42d6e9c407feaec18d567b44a6d6b0ea453b20e2e1526d9305efc96225b6e1`.
+
+SHA-256 do GLB distribuído: `e30f02e978222bf2bacdee81d3ee3e32304de3f9c06cce55a60948c6f49d2398`.

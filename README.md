@@ -34,7 +34,7 @@ As referências escolhidas no Sketchfab têm páginas e prévias oficiais sob cl
 
 - **Gorrilaz Car BlockBench — shabaev**: incorporado na estrada; CC BY 4.0.
 - **Flying windmill — zeee7**: sem download disponível, licença Standard. O moinho que aparece no circuito é uma criação geométrica **provisória autoral**, não o arquivo desse autor.
-- **Gorillaz — Dudi Julianto**: referência de papercraft, sem download nem licença de reutilização informada na consulta. O arquivo não está incluído; os personagens do circuito continuam sendo interpretações próprias.
+- **Gorillaz — Dudi Julianto**: referência de papercraft, sem download nem licença de reutilização informada na consulta. O arquivo não está incluído; os personagens do circuito usam o pacote Phase 7 enviado pelo usuário.
 
 Fontes verificadas, hashes e atribuições completas: [REFERENCES.md](REFERENCES.md).
 
@@ -46,7 +46,8 @@ Fontes verificadas, hashes e atribuições completas: [REFERENCES.md](REFERENCES
 - `src/route.js`: posição, tangente, normalização e distâncias do circuito.
 - `src/scene.js`: WebGL, modelos, iluminação, câmera e moinho provisório.
 - `src/vendor/`: Three.js 0.180.0, GLTFLoader e BufferGeometryUtils, com licença MIT. Só os caminhos de importação dos auxiliares foram adaptados.
-- `assets/models/`: GLB locais, créditos, licença Kenney e metadados públicos das referências.
+- `assets/models/`: GLB do Geep e da banda, modelos alternativos, créditos e metadados públicos das referências.
+- `assets/portraits/`: quatro retratos renderizados dos modelos Phase 7 para galeria e fichas.
 - `tests/route.test.mjs`: seis testes de continuidade e geometria circular.
 - `server.mjs`: servidor HTTP sem pacotes externos.
 
@@ -69,4 +70,18 @@ Sem WebGL há uma estrada 2D com fichas e paradas. Sem JavaScript há um resumo 
 
 A discografia é um recorte inicial até 2023 e precisa de atualização. Textos introdutórios precisam de revisão para uso acadêmico final.
 
-Projeto de **Eduardo Alves Xavier**, **Gedson de Souza Mancio Júnior** e **Rafael Machado Colnaghi**. Universo criado por Jamie Hewlett e Damon Albarn: https://www.gorillaz.com/. Projeto independente, sem vínculo oficial. Personagens esquemáticos e autorais; encontros cartunescos, sem violência gráfica.
+Projeto de **Eduardo Alves Xavier**, **Gedson de Souza Mancio Júnior** e **Rafael Machado Colnaghi**. Universo criado por Jamie Hewlett e Damon Albarn: https://www.gorillaz.com/. Projeto independente, sem vínculo oficial. Modelos externos e adaptações creditados na página; figuras geométricas autorais apenas como alternativa. Encontros cartunescos, sem violência gráfica.
+
+## Banda Phase 7 incorporada
+
+O ZIP `the-gorillaz-band-phase-7.zip` contém os quatro integrantes em FBX e quatro texturas PNG de 2048 × 2048. Foi convertido para `assets/models/gorillaz-phase7.glb`, com as texturas embutidas e raízes identificadas para 2-D, Murdoc, Noodle e Russel. A escala comum preserva as proporções entre eles. Os modelos substituem as figuras geométricas na estrada, no modo “Banda ao redor”, na galeria e nas fichas.
+
+A publicação correspondente é **The Gorillaz band (phase 7)**, de **Redtricity**, com **CC BY 4.0** indicada no Sketchfab. Sua descrição atribui os modelos originais ao Gorillaz. Créditos e adaptações: `assets/models/PHASE7-CREDITS.txt` e [REFERENCES.md](REFERENCES.md).
+
+As poses dos braços de 2-D, Murdoc e Noodle foram ajustadas nos rigs; as malhas avaliadas foram aplicadas para exportação estática. O pacote não traz clipes de animação. O GLB da aplicação não mantém os rigs: usa movimento suave dos grupos, desativado com movimento reduzido. Russel mantém a pose do arquivo. Os quatro retratos da galeria foram renderizados desses mesmos modelos.
+
+Se o GLB da banda não carregar, as quatro figuras geométricas continuam funcionando como alternativa, com as mesmas fichas e controles. Os retratos também têm alternativa SVG se a imagem falhar. O moinho continua sendo a geometria provisória autoral, pois o modelo Sketchfab escolhido não oferece download.
+
+No celular, o botão de câmera abre os controles de vista e zoom; Escape ou um toque fora os recolhe. A vista inicial mantém os quatro integrantes enquadrados.
+
+Validação da banda: o GLB Phase 7 passou no Khronos glTF Validator sem erros, avisos ou informações de problema. No Chromium foram verificados os quatro modelos junto ao Geep, os quatro retratos e fichas correspondentes, clique na malha da Noodle, contador sem duplicação, encontro no circuito, restauração do foco, layout e controles de câmera móveis e alternativa geométrica ao bloquear o GLB.

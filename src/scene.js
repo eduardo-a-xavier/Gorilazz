@@ -2,7 +2,7 @@ import * as THREE from './vendor/three.module.min.js';
 import { GLTFLoader } from './vendor/GLTFLoader.js';
 import { TRACK_RADIUS, routePose, wrapProgress, MEMBER_STOPS } from './route.js';
 
-// Local Geep by shabaev (CC BY 4.0), Kenney fallback (CC0), original scenery/characters.
+// Local credited Geep and Phase 7 models; original scenery and geometric fallbacks.
 export function createWorld(container, onMember) {
   const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
   renderer.setPixelRatio(Math.min(devicePixelRatio, 1.7));
@@ -268,6 +268,36 @@ export function createWorld(container, onMember) {
     sign(['2-D / VOCALS', 'MURDOC / BASS', 'NOODLE / GUITAR', 'RUSSEL / DRUMS'][index], progress, index % 2 ? 19 : -19, '#7fa6ff');
     return actor;
   });
+  const bandStatus = document.querySelector('#band-status');
+  async function loadBand() {
+    try {
+    const gltf = await new GLTFLoader().loadAsync('/assets/models/gorillaz-phase7.glb');
+    const roots = Array(4).fill(null);
+    gltf.scene.traverse(object => { if (Number.isInteger(object.userData.memberIndex) && object.userData.memberIndex >= 0 && object.userData.memberIndex < 4) roots[object.userData.memberIndex] = object; });
+    if (roots.length !== 4 || roots.some(root => !root)) throw new Error('O pacote precisa conter os quatro integrantes identificados');
+    gltf.scene.updateWorldMatrix(true, true);
+    const bounds = roots.map(root => new THREE.Box3().setFromObject(root));
+    const scale = 6.2 / Math.max(...bounds.map(box => box.max.y - box.min.y));
+    roots.forEach((model, index) => {
+      const center = bounds[index].getCenter(new THREE.Vector3());
+      const centered = new THREE.Group(); centered.add(model); centered.position.set(-center.x, -bounds[index].min.y, -center.z);
+      const visual = new THREE.Group(); visual.add(centered); visual.scale.setScalar(scale); visual.rotation.y = Math.PI;
+      visual.traverse(object => {
+        object.userData.member = index;
+        if (object.isMesh) { object.castShadow = true; object.receiveShadow = true; }
+      });
+      const actor = people[index];
+      actor.group.traverse(object => { if (object.isMesh) object.geometry.dispose(); });
+      actor.group.clear(); actor.group.add(visual); actor.arms = [];
+    });
+    bandStatus.textContent = 'PHASE 7 / QUATRO INTEGRANTES NO CIRCUITO';
+    bandStatus.dataset.loaded = 'true'; bandStatus.dataset.count = '4';
+    } catch (error) {
+    console.warn('Banda Phase 7 indisponível; personagens geométricos mantidos:', error.message);
+    bandStatus.textContent = 'PERSONAGENS GEOMÉTRICOS / MODO ALTERNATIVO'; bandStatus.dataset.loaded = 'false';
+    }
+  }
+  loadBand();
   const raycaster = new THREE.Raycaster(); const pointer = new THREE.Vector2();
   let dragging = null; let dragAngle = 0; let dragElevation = 0; let zoom = 1; let moved = false;
   renderer.domElement.style.cursor = 'grab';
@@ -334,7 +364,7 @@ export function createWorld(container, onMember) {
       previousProgress = progress;
       const angle = (orbit && !reduced ? t * .16 : .48) + dragAngle;
       const mobile = container.clientWidth < 700;
-      const radius = (mobile ? (showcase ? 34 : 30) : (showcase ? 32 : 26)) * zoom;
+      const radius = (mobile ? (showcase ? 46 : 32) : (showcase ? 32 : 26)) * zoom;
       const cameraAngle = angle + pose.heading;
       desiredCamera.set(x + Math.sin(cameraAngle) * radius, (orbit ? 13 : 12) + dragElevation, z + Math.cos(cameraAngle) * radius);
       const localX = showcase && !mobile && !orbit ? -6.5 : 0;
@@ -353,8 +383,10 @@ export function createWorld(container, onMember) {
         actor.group.position.z = showcase ? z - localSide * Math.sin(pose.heading) + localAlong * Math.cos(pose.heading) : fixed.z;
         actor.group.rotation.y = (showcase ? pose.heading : fixed.heading) + Math.PI;
         actor.group.position.y = reduced ? 0 : Math.sin(t * 2 + i) * .07;
-        actor.arms[0].rotation.z = reduced ? -.15 : Math.sin(t * 2 + i) * .12 - .15;
-        actor.arms[1].rotation.z = reduced ? .15 : Math.cos(t * 2 + i) * .12 + .15;
+        if (actor.arms.length) {
+          actor.arms[0].rotation.z = reduced ? -.15 : Math.sin(t * 2 + i) * .12 - .15;
+          actor.arms[1].rotation.z = reduced ? .15 : Math.cos(t * 2 + i) * .12 + .15;
+        }
       }
       renderer.render(scene, camera);
     },

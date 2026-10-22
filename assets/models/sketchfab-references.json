@@ -45,5 +45,32 @@
     "downloadable": false,
     "file_included": false,
     "checked_on": "2026-10-22"
+  },
+  {
+    "uid": "77d8602771c44a9e879cdc623258a650",
+    "name": "The Gorillaz band (phase 7)",
+    "publisher": "Redtricity",
+    "publisher_url": "https://sketchfab.com/nnastav49",
+    "creator_as_described_by_publisher": "Gorillaz",
+    "url": "https://sketchfab.com/3d-models/the-gorillaz-band-phase-7-77d8602771c44a9e879cdc623258a650",
+    "license": {
+      "name": "Creative Commons Attribution",
+      "url": "http://creativecommons.org/licenses/by/4.0/"
+    },
+    "downloadable": true,
+    "file_included": true,
+    "supplied_by_user": true,
+    "local_file": "assets/models/gorillaz-phase7.glb",
+    "sha256": "e30f02e978222bf2bacdee81d3ee3e32304de3f9c06cce55a60948c6f49d2398",
+    "checked_on": "2026-10-22",
+    "adaptations": [
+      "four original base-color textures reconnected",
+      "upper arms posed on three skinned rigs",
+      "static evaluated meshes exported to GLB",
+      "four named member roots centered and grounded",
+      "alpha masking for texture edges",
+      "rendered portrait images",
+      "runtime scale, orientation and idle group motion"
+    ]
   }
 ]
