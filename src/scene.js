@@ -1,6 +1,8 @@
 import * as THREE from './vendor/three.module.min.js';
+import { GLTFLoader } from './vendor/GLTFLoader.js';
+import { TRACK_RADIUS, routePose, wrapProgress, MEMBER_STOPS } from './route.js';
 
-// All geometry is original and generated locally. No remote models or textures.
+// Local Kenney SUV (CC0); original procedural scenery and character interpretations.
 export function createWorld(container, onMember) {
   const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
   renderer.setPixelRatio(Math.min(devicePixelRatio, 1.7));
@@ -40,34 +42,47 @@ export function createWorld(container, onMember) {
     const mesh = new THREE.Mesh(new THREE.CylinderGeometry(top, bottom, height, sides), material(color));
     mesh.position.set(...at); mesh.castShadow = true; parent.add(mesh); return mesh;
   }
-  const ground = box(scene, [190, 1, 1500], [0, -1, -620], '#39334e');
+  const ground = cylinder(scene, TRACK_RADIUS + 43, TRACK_RADIUS + 35, 5, [0, -2.8, -TRACK_RADIUS], '#34433f', 96);
   ground.receiveShadow = true;
-  box(scene, [17, .3, 1420], [0, -.25, -620], '#202333');
-  for (const x of [-8.2, 8.2]) box(scene, [.22, .04, 1410], [x, -.07, -620], '#f2559c', true);
-  for (let z = 70; z > -1310; z -= 12) {
-    box(scene, [.18, .05, 5], [0, -.04, z], '#e2d8c0');
-    for (const x of [-11, 11]) {
-      box(scene, [.16, 1.2, .16], [x, .6, z], '#8d8ba4');
-      box(scene, [.25, .22, .25], [x, 1.2, z], '#7fa6ff', true);
+  const roadMesh = new THREE.Mesh(new THREE.RingGeometry(TRACK_RADIUS - 7, TRACK_RADIUS + 7, 192), material('#202333'));
+  roadMesh.rotation.x = -Math.PI / 2; roadMesh.position.set(0, -.1, -TRACK_RADIUS); roadMesh.receiveShadow = true; scene.add(roadMesh);
+  for (const radius of [TRACK_RADIUS - 7, TRACK_RADIUS + 7]) {
+    const edge = new THREE.Mesh(new THREE.TorusGeometry(radius, .08, 6, 192), material('#f5a9c6', true));
+    edge.rotation.x = Math.PI / 2; edge.position.set(0, 0, -TRACK_RADIUS); scene.add(edge);
+  }
+  for (let i = 0; i < 80; i++) {
+    const at = routePose(i / 80);
+    const dash = box(scene, [.18, .04, 2.4], [at.x, -.03, at.z], '#e2d8c0'); dash.rotation.y = at.heading;
+    for (const side of [-1, 1]) {
+      const marker = routePose(i / 80, side * 9);
+      box(scene, [.15, .8, .15], [marker.x, .4, marker.z], '#8d8ba4');
+      box(scene, [.23, .18, .23], [marker.x, .9, marker.z], '#7fa6ff', true);
     }
   }
-  // Deterministic skyline and trees keep the scene identical on every visit.
-  for (let i = 0; i < 75; i++) {
-    const z = 30 - i * 18;
+  for (let i = 0; i < 36; i++) {
     for (const side of [-1, 1]) {
-      const x = side * (24 + (i * 17 % 47));
-      const h = 10 + (i * 13 % 35);
+      const at = routePose(i / 36 + .02, side * (19 + i % 3 * 3));
+      const height = 5 + i * 7 % 16;
       if (i % 3) {
-        const tower = box(scene, [7 + i % 5, h, 8], [x, h / 2 - 1, z], i % 2 ? '#45416a' : '#303556');
-        for (let y = 4; y < h - 2; y += 6) box(tower, [2.4, .7, .08], [0, y - h / 2, 4.05], i % 2 ? '#f2559c' : '#7fa6ff', true);
+        const tower = box(scene, [4 + i % 3, height, 4], [at.x, height / 2 - .4, at.z], i % 2 ? '#454b57' : '#35454c'); tower.rotation.y = at.heading;
+        for (let y = 3; y < height - 1; y += 5) box(tower, [1.6, .5, .08], [0, y - height / 2, 2.05], i % 2 ? '#f5a9c6' : '#7fa6ff', true);
       } else {
-        cylinder(scene, .4, .7, 5, [side * 15, 2, z], '#5b4562');
-        const tree = new THREE.Mesh(new THREE.ConeGeometry(3.3, 9, 5), material('#477b80'));
-        tree.position.set(side * 15, 8, z); scene.add(tree);
+        cylinder(scene, .3, .6, 4, [at.x, 1.5, at.z], '#5b4562');
+        const tree = new THREE.Mesh(new THREE.ConeGeometry(2.7, 7, 5), material('#477b80')); tree.position.set(at.x, 6, at.z); scene.add(tree);
       }
     }
   }
-  function sign(text, x, z, color = '#f2559c') {
+  // A central record makes the circuit legible in the aerial camera.
+  cylinder(scene, 24, 25, 1, [0, -.3, -TRACK_RADIUS], '#171d20', 96);
+  for (const radius of [12, 16, 20, 23]) {
+    const groove = new THREE.Mesh(new THREE.TorusGeometry(radius, .04, 4, 96), material('#566761'));
+    groove.rotation.x = Math.PI / 2; groove.position.set(0, .24, -TRACK_RADIUS); scene.add(groove);
+  }
+  cylinder(scene, 7, 7, .12, [0, .3, -TRACK_RADIUS], '#f5a9c6', 64);
+  cylinder(scene, .6, .6, .15, [0, .4, -TRACK_RADIUS], '#141414', 16);
+  function sign(text, progress, lateral = 18, color = '#f2559c') {
+    const at = routePose(progress, lateral);
+    const signGroup = new THREE.Group(); signGroup.position.set(at.x, 0, at.z); signGroup.rotation.y = at.heading; scene.add(signGroup);
     const canvas = document.createElement('canvas'); canvas.width = 768; canvas.height = 256;
     const context = canvas.getContext('2d'); context.fillStyle = '#141414'; context.fillRect(0, 0, 768, 256);
     context.strokeStyle = color; context.lineWidth = 16; context.strokeRect(8, 8, 752, 240);
@@ -75,16 +90,16 @@ export function createWorld(container, onMember) {
     text.split('|').forEach((line, index, lines) => context.fillText(line, 384, lines.length === 1 ? 150 : 105 + index * 72, 700));
     const texture = new THREE.CanvasTexture(canvas); texture.colorSpace = THREE.SRGBColorSpace;
     const board = new THREE.Mesh(new THREE.BoxGeometry(16, 5.3, .3), new THREE.MeshStandardMaterial({ map: texture, roughness: .7 }));
-    board.position.set(x, 9, z); board.rotation.y = x < 0 ? .22 : -.22; scene.add(board);
-    for (const dx of [-5, 5]) box(scene, [.4, 7, .4], [x + dx, 3, z], '#777487');
+    board.position.set(0, 8, 0); signGroup.add(board);
+    for (const dx of [-5, 5]) box(signGroup, [.4, 7, .4], [dx, 3, 0], '#777487');
   }
   const names = ['KONG STUDIOS|WELCOME TO THE ROAD', '1998 / LONDON|THE BEGINNING', 'MEET THE BAND|FOUR MINDS. ONE SOUND.', 'NO GENRE.|NO BOUNDARIES.', 'PLASTIC BEACH|WELCOME TO PARADISE', 'LIVE ON STAGE|TURN IT UP', 'A DIFFERENT WORLD|LISTEN CLOSER', 'MADE BY STUDENTS|DRIVEN BY MUSIC', 'NO REALITY.|JUST GORILLAZ.'];
-  names.forEach((name, i) => sign(name, i % 2 ? -19 : 19, -i * 140 - 20));
+  names.forEach((name, i) => sign(name, i / 9 + .025, i % 2 ? -18 : 18));
   // Raised solar disc at the vanishing point.
   const sun = new THREE.Mesh(new THREE.CircleGeometry(45, 64), new THREE.MeshBasicMaterial({ color: '#f2559c', fog: false }));
-  sun.position.set(0, 65, -1450); scene.add(sun);
+  sun.position.set(0, 80, -180); scene.add(sun);
   // A sculptural starting island gathers the band around the car.
-  const island = new THREE.Group(); scene.add(island);
+  const island = new THREE.Group(); island.rotation.y = -Math.PI / 2; scene.add(island);
   cylinder(island, 15, 13.8, .9, [0, -.5, 0], '#4e6257', 64);
   const islandRock = cylinder(island, 13.8, 6, 7, [0, -4.4, 0], '#293b36', 9);
   islandRock.rotation.y = .2;
@@ -116,10 +131,10 @@ export function createWorld(container, onMember) {
   dustGeometry.setAttribute('position', new THREE.BufferAttribute(dustPositions, 3));
   const dust = new THREE.Points(dustGeometry, new THREE.PointsMaterial({color:'#e2d8c0',size:.12,transparent:true,opacity:.45,depthWrite:false}));
   scene.add(dust);
-  const gates = [];
-  for (let i = 1; i < 9; i++) {
-    const gate = new THREE.Mesh(new THREE.TorusGeometry(12, .09, 6, 64), material(['#d2e2a8','#7fa6ff','#f5a9c6'][i % 3], true));
-    gate.position.set(0, 5, -i * 140); scene.add(gate); gates.push(gate);
+  for (let i = 0; i < 9; i++) {
+    const at = routePose(i / 9);
+    const gate = new THREE.Mesh(new THREE.TorusGeometry(10.5, .09, 6, 64), material(['#d2e2a8','#7fa6ff','#f5a9c6'][i % 3], true));
+    gate.position.set(at.x, 4, at.z); gate.rotation.y = at.heading; scene.add(gate);
   }
   const skyColors = ['#202631','#30283c','#273447','#282631','#254347','#384047','#292d48','#352b3d','#202631'].map(color => new THREE.Color(color));
   const groundColors = ['#34433f','#514044','#374958','#3d3b48','#365b57','#485355','#343b54','#50414c','#34433f'].map(color => new THREE.Color(color));
@@ -145,6 +160,26 @@ export function createWorld(container, onMember) {
     const wheel = cylinder(car, .75, .75, .5, [x, .75, z], '#11131c'); wheel.rotation.z = Math.PI / 2; wheels.push(wheel);
     const hub = cylinder(car, .36, .36, .52, [x * 1.04, .75, z], '#f2559c'); hub.rotation.z = Math.PI / 2;
   }
+  let modelWheels = [];
+  const vehicleStatus = document.querySelector('#vehicle-status');
+  new GLTFLoader().load('/assets/models/kenney-suv.glb', gltf => {
+    const model = gltf.scene;
+    const bounds = new THREE.Box3().setFromObject(model); const size = bounds.getSize(new THREE.Vector3());
+    const scale = 6.6 / size.z; const center = bounds.getCenter(new THREE.Vector3());
+    const vehicle = new THREE.Group();
+    model.scale.setScalar(scale); model.position.set(-center.x * scale, -bounds.min.y * scale, -center.z * scale); vehicle.add(model); vehicle.rotation.y = Math.PI;
+    model.traverse(object => {
+      if (object.isMesh) { object.castShadow = true; object.receiveShadow = true; }
+      if (/wheel-(front|back)-(left|right)/.test(object.name)) modelWheels.push(object);
+    });
+    // Dispose only the superseded fallback geometries; shared materials are retained.
+    car.traverse(object => { if (object.isMesh) object.geometry.dispose(); });
+    car.clear(); car.add(vehicle);
+    vehicleStatus.textContent = 'SUV KENNEY / CC0'; vehicleStatus.dataset.loaded = 'true';
+  }, undefined, error => {
+    console.warn('SUV GLB indisponível; veículo geométrico mantido:', error.message);
+    vehicleStatus.textContent = 'VEÍCULO GEOMÉTRICO / MODO ALTERNATIVO'; vehicleStatus.dataset.loaded = 'false';
+  });
   function person(index) {
     const g = new THREE.Group();
     const skin = ['#e2d8c0', '#91a568', '#e2d8c0', '#986b50'][index];
@@ -175,12 +210,12 @@ export function createWorld(container, onMember) {
     if (index === 3) { const drum = cylinder(g, .9, .9, .65, [0, 2.1, -1.05], '#3a68d8'); drum.rotation.x = Math.PI / 2; }
     return { group: g, arms };
   }
-  const people = [.22, .44, .65, .86].map((progress, index) => {
-    const actor = person(index); actor.group.position.set(index % 2 ? 5.7 : -5.7, 0, -progress * 1120);
-    actor.group.rotation.y = Math.PI + (index % 2 ? .3 : -.3); actor.group.userData.member = index;
-    actor.group.traverse(object => { object.userData.member = index; }); scene.add(actor.group);
-    const platform = cylinder(scene, 3.7, 4, .4, [actor.group.position.x, -.08, actor.group.position.z], '#3a68d8'); platform.receiveShadow = true;
-    sign(['2-D / VOCALS', 'MURDOC / BASS', 'NOODLE / GUITAR', 'RUSSEL / DRUMS'][index], index % 2 ? 18 : -18, actor.group.position.z - 5, '#7fa6ff');
+  const people = MEMBER_STOPS.map((progress, index) => {
+    const at = routePose(progress, index % 2 ? 11 : -11);
+    const actor = person(index); actor.group.position.set(at.x, 0, at.z); actor.group.rotation.y = at.heading + Math.PI;
+    actor.group.userData.member = index; actor.group.traverse(object => { object.userData.member = index; }); scene.add(actor.group);
+    const platform = cylinder(scene, 3.6, 4, .4, [at.x, -.08, at.z], '#3a68d8'); platform.receiveShadow = true;
+    sign(['2-D / VOCALS', 'MURDOC / BASS', 'NOODLE / GUITAR', 'RUSSEL / DRUMS'][index], progress, index % 2 ? 19 : -19, '#7fa6ff');
     return actor;
   });
   const raycaster = new THREE.Raycaster(); const pointer = new THREE.Vector2();
@@ -217,40 +252,53 @@ export function createWorld(container, onMember) {
     renderer.setSize(width, height, false); camera.aspect = width / height; camera.updateProjectionMatrix();
   }
   const observer = new ResizeObserver(resize); observer.observe(container); resize();
-  let wasZ = 0;
+  let previousProgress = 0;
+  let overview = false;
   const look = new THREE.Vector3();
   const cameraTarget = new THREE.Vector3();
   const desiredCamera = new THREE.Vector3();
   let previousTime = null; let initialized = false;
   return {
+    setOverview(value) { overview = value; },
     zoomBy(amount) { zoom = THREE.MathUtils.clamp(zoom + amount, .7, 1.6); },
     resetCamera() { dragAngle = 0; dragElevation = 0; zoom = 1; },
     update(progress, time, moving, orbit, reduced, showcase) {
-      const z = -progress * 1120; const t = time / 1000;
+      const pose = routePose(progress); const z = pose.z; const x = pose.x; const t = time / 1000;
       const dt = previousTime === null ? .016 : Math.min((time - previousTime) / 1000, .1); previousTime = time;
       const blend = reduced ? 1 : 1 - Math.exp(-dt * 4);
-      const zone = Math.min(8, Math.round(progress * 8));
+      const zone = Math.round(wrapProgress(progress) * 9) % 9;
       scene.background.lerp(skyColors[zone], blend * .35); scene.fog.color.copy(scene.background);
+      scene.fog.density = THREE.MathUtils.lerp(scene.fog.density, overview ? .0015 : .007, blend);
       ground.material.color.lerp(groundColors[zone], blend * .35);
-      island.visible = progress < .08;
-      dust.position.z = z - 60;
+      island.visible = showcase && Math.min(wrapProgress(progress), 1 - wrapProgress(progress)) < .07;
+      dust.position.set(x, 0, z);
       if (!reduced) { dust.rotation.y = Math.sin(t * .025) * .15; satellites.rotation.y = Math.sin(t * .1) * .12; portal.rotation.z = Math.sin(t * .07) * .04; }
 
-      car.position.z = z; car.position.y = moving && !reduced ? Math.sin(t * 14) * .035 : 0;
+      car.position.x = x; car.position.z = z; car.rotation.y = pose.heading; car.position.y = moving && !reduced ? Math.sin(t * 14) * .035 : 0;
       car.rotation.z = moving && !reduced ? Math.sin(t * 2) * .012 : 0;
-      wheels.forEach(wheel => { wheel.rotation.x += (z - wasZ) * .8; }); wasZ = z;
+      const travelled = (progress - previousProgress) * Math.PI * 2 * TRACK_RADIUS;
+      modelWheels.forEach(wheel => { wheel.rotation.x -= travelled / .85; });
+      if (!modelWheels.length) wheels.forEach(wheel => { wheel.rotation.x -= travelled / .75; });
+      previousProgress = progress;
       const angle = (orbit && !reduced ? t * .16 : .48) + dragAngle;
       const mobile = container.clientWidth < 700;
       const radius = (mobile ? (showcase ? 34 : 30) : (showcase ? 32 : 26)) * zoom;
-      desiredCamera.set(Math.sin(angle) * radius, (orbit ? 13 : 12) + dragElevation, z + Math.cos(angle) * radius);
-      look.set(showcase && !mobile && !orbit ? -6.5 : 0, mobile && showcase ? 3 : 2, z - (orbit || showcase ? 1 : 12));
+      const cameraAngle = angle + pose.heading;
+      desiredCamera.set(x + Math.sin(cameraAngle) * radius, (orbit ? 13 : 12) + dragElevation, z + Math.cos(cameraAngle) * radius);
+      const localX = showcase && !mobile && !orbit ? -6.5 : 0;
+      const localZ = -(orbit || showcase ? 1 : 12);
+      look.set(x + localX * Math.cos(pose.heading) + localZ * Math.sin(pose.heading), mobile && showcase ? 3 : 2, z - localX * Math.sin(pose.heading) + localZ * Math.cos(pose.heading));
+      if (overview) { desiredCamera.set(0, 185 * zoom, -TRACK_RADIUS + .01); look.set(0, 0, -TRACK_RADIUS); }
       if (!initialized || reduced) { camera.position.copy(desiredCamera); cameraTarget.copy(look); initialized = true; }
       else { camera.position.lerp(desiredCamera, blend); cameraTarget.lerp(look, blend); }
       camera.lookAt(cameraTarget);
-      sunlight.position.z = z + 20; sunlight.target.position.z = z - 15;
+      sunlight.position.set(x - 35, 65, z + 20); sunlight.target.position.set(x, 0, z); sun.lookAt(camera.position);
       for (const [i, actor] of people.entries()) {
-        actor.group.position.x = showcase ? (i % 2 ? 5.5 : -5.5) : (i % 2 ? 5.7 : -5.7);
-        actor.group.position.z = showcase ? z + (i < 2 ? -5 : 3) : -[.22, .44, .65, .86][i] * 1120;
+        const localSide = i % 2 ? 5.5 : -5.5; const localAlong = i < 2 ? -5 : 3;
+        const fixed = routePose(MEMBER_STOPS[i], i % 2 ? 11 : -11);
+        actor.group.position.x = showcase ? x + localSide * Math.cos(pose.heading) + localAlong * Math.sin(pose.heading) : fixed.x;
+        actor.group.position.z = showcase ? z - localSide * Math.sin(pose.heading) + localAlong * Math.cos(pose.heading) : fixed.z;
+        actor.group.rotation.y = (showcase ? pose.heading : fixed.heading) + Math.PI;
         actor.group.position.y = reduced ? 0 : Math.sin(t * 2 + i) * .07;
         actor.arms[0].rotation.z = reduced ? -.15 : Math.sin(t * 2 + i) * .12 - .15;
         actor.arms[1].rotation.z = reduced ? .15 : Math.cos(t * 2 + i) * .12 + .15;

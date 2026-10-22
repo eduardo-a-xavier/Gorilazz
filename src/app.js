@@ -1,8 +1,9 @@
+import { wrapProgress, nearestDestination, circularDistance, STOP_COUNT, MEMBER_STOPS } from './route.js';
 const members = [
-  { name: '2-D', role: 'Voz e teclados', skin: '#e2d8c0', hair: '#3a68d8', shirt: '#f2559c', position: .22, description: 'Stuart Pot, conhecido como 2-D, é a voz da banda virtual. Seu cabelo azul e olhos escuros compõem sua identidade visual. Sua personalidade sensível contrasta com o caos ao redor.', song: 'Tomorrow Comes Today' },
-  { name: 'Murdoc', role: 'Baixo', skin: '#91a568', hair: '#141414', shirt: '#373737', position: .44, description: 'Murdoc Niccals é o baixista e autoproclamado líder da banda. Provocador e ligado ao rock, está no centro de várias histórias do universo Gorillaz.', song: 'Feel Good Inc.' },
-  { name: 'Noodle', role: 'Guitarra', skin: '#e2d8c0', hair: '#141414', shirt: '#3a68d8', position: .65, description: 'Noodle é a guitarrista japonesa da banda. Sua trajetória atravessa as eras visuais de Gorillaz, combinando mistério, independência e energia.', song: 'DARE' },
-  { name: 'Russel', role: 'Bateria', skin: '#986b50', hair: '#141414', shirt: '#e2d8c0', position: .86, description: 'Russel Hobbs é o baterista. Sua conexão com o hip-hop e o sobrenatural faz parte da narrativa da banda.', song: 'Clint Eastwood' },
+  { name: '2-D', role: 'Voz e teclados', skin: '#e2d8c0', hair: '#3a68d8', shirt: '#f2559c', position: MEMBER_STOPS[0], description: 'Stuart Pot, conhecido como 2-D, é a voz da banda virtual. Seu cabelo azul e olhos escuros compõem sua identidade visual. Sua personalidade sensível contrasta com o caos ao redor.', song: 'Tomorrow Comes Today' },
+  { name: 'Murdoc', role: 'Baixo', skin: '#91a568', hair: '#141414', shirt: '#373737', position: MEMBER_STOPS[1], description: 'Murdoc Niccals é o baixista e autoproclamado líder da banda. Provocador e ligado ao rock, está no centro de várias histórias do universo Gorillaz.', song: 'Feel Good Inc.' },
+  { name: 'Noodle', role: 'Guitarra', skin: '#e2d8c0', hair: '#141414', shirt: '#3a68d8', position: MEMBER_STOPS[2], description: 'Noodle é a guitarrista japonesa da banda. Sua trajetória atravessa as eras visuais de Gorillaz, combinando mistério, independência e energia.', song: 'DARE' },
+  { name: 'Russel', role: 'Bateria', skin: '#986b50', hair: '#141414', shirt: '#e2d8c0', position: MEMBER_STOPS[3], description: 'Russel Hobbs é o baterista. Sua conexão com o hip-hop e o sobrenatural faz parte da narrativa da banda.', song: 'Clint Eastwood' },
 ];
 function portrait(member, index) {
   return `<svg viewBox="0 0 70 110" aria-hidden="true"><path d="M22 76 18 108M47 76l5 32" stroke="#141414" stroke-width="10"/><path d="M${index === 3 ? 10 : 17} 79V54Q35 36 ${index === 3 ? 60 : 53} 54v25Z" fill="${member.shirt}" stroke="#141414" stroke-width="3"/><path d="M18 55 8 80m45-25 9 25" stroke="${member.skin}" stroke-width="8"/><ellipse cx="35" cy="28" rx="${index === 3 ? 24 : 19}" ry="24" fill="${member.skin}" stroke="#141414" stroke-width="3"/><path d="M15 24 13 7 26 9 34 0 41 9 56 5 54 30 44 15 34 21 26 15Z" fill="${member.hair}"/><g fill="#141414"><ellipse cx="27" cy="29" rx="4" ry="5"/><ellipse cx="43" cy="29" rx="4" ry="5"/></g><path d="m28 42 15-2" stroke="#141414" stroke-width="2"/></svg>`;
@@ -43,6 +44,11 @@ let world = null;
 document.querySelector('#zoom-in').addEventListener('click', () => world?.zoomBy(-.15));
 document.querySelector('#zoom-out').addEventListener('click', () => world?.zoomBy(.15));
 document.querySelector('#reset-camera').addEventListener('click', () => world?.resetCamera());
+let overview = false;
+document.querySelector('#overview-toggle').addEventListener('click', event => {
+  overview = !overview; world?.setOverview(overview); event.currentTarget.setAttribute('aria-pressed', String(overview));
+  event.currentTarget.textContent = overview ? '↙ VOLTAR AO JIPE' : '◎ VER CIRCUITO';
+});
 let routeIndex = -1;
 let musicSector = -1;
 const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
@@ -51,7 +57,7 @@ function setTour(value) {
   touring = value; tourButton.setAttribute('aria-pressed', String(value));
   tourButton.textContent = value ? 'Ⅱ PAUSAR TOUR' : '▶ TOUR AUTOMÁTICO';
 }
-tourButton.addEventListener('click', () => { enterWorld(); destination = null; if (position >= .999) position = 0; setTour(!touring); });
+tourButton.addEventListener('click', () => { enterWorld(); destination = null; setTour(!touring); });
 document.querySelector('#camera-toggle').addEventListener('click', event => {
   orbital = !orbital; event.currentTarget.setAttribute('aria-pressed', String(orbital));
   event.currentTarget.textContent = orbital ? '↗ CÂMERA DE VIAGEM' : '↻ CÂMERA ORBITAL';
@@ -63,7 +69,8 @@ import('./scene.js').then(({createWorld}) => {
 }).catch(error => {
   console.warn('Modo 2D ativado:', error.message);
   document.querySelector('#render-status').textContent = 'MODO 2D / WebGL indisponível';
-  for (const button of document.querySelectorAll('.camera-tools button, #camera-toggle, #band-toggle')) button.disabled = true;
+  document.querySelector('#vehicle-status').textContent = 'MODO 2D / MODELOS DISPONÍVEIS PARA DOWNLOAD';
+  for (const button of document.querySelectorAll('.camera-tools button, #camera-toggle, #band-toggle, #overview-toggle')) button.disabled = true;
 });
 let lastTime;
 let previousFocus;
@@ -146,23 +153,22 @@ function frame(time) {
       if (Math.abs(difference) < .002) { position = destination; destination = null; }
       else position += Math.sign(difference) * Math.min(Math.abs(difference), delta * .17);
     } else position += (direction || (touring ? 1 : 0)) * delta * .035;
-    position = Math.max(0, Math.min(1, position));
-    if (position >= 1) setTour(false);
     moving = Math.abs(previous - position) > .000001;
     if (moving) { enterWorld(); setShowcase(false); }
-    const nearby = members.findIndex(member => Math.abs(member.position - position) < .009);
+    const nearby = members.findIndex(member => circularDistance(member.position, position) < .009);
     if (encounter !== null && nearby !== encounter) encounter = null;
     if (moving && destination === null && nearby >= 0 && nearby !== encounter && time >= cooldown) openMember(nearby, true);
   }
-  const currentRoute = Math.min(8, Math.round(position * 8));
+  const progress = wrapProgress(position);
+  const currentRoute = Math.round(progress * STOP_COUNT) % STOP_COUNT;
   if (currentRoute !== routeIndex) {
     routeIndex = currentRoute; selectStop(currentRoute, false);
     document.querySelector('#scene-label').textContent = `${String(currentRoute + 1).padStart(2, '0')} / ${stops[currentRoute][0].toUpperCase()}`;
   }
-  const sector = Math.min(7, Math.floor(position * 8));
+  const sector = Math.min(7, Math.floor(progress * 8));
   if (sector !== musicSector) { musicSector = sector; setTrack(sector); }
-  document.querySelector('#trip-distance').textContent = `KM ${String(Math.round(position * 112)).padStart(3, '0')}`;
-  document.querySelector('#trip-progress').style.width = `${position * 100}%`;
+  document.querySelector('#trip-distance').textContent = `CIRCUITO ${String(Math.floor(progress * 100)).padStart(2, '0')}%`;
+  document.querySelector('#trip-progress').style.width = `${progress * 100}%`;
   document.querySelector('#radio').classList.toggle('playing', moving && !reducedMotion.matches);
   if (world) world.update(position, time, moving, orbital, reducedMotion.matches, showcase);
   const width = road.clientWidth; car.style.transform = `translateX(${position * Math.max(0, width - car.offsetWidth)}px)`;
@@ -177,13 +183,13 @@ const stops = [
   ['Álbuns', 'Uma discografia em movimento.', '<ul class="albums">' + [['Gorillaz',2001],['Demon Days',2005],['Plastic Beach',2010],['The Fall',2010],['Humanz',2017],['The Now Now',2018],['Song Machine, Season One',2020],['Cracker Island',2023]].map(([name, year]) => `<li>${name}<small>${year}</small></li>`).join('') + '</ul><p>Recorte inicial até 2023. Este conteúdo precisa de revisão e atualização para incluir lançamentos posteriores.</p>'],
   ['Ao vivo', 'Do desenho ao palco.', '<p>Nos shows, músicos reais e convidados dão vida ao repertório. Projeções e imagens dos personagens conectam a performance ao universo visual da banda, em formatos que variam entre turnês.</p>'],
   ['Temas', 'O mundo no retrovisor.', '<p>Solidão, consumo, tecnologia e meio ambiente atravessam o universo da banda. Plastic Beach, por exemplo, usa a imagem de uma ilha de resíduos para abordar questões ambientais e o consumo.</p>'],
-  ['Projeto', 'Uma estrada feita por nós.', '<p>Projeto acadêmico de <strong>Eduardo Alves Xavier</strong>, <strong>Gedson de Souza Mancio Júnior</strong> e <strong>Rafael Machado Colnaghi</strong>.</p><p>A estrada conecta nove paradas temáticas. O carro e as figuras esquemáticas são interpretações autorais para este protótipo, sem uso de arte oficial.</p>'],
-  ['Fontes', 'Respeito às origens.', '<p>Crédito ao universo criado por Jamie Hewlett e Damon Albarn. Consulte o <a href="https://www.gorillaz.com/" target="_blank" rel="noopener noreferrer">site oficial de Gorillaz ↗</a>.</p><p>Projeto acadêmico independente, sem vínculo oficial. As figuras deste protótipo são esquemáticas e autorais; os textos são introdutórios e devem ser revisados para uso acadêmico final.</p>'],
+  ['Projeto', 'Uma estrada feita por nós.', '<p>Projeto acadêmico de <strong>Eduardo Alves Xavier</strong>, <strong>Gedson de Souza Mancio Júnior</strong> e <strong>Rafael Machado Colnaghi</strong>.</p><p>A estrada conecta nove paradas temáticas. O circuito e as figuras esquemáticas são interpretações autorais. O veículo é um SUV Kenney sob licença CC0, sem vínculo com a marca Jeep.</p>'],
+  ['Fontes', 'Respeito às origens.', '<p>Modelo SUV do <a href="https://kenney.nl/assets/car-kit" target="_blank" rel="noopener noreferrer">Kenney Car Kit</a>, sob licença CC0. Consulte também os <a href="#modelos">modelos para download e as referências do circuito</a>.</p><p>Crédito ao universo criado por Jamie Hewlett e Damon Albarn. Consulte o <a href="https://www.gorillaz.com/" target="_blank" rel="noopener noreferrer">site oficial de Gorillaz ↗</a>.</p><p>Projeto acadêmico independente, sem vínculo oficial. As figuras deste protótipo são esquemáticas e autorais; os textos são introdutórios e devem ser revisados para uso acadêmico final.</p>'],
 ];
 const menu = document.querySelector('#stop-menu');
 const panel = document.querySelector('#panel');
 function selectStop(index, travel = true) {
-  if (travel) { enterWorld(); destination = index / 8; setTour(false); }
+  if (travel) { enterWorld(); destination = nearestDestination(position, index / STOP_COUNT); setTour(false); }
   document.querySelectorAll('#chapter-dock button').forEach((button, number) => button.setAttribute('aria-current', String(index === number)));
   document.querySelector('#chapter-title').textContent = stops[index][1];
   const chapterCopy = document.createElement('div'); chapterCopy.innerHTML = stops[index][2];

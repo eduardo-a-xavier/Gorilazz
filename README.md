@@ -1,6 +1,6 @@
 # Gorilazz — A estrada
 
-Projeto acadêmico interativo independente sobre Gorillaz. HTML, CSS e JavaScript, com cenário 3D WebGL e modelos geométricos autorais. Three.js 0.180.0 está incluído localmente em `src/vendor`, com licença MIT; não é necessário instalar pacotes nem carregar bibliotecas externas para executar.
+Projeto acadêmico interativo independente sobre Gorillaz. HTML, CSS e JavaScript, com cenário e personagens geométricos autorais em WebGL, e veículo GLB Kenney sob CC0. Three.js 0.180.0 está incluído localmente em `src/vendor`, com licença MIT; não é necessário instalar pacotes nem carregar bibliotecas externas para executar.
 
 ## Executar
 
@@ -24,7 +24,7 @@ Use `PORT=4000 npm start` para escolher outra porta em shells compatíveis. O se
 - `index.html`: estrutura semântica, cenário e diálogo.
 - `src/style.css`: visual, responsividade e preferência por movimento reduzido.
 - `src/app.js`: movimento por tempo, encontros, fichas, rádio, tour e paradas.
-- `src/scene.js`: câmera, iluminação, carro, personagens e cenário WebGL gerados localmente.
+- `src/scene.js`: câmera, iluminação, carregamento do SUV GLB, personagens e cenário WebGL.
 - `src/vendor/`: Three.js 0.180.0 e licença MIT incluídos na distribuição.
 - `server.mjs`: servidor HTTP com lista explícita de arquivos permitidos.
 - `package.json`: comandos de execução e validação.
@@ -33,13 +33,13 @@ Execute `npm run check` para verificar a sintaxe do servidor e do JavaScript. De
 
 ## Limitações e créditos
 
-Protótipo acadêmico de Eduardo Alves Xavier, Gedson de Souza Mancio Júnior e Rafael Machado Colnaghi. Universo criado por Jamie Hewlett e Damon Albarn: https://www.gorillaz.com/. Sem vínculo oficial. O carro e as figuras são interpretações autorais esquemáticas, não arte oficial. Colisões cartunescas, sem violência gráfica.
+Protótipo acadêmico de Eduardo Alves Xavier, Gedson de Souza Mancio Júnior e Rafael Machado Colnaghi. Universo criado por Jamie Hewlett e Damon Albarn: https://www.gorillaz.com/. Sem vínculo oficial. O veículo é o SUV do Kenney Car Kit sob CC0. As figuras são interpretações autorais esquemáticas, não arte oficial. Colisões cartunescas, sem violência gráfica.
 
 A discografia é um recorte inicial até 2023 e precisa de atualização; textos introdutórios precisam de revisão para uso acadêmico final. O suporte a teclado, diálogo nativo e foco visível não constitui certificação de acessibilidade. Validar com tecnologias assistivas e dispositivos reais antes de publicação final.
 
 ## Experiência 3D e apresentação
 
-A viagem começa com os quatro integrantes ao redor do carro. “Banda ao redor” reúne ou devolve os personagens às suas posições na estrada. Clique em um personagem 3D ou nos cartões para abrir sua ficha. Modelos são interpretações geométricas autorais, não reproduções oficiais.
+A viagem começa com os quatro integrantes ao redor do carro. “Banda ao redor” reúne ou devolve os personagens às suas posições na estrada. Clique em um personagem 3D ou nos cartões para abrir sua ficha. Os personagens são interpretações geométricas autorais, não reproduções oficiais. O SUV é um modelo Kenney sob CC0.
 
 “Tour automático” avança pela estrada e pausa ao encontrar um personagem; feche a ficha e ative novamente para continuar a apresentação. “Câmera orbital” gira ao redor do carro; clique novamente para voltar à câmera de viagem. Escolher uma das nove paradas leva o carro até a região correspondente. O rádio acompanha a região com oito sugestões de músicas; anterior/próxima permitem explorar a seleção independentemente.
 
@@ -60,3 +60,15 @@ A experiência abre diretamente no mundo 3D, com uma ilha de apresentação, por
 - Se WebGL falhar, a estrada 2D e os conteúdos permanecem; controles exclusivos da câmera 3D ficam desativados.
 
 A direção desta edição prioriza exploração e câmera em um universo musical, conforme a referência indicada pelo usuário, “Yamê: The Molazone”. O site de referência não pôde ser inspecionado neste ambiente; a implementação é autoral, sem reutilização de código ou arquivos daquele site.
+
+## Jipe e circuito circular
+
+A estrada 3D agora fecha um círculo: é possível seguir dando voltas em qualquer sentido. A câmera acompanha o jipe na tangente das curvas. “Ver circuito” alterna entre acompanhamento e vista aérea do anel; arraste, zoom e restauração continuam disponíveis. A navegação por paradas escolhe o caminho mais curto.
+
+O veículo padrão é `assets/models/kenney-suv.glb`, do **Kenney Car Kit**, sob **CC0**, com estepe e rodas separadas. Há uma segunda opção de download em `assets/models/kenney-suv-luxury.glb`. Ambos podem ser abertos em Blender ou outro editor compatível com glTF 2.0. A seção “Um jipe. Um mundo em volta.” contém os downloads no próprio site.
+
+Veja [REFERENCES.md](REFERENCES.md) para fontes, autoria, licença e hashes SHA-256. O modelo padrão é servido localmente pelo `server.mjs`; nenhuma conexão externa é necessária para carregar o jipe. Se ele falhar, um veículo geométrico mantém a experiência disponível. O fallback sem WebGL usa a representação 2D, mantendo navegação e fichas.
+
+`src/route.js` concentra posição, orientação, normalização e distância circular. A música e as paradas acompanham a posição dentro da volta; o progresso não é salvo ao recarregar.
+
+Execute `npm test` para os seis testes do circuito: fechamento de volta, tangente do jipe, deslocamento lateral, nove posições distintas, caminho mais curto e encontros na emenda. A versão circular também foi validada no Chromium com carregamento do GLB local, vista aérea, passagem pela emenda nos dois sentidos, download real e fallback do veículo.

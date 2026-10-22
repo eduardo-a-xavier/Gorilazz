@@ -3,10 +3,13 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "engines": { "node": ">=20" },
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
     "dev": "node server.mjs",
     "start": "node server.mjs",
-    "check": "node --check server.mjs && node --check src/app.js && node --check src/scene.js"
+    "check": "node --check server.mjs && node --check src/app.js && node --check src/scene.js && node --check src/route.js",
+    "test": "node --test tests/route.test.mjs"
   }
 }

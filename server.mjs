@@ -6,6 +6,12 @@ const routes = new Map([
   ['/src/style.css', ['src/style.css', 'text/css; charset=utf-8']],
   ['/src/app.js', ['src/app.js', 'text/javascript; charset=utf-8']],
   ['/src/scene.js', ['src/scene.js', 'text/javascript; charset=utf-8']],
+  ['/src/route.js', ['src/route.js', 'text/javascript; charset=utf-8']],
+  ['/src/vendor/GLTFLoader.js', ['src/vendor/GLTFLoader.js', 'text/javascript; charset=utf-8']],
+  ['/src/vendor/BufferGeometryUtils.js', ['src/vendor/BufferGeometryUtils.js', 'text/javascript; charset=utf-8']],
+  ['/assets/models/kenney-suv.glb', ['assets/models/kenney-suv.glb', 'model/gltf-binary']],
+  ['/assets/models/kenney-suv-luxury.glb', ['assets/models/kenney-suv-luxury.glb', 'model/gltf-binary']],
+  ['/assets/models/KENNEY-LICENSE.txt', ['assets/models/KENNEY-LICENSE.txt', 'text/plain; charset=utf-8']],
   ['/src/vendor/three.module.min.js', ['src/vendor/three.module.min.js', 'text/javascript; charset=utf-8']],
   ['/src/vendor/three.core.min.js', ['src/vendor/three.core.min.js', 'text/javascript; charset=utf-8']],
 ]);
