@@ -5,6 +5,9 @@ const routes = new Map([
   ['/index.html', ['index.html', 'text/html; charset=utf-8']],
   ['/src/style.css', ['src/style.css', 'text/css; charset=utf-8']],
   ['/src/app.js', ['src/app.js', 'text/javascript; charset=utf-8']],
+  ['/src/scene.js', ['src/scene.js', 'text/javascript; charset=utf-8']],
+  ['/src/vendor/three.module.min.js', ['src/vendor/three.module.min.js', 'text/javascript; charset=utf-8']],
+  ['/src/vendor/three.core.min.js', ['src/vendor/three.core.min.js', 'text/javascript; charset=utf-8']],
 ]);
 const port = Number(process.env.PORT ?? 3000);
 if (!Number.isInteger(port) || port < 0 || port > 65535) throw new Error('PORT inválida');

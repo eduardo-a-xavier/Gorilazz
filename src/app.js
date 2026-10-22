@@ -14,7 +14,36 @@ const pow = document.querySelector('#pow');
 const discovered = new Set();
 const held = new Set();
 const pointers = new Map();
-let position = .04;
+let position = 0;
+let destination = null;
+let touring = false;
+let orbital = false;
+let showcase = true;
+const bandToggle = document.querySelector("#band-toggle");
+function setShowcase(value) { showcase = value; bandToggle.setAttribute("aria-pressed", String(value)); }
+bandToggle.addEventListener("click", () => { setTour(false); destination = null; setShowcase(!showcase); });
+let world = null;
+let routeIndex = -1;
+let musicSector = -1;
+const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
+const tourButton = document.querySelector('#tour-toggle');
+function setTour(value) {
+  touring = value; tourButton.setAttribute('aria-pressed', String(value));
+  tourButton.textContent = value ? 'Ⅱ PAUSAR TOUR' : '▶ TOUR AUTOMÁTICO';
+}
+tourButton.addEventListener('click', () => { destination = null; if (position >= .999) position = 0; setTour(!touring); });
+document.querySelector('#camera-toggle').addEventListener('click', event => {
+  orbital = !orbital; event.currentTarget.setAttribute('aria-pressed', String(orbital));
+  event.currentTarget.textContent = orbital ? '↗ CÂMERA DE VIAGEM' : '↻ CÂMERA ORBITAL';
+});
+import('./scene.js').then(({createWorld}) => {
+  world = createWorld(document.querySelector('#world'), index => openMember(index));
+  document.querySelector('.world-shell').classList.add('has-3d');
+  document.querySelector('#render-status').textContent = '3D EM TEMPO REAL / ARTE AUTORAL';
+}).catch(error => {
+  console.warn('Modo 2D ativado:', error.message);
+  document.querySelector('#render-status').textContent = 'MODO 2D / WebGL indisponível';
+});
 let lastTime;
 let previousFocus;
 let encounter = null;
@@ -34,12 +63,15 @@ function stop() { held.clear(); pointers.clear(); }
 function openMember(index, collision = false) {
   if (dialog.open) return;
   const member = members[index];
-  stop(); previousFocus = document.activeElement;
+  dialog.dataset.collision = String(collision);
+  stop(); setTour(false); destination = null; previousFocus = document.activeElement;
   document.querySelector('#portrait').innerHTML = portrait(member, index);
   document.querySelector('#character-name').textContent = member.name;
   document.querySelector('#character-role').textContent = member.role;
   document.querySelector('#character-description').textContent = member.description;
   document.querySelector('#character-song').textContent = member.song;
+  setTrack([1, 2, 3, 0][index]);
+  document.querySelector('#character-listen').href = `https://www.youtube.com/watch?v=${tracks[trackIndex].video}`;
   if (!discovered.has(index)) {
     discovered.add(index); actors[index].classList.add('discovered');
     document.querySelector('#counter').textContent = `${String(discovered.size).padStart(2, '0')} / 04 PERSONAGENS`;
@@ -83,19 +115,36 @@ for (const button of document.querySelectorAll('[data-direction]')) {
 }
 function frame(time) {
   const delta = lastTime === undefined ? 0 : Math.min((time - lastTime) / 1000, .05); lastTime = time;
-  const width = road.clientWidth;
-  const carWidth = car.offsetWidth;
-  const maxPosition = Math.max(0, 1 - carWidth / width);
-  position = Math.min(position, maxPosition);
-  if (!dialog.open && width > 0) {
+  let moving = false;
+  if (!dialog.open && !document.hidden) {
     const direction = Math.sign([...held].reduce((sum, key) => sum + directionFor(key), 0) + [...pointers.values()].reduce((sum, value) => sum + value, 0));
-    position = Math.max(0, Math.min(maxPosition, position + direction * 260 * delta / width));
-    const center = position * width + carWidth / 2;
-    const nearby = members.findIndex(member => Math.abs(member.position * width - center) < carWidth * .43 + actors[0].offsetWidth * .3);
+    if (direction) { destination = null; setTour(false); }
+    const previous = position;
+    if (destination !== null) {
+      const difference = destination - position;
+      if (Math.abs(difference) < .002) { position = destination; destination = null; }
+      else position += Math.sign(difference) * Math.min(Math.abs(difference), delta * .17);
+    } else position += (direction || (touring ? 1 : 0)) * delta * .035;
+    position = Math.max(0, Math.min(1, position));
+    if (position >= 1) setTour(false);
+    moving = Math.abs(previous - position) > .000001;
+    if (moving) setShowcase(false);
+    const nearby = members.findIndex(member => Math.abs(member.position - position) < .009);
     if (encounter !== null && nearby !== encounter) encounter = null;
-    if (direction && nearby >= 0 && nearby !== encounter && time >= cooldown) openMember(nearby, true);
+    if (moving && destination === null && nearby >= 0 && nearby !== encounter && time >= cooldown) openMember(nearby, true);
   }
-  car.style.transform = `translateX(${position * width}px)`;
+  const currentRoute = Math.min(8, Math.round(position * 8));
+  if (currentRoute !== routeIndex) {
+    routeIndex = currentRoute; selectStop(currentRoute, false);
+    document.querySelector('#scene-label').textContent = `${String(currentRoute + 1).padStart(2, '0')} / ${stops[currentRoute][0].toUpperCase()}`;
+  }
+  const sector = Math.min(7, Math.floor(position * 8));
+  if (sector !== musicSector) { musicSector = sector; setTrack(sector); }
+  document.querySelector('#trip-distance').textContent = `KM ${String(Math.round(position * 112)).padStart(3, '0')}`;
+  document.querySelector('#trip-progress').style.width = `${position * 100}%`;
+  document.querySelector('#radio').classList.toggle('playing', moving && !reducedMotion.matches);
+  if (world) world.update(position, time, moving, orbital, reducedMotion.matches, showcase);
+  const width = road.clientWidth; car.style.transform = `translateX(${position * Math.max(0, width - car.offsetWidth)}px)`;
   requestAnimationFrame(frame);
 }
 requestAnimationFrame(frame);
@@ -112,7 +161,8 @@ const stops = [
 ];
 const menu = document.querySelector('#stop-menu');
 const panel = document.querySelector('#panel');
-function selectStop(index) {
+function selectStop(index, travel = true) {
+  if (travel) { destination = index / 8; setTour(false); }
   [...menu.children].forEach((button, number) => button.setAttribute('aria-current', String(index === number)));
   panel.setAttribute('aria-labelledby', `stop-${index}`);
   panel.innerHTML = `<span class="eyebrow">PARADA ${String(index + 1).padStart(2, '0')} / ${stops[index][0].toUpperCase()}</span><h3>${stops[index][1]}</h3>${stops[index][2]}`;
@@ -123,4 +173,47 @@ stops.forEach(([name], index) => {
   button.setAttribute('aria-controls', 'panel'); button.innerHTML = `<span>${String(index + 1).padStart(2, '0')}</span>${name.toUpperCase()}`;
   button.addEventListener('click', () => selectStop(index)); menu.append(button);
 });
-selectStop(0);
+selectStop(0, false);
+
+const tracks = [
+  { name: 'Clint Eastwood', album: 'Gorillaz', year: 2001, video: '1V_xRb0x9aw', text: 'O ponto de partida: hip-hop, dub e um refrão que atravessa gerações.', color: '#a9b775' },
+  { name: 'Tomorrow Comes Today', album: 'Gorillaz', year: 2001, video: 'PiNdcBg3xC8', text: 'A voz de 2-D em uma Londres de animação, melancolia e batidas arrastadas.', color: '#7fa6ff' },
+  { name: 'Feel Good Inc.', album: 'Demon Days', year: 2005, video: 'HyHNuVaZJ-k', text: 'Um baixo inconfundível. Uma torre isolada. O encontro entre crítica, hip-hop e pop.', color: '#f2559c' },
+  { name: 'DARE', album: 'Demon Days', year: 2005, video: 'uAOR6ib95kQ', text: 'Noodle no centro da cena: uma parada para o lado mais dançante da banda.', color: '#bc9df5' },
+  { name: 'On Melancholy Hill', album: 'Plastic Beach', year: 2010, video: '04mfKJWDSzI', text: 'Sintetizadores e uma paisagem distante. Bem-vindo ao arquipélago de Plastic Beach.', color: '#62c5bd' },
+  { name: 'Stylo', album: 'Plastic Beach', year: 2010, video: 'nhPaWIeULKk', text: 'Uma perseguição pela estrada. A conexão perfeita entre música e esta viagem.', color: '#ef9a65' },
+  { name: 'Saturnz Barz', album: 'Humanz', year: 2017, video: '5qJp6xlKEug', text: 'Outra dimensão do universo Gorillaz, com a participação de Popcaan.', color: '#af8fce' },
+  { name: 'Cracker Island', album: 'Cracker Island', year: 2023, video: 'S03T47hapAc', text: 'Uma nova paisagem sonora, com Thundercat. O fim deste percurso é só outra entrada.', color: '#f2559c' },
+];
+let trackIndex = 0;
+function setTrack(index) {
+  trackIndex = (index + tracks.length) % tracks.length;
+  const track = tracks[trackIndex];
+  document.querySelector('#radio-title').textContent = track.name;
+  document.querySelector('#track-album').textContent = `${track.album} · ${track.year}`;
+  document.querySelector('#track-description').textContent = track.text;
+  document.querySelector('#track-number').textContent = `${String(trackIndex + 1).padStart(2, '0')} — 08`;
+  document.querySelector('#listen-link').href = `https://www.youtube.com/watch?v=${track.video}`;
+  document.querySelector('#radio').style.setProperty('--record-color', track.color);
+  document.querySelector('#video-slot').replaceChildren();
+  document.querySelector('#play-track').textContent = '▶ ABRIR CLIPE';
+}
+document.querySelector('#previous-track').addEventListener('click', () => setTrack(trackIndex - 1));
+document.querySelector('#next-track').addEventListener('click', () => setTrack(trackIndex + 1));
+document.querySelector('#play-track').addEventListener('click', () => {
+  const slot = document.querySelector('#video-slot');
+  if (slot.firstChild) { slot.replaceChildren(); document.querySelector('#play-track').textContent = '▶ ABRIR CLIPE'; return; }
+  setTour(false); stop(); destination = null;
+  const iframe = document.createElement('iframe');
+  iframe.src = `https://www.youtube-nocookie.com/embed/${tracks[trackIndex].video}`;
+  iframe.title = `Clipe de ${tracks[trackIndex].name} — Gorillaz`;
+  iframe.allow = 'encrypted-media; picture-in-picture; fullscreen';
+  iframe.allowFullscreen = true; iframe.referrerPolicy = 'strict-origin-when-cross-origin';
+  slot.append(iframe); document.querySelector('#play-track').textContent = '× FECHAR CLIPE';
+});
+members.forEach((member, index) => {
+  const button = document.createElement('button'); button.type = 'button'; button.className = 'band-card';
+  button.innerHTML = `<div class="band-portrait">${portrait(member, index)}</div><span class="eyebrow">0${index + 1} / ${member.role.toUpperCase()}</span><strong>${member.name}</strong><span>CONHEÇA A HISTÓRIA ↗</span>`;
+  button.addEventListener('click', () => openMember(index)); document.querySelector('#band-grid').append(button);
+});
+setTrack(0);
