@@ -136,6 +136,27 @@ export function createWorld(container, onMember) {
     const gate = new THREE.Mesh(new THREE.TorusGeometry(10.5, .09, 6, 64), material(['#d2e2a8','#7fa6ff','#f5a9c6'][i % 3], true));
     gate.position.set(at.x, 4, at.z); gate.rotation.y = at.heading; scene.add(gate);
   }
+  // Original provisional landmark, not the non-downloadable Sketchfab asset.
+  const windmill = new THREE.Group(); windmill.position.set(0, 15, -TRACK_RADIUS); scene.add(windmill);
+  const floatingRock = new THREE.Mesh(new THREE.DodecahedronGeometry(1, 0), material('#414d49'));
+  floatingRock.scale.set(17, 6, 14); floatingRock.position.y = -3; floatingRock.rotation.z = .12; windmill.add(floatingRock);
+  cylinder(windmill, 14, 15, 1.4, [0, 0, 0], '#68806a', 12);
+  cylinder(windmill, 3, 4.7, 17, [0, 9, 0], '#a28c73', 8);
+  cylinder(windmill, 0, 5.4, 5.5, [0, 20.1, 0], '#485e64', 8);
+  box(windmill, [1.7, 3.4, .15], [0, 3, 4.25], '#202b2e');
+  for (const x of [-1.5, 1.5]) box(windmill, [1.1, 1.6, .15], [x, 9, 3.5], '#d2e2a8', true);
+  const rotor = new THREE.Group(); rotor.position.set(0, 15, 4.8); windmill.add(rotor);
+  const hub = cylinder(rotor, .7, .7, .9, [0, 0, .1], '#d2e2a8'); hub.rotation.x = Math.PI / 2;
+  for (let i = 0; i < 4; i++) {
+    const blade = new THREE.Group(); blade.rotation.z = i * Math.PI / 2; rotor.add(blade);
+    box(blade, [.2, 12, .25], [0, 5.7, 0], '#303d39');
+    box(blade, [2.6, 7.5, .12], [1.1, 7.6, 0], '#c5bd9c');
+    for (let j = 0; j < 6; j++) box(blade, [2.7, .09, .2], [1.1, 4.2 + j * 1.3, .1], '#48584a');
+  }
+  for (let i = 0; i < 5; i++) {
+    const tuft = new THREE.Mesh(new THREE.ConeGeometry(1.5, 4 + i % 2, 5), material('#4c6d5b'));
+    tuft.position.set(Math.cos(i * 1.3) * 10, 2, Math.sin(i * 1.3) * 9); windmill.add(tuft);
+  }
   const skyColors = ['#202631','#30283c','#273447','#282631','#254347','#384047','#292d48','#352b3d','#202631'].map(color => new THREE.Color(color));
   const groundColors = ['#34433f','#514044','#374958','#3d3b48','#365b57','#485355','#343b54','#50414c','#34433f'].map(color => new THREE.Color(color));
   const car = new THREE.Group(); scene.add(car);
@@ -254,25 +275,27 @@ export function createWorld(container, onMember) {
   const observer = new ResizeObserver(resize); observer.observe(container); resize();
   let previousProgress = 0;
   let overview = false;
+  let landmarkView = false;
   const look = new THREE.Vector3();
   const cameraTarget = new THREE.Vector3();
   const desiredCamera = new THREE.Vector3();
   let previousTime = null; let initialized = false;
   return {
-    setOverview(value) { overview = value; },
+    setOverview(value) { overview = value; landmarkView = false; },
+    focusWindmill(value) { landmarkView = value; overview = false; },
     zoomBy(amount) { zoom = THREE.MathUtils.clamp(zoom + amount, .7, 1.6); },
-    resetCamera() { dragAngle = 0; dragElevation = 0; zoom = 1; },
+    resetCamera() { dragAngle = 0; dragElevation = 0; zoom = 1; overview = false; landmarkView = false; },
     update(progress, time, moving, orbit, reduced, showcase) {
       const pose = routePose(progress); const z = pose.z; const x = pose.x; const t = time / 1000;
       const dt = previousTime === null ? .016 : Math.min((time - previousTime) / 1000, .1); previousTime = time;
       const blend = reduced ? 1 : 1 - Math.exp(-dt * 4);
       const zone = Math.round(wrapProgress(progress) * 9) % 9;
       scene.background.lerp(skyColors[zone], blend * .35); scene.fog.color.copy(scene.background);
-      scene.fog.density = THREE.MathUtils.lerp(scene.fog.density, overview ? .0015 : .007, blend);
+      scene.fog.density = THREE.MathUtils.lerp(scene.fog.density, overview ? .0015 : landmarkView ? .003 : .007, blend);
       ground.material.color.lerp(groundColors[zone], blend * .35);
       island.visible = showcase && Math.min(wrapProgress(progress), 1 - wrapProgress(progress)) < .07;
       dust.position.set(x, 0, z);
-      if (!reduced) { dust.rotation.y = Math.sin(t * .025) * .15; satellites.rotation.y = Math.sin(t * .1) * .12; portal.rotation.z = Math.sin(t * .07) * .04; }
+      if (!reduced) { rotor.rotation.z = -t * .3; windmill.position.y = 15 + Math.sin(t * .65) * .5; dust.rotation.y = Math.sin(t * .025) * .15; satellites.rotation.y = Math.sin(t * .1) * .12; portal.rotation.z = Math.sin(t * .07) * .04; }
 
       car.position.x = x; car.position.z = z; car.rotation.y = pose.heading; car.position.y = moving && !reduced ? Math.sin(t * 14) * .035 : 0;
       car.rotation.z = moving && !reduced ? Math.sin(t * 2) * .012 : 0;
@@ -288,6 +311,7 @@ export function createWorld(container, onMember) {
       const localX = showcase && !mobile && !orbit ? -6.5 : 0;
       const localZ = -(orbit || showcase ? 1 : 12);
       look.set(x + localX * Math.cos(pose.heading) + localZ * Math.sin(pose.heading), mobile && showcase ? 3 : 2, z - localX * Math.sin(pose.heading) + localZ * Math.cos(pose.heading));
+      if (landmarkView) { desiredCamera.set(35 * zoom, 33 + dragElevation, -TRACK_RADIUS + 48 * zoom); look.set(0, 24, -TRACK_RADIUS); }
       if (overview) { desiredCamera.set(0, 185 * zoom, -TRACK_RADIUS + .01); look.set(0, 0, -TRACK_RADIUS); }
       if (!initialized || reduced) { camera.position.copy(desiredCamera); cameraTarget.copy(look); initialized = true; }
       else { camera.position.lerp(desiredCamera, blend); cameraTarget.lerp(look, blend); }

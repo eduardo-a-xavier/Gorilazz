@@ -11,6 +11,7 @@ function portrait(member, index) {
 const road = document.querySelector('#road');
 const car = document.querySelector('#car');
 const dialog = document.querySelector('#character-dialog');
+const modalOpen = () => Boolean(document.querySelector('dialog[open]'));
 const pow = document.querySelector('#pow');
 const discovered = new Set();
 const held = new Set();
@@ -43,11 +44,21 @@ bandToggle.addEventListener("click", () => { setTour(false); destination = null;
 let world = null;
 document.querySelector('#zoom-in').addEventListener('click', () => world?.zoomBy(-.15));
 document.querySelector('#zoom-out').addEventListener('click', () => world?.zoomBy(.15));
-document.querySelector('#reset-camera').addEventListener('click', () => world?.resetCamera());
+document.querySelector('#reset-camera').addEventListener('click', () => { world?.resetCamera(); overview = false; landmarkView = false; syncCameraModes(); });
 let overview = false;
-document.querySelector('#overview-toggle').addEventListener('click', event => {
-  overview = !overview; world?.setOverview(overview); event.currentTarget.setAttribute('aria-pressed', String(overview));
-  event.currentTarget.textContent = overview ? '↙ VOLTAR AO JIPE' : '◎ VER CIRCUITO';
+let landmarkView = false;
+function syncCameraModes() {
+  const overviewButton = document.querySelector('#overview-toggle');
+  overviewButton.setAttribute('aria-pressed', String(overview)); overviewButton.textContent = overview ? '↙ VOLTAR AO JIPE' : '◎ VER CIRCUITO';
+  const landmarkButton = document.querySelector('#windmill-focus');
+  landmarkButton.setAttribute('aria-pressed', String(landmarkView)); landmarkButton.textContent = landmarkView ? '↙ VOLTAR AO JIPE' : '✦ VER MOINHO';
+}
+document.querySelector('#overview-toggle').addEventListener('click', () => {
+  overview = !overview; landmarkView = false; world?.setOverview(overview); syncCameraModes();
+});
+document.querySelector('#windmill-focus').addEventListener('click', () => {
+  enterWorld(); landmarkView = !landmarkView; overview = false; setTour(false); stop(); destination = null;
+  world?.focusWindmill(landmarkView); syncCameraModes();
 });
 let routeIndex = -1;
 let musicSector = -1;
@@ -89,7 +100,7 @@ const actors = members.map((member, index) => {
 });
 function stop() { held.clear(); pointers.clear(); }
 function openMember(index, collision = false) {
-  if (dialog.open) return;
+  if (modalOpen()) return;
   const member = members[index];
   dialog.dataset.collision = String(collision);
   stop(); setTour(false); destination = null; previousFocus = document.activeElement;
@@ -122,7 +133,7 @@ dialog.addEventListener('close', () => {
 const inputTarget = (target) => target instanceof Element && Boolean(target.closest('input, textarea, select, button, a, [contenteditable]:not([contenteditable="false"])'));
 const directionFor = key => ['ArrowLeft', 'a', 'A'].includes(key) ? -1 : ['ArrowRight', 'd', 'D'].includes(key) ? 1 : 0;
 window.addEventListener('keydown', event => {
-  if (dialog.open || inputTarget(event.target) || event.ctrlKey || event.metaKey || event.altKey) return;
+  if (modalOpen() || inputTarget(event.target) || event.ctrlKey || event.metaKey || event.altKey) return;
   if (directionFor(event.key)) { event.preventDefault(); held.add(event.key); }
 });
 window.addEventListener('keyup', event => held.delete(event.key));
@@ -130,13 +141,13 @@ window.addEventListener('blur', stop);
 document.addEventListener('visibilitychange', () => { if (document.hidden) stop(); });
 for (const button of document.querySelectorAll('[data-direction]')) {
   button.addEventListener('pointerdown', event => {
-    if (dialog.open || (event.pointerType === 'mouse' && event.button !== 0)) return;
+    if (modalOpen() || (event.pointerType === 'mouse' && event.button !== 0)) return;
     event.preventDefault(); button.focus({ preventScroll: true });
     button.setPointerCapture(event.pointerId); pointers.set(event.pointerId, Number(button.dataset.direction));
   });
   for (const type of ['pointerup', 'pointercancel', 'lostpointercapture']) button.addEventListener(type, event => pointers.delete(event.pointerId));
   button.addEventListener('keydown', event => {
-    if ([' ', 'Enter'].includes(event.key) && !dialog.open) { event.preventDefault(); pointers.set(button, Number(button.dataset.direction)); }
+    if ([' ', 'Enter'].includes(event.key) && !modalOpen()) { event.preventDefault(); pointers.set(button, Number(button.dataset.direction)); }
   });
   button.addEventListener('keyup', event => { if ([' ', 'Enter'].includes(event.key)) { event.preventDefault(); pointers.delete(button); } });
   button.addEventListener('blur', () => pointers.delete(button));
@@ -144,7 +155,7 @@ for (const button of document.querySelectorAll('[data-direction]')) {
 function frame(time) {
   const delta = lastTime === undefined ? 0 : Math.min((time - lastTime) / 1000, .05); lastTime = time;
   let moving = false;
-  if (!dialog.open && !document.hidden) {
+  if (!modalOpen() && !document.hidden) {
     const direction = Math.sign([...held].reduce((sum, key) => sum + directionFor(key), 0) + [...pointers.values()].reduce((sum, value) => sum + value, 0));
     if (direction) { enterWorld(); destination = null; setTour(false); }
     const previous = position;
@@ -170,8 +181,8 @@ function frame(time) {
   document.querySelector('#trip-distance').textContent = `CIRCUITO ${String(Math.floor(progress * 100)).padStart(2, '0')}%`;
   document.querySelector('#trip-progress').style.width = `${progress * 100}%`;
   document.querySelector('#radio').classList.toggle('playing', moving && !reducedMotion.matches);
-  if (world) world.update(position, time, moving, orbital, reducedMotion.matches, showcase);
-  const width = road.clientWidth; car.style.transform = `translateX(${position * Math.max(0, width - car.offsetWidth)}px)`;
+  if (world && !modalOpen() && !document.hidden) world.update(position, time, moving, orbital, reducedMotion.matches, showcase);
+  const width = road.clientWidth; car.style.transform = `translateX(${progress * Math.max(0, width - car.offsetWidth)}px)`;
   requestAnimationFrame(frame);
 }
 requestAnimationFrame(frame);
@@ -184,7 +195,7 @@ const stops = [
   ['Ao vivo', 'Do desenho ao palco.', '<p>Nos shows, músicos reais e convidados dão vida ao repertório. Projeções e imagens dos personagens conectam a performance ao universo visual da banda, em formatos que variam entre turnês.</p>'],
   ['Temas', 'O mundo no retrovisor.', '<p>Solidão, consumo, tecnologia e meio ambiente atravessam o universo da banda. Plastic Beach, por exemplo, usa a imagem de uma ilha de resíduos para abordar questões ambientais e o consumo.</p>'],
   ['Projeto', 'Uma estrada feita por nós.', '<p>Projeto acadêmico de <strong>Eduardo Alves Xavier</strong>, <strong>Gedson de Souza Mancio Júnior</strong> e <strong>Rafael Machado Colnaghi</strong>.</p><p>A estrada conecta nove paradas temáticas. O circuito e as figuras esquemáticas são interpretações autorais. O veículo é um SUV Kenney sob licença CC0, sem vínculo com a marca Jeep.</p>'],
-  ['Fontes', 'Respeito às origens.', '<p>Modelo SUV do <a href="https://kenney.nl/assets/car-kit" target="_blank" rel="noopener noreferrer">Kenney Car Kit</a>, sob licença CC0. Consulte também os <a href="#modelos">modelos para download e as referências do circuito</a>.</p><p>Crédito ao universo criado por Jamie Hewlett e Damon Albarn. Consulte o <a href="https://www.gorillaz.com/" target="_blank" rel="noopener noreferrer">site oficial de Gorillaz ↗</a>.</p><p>Projeto acadêmico independente, sem vínculo oficial. As figuras deste protótipo são esquemáticas e autorais; os textos são introdutórios e devem ser revisados para uso acadêmico final.</p>'],
+  ['Fontes', 'Respeito às origens.', '<p>Modelo SUV do <a href="https://kenney.nl/assets/car-kit" target="_blank" rel="noopener noreferrer">Kenney Car Kit</a>, sob licença CC0. Consulte os <a href="#modelos">modelos incluídos para download</a> e as <a href="#referencias">referências Sketchfab selecionadas</a>.</p><p>Crédito ao universo criado por Jamie Hewlett e Damon Albarn. Consulte o <a href="https://www.gorillaz.com/" target="_blank" rel="noopener noreferrer">site oficial de Gorillaz ↗</a>.</p><p>Projeto acadêmico independente, sem vínculo oficial. As figuras deste protótipo são esquemáticas e autorais; os textos são introdutórios e devem ser revisados para uso acadêmico final.</p>'],
 ];
 const menu = document.querySelector('#stop-menu');
 const panel = document.querySelector('#panel');
@@ -251,3 +262,28 @@ members.forEach((member, index) => {
   button.addEventListener('click', () => openMember(index)); document.querySelector('#band-grid').append(button);
 });
 setTrack(0);
+
+const selectedModels = {
+  car: { uid: 'd1ac8116d1ab4ad7b612921425aa827a', name: 'Gorrilaz Car BlockBench', author: 'shabaev', license: 'CC BY 4.0', url: 'https://sketchfab.com/3d-models/gorrilaz-car-blockbench-d1ac8116d1ab4ad7b612921425aa827a' },
+  windmill: { uid: '0e72abda7e8b4ec5a8eaa6bf9d25603b', name: 'Flying windmill', author: 'zeee7', license: 'Standard · referência visual', url: 'https://sketchfab.com/3d-models/flying-windmill-0e72abda7e8b4ec5a8eaa6bf9d25603b' },
+};
+const modelDialog = document.querySelector('#model-dialog');
+const previewSlot = document.querySelector('#sketchfab-slot');
+let modelPreviousFocus;
+for (const button of document.querySelectorAll('[data-sketchfab]')) button.addEventListener('click', () => {
+  if (modalOpen()) return;
+  const model = selectedModels[button.dataset.sketchfab];
+  stop(); setTour(false); destination = null; modelPreviousFocus = document.activeElement;
+  document.querySelector('#model-preview-title').textContent = model.name;
+  document.querySelector('#model-preview-credit').textContent = `Por ${model.author} / ${model.license}`;
+  document.querySelector('#model-preview-source').href = model.url;
+  const frame = document.createElement('iframe'); frame.src = `https://sketchfab.com/models/${model.uid}/embed?autostart=0`;
+  frame.title = `Prévia 3D: ${model.name}, por ${model.author}`;
+  frame.allow = 'fullscreen; xr-spatial-tracking'; frame.referrerPolicy = 'strict-origin-when-cross-origin';
+  previewSlot.replaceChildren(frame); modelDialog.showModal(); document.querySelector('#close-model-preview').focus();
+});
+document.querySelector('#close-model-preview').addEventListener('click', () => modelDialog.close());
+modelDialog.addEventListener('close', () => {
+  previewSlot.replaceChildren(); stop(); cooldown = performance.now() + 700;
+  modelPreviousFocus?.focus({preventScroll:true});
+});

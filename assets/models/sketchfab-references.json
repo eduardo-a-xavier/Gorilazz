@@ -1,0 +1,30 @@
+[
+  {
+    "uid": "0e72abda7e8b4ec5a8eaa6bf9d25603b",
+    "name": "Flying windmill",
+    "author": "zeee7",
+    "author_url": "https://sketchfab.com/zeee7",
+    "url": "https://sketchfab.com/3d-models/flying-windmill-0e72abda7e8b4ec5a8eaa6bf9d25603b",
+    "license": {
+      "name": "Standard",
+      "url": "https://sketchfab.com/licenses"
+    },
+    "downloadable": false,
+    "file_included": false,
+    "checked_on": "2026-10-22"
+  },
+  {
+    "uid": "d1ac8116d1ab4ad7b612921425aa827a",
+    "name": "Gorrilaz Car BlockBench",
+    "author": "shabaev",
+    "author_url": "https://sketchfab.com/shabaev",
+    "url": "https://sketchfab.com/3d-models/gorrilaz-car-blockbench-d1ac8116d1ab4ad7b612921425aa827a",
+    "license": {
+      "name": "Creative Commons Attribution",
+      "url": "http://creativecommons.org/licenses/by/4.0/"
+    },
+    "downloadable": true,
+    "file_included": false,
+    "checked_on": "2026-10-22"
+  }
+]

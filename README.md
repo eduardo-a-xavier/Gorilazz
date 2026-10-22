@@ -72,3 +72,13 @@ Veja [REFERENCES.md](REFERENCES.md) para fontes, autoria, licença e hashes SHA-
 `src/route.js` concentra posição, orientação, normalização e distância circular. A música e as paradas acompanham a posição dentro da volta; o progresso não é salvo ao recarregar.
 
 Execute `npm test` para os seis testes do circuito: fechamento de volta, tangente do jipe, deslocamento lateral, nove posições distintas, caminho mais curto e encontros na emenda. A versão circular também foi validada no Chromium com carregamento do GLB local, vista aérea, passagem pela emenda nos dois sentidos, download real e fallback do veículo.
+
+## Referências escolhidas no Sketchfab
+
+A seção “As peças deste universo” apresenta os links escolhidos, autoria, licença e prévias oficiais sob escolha do visitante. O carro “Gorrilaz Car BlockBench”, de shabaev (CC BY 4.0), está disponível para download autenticado, mas seu arquivo ainda precisa ser fornecido para substituir o SUV local. O “Flying windmill”, de zeee7 (Standard), não oferece download. Os detalhes verificados estão em [REFERENCES.md](REFERENCES.md).
+
+O botão “Ver moinho” aproxima a câmera de uma ilha flutuante com moinho **provisório autoral**, gerado localmente e com pás animadas. Não é o arquivo do Sketchfab. “Restaurar câmera” volta ao acompanhamento do jipe. Movimento reduzido interrompe as animações decorativas.
+
+As prévias externas abrem em um diálogo, suspendem o deslocamento e restauram o foco ao fechar; fechar também remove o iframe. O conteúdo local permanece disponível sem internet. Não é necessário fornecer credenciais para executar o projeto; o bloqueio de autenticação se aplica apenas ao download pendente do carro no serviço externo.
+
+Validação desta seleção: sintaxe e seis testes de geometria passaram; moinho e câmera foram verificados em WebGL no Chromium, inclusive layout móvel. Os diálogos, créditos, Escape, limpeza de iframe e foco passaram com respostas externas simuladas. A tentativa real do visualizador Sketchfab falhou no navegador deste ambiente; não se confirmou a renderização dos modelos externos. O fallback 2D também foi verificado atravessando a emenda em marcha à ré sem sair dos limites da estrada.

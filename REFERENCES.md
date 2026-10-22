@@ -28,3 +28,27 @@ O site oficial da Kenney não abriu na rede desta máquina. O conteúdo e sua li
 ## Circuito
 
 O trajeto é um círculo fechado de raio 58 unidades. As nove paradas usam posições distintas `i / 9`; o jipe aponta para a tangente e a câmera o acompanha. Avançar ou voltar atravessa a emenda da volta sem reiniciar o mundo. A navegação por paradas escolhe o caminho mais curto do círculo. Personagens permanecem acessíveis pela galeria.
+
+## Seleção Sketchfab do usuário
+
+Metadados públicos consultados em 22/10/2026 via API oficial. O registro resumido está em `assets/models/sketchfab-references.json`. Nenhum arquivo desses dois modelos está incluído na distribuição.
+
+### Gorrilaz Car BlockBench
+
+- Autor: **shabaev** — https://sketchfab.com/shabaev
+- Página: https://sketchfab.com/3d-models/gorrilaz-car-blockbench-d1ac8116d1ab4ad7b612921425aa827a
+- Licença informada: **Creative Commons Attribution 4.0**, https://creativecommons.org/licenses/by/4.0/
+- API: `isDownloadable: true`. O endpoint oficial de download respondeu HTTP 401 por ausência de autenticação; não havia credencial Sketchfab nas configurações nem no processo.
+- Pendente: obter o ZIP/GLB por uma conta autorizada e fornecer o arquivo para integração. Ao incorporá-lo, preservar autoria, link da fonte, licença e descrição de eventuais modificações. O SUV Kenney permanece como veículo enquanto isso.
+
+### Flying windmill
+
+- Autor: **zeee7** — https://sketchfab.com/zeee7
+- Página: https://sketchfab.com/3d-models/flying-windmill-0e72abda7e8b4ec5a8eaa6bf9d25603b
+- Licença informada: **Standard**, https://sketchfab.com/licenses
+- API: `isDownloadable: false`. Usado como referência visual e por visualizador oficial incorporado sob escolha do visitante. Não foram extraídos arquivos do visualizador.
+- O moinho do circuito é uma geometria provisória autoral, com pás animadas e ilha flutuante; não é o arquivo de zeee7. Para usar aquele arquivo específico é necessário obtê-lo de forma autorizada do autor.
+
+As prévias oficiais são carregadas em iframes apenas após clique e removidas ao fechar o diálogo. Elas dependem do Sketchfab e da rede do navegador. Sua presença não significa que o modelo foi baixado ou incorporado ao WebGL local.
+
+Na validação, as páginas e metadados foram acessíveis por requisição HTTP, mas o iframe real no Chromium exibiu erro de rede. Os testes do diálogo usaram respostas simuladas e não demonstram que os modelos externos renderizaram neste ambiente.
