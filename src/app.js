@@ -19,10 +19,30 @@ let destination = null;
 let touring = false;
 let orbital = false;
 let showcase = true;
+let entered = false;
+let enterTimer;
+function enterWorld(startTour = false) {
+  if (!entered) {
+    entered = true;
+    const intro = document.querySelector('.scene-intro');
+    intro.classList.add('leaving');
+    const reveal = () => { document.querySelector('#jogo').dataset.entered = 'true'; document.querySelector('.chapter-card').hidden = false; };
+    if (reducedMotion.matches) reveal(); else { clearTimeout(enterTimer); enterTimer = setTimeout(reveal, 550); }
+  }
+  if (startTour) { setShowcase(false); setTour(true); }
+}
+document.querySelector('#enter-world').addEventListener('click', () => { enterWorld(); document.querySelector('#world canvas, #road')?.focus({preventScroll:true}); });
+document.querySelector('#read-chapter').addEventListener('click', () => {
+  document.querySelector('#paradas').scrollIntoView({behavior: reducedMotion.matches ? 'instant' : 'smooth'});
+  document.querySelector('#panel').focus({preventScroll:true});
+});
 const bandToggle = document.querySelector("#band-toggle");
 function setShowcase(value) { showcase = value; bandToggle.setAttribute("aria-pressed", String(value)); }
 bandToggle.addEventListener("click", () => { setTour(false); destination = null; setShowcase(!showcase); });
 let world = null;
+document.querySelector('#zoom-in').addEventListener('click', () => world?.zoomBy(-.15));
+document.querySelector('#zoom-out').addEventListener('click', () => world?.zoomBy(.15));
+document.querySelector('#reset-camera').addEventListener('click', () => world?.resetCamera());
 let routeIndex = -1;
 let musicSector = -1;
 const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
@@ -31,7 +51,7 @@ function setTour(value) {
   touring = value; tourButton.setAttribute('aria-pressed', String(value));
   tourButton.textContent = value ? 'Ⅱ PAUSAR TOUR' : '▶ TOUR AUTOMÁTICO';
 }
-tourButton.addEventListener('click', () => { destination = null; if (position >= .999) position = 0; setTour(!touring); });
+tourButton.addEventListener('click', () => { enterWorld(); destination = null; if (position >= .999) position = 0; setTour(!touring); });
 document.querySelector('#camera-toggle').addEventListener('click', event => {
   orbital = !orbital; event.currentTarget.setAttribute('aria-pressed', String(orbital));
   event.currentTarget.textContent = orbital ? '↗ CÂMERA DE VIAGEM' : '↻ CÂMERA ORBITAL';
@@ -43,6 +63,7 @@ import('./scene.js').then(({createWorld}) => {
 }).catch(error => {
   console.warn('Modo 2D ativado:', error.message);
   document.querySelector('#render-status').textContent = 'MODO 2D / WebGL indisponível';
+  for (const button of document.querySelectorAll('.camera-tools button, #camera-toggle, #band-toggle')) button.disabled = true;
 });
 let lastTime;
 let previousFocus;
@@ -118,7 +139,7 @@ function frame(time) {
   let moving = false;
   if (!dialog.open && !document.hidden) {
     const direction = Math.sign([...held].reduce((sum, key) => sum + directionFor(key), 0) + [...pointers.values()].reduce((sum, value) => sum + value, 0));
-    if (direction) { destination = null; setTour(false); }
+    if (direction) { enterWorld(); destination = null; setTour(false); }
     const previous = position;
     if (destination !== null) {
       const difference = destination - position;
@@ -128,7 +149,7 @@ function frame(time) {
     position = Math.max(0, Math.min(1, position));
     if (position >= 1) setTour(false);
     moving = Math.abs(previous - position) > .000001;
-    if (moving) setShowcase(false);
+    if (moving) { enterWorld(); setShowcase(false); }
     const nearby = members.findIndex(member => Math.abs(member.position - position) < .009);
     if (encounter !== null && nearby !== encounter) encounter = null;
     if (moving && destination === null && nearby >= 0 && nearby !== encounter && time >= cooldown) openMember(nearby, true);
@@ -162,7 +183,11 @@ const stops = [
 const menu = document.querySelector('#stop-menu');
 const panel = document.querySelector('#panel');
 function selectStop(index, travel = true) {
-  if (travel) { destination = index / 8; setTour(false); }
+  if (travel) { enterWorld(); destination = index / 8; setTour(false); }
+  document.querySelectorAll('#chapter-dock button').forEach((button, number) => button.setAttribute('aria-current', String(index === number)));
+  document.querySelector('#chapter-title').textContent = stops[index][1];
+  const chapterCopy = document.createElement('div'); chapterCopy.innerHTML = stops[index][2];
+  document.querySelector('#chapter-description').textContent = (chapterCopy.querySelector('p')?.textContent ?? 'Explore os discos e as histórias que constroem este universo.').split('. ').slice(0, 2).join('. ').replace(/\.*$/, '.');
   [...menu.children].forEach((button, number) => button.setAttribute('aria-current', String(index === number)));
   panel.setAttribute('aria-labelledby', `stop-${index}`);
   panel.innerHTML = `<span class="eyebrow">PARADA ${String(index + 1).padStart(2, '0')} / ${stops[index][0].toUpperCase()}</span><h3>${stops[index][1]}</h3>${stops[index][2]}`;
@@ -172,6 +197,9 @@ stops.forEach(([name], index) => {
   const button = document.createElement('button'); button.type = 'button'; button.id = `stop-${index}`;
   button.setAttribute('aria-controls', 'panel'); button.innerHTML = `<span>${String(index + 1).padStart(2, '0')}</span>${name.toUpperCase()}`;
   button.addEventListener('click', () => selectStop(index)); menu.append(button);
+  const waypoint = document.createElement('button'); waypoint.type = 'button'; waypoint.textContent = String(index + 1).padStart(2, '0');
+  waypoint.setAttribute('aria-label', `Viajar para ${name}`); waypoint.setAttribute('aria-controls', 'panel');
+  waypoint.addEventListener('click', () => selectStop(index)); document.querySelector('#chapter-dock').append(waypoint);
 });
 selectStop(0, false);
 

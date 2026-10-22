@@ -7,12 +7,14 @@ export function createWorld(container, onMember) {
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   renderer.outputColorSpace = THREE.SRGBColorSpace;
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = 1.15;
   container.append(renderer.domElement);
   renderer.domElement.setAttribute('aria-label', 'Estrada 3D com carro, personagens e cenários musicais');
   renderer.domElement.setAttribute('role', 'img');
   const scene = new THREE.Scene();
-  scene.background = new THREE.Color('#252144');
-  scene.fog = new THREE.FogExp2('#252144', .006);
+  scene.background = new THREE.Color('#202631');
+  scene.fog = new THREE.FogExp2('#202631', .007);
   const camera = new THREE.PerspectiveCamera(46, 1, .1, 650);
   scene.add(new THREE.HemisphereLight('#c6d7ff', '#755375', 2.4));
   const sunlight = new THREE.DirectionalLight('#ffe4c2', 3.7);
@@ -81,6 +83,46 @@ export function createWorld(container, onMember) {
   // Raised solar disc at the vanishing point.
   const sun = new THREE.Mesh(new THREE.CircleGeometry(45, 64), new THREE.MeshBasicMaterial({ color: '#f2559c', fog: false }));
   sun.position.set(0, 65, -1450); scene.add(sun);
+  // A sculptural starting island gathers the band around the car.
+  const island = new THREE.Group(); scene.add(island);
+  cylinder(island, 15, 13.8, .9, [0, -.5, 0], '#4e6257', 64);
+  const islandRock = cylinder(island, 13.8, 6, 7, [0, -4.4, 0], '#293b36', 9);
+  islandRock.rotation.y = .2;
+  const edge = new THREE.Mesh(new THREE.TorusGeometry(14.5, .06, 6, 96), material('#d2e2a8', true));
+  edge.rotation.x = Math.PI / 2; edge.position.y = .02; island.add(edge);
+  const portal = new THREE.Group(); portal.position.set(0, 8, -12); island.add(portal);
+  for (const radius of [10, 10.5, 11.2]) {
+    const ring = new THREE.Mesh(new THREE.TorusGeometry(radius, radius === 10 ? .18 : .04, 8, 96), material(radius === 10 ? '#d2e2a8' : '#e2d8c0', true));
+    portal.add(ring);
+  }
+  // Tiny satellites, floating stones and dust add depth without remote assets.
+  const satellites = new THREE.Group(); island.add(satellites);
+  for (let i = 0; i < 7; i++) {
+    const vinyl = cylinder(satellites, 1.2, 1.2, .12, [Math.cos(i * 1.7) * 18, 5 + i % 3 * 2.5, Math.sin(i * 1.7) * 16], '#202427', 32);
+    vinyl.rotation.x = .4 + i * .2; vinyl.rotation.z = i * .4;
+    const label = cylinder(vinyl, .4, .4, .14, [0, 0, 0], i % 2 ? '#f5a9c6' : '#d2e2a8', 24); label.castShadow = false;
+  }
+  for (let i = 0; i < 16; i++) {
+    const rock = new THREE.Mesh(new THREE.DodecahedronGeometry(.5 + i % 4 * .3, 0), material(i % 2 ? '#455f58' : '#554956'));
+    rock.position.set(Math.cos(i * 2.4) * (19 + i % 3 * 5), -1 + i % 5 * 2, Math.sin(i * 2.4) * 23); rock.rotation.set(i, i * .3, i * .7); island.add(rock);
+  }
+  const dustGeometry = new THREE.BufferGeometry();
+  const dustPositions = new Float32Array(360 * 3);
+  for (let i = 0; i < 360; i++) {
+    dustPositions[i * 3] = Math.sin(i * 43.17) * 95;
+    dustPositions[i * 3 + 1] = 3 + (i * 17 % 70);
+    dustPositions[i * 3 + 2] = Math.cos(i * 12.79) * 160;
+  }
+  dustGeometry.setAttribute('position', new THREE.BufferAttribute(dustPositions, 3));
+  const dust = new THREE.Points(dustGeometry, new THREE.PointsMaterial({color:'#e2d8c0',size:.12,transparent:true,opacity:.45,depthWrite:false}));
+  scene.add(dust);
+  const gates = [];
+  for (let i = 1; i < 9; i++) {
+    const gate = new THREE.Mesh(new THREE.TorusGeometry(12, .09, 6, 64), material(['#d2e2a8','#7fa6ff','#f5a9c6'][i % 3], true));
+    gate.position.set(0, 5, -i * 140); scene.add(gate); gates.push(gate);
+  }
+  const skyColors = ['#202631','#30283c','#273447','#282631','#254347','#384047','#292d48','#352b3d','#202631'].map(color => new THREE.Color(color));
+  const groundColors = ['#34433f','#514044','#374958','#3d3b48','#365b57','#485355','#343b54','#50414c','#34433f'].map(color => new THREE.Color(color));
   const car = new THREE.Group(); scene.add(car);
   box(car, [3.5, .95, 6.8], [0, 1.15, 0], '#e2d8c0');
   box(car, [3.2, .6, 2], [0, 1.65, -2.1], '#e2d8c0');
@@ -142,11 +184,33 @@ export function createWorld(container, onMember) {
     return actor;
   });
   const raycaster = new THREE.Raycaster(); const pointer = new THREE.Vector2();
+  let dragging = null; let dragAngle = 0; let dragElevation = 0; let zoom = 1; let moved = false;
+  renderer.domElement.style.cursor = 'grab';
+  renderer.domElement.tabIndex = 0;
+  renderer.domElement.setAttribute('aria-label', 'Cenário 3D. Arraste para girar a câmera. Use A e D ou as setas para viajar. As fichas também estão disponíveis na galeria.');
+  renderer.domElement.addEventListener('pointerdown', event => {
+    if (event.button !== 0) return;
+    dragging = {x:event.clientX, y:event.clientY}; moved = false;
+    renderer.domElement.setPointerCapture(event.pointerId); renderer.domElement.style.cursor = 'grabbing';
+  });
+  renderer.domElement.addEventListener('pointermove', event => {
+    if (!dragging) return;
+    const dx = event.clientX - dragging.x; const dy = event.clientY - dragging.y;
+    if (Math.abs(dx) + Math.abs(dy) > 3) moved = true;
+    dragAngle -= dx * .006; dragElevation = THREE.MathUtils.clamp(dragElevation + dy * .035, -3, 14);
+    dragging = {x:event.clientX, y:event.clientY};
+  });
+  function release() { dragging = null; renderer.domElement.style.cursor = 'grab'; }
+  for (const event of ['pointerup', 'pointercancel', 'lostpointercapture']) renderer.domElement.addEventListener(event, release);
   renderer.domElement.addEventListener('click', event => {
+    if (moved) return;
     const bounds = renderer.domElement.getBoundingClientRect(); pointer.set((event.clientX - bounds.left) / bounds.width * 2 - 1, -(event.clientY - bounds.top) / bounds.height * 2 + 1);
     raycaster.setFromCamera(pointer, camera);
     const hit = raycaster.intersectObjects(people.map(actor => actor.group), true)[0];
     if (hit) onMember(hit.object.userData.member);
+  });
+  renderer.domElement.addEventListener('keydown', event => {
+    if (event.key === 'Home') { dragAngle = 0; dragElevation = 0; zoom = 1; event.preventDefault(); }
   });
   function resize() {
     const width = container.clientWidth; const height = container.clientHeight;
@@ -155,17 +219,34 @@ export function createWorld(container, onMember) {
   const observer = new ResizeObserver(resize); observer.observe(container); resize();
   let wasZ = 0;
   const look = new THREE.Vector3();
+  const cameraTarget = new THREE.Vector3();
+  const desiredCamera = new THREE.Vector3();
+  let previousTime = null; let initialized = false;
   return {
+    zoomBy(amount) { zoom = THREE.MathUtils.clamp(zoom + amount, .7, 1.6); },
+    resetCamera() { dragAngle = 0; dragElevation = 0; zoom = 1; },
     update(progress, time, moving, orbit, reduced, showcase) {
       const z = -progress * 1120; const t = time / 1000;
+      const dt = previousTime === null ? .016 : Math.min((time - previousTime) / 1000, .1); previousTime = time;
+      const blend = reduced ? 1 : 1 - Math.exp(-dt * 4);
+      const zone = Math.min(8, Math.round(progress * 8));
+      scene.background.lerp(skyColors[zone], blend * .35); scene.fog.color.copy(scene.background);
+      ground.material.color.lerp(groundColors[zone], blend * .35);
+      island.visible = progress < .08;
+      dust.position.z = z - 60;
+      if (!reduced) { dust.rotation.y = Math.sin(t * .025) * .15; satellites.rotation.y = Math.sin(t * .1) * .12; portal.rotation.z = Math.sin(t * .07) * .04; }
+
       car.position.z = z; car.position.y = moving && !reduced ? Math.sin(t * 14) * .035 : 0;
       car.rotation.z = moving && !reduced ? Math.sin(t * 2) * .012 : 0;
       wheels.forEach(wheel => { wheel.rotation.x += (z - wasZ) * .8; }); wasZ = z;
-      const angle = orbit && !reduced ? t * .18 : .48;
-      const mobile = container.clientWidth < 600;
-      const radius = mobile ? 30 : 24;
-      camera.position.set(Math.sin(angle) * radius, orbit ? 10 : 9, z + Math.cos(angle) * radius);
-      look.set(0, 1.5, z - (orbit || showcase ? 1 : 12)); camera.lookAt(look);
+      const angle = (orbit && !reduced ? t * .16 : .48) + dragAngle;
+      const mobile = container.clientWidth < 700;
+      const radius = (mobile ? (showcase ? 34 : 30) : (showcase ? 32 : 26)) * zoom;
+      desiredCamera.set(Math.sin(angle) * radius, (orbit ? 13 : 12) + dragElevation, z + Math.cos(angle) * radius);
+      look.set(showcase && !mobile && !orbit ? -6.5 : 0, mobile && showcase ? 3 : 2, z - (orbit || showcase ? 1 : 12));
+      if (!initialized || reduced) { camera.position.copy(desiredCamera); cameraTarget.copy(look); initialized = true; }
+      else { camera.position.lerp(desiredCamera, blend); cameraTarget.lerp(look, blend); }
+      camera.lookAt(cameraTarget);
       sunlight.position.z = z + 20; sunlight.target.position.z = z - 15;
       for (const [i, actor] of people.entries()) {
         actor.group.position.x = showcase ? (i % 2 ? 5.5 : -5.5) : (i % 2 ? 5.7 : -5.7);

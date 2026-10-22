@@ -48,3 +48,15 @@ A viagem começa com os quatro integrantes ao redor do carro. “Banda ao redor�
 WebGL é necessário para o cenário 3D. Se indisponível, a estrada 2D original é exibida e as fichas e paradas continuam acessíveis. A preferência por movimento reduzido desativa a órbita automática e animações decorativas; o deslocamento comandado pelo visitante permanece funcional.
 
 Validação da edição 3D: sintaxe e rotas HTTP; navegador Chromium com renderização WebGL por software para tour, câmera, colisão, fichas, contador, rádio, incorporação opt-in, layout móvel e movimento reduzido. Emulação móvel não substitui testes em aparelhos físicos. A reprodução dos vídeos externos e a acessibilidade com leitores de tela não foram certificadas.
+
+## Edição imersiva
+
+A experiência abre diretamente no mundo 3D, com uma ilha de apresentação, portais, discos flutuantes e os quatro integrantes ao redor do carro. “Entrar no universo” libera a exploração sem iniciar som ou deslocamento automático.
+
+- Arraste o cenário horizontalmente para girar a câmera e verticalmente para ajustar a altura. Os botões +, − e ↺ aproximam, afastam e restauram a vista. Com o cenário focado, Home também restaura a câmera.
+- A câmera acompanha o carro com interpolação; a atmosfera muda entre regiões. Movimento reduzido elimina a interpolação e as animações decorativas, preservando a navegação explícita.
+- Os nove botões numerados dentro do cenário levam às paradas. “Abrir esta parada” leva ao conteúdo textual e posiciona o foco no painel.
+- Setas/A/D, botões de direção, tour e câmera orbital continuam disponíveis. No celular, a faixa de paradas pode ser deslizada horizontalmente.
+- Se WebGL falhar, a estrada 2D e os conteúdos permanecem; controles exclusivos da câmera 3D ficam desativados.
+
+A direção desta edição prioriza exploração e câmera em um universo musical, conforme a referência indicada pelo usuário, “Yamê: The Molazone”. O site de referência não pôde ser inspecionado neste ambiente; a implementação é autoral, sem reutilização de código ou arquivos daquele site.
