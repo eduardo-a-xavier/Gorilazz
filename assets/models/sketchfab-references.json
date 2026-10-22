@@ -24,6 +24,25 @@
       "url": "http://creativecommons.org/licenses/by/4.0/"
     },
     "downloadable": true,
+    "file_included": true,
+    "checked_on": "2026-10-22",
+    "supplied_by_user": true,
+    "local_file": "assets/models/gorillaz-geep.glb",
+    "sha256": "a07400446fe54848d8e2c44a0b1e60ff643980ec44f866c729d33010239e10d0",
+    "adaptations": [
+      "glTF to self-contained GLB",
+      "runtime scale and orientation",
+      "runtime wheel pivots"
+    ]
+  },
+  {
+    "uid": "b693d0e95a634674b5fe5744dd3392cb",
+    "name": "Gorillaz",
+    "author": "Dudi Julianto",
+    "author_url": "https://sketchfab.com/julianto.dudi",
+    "url": "https://sketchfab.com/3d-models/gorillaz-b693d0e95a634674b5fe5744dd3392cb",
+    "license": null,
+    "downloadable": false,
     "file_included": false,
     "checked_on": "2026-10-22"
   }

@@ -2,7 +2,7 @@ import * as THREE from './vendor/three.module.min.js';
 import { GLTFLoader } from './vendor/GLTFLoader.js';
 import { TRACK_RADIUS, routePose, wrapProgress, MEMBER_STOPS } from './route.js';
 
-// Local Kenney SUV (CC0); original procedural scenery and character interpretations.
+// Local Geep by shabaev (CC BY 4.0), Kenney fallback (CC0), original scenery/characters.
 export function createWorld(container, onMember) {
   const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
   renderer.setPixelRatio(Math.min(devicePixelRatio, 1.7));
@@ -183,24 +183,53 @@ export function createWorld(container, onMember) {
   }
   let modelWheels = [];
   const vehicleStatus = document.querySelector('#vehicle-status');
-  new GLTFLoader().load('/assets/models/kenney-suv.glb', gltf => {
+  function installVehicle(gltf, kind) {
     const model = gltf.scene;
     const bounds = new THREE.Box3().setFromObject(model); const size = bounds.getSize(new THREE.Vector3());
     const scale = 6.6 / size.z; const center = bounds.getCenter(new THREE.Vector3());
     const vehicle = new THREE.Group();
-    model.scale.setScalar(scale); model.position.set(-center.x * scale, -bounds.min.y * scale, -center.z * scale); vehicle.add(model); vehicle.rotation.y = Math.PI;
+    model.scale.setScalar(scale); model.position.set(-center.x * scale, -bounds.min.y * scale, -center.z * scale);
+    vehicle.add(model); vehicle.rotation.y = Math.PI;
+    const wheelMeshes = []; const details = [];
     model.traverse(object => {
       if (object.isMesh) { object.castShadow = true; object.receiveShadow = true; }
-      if (/wheel-(front|back)-(left|right)/.test(object.name)) modelWheels.push(object);
+      if (!object.isMesh) return;
+      if (kind === 'geep' ? /^Wheel(?:_\d+)?$/i.test(object.name) : /wheel-(front|back)-(left|right)/.test(object.name)) wheelMeshes.push(object);
+      if (kind === 'geep' && /^Wheel_selection/i.test(object.name)) details.push(object);
     });
-    // Dispose only the superseded fallback geometries; shared materials are retained.
+    // Normalize and reparent each wheel around its geometric axle, preserving
+    // the imported model's transforms. Rim details follow the closest wheel.
     car.traverse(object => { if (object.isMesh) object.geometry.dispose(); });
-    car.clear(); car.add(vehicle);
-    vehicleStatus.textContent = 'SUV KENNEY / CC0'; vehicleStatus.dataset.loaded = 'true';
-  }, undefined, error => {
-    console.warn('SUV GLB indisponível; veículo geométrico mantido:', error.message);
-    vehicleStatus.textContent = 'VEÍCULO GEOMÉTRICO / MODO ALTERNATIVO'; vehicleStatus.dataset.loaded = 'false';
-  });
+    car.clear(); car.add(vehicle); car.updateWorldMatrix(true, true); modelWheels = [];
+    const wheelGroups = wheelMeshes.map(mesh => {
+      const box = new THREE.Box3().setFromObject(mesh); const center = box.getCenter(new THREE.Vector3());
+      const pivot = new THREE.Group(); pivot.position.copy(car.worldToLocal(center));
+      pivot.userData.radius = Math.max(.2, box.getSize(new THREE.Vector3()).y / 2);
+      car.add(pivot); pivot.updateWorldMatrix(true, false);
+      return { mesh, pivot };
+    });
+    for (const detail of details) {
+      const center = car.worldToLocal(new THREE.Box3().setFromObject(detail).getCenter(new THREE.Vector3()));
+      const closest = wheelGroups.reduce((best, item) => !best || item.pivot.position.distanceToSquared(center) < best.pivot.position.distanceToSquared(center) ? item : best, null);
+      closest?.pivot.attach(detail);
+    }
+    for (const {mesh, pivot} of wheelGroups) { pivot.attach(mesh); modelWheels.push(pivot); }
+    vehicleStatus.textContent = kind === 'geep' ? 'GEEP / SHABAEV / CC BY 4.0' : 'SUV KENNEY / CC0 · VEÍCULO ALTERNATIVO';
+    vehicleStatus.dataset.loaded = 'true'; vehicleStatus.dataset.model = kind; vehicleStatus.dataset.wheels = String(modelWheels.length);
+  }
+  async function loadVehicle() {
+    const loader = new GLTFLoader();
+    try { installVehicle(await loader.loadAsync('/assets/models/gorillaz-geep.glb'), 'geep'); }
+    catch (error) {
+      console.warn('Geep indisponível; tentando o SUV local:', error.message);
+      try { installVehicle(await loader.loadAsync('/assets/models/kenney-suv.glb'), 'kenney'); }
+      catch (fallbackError) {
+        console.warn('SUV indisponível; veículo geométrico mantido:', fallbackError.message);
+        vehicleStatus.textContent = 'VEÍCULO GEOMÉTRICO / MODO ALTERNATIVO'; vehicleStatus.dataset.loaded = 'false';
+      }
+    }
+  }
+  loadVehicle();
   function person(index) {
     const g = new THREE.Group();
     const skin = ['#e2d8c0', '#91a568', '#e2d8c0', '#986b50'][index];
@@ -300,7 +329,7 @@ export function createWorld(container, onMember) {
       car.position.x = x; car.position.z = z; car.rotation.y = pose.heading; car.position.y = moving && !reduced ? Math.sin(t * 14) * .035 : 0;
       car.rotation.z = moving && !reduced ? Math.sin(t * 2) * .012 : 0;
       const travelled = (progress - previousProgress) * Math.PI * 2 * TRACK_RADIUS;
-      modelWheels.forEach(wheel => { wheel.rotation.x -= travelled / .85; });
+      modelWheels.forEach(wheel => { wheel.rotation.x -= travelled / wheel.userData.radius; });
       if (!modelWheels.length) wheels.forEach(wheel => { wheel.rotation.x -= travelled / .75; });
       previousProgress = progress;
       const angle = (orbit && !reduced ? t * .16 : .48) + dragAngle;

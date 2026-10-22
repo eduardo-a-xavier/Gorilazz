@@ -1,54 +1,62 @@
-# Referências e modelos 3D
+# Fontes, modelos e licenças
 
-## Arquivos incluídos
+## Geep em uso — shabaev
 
-Autor: **Kenney**. Pacote: **Car Kit 3.1**. Licença: **CC0 1.0 Universal**.
+- Modelo: **Gorrilaz Car BlockBench**.
+- Autor: [shabaev](https://sketchfab.com/shabaev).
+- Fonte: https://sketchfab.com/3d-models/gorrilaz-car-blockbench-d1ac8116d1ab4ad7b612921425aa827a
+- Licença: [Creative Commons Attribution 4.0 International](https://creativecommons.org/licenses/by/4.0/).
+- O ZIP `gorrilaz-car-blockbench.zip` foi fornecido pelo usuário. Seu SHA-256 é `26e8d416f17a6925c827a33e8f16c3435b78d84e52326d8cf13926bfa27069ce`.
+- Conversão: `source/model.gltf` para `assets/models/gorillaz-geep.glb`, com as 14 imagens embutidas em bufferViews. Malhas, materiais e coordenadas originais foram preservados. Atribuição adicionada ao campo `asset.copyright`.
+- Em execução: escala, centralização e orientação ajustadas ao circuito, com pivôs para animar rodas e detalhes. Créditos também em `assets/models/GEEP-CREDITS.txt`.
+- O autor não endossa este projeto acadêmico. O nome Geep identifica o veículo da obra, sem afirmar vínculo com fabricantes.
 
+## SUVs alternativos — Kenney
+
+- Autor: **Kenney**. Pacote: **Car Kit 3.1**, licença **CC0 1.0 Universal**.
 - Fonte oficial: https://kenney.nl/assets/car-kit
 - Cópia pública consultada e baixada: https://github.com/Arslan12216775/kenney_car-kit/tree/153591d606970058a4d0e44aeadf435c2d3f89ed
-- Licença original preservada em `assets/models/KENNEY-LICENSE.txt`.
-- Arquivos binários copiados sem alteração; escala e orientação são ajustadas apenas em tempo de execução.
-- O arquivo `kenney-suv.glb` é o veículo padrão. É um SUV estilizado com estepe, usado como jipe neste protótipo; não se afirma que seja um modelo oficial da marca Jeep.
-- `kenney-suv-luxury.glb` é uma alternativa disponível para download, não carregada na cena.
+- Licença preservada em `assets/models/KENNEY-LICENSE.txt`. O site oficial não abriu na rede desta máquina; arquivos e licença foram verificados na cópia pública.
+- GLBs copiados sem alteração; escala e orientação são ajustadas em execução.
+- `kenney-suv.glb` é o fallback do Geep. `kenney-suv-luxury.glb` é uma alternativa para download e não é carregado na cena.
+
+## Integridade dos arquivos incluídos
 
 | Arquivo | SHA-256 |
 | --- | --- |
+| `gorillaz-geep.glb` | `a07400446fe54848d8e2c44a0b1e60ff643980ec44f866c729d33010239e10d0` |
 | `kenney-suv.glb` | `cc195543e412a3c6b7c94dee3313c9998522efc18a0a95a9438a4b476754ff4f` |
 | `kenney-suv-luxury.glb` | `45193092aa900794b56817f5158aae0a562f4bc97fe566e15ff75b3b7c863ee2` |
 
-O site oficial da Kenney não abriu na rede desta máquina. O conteúdo e sua licença foram verificados na cópia pública acima; os arquivos GLB foram carregados e validados localmente.
+## Referências Sketchfab sem arquivo incorporado
 
-## Outras referências
+Os metadados públicos foram consultados em 22/10/2026 via API oficial e resumidos em `assets/models/sketchfab-references.json`.
 
-- **Khronos Toy Car**: https://github.com/KhronosGroup/glTF-Sample-Assets/tree/main/Models/ToyCar — exemplo de glTF 2.0, com créditos a Guido Odendahl e Eric Chadwick e licença CC0 informada no README consultado. Referência de formato; não incluído nem usado na cena.
-- **Yamê — The Molazone**: referência de direção para exploração 3D e câmera imersiva indicada pelo usuário. Não foi possível inspecionar esse site; nenhum código ou arquivo dele foi reutilizado.
+### Flying windmill — zeee7
+
+- Autor: [zeee7](https://sketchfab.com/zeee7).
+- Fonte: https://sketchfab.com/3d-models/flying-windmill-0e72abda7e8b4ec5a8eaa6bf9d25603b
+- Licença informada: **Standard**, https://sketchfab.com/licenses
+- API: `isDownloadable: false`. Referência visual e visualizador oficial sob clique; nenhum arquivo foi extraído do visualizador.
+- O moinho do circuito é uma geometria provisória própria. Para usar o arquivo de zeee7 é necessário obtê-lo de forma autorizada do autor.
+
+### Gorillaz — Dudi Julianto
+
+- Autor: [Dudi Julianto](https://sketchfab.com/julianto.dudi).
+- Fonte: https://sketchfab.com/3d-models/gorillaz-b693d0e95a634674b5fe5744dd3392cb
+- O autor descreve o modelo como uma encomenda de papercraft.
+- API: `isDownloadable: false`, campo `license` vazio na consulta. Não foi encontrada licença pública de reutilização; o arquivo não está incluído nem foi extraído do visualizador.
+- Mantido apenas como referência visual com autoria e link. Os integrantes do circuito continuam sendo interpretações geométricas próprias.
+
+As prévias abrem em iframes apenas após clique e são removidas ao fechar. A tentativa real de iframe no Chromium apresentou erro de rede; testes de interface usaram respostas externas simuladas. A presença da prévia não implica download ou incorporação ao WebGL local.
+
+## Bibliotecas e direção
+
+- **Three.js 0.180.0**: licença MIT em `src/vendor/THREE-LICENSE.txt`. GLTFLoader e BufferGeometryUtils são da mesma versão, com caminhos de importação adaptados para módulos locais.
+- **Khronos Toy Car**: https://github.com/KhronosGroup/glTF-Sample-Assets/tree/main/Models/ToyCar — referência de glTF 2.0. Créditos a Guido Odendahl e Eric Chadwick, licença CC0 no README consultado. Arquivo não incluído.
+- **Yamê — The Molazone**: referência de exploração e câmera indicada pelo usuário. O site não pôde ser inspecionado; nenhum código ou arquivo dele foi reutilizado.
 - **Gorillaz**: https://www.gorillaz.com/ — universo criado por Jamie Hewlett e Damon Albarn. Projeto acadêmico independente, sem vínculo oficial.
-- **Three.js 0.180.0**: biblioteca sob licença MIT em `src/vendor/THREE-LICENSE.txt`. GLTFLoader e BufferGeometryUtils são da mesma versão; apenas caminhos de importação foram adaptados para módulos locais.
 
 ## Circuito
 
-O trajeto é um círculo fechado de raio 58 unidades. As nove paradas usam posições distintas `i / 9`; o jipe aponta para a tangente e a câmera o acompanha. Avançar ou voltar atravessa a emenda da volta sem reiniciar o mundo. A navegação por paradas escolhe o caminho mais curto do círculo. Personagens permanecem acessíveis pela galeria.
-
-## Seleção Sketchfab do usuário
-
-Metadados públicos consultados em 22/10/2026 via API oficial. O registro resumido está em `assets/models/sketchfab-references.json`. Nenhum arquivo desses dois modelos está incluído na distribuição.
-
-### Gorrilaz Car BlockBench
-
-- Autor: **shabaev** — https://sketchfab.com/shabaev
-- Página: https://sketchfab.com/3d-models/gorrilaz-car-blockbench-d1ac8116d1ab4ad7b612921425aa827a
-- Licença informada: **Creative Commons Attribution 4.0**, https://creativecommons.org/licenses/by/4.0/
-- API: `isDownloadable: true`. O endpoint oficial de download respondeu HTTP 401 por ausência de autenticação; não havia credencial Sketchfab nas configurações nem no processo.
-- Pendente: obter o ZIP/GLB por uma conta autorizada e fornecer o arquivo para integração. Ao incorporá-lo, preservar autoria, link da fonte, licença e descrição de eventuais modificações. O SUV Kenney permanece como veículo enquanto isso.
-
-### Flying windmill
-
-- Autor: **zeee7** — https://sketchfab.com/zeee7
-- Página: https://sketchfab.com/3d-models/flying-windmill-0e72abda7e8b4ec5a8eaa6bf9d25603b
-- Licença informada: **Standard**, https://sketchfab.com/licenses
-- API: `isDownloadable: false`. Usado como referência visual e por visualizador oficial incorporado sob escolha do visitante. Não foram extraídos arquivos do visualizador.
-- O moinho do circuito é uma geometria provisória autoral, com pás animadas e ilha flutuante; não é o arquivo de zeee7. Para usar aquele arquivo específico é necessário obtê-lo de forma autorizada do autor.
-
-As prévias oficiais são carregadas em iframes apenas após clique e removidas ao fechar o diálogo. Elas dependem do Sketchfab e da rede do navegador. Sua presença não significa que o modelo foi baixado ou incorporado ao WebGL local.
-
-Na validação, as páginas e metadados foram acessíveis por requisição HTTP, mas o iframe real no Chromium exibiu erro de rede. Os testes do diálogo usaram respostas simuladas e não demonstram que os modelos externos renderizaram neste ambiente.
+Trajeto autoral circular de raio 58 unidades. As nove paradas têm posições distintas `i / 9`; o Geep segue a tangente e a câmera acompanha. A emenda é contínua em ambos os sentidos e a navegação por paradas escolhe o menor arco. O moinho e os personagens provisórios são gerados localmente.

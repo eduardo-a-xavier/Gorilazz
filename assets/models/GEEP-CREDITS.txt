@@ -1,0 +1,16 @@
+Gorrilaz Car BlockBench / Geep
+Autor: shabaev
+Perfil: https://sketchfab.com/shabaev
+Fonte: https://sketchfab.com/3d-models/gorrilaz-car-blockbench-d1ac8116d1ab4ad7b612921425aa827a
+Licença: Creative Commons Attribution 4.0 International (CC BY 4.0)
+https://creativecommons.org/licenses/by/4.0/
+https://creativecommons.org/licenses/by/4.0/legalcode
+
+Arquivo original gorrilaz-car-blockbench.zip fornecido pelo usuário.
+Adaptações no projeto Gorilazz — A estrada:
+- Conversão de glTF com dados embutidos para GLB, preservando malhas,
+  materiais e as 14 imagens originais, sem recursos externos.
+- Inclusão desta atribuição nos metadados do GLB e no projeto.
+- Escala, centralização e orientação ajustadas em tempo de execução.
+- Agrupamento das rodas e detalhes em pivôs locais para animação no circuito.
+Não há vínculo nem endosso do autor ao projeto acadêmico.
