@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Uma viagem acadêmica e interativa pelo universo Gorillaz.">
+<title>Gorilazz — A estrada</title><link rel="stylesheet" href="/src/style.css">
+<script src="/src/app.js" type="module"></script>
+</head>
+<body>
+<a class="skip" href="#paradas">Pular para o conteúdo</a>
+<header><a class="brand" href="#">GORILLAZ <span>/ THE ROAD</span></a><p>UMA VIAGEM PELO UNIVERSO DA BANDA</p><a href="#paradas">EXPLORAR ↗</a></header>
+<main>
+<section class="intro" aria-labelledby="title"><div class="eyebrow">LONDRES, 1998 → UM UNIVERSO SEM FIM</div><h1 id="title">A ESTRADA<br>É <em>SUA.</em></h1><div class="intro-bottom"><p>Quatro personagens. Nove paradas.<br>Entre no universo Gorillaz.</p><a class="cta" href="#jogo">ASSUMA O VOLANTE <span>↘</span></a></div><span class="stamp" aria-hidden="true">EST. 1998<br>NO MAP.<br>JUST MUSIC.</span></section>
+<section id="jogo" aria-label="Estrada interativa"><div class="game-top"><span>01 / PEGUE A ESTRADA</span><span id="counter">00 / 04 PERSONAGENS</span></div>
+<div class="landscape"><div class="sun"></div><div class="cloud one"></div><div class="cloud two"></div><div class="mountains"></div><div class="billboard">NO REALITY.<br>JUST GORILLAZ.</div><div class="sign">KONG STUDIOS ↗</div><div class="horizon"></div><div id="road" class="road" tabindex="0" aria-label="Dirija com setas esquerda e direita ou A e D"><div class="lane"></div><div id="characters"></div><div id="car" class="car" aria-label="Seu carro"><svg viewBox="0 0 180 90" role="img" aria-label="Carro creme com vidros azuis"><path d="M12 48 42 40 62 13 121 13 145 42 169 49 175 72 8 72Z" fill="#E2D8C0" stroke="#141414" stroke-width="4"/><path d="m66 20-17 24h38V20Zm30 0v24h37l-17-24Z" fill="#3A68D8" stroke="#141414" stroke-width="3"/><path d="M9 59h166M98 48v19" stroke="#141414" stroke-width="3"/><path d="M12 50h19v9H12Zm145 0h13v9h-13Z" fill="#F2559C"/><g fill="#141414" stroke="#E2D8C0" stroke-width="3"><circle cx="43" cy="72" r="15"/><circle cx="140" cy="72" r="15"/></g><g fill="#F2559C"><circle cx="43" cy="72" r="6"/><circle cx="140" cy="72" r="6"/></g></svg></div><span id="pow" hidden aria-hidden="true">POW!</span></div></div>
+<div class="controls"><p><b>DIRIJA. ENCONTRE. DESCUBRA.</b><br>← → ou A / D para mover. Encontre os quatro personagens.</p><div class="drive-buttons"><button type="button" data-direction="-1" aria-label="Dirigir para esquerda">←</button><button type="button" data-direction="1" aria-label="Dirigir para direita">→</button></div></div><p id="announcement" class="sr-only" aria-live="polite"></p>
+</section>
+<section id="paradas" aria-labelledby="stops-title"><div class="section-heading"><h2 id="stops-title">NOVE PARADAS.<br>UM UNIVERSO.</h2><p>ESCOLHA SEU PRÓXIMO DESTINO ↙</p></div><nav id="stop-menu" aria-label="Paradas da viagem"></nav><article id="panel" tabindex="-1"></article>
+<noscript><article class="fallback"><h3>Uma banda, muitas histórias</h3><p>Gorillaz foi criada em Londres, em 1998, por Damon Albarn e Jamie Hewlett. O primeiro álbum saiu em 2001. Seus integrantes virtuais são 2-D (voz e teclados), Murdoc (baixo), Noodle (guitarra) e Russel (bateria).</p><p>Rock, hip-hop, eletrônico e dub se encontram em músicas, animações e narrativas. Plastic Beach aborda também questões ambientais. Os shows combinam músicos reais, convidados e projeções.</p><p>Discografia inicial: Gorillaz (2001), Demon Days (2005), Plastic Beach (2010), The Fall (2010), Humanz (2017), The Now Now (2018), Song Machine, Season One (2020) e Cracker Island (2023). Lista sujeita a atualização.</p><p>Projeto acadêmico de Eduardo Alves Xavier, Gedson de Souza Mancio Júnior e Rafael Machado Colnaghi. Ative o JavaScript para dirigir e explorar as nove paradas.</p></article></noscript></section>
+</main>
+<footer><strong>GORILLAZ / THE ROAD</strong><p>Projeto acadêmico independente, sem vínculo oficial.<br>Universo criado por Jamie Hewlett e Damon Albarn. Figuras esquemáticas e autorais.</p><a href="https://www.gorillaz.com/" target="_blank" rel="noopener noreferrer">SITE OFICIAL ↗</a></footer>
+<dialog id="character-dialog" aria-labelledby="character-name"><button class="close" aria-label="Fechar ficha">×</button><div id="portrait" aria-hidden="true"></div><p class="eyebrow" id="character-role"></p><h2 id="character-name"></h2><p id="character-description"></p><p class="listen">SUGESTÃO DE ESCUTA <strong id="character-song"></strong></p><button class="return">VOLTAR À ESTRADA ↗</button></dialog>
+</body></html>
