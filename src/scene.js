@@ -3,7 +3,7 @@ import { GLTFLoader } from './vendor/GLTFLoader.js';
 import { TRACK_RADIUS, routePose, wrapProgress, MEMBER_STOPS } from './route.js';
 
 // Local credited Geep and Phase 7 models; original scenery and geometric fallbacks.
-export function createWorld(container, onMember) {
+export function createWorld(container, onMember, {onLost = () => {}, onRestored = () => {}, onViewReset = () => {}} = {}) {
   const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
   renderer.setPixelRatio(Math.min(devicePixelRatio, 1.7));
   renderer.shadowMap.enabled = true;
@@ -14,6 +14,8 @@ export function createWorld(container, onMember) {
   container.append(renderer.domElement);
   renderer.domElement.setAttribute('aria-label', 'Estrada 3D com carro, personagens e cenários musicais');
   renderer.domElement.setAttribute('role', 'img');
+  renderer.domElement.addEventListener('webglcontextlost', event => { event.preventDefault(); onLost(); });
+  renderer.domElement.addEventListener('webglcontextrestored', () => onRestored());
   const scene = new THREE.Scene();
   scene.background = new THREE.Color('#202631');
   scene.fog = new THREE.FogExp2('#202631', .007);
@@ -157,8 +159,8 @@ export function createWorld(container, onMember) {
     const tuft = new THREE.Mesh(new THREE.ConeGeometry(1.5, 4 + i % 2, 5), material('#4c6d5b'));
     tuft.position.set(Math.cos(i * 1.3) * 10, 2, Math.sin(i * 1.3) * 9); windmill.add(tuft);
   }
-  const skyColors = ['#202631','#30283c','#273447','#282631','#254347','#384047','#292d48','#352b3d','#202631'].map(color => new THREE.Color(color));
-  const groundColors = ['#34433f','#514044','#374958','#3d3b48','#365b57','#485355','#343b54','#50414c','#34433f'].map(color => new THREE.Color(color));
+  const skyColors = ['#202b2a','#272333','#254347','#3b3330','#2d293f','#304050','#273f3c','#352b3d'].map(color => new THREE.Color(color));
+  const groundColors = ['#34433f','#423b4f','#365b57','#5b4940','#443d57','#44586a','#3b5b50','#50414c'].map(color => new THREE.Color(color));
   const car = new THREE.Group(); scene.add(car);
   box(car, [3.5, .95, 6.8], [0, 1.15, 0], '#e2d8c0');
   box(car, [3.2, .6, 2], [0, 1.65, -2.1], '#e2d8c0');
@@ -325,21 +327,24 @@ export function createWorld(container, onMember) {
     if (hit) onMember(hit.object.userData.member);
   });
   renderer.domElement.addEventListener('keydown', event => {
-    if (event.key === 'Home') { dragAngle = 0; dragElevation = 0; zoom = 1; event.preventDefault(); }
+    if (event.key === 'Home') { dragAngle = 0; dragElevation = 0; zoom = 1; overview = false; landmarkView = false; onViewReset(); event.preventDefault(); }
   });
   function resize() {
     const width = container.clientWidth; const height = container.clientHeight;
+    if (width <= 0 || height <= 0) return;
     renderer.setSize(width, height, false); camera.aspect = width / height; camera.updateProjectionMatrix();
   }
   const observer = new ResizeObserver(resize); observer.observe(container); resize();
   let previousProgress = 0;
   let overview = false;
+  let activeEra = 0;
   let landmarkView = false;
   const look = new THREE.Vector3();
   const cameraTarget = new THREE.Vector3();
   const desiredCamera = new THREE.Vector3();
   let previousTime = null; let initialized = false;
   return {
+    setEra(index) { activeEra = Math.max(0, Math.min(7, index)); },
     setOverview(value) { overview = value; landmarkView = false; },
     focusWindmill(value) { landmarkView = value; overview = false; },
     zoomBy(amount) { zoom = THREE.MathUtils.clamp(zoom + amount, .7, 1.6); },
@@ -348,10 +353,11 @@ export function createWorld(container, onMember) {
       const pose = routePose(progress); const z = pose.z; const x = pose.x; const t = time / 1000;
       const dt = previousTime === null ? .016 : Math.min((time - previousTime) / 1000, .1); previousTime = time;
       const blend = reduced ? 1 : 1 - Math.exp(-dt * 4);
-      const zone = Math.round(wrapProgress(progress) * 9) % 9;
-      scene.background.lerp(skyColors[zone], blend * .35); scene.fog.color.copy(scene.background);
+      const zone = activeEra;
+      if (reduced) scene.background.copy(skyColors[zone]); else scene.background.lerp(skyColors[zone], blend * .35);
+      scene.fog.color.copy(scene.background);
       scene.fog.density = THREE.MathUtils.lerp(scene.fog.density, overview ? .0015 : landmarkView ? .003 : .007, blend);
-      ground.material.color.lerp(groundColors[zone], blend * .35);
+      if (reduced) ground.material.color.copy(groundColors[zone]); else ground.material.color.lerp(groundColors[zone], blend * .35);
       island.visible = showcase && Math.min(wrapProgress(progress), 1 - wrapProgress(progress)) < .07;
       dust.position.set(x, 0, z);
       if (!reduced) { rotor.rotation.z = -t * .3; windmill.position.y = 15 + Math.sin(t * .65) * .5; dust.rotation.y = Math.sin(t * .025) * .15; satellites.rotation.y = Math.sin(t * .1) * .12; portal.rotation.z = Math.sin(t * .07) * .04; }

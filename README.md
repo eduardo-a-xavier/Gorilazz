@@ -1,6 +1,6 @@
 # Gorilazz — A estrada
 
-Uma experiência acadêmica para explorar o universo Gorillaz em um circuito 3D: dirija o Geep, encontre os quatro integrantes, visite nove paradas e descubra oito sugestões de músicas.
+Uma experiência acadêmica para explorar o universo Gorillaz em um circuito 3D: dirija o Geep, encontre os quatro integrantes, visite nove paradas, explore oito eras de 1998 a 2023 e descubra onze sugestões de músicas.
 
 ## Executar na sua máquina
 
@@ -43,12 +43,15 @@ Fontes verificadas, hashes e atribuições completas: [REFERENCES.md](REFERENCES
 - `index.html`: página, cenário, fichas e diálogos de prévia.
 - `src/style.css`: visual, responsividade e movimento reduzido.
 - `src/app.js`: navegação, encontros, rádio, foco e prévias externas.
+- `src/content.js`: eras, faixas, perfis e referências históricas.
+- `src/progress.js`: leitura e gravação tolerante a falhas do progresso local.
+- `src/editorial.css`: linha do tempo, painéis de leitura e bastidores recolhíveis.
 - `src/route.js`: posição, tangente, normalização e distâncias do circuito.
 - `src/scene.js`: WebGL, modelos, iluminação, câmera e moinho provisório.
 - `src/vendor/`: Three.js 0.180.0, GLTFLoader e BufferGeometryUtils, com licença MIT. Só os caminhos de importação dos auxiliares foram adaptados.
 - `assets/models/`: GLB do Geep e da banda, modelos alternativos, créditos e metadados públicos das referências.
 - `assets/portraits/`: quatro retratos renderizados dos modelos Phase 7 para galeria e fichas.
-- `tests/route.test.mjs`: seis testes de continuidade e geometria circular.
+- `tests/`: 17 testes de geometria circular, integridade do conteúdo e progresso local.
 - `server.mjs`: servidor HTTP sem pacotes externos.
 
 ## Verificar
@@ -58,13 +61,13 @@ npm run check
 npm test
 ```
 
-A sintaxe e os seis testes de geometria passaram. O Geep convertido passou no **Khronos glTF Validator 2.0.0-dev.3.10**, sem erros, avisos ou informações de problema. Também foi verificado no Chromium o carregamento do modelo, quatro pivôs de roda, circuito nos dois sentidos, download GLB, layout móvel e fallback Kenney.
+A sintaxe e os 17 testes automatizados passaram, incluindo seis testes da geometria do circuito. O Geep convertido passou no **Khronos glTF Validator 2.0.0-dev.3.10**, sem erros, avisos ou informações de problema. Também foi verificado no Chromium o carregamento do modelo, quatro pivôs de roda, circuito nos dois sentidos, download GLB, layout móvel e fallback Kenney.
 
 O moinho e a câmera foram verificados em WebGL. Os diálogos externos, créditos, Escape, limpeza de iframe e foco foram testados com respostas externas simuladas. A tentativa do visualizador real Sketchfab no Chromium apresentou erro de rede; não foi confirmada a renderização desses iframes nesta máquina. As páginas e os metadados da API puderam ser consultados por HTTP.
 
 ## Limitações
 
-A cena e os arquivos incluídos funcionam com o servidor local, sem conexão externa. Vídeos, links e prévias do Sketchfab precisam de internet e dependem do serviço. Não há reprodução automática de música. O progresso reinicia ao recarregar.
+A cena e os arquivos incluídos funcionam com o servidor local, sem conexão externa. Vídeos, links e prévias do Sketchfab precisam de internet e dependem do serviço. Não há reprodução automática de música. A posição e os integrantes encontrados ficam salvos neste navegador quando o armazenamento local está disponível. “Reiniciar viagem” apaga esse progresso local. Se o navegador bloquear o armazenamento, a experiência continua funcionando durante a sessão.
 
 Sem WebGL há uma estrada 2D com fichas e paradas. Sem JavaScript há um resumo básico. A preferência por movimento reduzido desativa órbita e animações decorativas; o deslocamento explícito continua disponível. Não foi certificada conformidade de acessibilidade, reprodução externa de vídeo ou compatibilidade com aparelhos físicos; a validação móvel usou emulação.
 
@@ -85,3 +88,15 @@ Se o GLB da banda não carregar, as quatro figuras geométricas continuam funcio
 No celular, o botão de câmera abre os controles de vista e zoom; Escape ou um toque fora os recolhe. A vista inicial mantém os quatro integrantes enquadrados.
 
 Validação da banda: o GLB Phase 7 passou no Khronos glTF Validator sem erros, avisos ou informações de problema. No Chromium foram verificados os quatro modelos junto ao Geep, os quatro retratos e fichas correspondentes, clique na malha da Noodle, contador sem duplicação, encontro no circuito, restauração do foco, layout e controles de câmera móveis e alternativa geométrica ao bloquear o GLB.
+
+## Revisão histórica e de experiência
+
+A linha do tempo apresenta oito eras de **1998–2023**, com história real, narrativa virtual, uma interpretação para o circuito e sugestões de escuta. É um recorte editorial, sem afirmar que não existam lançamentos posteriores. As nove paradas temáticas continuam disponíveis e foram ampliadas; o menu de leitura não move o carro nem troca o texto sozinho. Os botões explícitos de viagem levam à estrada.
+
+The Fall distingue a disponibilização digital de 2010 da edição física de 2011. As fichas separam personagens de intérpretes e colaboradores reais; o Geep é relacionado a 19-2000, e o moinho à ideia visual de Feel Good Inc. Os modelos Phase 7 permanecem em todas as eras, como informado na página.
+
+O rádio tem onze faixas. Para três escutas sem ID cadastrado, o botão abre uma busca pelo clipe oficial em vez de inventar um endereço de vídeo. As prévias existentes continuam sob clique e dependem do YouTube; sua reprodução externa não foi revalidada.
+
+A renderização 3D e o tour pausam fora da seção da estrada; no celular, a renderização é limitada a aproximadamente 30 quadros por segundo. A perda do contexto WebGL mostra a alternativa 2D, e a restauração reconecta a cena. Créditos e downloads permanecem disponíveis nos bastidores, com atribuições visíveis junto da banda.
+
+As consultas ao site oficial e à Britannica foram bloqueadas pela política de rede desta instância. A revisão editorial está implementada, mas a conferência documental online permanece pendente. Consulte [HISTORY_REVIEW.md](HISTORY_REVIEW.md) para escopo, fontes indicadas, evidências e limitações.

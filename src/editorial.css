@@ -1,0 +1,80 @@
+/* Reading, historical eras, and the optional asset credits. */
+.eras-section { padding: 70px 5% 0; }
+.era-introduction { max-width: 760px; font-size: 12px; line-height: 1.9; opacity: .8; margin: 0 0 30px; }
+#era-menu { display: grid; grid-template-columns: repeat(8,minmax(0,1fr)); border: 1px solid #e9e4d433; }
+#era-menu button { border: 0; border-right: 1px solid #e9e4d433; color: var(--cream); background: transparent; text-align: left; padding: 18px 12px; min-height: 110px; display: flex; flex-direction: column; gap: 14px; }
+#era-menu button:last-child { border-right: 0; }
+#era-menu button span { font-size: 10px; letter-spacing: .5px; color: var(--acid); }
+#era-menu button strong { font-size: 10px; line-height: 1.6; font-weight: normal; overflow-wrap: anywhere; }
+#era-menu button[aria-current=true] { background: var(--cream); color: var(--black); }
+#era-menu button[aria-current=true] span { color: var(--black); }
+#era-menu button:focus-visible { outline-offset: -4px; }
+.era-panel { --era-color: #d2e2a8; border: 1px solid #e9e4d433; border-top: 0; padding: 35px; background: linear-gradient(130deg,#27333566,transparent 70%); }
+.era-heading .eyebrow { color: var(--era-color); font-size: 9px; }
+.era-heading h3 { font: italic clamp(30px,3.5vw,48px)/1.1 Georgia,serif; letter-spacing: -1px; margin: 18px 0 32px; max-width: 850px; }
+.era-columns { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
+.layer-label { font-size: 9px; color: var(--era-color); letter-spacing: 1px; }
+.era-columns p:not(.layer-label) { font-size: 12px; line-height: 1.95; max-width: 570px; }
+.era-insight { font-size: 12px; border-left: 2px solid var(--era-color); padding: 6px 0 6px 18px; margin: 25px 0; max-width: 850px; opacity: .85; }
+.era-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 20px; }
+.era-actions button, .drive-to-stop { min-height: 44px; padding: 14px 20px; border: 0; border-radius: 25px; background: var(--era-color,var(--cream)); color: var(--black); font-size: 9px; font-weight: bold; }
+.era-actions>a { font-size: 9px; }
+#era-source-links { flex-basis: 100%; border-top: 1px solid #e9e4d422; padding-top: 18px; display: flex; gap: 20px; flex-wrap: wrap; }
+#era-source-links a { font-size: 9px; opacity: .7; }
+.editorial-note { max-width: 880px; font-size: 10px; line-height: 1.8; opacity: .65; margin-top: 20px; }
+.character-context { padding: 16px; border: 1px solid #e9e4d433; font-size: 11px; line-height: 1.8; }
+#panel>p { line-height: 1.95; }
+.genre-tags { display: flex; flex-wrap: wrap; gap: 8px; margin: 25px 0; }
+.genre-tags span { padding: 7px 12px; border: 1px solid #e9e4d433; border-radius: 20px; font-size: 9px; }
+.album-guide { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 12px; margin: 28px 0; }
+.album-guide article { padding: 20px; border: 1px solid #e9e4d433; display: flex; flex-direction: column; align-items: start; }
+.album-guide article>span { color: var(--acid); font-size: 10px; }
+.album-guide h4 { font: italic 22px/1.2 Georgia,serif; margin: 16px 0; }
+.album-guide p { font-size: 11px; line-height: 1.8; flex: 1; }
+.album-guide button { background: transparent; color: var(--cream); border: 0; padding: 12px 0; min-height: 44px; font-size: 9px; }
+.theme-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 20px; margin: 25px 0; }
+.theme-grid article { border-top: 1px solid #e9e4d433; padding-top: 16px; }
+.theme-grid h4 { font: italic 25px/1.2 Georgia,serif; margin: 10px 0; }
+.theme-grid p { font-size: 12px; line-height: 1.9; }
+.history-sources { list-style: none; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.history-sources li { border-top: 1px solid #e9e4d433; padding: 15px 0; }
+.history-sources a { font-size: 12px; }
+.history-sources p { font-size: 10px; line-height: 1.8; opacity: .7; }
+.drive-to-stop { margin-top: 20px; }
+#reset-journey { background: transparent; color: var(--cream); border: 0; padding: 3px 0; font-size: 7px; letter-spacing: .4px; text-decoration: underline; text-underline-offset: 3px; min-height: 24px; }
+.backstage { width: 90%; max-width: 1450px; margin: 30px auto 70px; border-top: 1px solid #e9e4d433; border-bottom: 1px solid #e9e4d433; }
+.backstage summary { cursor: pointer; padding: 30px 0; list-style: none; }
+.backstage summary::-webkit-details-marker { display: none; }
+.backstage summary>span { display: block; font-size: 8px; opacity: .6; letter-spacing: 1px; margin-bottom: 15px; }
+.backstage summary strong { display: flex; justify-content: space-between; gap: 20px; font: italic 30px/1.2 Georgia,serif; }
+.backstage summary strong span { font: 30px 'Courier New',monospace; transition: transform .2s; }
+.backstage[open] summary strong span { transform: rotate(45deg); }
+.backstage .model-section,.backstage .reference-section { padding-left: 0; padding-right: 0; }
+.backstage .reference-section { padding-bottom: 30px; }
+.backstage .section-heading h2 { font-size: 40px; }
+@media(min-width:1500px) { .eras-section { max-width: 1450px; margin: auto; } }
+@media(max-width:1000px) { #era-menu { grid-template-columns: repeat(4,minmax(0,1fr)); } #era-menu button { border-bottom: 1px solid #e9e4d433; } .album-guide { grid-template-columns: repeat(2,minmax(0,1fr)); } }
+@media(max-width:700px) {
+  .header-nav a:first-child { display: inline; }
+  .header-nav a[href="#radio"],.header-nav a[href="#band-title"] { display: none; }
+  .eras-section { padding-top: 45px; }
+  .era-introduction { font-size: 11px; }
+  #era-menu { grid-template-columns: none; grid-auto-flow: column; grid-auto-columns: 148px; overflow-x: auto; scroll-snap-type: x proximity; scrollbar-width: thin; }
+  #era-menu button { scroll-snap-align: start; min-height: 110px; border-bottom: 0; }
+  .era-panel { padding: 23px; }
+  .era-heading h3 { font-size: 34px; }
+  .era-columns { grid-template-columns: 1fr; gap: 12px; }
+  .era-columns p:not(.layer-label),.era-insight { font-size: 11px; }
+  .era-actions { gap: 16px; }
+  #era-source-links { gap: 14px; }
+  .album-guide { gap: 10px; }
+  .album-guide article { padding: 15px; }
+  .album-guide h4 { font-size: 20px; }
+  .theme-grid,.history-sources { grid-template-columns: 1fr; }
+  .backstage summary strong { font-size: 25px; }
+  .game-top { bottom: 227px; }
+  #reset-journey { min-height: 28px; }
+  .character-context { padding: 12px; font-size: 10px; }
+}
+.era-columns p:not(.layer-label),.era-insight{font-size:13px}#panel>p{font-size:14px}@media(max-width:700px){.era-columns p:not(.layer-label),.era-insight{font-size:12px}#panel>p{font-size:13px}}
+#reset-journey{min-height:44px}@media(max-width:700px){.game-top{bottom:250px}}

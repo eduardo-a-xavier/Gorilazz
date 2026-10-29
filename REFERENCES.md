@@ -77,3 +77,18 @@ Trajeto autoral circular de raio 58 unidades. As nove paradas têm posições di
 SHA-256 do ZIP fornecido: `5a42d6e9c407feaec18d567b44a6d6b0ea453b20e2e1526d9305efc96225b6e1`.
 
 SHA-256 do GLB distribuído: `e30f02e978222bf2bacdee81d3ee3e32304de3f9c06cce55a60948c6f49d2398`.
+
+## Conteúdo histórico e recorte editorial
+
+O conteúdo de `src/content.js` é uma seleção de 1998 a 2023. Não é apresentado como discografia completa nem como consulta atualizada a todos os lançamentos. A referência a The Fall distingue digital (2010) e físico (2011).
+
+Referências indicadas para consulta:
+
+- Gorillaz, site oficial: https://www.gorillaz.com/
+- Gorillaz, canal oficial e clipes: https://www.youtube.com/@Gorillaz
+- Histórico e referências adicionais: https://en.wikipedia.org/wiki/Gorillaz
+- Cronologia de The Fall: https://en.wikipedia.org/wiki/The_Fall_(Gorillaz_album)
+
+Nesta revisão, em 29/10/2026, os pedidos HTTP ao site oficial e à Britannica foram bloqueados pelo proxy (403 no túnel). Não se afirma que essas páginas foram lidas ou que a atualização documental online foi concluída. A versão distingue fatos históricos, narrativa virtual e interpretações editoriais, mantendo o recorte limitado a informações históricas conhecidas. As fontes secundárias são pontos de partida para conferência, não substituem uma bibliografia acadêmica final.
+
+A auditoria e os limites da revisão estão em [HISTORY_REVIEW.md](HISTORY_REVIEW.md).
