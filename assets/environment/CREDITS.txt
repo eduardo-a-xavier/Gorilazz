@@ -1,0 +1,50 @@
+GORILAZZ — CENÁRIO E PEÇAS DA EXPOSIÇÃO
+
+KONG STUDIOS / VEGETAÇÃO / MATERIAIS
+Fachada, árvore, texturas de superfícies, céu e mural produzidos para este projeto.
+Geração reproduzível: scripts/build-visual-environment.py (Blender 4.3.2).
+As texturas de superfícies são autorais e geradas localmente. Não são downloads
+da Poly Haven, ambientCG ou Quaternius. O acesso de download à Poly Haven foi
+bloqueado pela rede desta execução; nenhum material foi atribuído a esses sites.
+Os pôsteres usam os retratos existentes derivados dos modelos Phase 7;
+os créditos de Redtricity/Gorillaz permanecem em PHASE7-CREDITS.txt.
+O cenário é uma interpretação acadêmica independente, não um cenário oficial.
+
+2D-SCULPTURE.GLB
+Arquivo fornecido pelo usuário: gorillaz-sculpture.zip.
+Contém poly.obj e uma imagem JPEG de 8192 x 8192.
+Correspondência identificada: Gorillaz sculpture, scan publicado por Leam (leamlld).
+https://sketchfab.com/3d-models/gorillaz-sculpture-cf1f323bba7d45ad8596eaa62ca60ce1
+A página pública indexada informa CC Attribution e 129,4 mil triângulos,
+compatíveis com os 129.391 triângulos do arquivo inspecionado.
+A versão exata da licença não foi obtida pela API; não se inventa esse metadado.
+Adaptações: reconexão da textura, escala/alinhamento, redução para 33.999
+triângulos, textura reduzida para 1024 px e exportação GLB estática.
+O arquivo é um scan de uma escultura; Leam é creditado como publicador do scan,
+sem atribuir a ele a criação do personagem ou autoria física não informada.
+
+NOODLE-DIORAMA.GLB
+Arquivo fornecido pelo usuário: noodle.zip.
+Contém Character.fbx e texturas Noodle_UV, Windmill_UV, Rock_UV e RockBump_Normals.
+Inspeção confirmou um conjunto estático com personagem, ilha e pequeno moinho,
+sem esqueleto ou animações. Original: 306.208 triângulos.
+Adaptações: reconexão das três texturas de cor, escala/alinhamento, redução para
+48.000 triângulos, imagens em 1024 px e exportação GLB estática.
+Origem indicada pelo usuário:
+https://sketchfab.com/search?features=downloadable&q=gorilaz&type=models
+A página individual, o autor e a licença deste arquivo ainda não foram
+confirmados. A pesquisa por imagem encontrou um candidato visual, mas não
+estabeleceu correspondência técnica suficiente para atribuir autoria.
+Nenhum autor ou licença foi presumido a partir do nome do ZIP.
+
+As duas peças aparecem como esculturas da exposição e não substituem os
+quatro integrantes Phase 7 usados nos encontros. Não receberam animação
+articulada nem são apresentadas como modelos rigados.
+
+ARQUIVOS AINDA NÃO INSPECIONADOS
+2d-gorillaz-model-v2-study.zip e take-me-to-a-galaxy-far-away.zip excederam
+o limite de transferência de 32 MiB da ferramenta de anexos desta execução.
+O conteúdo desses ZIPs não foi acessado, convertido nem incorporado.
+
+Universo Gorillaz: Jamie Hewlett, Damon Albarn e demais titulares e artistas.
+Projeto acadêmico independente, sem vínculo ou endosso oficial.

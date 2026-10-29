@@ -46,6 +46,8 @@ Fontes verificadas, hashes e atribuições completas: [REFERENCES.md](REFERENCES
 
 ## Estrutura
 
+O primeiro piloto visual inclui uma fachada de Kong Studios, materiais autorais, árvores instanciadas e duas peças fornecidas pelo usuário. Veja [as capturas e a avaliação dos anexos](docs/PILOTO-VISUAL.md). A escultura e o diorama são estáticos e foram otimizados; dois outros ZIPs ainda não puderam ser transferidos por excederem 32 MiB.
+
 - `index.html`, `src/style.css`, `src/world.css`: página, controles, mapa, diário e diálogos responsivos.
 - `src/app.js`: coordenação da exploração, fichas, conteúdo, câmera e rádio.
 - `src/world-data.js`: regiões, ruas suaves, cruzamentos, descobertas, obstáculos e posições compartilhadas entre mapa, física e cena.
@@ -54,6 +56,8 @@ Fontes verificadas, hashes e atribuições completas: [REFERENCES.md](REFERENCES
 - `src/discoveries.js`: proximidade espacial, visibilidade de interação e diário persistido.
 - `src/navigation.js`: caminhos pelo grafo de ruas e comandos do passeio guiado.
 - `src/scene.js`: Three.js, terreno, ruas, Geep, integrantes, moinho, rodas e câmera.
+- `src/environment.js`, `src/materials.js`: cenário texturizado, assets da exposição e superfícies locais.
+- `scripts/build-visual-environment.py`: geração reproduzível da fachada, árvore e texturas autorais no Blender.
 - `src/content.js`, `src/editorial.css`: oito eras de 1998–2023, onze faixas e conteúdo histórico ampliado.
 - `src/progress.js`: persistência da posição no mundo e dos integrantes, com leitura do progresso anterior.
 - `src/route.js`: utilitários circulares legados, mantidos para compatibilidade com os dados da representação anterior; não controlam o Geep do mundo aberto.
@@ -71,7 +75,7 @@ npm test
 
 A física roda em passos fixos de 1/120 s, independentemente da renderização. Os testes cobrem inércia, freio e ré, direção, estabilidade entre passos de simulação, limites, colisões, conexão das ruas, persistência opcional e chegada aos cinco destinos pelo passeio guiado. Os modelos existentes não foram modificados nesta etapa.
 
-A versão integrada passou nos 36 testes e na verificação de sintaxe. O Chromium verificou carregamento dos modelos, descobertas e diálogos; a alternativa sem WebGL também passou pelo fluxo de condução, diário e recarregamento. A emulação móvel verificou pedais simultâneos, cancelamento de toque e ausência de transbordamento horizontal.
+A versão integrada passou nos 39 testes e na verificação de sintaxe. O Chromium verificou carregamento dos modelos, descobertas e diálogos; a alternativa sem WebGL também passou pelo fluxo de condução, diário e recarregamento. A emulação móvel verificou pedais simultâneos, cancelamento de toque e ausência de transbordamento horizontal.
 
 ## Limitações
 

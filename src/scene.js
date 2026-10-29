@@ -1,27 +1,38 @@
 import * as THREE from './vendor/three.module.min.js';
 import { GLTFLoader } from './vendor/GLTFLoader.js';
-import { ROADS, REGIONS, DISCOVERIES, MEMBER_LOCATIONS, BUILDINGS, nearestRoad } from './world-data.js';
+import { ROADS, NODES, REGIONS, DISCOVERIES, MEMBER_LOCATIONS, BUILDINGS } from './world-data.js';
+import { mergeGeometries } from './vendor/BufferGeometryUtils.js';
+import { createSurfaceLibrary, letteringTexture } from './materials.js';
+import { installEnvironment } from './environment.js';
 
 // Local credited Geep and Phase 7 models; original scenery and geometric fallbacks.
 export function createWorld(container, onMember, {onLost = () => {}, onRestored = () => {}, onViewReset = () => {}} = {}) {
   const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
-  renderer.setPixelRatio(Math.min(devicePixelRatio, 1.7));
+  renderer.setPixelRatio(Math.min(devicePixelRatio, container.clientWidth < 700 ? 1.25 : 1.5));
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.15;
+  renderer.toneMappingExposure = 1.05;
   container.append(renderer.domElement);
   renderer.domElement.setAttribute('aria-label', 'Estrada 3D com carro, personagens e cenários musicais');
   renderer.domElement.setAttribute('role', 'img');
   renderer.domElement.addEventListener('webglcontextlost', event => { event.preventDefault(); onLost(); });
   renderer.domElement.addEventListener('webglcontextrestored', () => onRestored());
   const scene = new THREE.Scene();
+  const surfaces = createSurfaceLibrary();
   scene.background = new THREE.Color('#202631');
   scene.fog = new THREE.FogExp2('#202631', .007);
+  const skyCanvas=document.createElement('canvas');skyCanvas.width=1024;skyCanvas.height=512;
+  const skyContext=skyCanvas.getContext('2d');const skyGradient=skyContext.createLinearGradient(0,0,0,512);
+  skyGradient.addColorStop(0,'#253c4a');skyGradient.addColorStop(.46,'#8c9e96');skyGradient.addColorStop(.62,'#b0b2a0');skyGradient.addColorStop(1,'#677b77');
+  skyContext.fillStyle=skyGradient;skyContext.fillRect(0,0,1024,512);
+  for(let i=0;i<18;i++){skyContext.fillStyle=`rgba(218,222,200,${.025+i%3*.012})`;skyContext.beginPath();skyContext.ellipse((i*173)%1024,100+(i*47)%120,100+i%4*25,12+i%3*4,0,0,Math.PI*2);skyContext.fill();}
+  const skyTexture=new THREE.CanvasTexture(skyCanvas);skyTexture.colorSpace=THREE.SRGBColorSpace;
+  const sky=new THREE.Mesh(new THREE.SphereGeometry(480,32,16),new THREE.MeshBasicMaterial({map:skyTexture,side:THREE.BackSide,fog:false,depthWrite:false}));sky.renderOrder=-1;scene.add(sky);
   const camera = new THREE.PerspectiveCamera(46, 1, .1, 650);
-  scene.add(new THREE.HemisphereLight('#c6d7ff', '#755375', 2.4));
-  const sunlight = new THREE.DirectionalLight('#ffe4c2', 3.7);
+  scene.add(new THREE.HemisphereLight('#c6d7ff', '#626c55', 1.55));
+  const sunlight = new THREE.DirectionalLight('#ffe4c2', 2.8);
   sunlight.position.set(-35, 65, 15); sunlight.castShadow = true;
   sunlight.shadow.mapSize.set(1024, 1024);
   Object.assign(sunlight.shadow.camera, { left: -45, right: 45, top: 45, bottom: -45, far: 180 });
@@ -29,7 +40,7 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
   const materials = new Map();
   function material(color, glow = false) {
     const key = color + glow;
-    if (!materials.has(key)) materials.set(key, new THREE.MeshStandardMaterial({ color, roughness: .65, metalness: .12, ...(glow ? { emissive: color, emissiveIntensity: .65 } : {}) }));
+    if (!materials.has(key)) materials.set(key, new THREE.MeshStandardMaterial({ color, roughness: .88, metalness: 0, ...(glow ? { emissive: color, emissiveIntensity: .65 } : {}) }));
     return materials.get(key);
   }
   function box(parent, size, at, color, glow = false) {
@@ -45,39 +56,41 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
     mesh.position.set(...at); mesh.castShadow = true; parent.add(mesh); return mesh;
   }
   const ocean = box(scene, [1800, 1, 1800], [0, -6, -75], '#203d49'); ocean.receiveShadow = true;
-  const ground = box(scene, [280, 5, 250], [0, -2.8, -75], '#34433f'); ground.receiveShadow = true;
+  const ground = box(scene, [280, 5, 250], [0, -2.8, -75], '#34433f'); ground.material = surfaces.get('grass',90,80); ground.receiveShadow = true;
   for (const region of REGIONS) {
-    const plaza = cylinder(scene, 17, 17, .06, [region.x, -.15, region.z], region.id === 'murals' ? '#454253' : '#495448', 48); plaza.receiveShadow = true;
+    const plaza = cylinder(scene, 17, 17, .06, [region.x, -.15, region.z], region.id === 'murals' ? '#454253' : '#495448', 48); plaza.material = surfaces.get('earth',8); plaza.receiveShadow = true;
   }
   for (const road of ROADS) {
-    const vertices = [], indices = [], borders = [[], []];
+    const vertices = [], indices = [], uvs = [], borders = [[], []]; let along = 0;
     road.samples.forEach((point, i) => {
       const previous = road.samples[Math.max(0, i - 1)], next = road.samples[Math.min(road.samples.length - 1, i + 1)];
       const dx = next.x - previous.x, dz = next.z - previous.z; const length = Math.hypot(dx, dz) || 1;
+      if(i) along += Math.hypot(point.x-previous.x,point.z-previous.z);
       for (const [sideIndex, side] of [-1, 1].entries()) {
         const x = point.x + dz / length * road.width / 2 * side, z = point.z - dx / length * road.width / 2 * side;
-        vertices.push(x, -.09, z); borders[sideIndex].push(new THREE.Vector3(x, -.04, z));
+        vertices.push(x, -.09, z); uvs.push(sideIndex * road.width/3,along/3); if(i>=7 && i<road.samples.length-7) borders[sideIndex].push(new THREE.Vector3(x, -.04, z));
       }
       if (i < road.samples.length - 1) { const n = i * 2; indices.push(n, n + 2, n + 1, n + 1, n + 2, n + 3); }
-      if (i % 7 === 3) { const dash = box(scene, [.16, .03, 1.7], [point.x, -.035, point.z], '#e2d8c0'); dash.rotation.y = Math.atan2(dx, dz); }
+      if (i % 7 === 3 && !NODES.some(node=>Math.hypot(point.x-node.x,point.z-node.z)<8)) { const dash = box(scene, [.16, .03, 1.7], [point.x, -.035, point.z], '#e2d8c0'); dash.rotation.y = Math.atan2(dx, dz); }
     });
-    const geometry = new THREE.BufferGeometry(); geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3)); geometry.setIndex(indices); geometry.computeVertexNormals();
-    const mesh = new THREE.Mesh(geometry, material('#252b33')); mesh.material.side = THREE.DoubleSide; mesh.receiveShadow = true; scene.add(mesh);
+    const geometry = new THREE.BufferGeometry(); geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3)); geometry.setAttribute('uv',new THREE.Float32BufferAttribute(uvs,2)); geometry.setIndex(indices); geometry.computeVertexNormals();
+    const mesh = new THREE.Mesh(geometry, surfaces.get('asphalt')); mesh.material.side = THREE.DoubleSide; mesh.receiveShadow = true; scene.add(mesh);
     for (const border of borders) scene.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(border), new THREE.LineBasicMaterial({color:'#a9bca0',transparent:true,opacity:.65})));
   }
+  for(const node of NODES){const junction=new THREE.Mesh(new THREE.CircleGeometry(7,40),surfaces.get('asphalt',4));junction.rotation.x=-Math.PI/2;junction.position.set(node.x,-.015,node.z);junction.receiveShadow=true;scene.add(junction);}
+  const city=new THREE.Group();scene.add(city);
   for (const [i, building] of BUILDINGS.entries()) {
     const {x, z, radius, height} = building;
-    const tower = box(scene, [radius * 1.35, height, radius * 1.35], [x, height / 2 - .3, z], i % 2 ? '#454b57' : '#35454c');
+    if(i===0) continue;
+    const tower = box(city, [radius * 1.35, height, radius * 1.35], [x, height / 2 - .3, z], i % 2 ? '#454b57' : '#35454c');
+    tower.material = surfaces.get(i%2?'plaster':'brick',2,3);
     for (let y = 3; y < height - 1; y += 4) for (const side of [-1,1]) box(tower, [radius * .65, .6, .08], [0, y - height / 2, side * (radius * .675 + .05)], i % 2 ? '#f5a9c6' : '#7fa6ff', true);
     box(tower, [radius * 1.5, .3, radius * 1.5], [0, height / 2, 0], '#202631');
   }
-  for (let i = 0; i < 70; i++) {
-    const at = { x: Math.sin(i * 23.71) * 126, z: -75 + Math.cos(i * 16.37) * 112 };
-    if (nearestRoad(at).distance < 15 || DISCOVERIES.some(p => Math.hypot(p.x-at.x,p.z-at.z)<15) || BUILDINGS.some(p => Math.hypot(p.x-at.x,p.z-at.z)<p.radius+4)) continue;
-    const height = 3 + i % 4;
-    cylinder(scene, .22, .4, 2, [at.x, .6, at.z], '#5b4562', 5);
-    const tree = new THREE.Mesh(new THREE.ConeGeometry(1.8 + i % 2, height, 5), material(i % 2 ? '#477b80' : '#547963')); tree.position.set(at.x, height / 2 + 1, at.z); scene.add(tree);
-  }
+  city.updateMatrixWorld(true);
+  const cityBatches=new Map();city.traverse(object=>{if(!object.isMesh)return;const key=object.material.uuid;const batch=cityBatches.get(key)||{material:object.material,geometries:[]};batch.geometries.push(object.geometry.clone().applyMatrix4(object.matrixWorld));cityBatches.set(key,batch);});
+  city.traverse(object=>{if(object.isMesh)object.geometry.dispose();});city.clear();
+  for(const batch of cityBatches.values()){const geometry=mergeGeometries(batch.geometries);batch.geometries.forEach(g=>g.dispose());const mesh=new THREE.Mesh(geometry,batch.material);mesh.castShadow=mesh.receiveShadow=true;city.add(mesh);}
   // Visible boundary stones mark the coast and recovery area.
   for (let i = 0; i < 32; i++) {
     const x = i < 16 ? -134 + i * 17.8 : (i % 2 ? -134 : 134);
@@ -92,50 +105,58 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
     context.fillStyle = '#e2d8c0'; context.font = 'bold 55px monospace'; context.textAlign = 'center';
     text.split('|').forEach((line, index, lines) => context.fillText(line, 384, lines.length === 1 ? 150 : 105 + index * 72, 700));
     const texture = new THREE.CanvasTexture(canvas); texture.colorSpace = THREE.SRGBColorSpace;
-    const board = new THREE.Mesh(new THREE.BoxGeometry(16, 5.3, .3), new THREE.MeshStandardMaterial({ map: texture, roughness: .7 }));
-    board.position.set(0, 8, 0); signGroup.add(board);
-    for (const dx of [-5, 5]) box(signGroup, [.4, 7, .4], [dx, 3, 0], '#777487');
+    const board = new THREE.Mesh(new THREE.BoxGeometry(8, 2.65, .18), new THREE.MeshStandardMaterial({ map: texture, roughness: .7 }));
+    board.position.set(0, 4.1, 0); signGroup.add(board);
+    for (const dx of [-2.6, 2.6]) box(signGroup, [.18, 3.5, .18], [dx, 1.5, 0], '#777487');
   }
-  sign('KONG STUDIOS|ESCOLHA SEU CAMINHO', {x:-26,z:1}, '#d2e2a8');
+  installEnvironment(scene, renderer, surfaces);
   sign('MURAIS ←|MOINHO →', {x:7,z:-43}, '#7fa6ff');
   const discoveryObjects = DISCOVERIES.map((point, i) => {
-    const group = new THREE.Group(); group.position.set(point.x, 0, point.z); scene.add(group);
-    cylinder(group, 4.8, 5.1, .18, [0, -.08, 0], '#465a50', 32);
-    const glow = new THREE.Mesh(new THREE.TorusGeometry(4.3, .09, 6, 40), material('#f5a9c6', true)); glow.rotation.x = Math.PI/2; glow.position.y=.08; group.add(glow);
-    box(group, [4.8, 3.5, .6], [0, 2, -2.8], i % 2 ? '#7fa6ff' : '#d2e2a8');
-    box(group, [3.8, .16, .8], [0, 1.9, -2.4], '#202631');
-    const vinyl = cylinder(group, 1.4, 1.4, .14, [0, 4.8, -2.8], '#202631', 32); vinyl.rotation.x = Math.PI/2;
-    const label = cylinder(vinyl, .5, .5, .18, [0, 0, 0], '#f5a9c6', 20); label.castShadow=false;
-    const beacon = new THREE.Mesh(new THREE.OctahedronGeometry(.7), material('#f5a9c6',true)); beacon.position.set(0,7,-2.8); group.add(beacon);
-    sign(point.label, {x:point.x,z:point.z-5}, REGIONS[point.region].color);
-    return { group, glow, beacon };
+    const group = new THREE.Group(); group.position.set(point.x,0,point.z); scene.add(group);
+    const paving = cylinder(group,4.5,4.7,.14,[0,-.11,0],'#687463',40);paving.material=surfaces.get('earth',3);
+    const glow = new THREE.Mesh(new THREE.TorusGeometry(3.9,.035,6,40),material('#f5a9c6',true));glow.rotation.x=Math.PI/2;glow.position.y=.01;group.add(glow);
+    if(i===0) {
+      const wall=box(group,[9.4,4.8,.35],[0,2.2,-3],'#d5c6a6');wall.material=surfaces.get('plaster',3,2);
+      const canvas=document.createElement('canvas');canvas.width=1536;canvas.height=768;const ctx=canvas.getContext('2d');
+      ctx.fillStyle='#b2ad8d';ctx.fillRect(0,0,1536,768);
+      // Original graphic mural: expressive sound lines, graphic faces and dates.
+      ctx.fillStyle='#314a51';ctx.beginPath();ctx.ellipse(400,390,230,250,-.1,0,Math.PI*2);ctx.fill();
+      ctx.fillStyle='#63929e';ctx.beginPath();ctx.moveTo(185,265);ctx.lineTo(260,65);ctx.lineTo(335,160);ctx.lineTo(440,30);ctx.lineTo(485,160);ctx.lineTo(620,75);ctx.lineTo(570,285);ctx.closePath();ctx.fill();
+      ctx.fillStyle='#d8d0aa';for(const x of [310,475]){ctx.beginPath();ctx.ellipse(x,350,35,45,0,0,Math.PI*2);ctx.fill();}
+      ctx.strokeStyle='#dc8e9a';ctx.lineWidth=16;ctx.lineCap='round';
+      for(let j=0;j<5;j++){ctx.beginPath();for(let k=0;k<28;k++){const x=710+k*25,y=245+j*68+Math.sin(k*.7+j)*33;if(k===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);}ctx.stroke();}
+      ctx.fillStyle='#263e42';ctx.font='bold 100px monospace';ctx.fillText('1998',755,165);ctx.font='bold 57px monospace';ctx.fillText('DUAS MENTES.',730,680);ctx.fillText('UM UNIVERSO.',730,735);
+      const texture=new THREE.CanvasTexture(canvas);texture.colorSpace=THREE.SRGBColorSpace;
+      const mural=new THREE.Mesh(new THREE.PlaneGeometry(8.8,4.4),new THREE.MeshStandardMaterial({map:texture,roughness:1,metalness:0}));mural.position.set(0,2.2,-2.81);group.add(mural);
+    } else if(i===1) {
+      const archive=box(group,[4.9,4,.8],[0,1.9,-2.5],'#596357');archive.material=surfaces.get('wood',2);
+      for(let k=0;k<4;k++){const page=box(group,[1.05,2.9,.04],[-1.8+k*1.2,2,-2.07],'#e2d8c0');page.rotation.z=(k%2?1:-1)*.04;}
+      const heading=new THREE.Mesh(new THREE.PlaneGeometry(4.3,.55),new THREE.MeshStandardMaterial({map:letteringTexture('QUATRO ROSTOS',{height:128}),roughness:1}));heading.position.set(0,3.7,-2.03);group.add(heading);
+    } else if(i===2) {
+      const radio=box(group,[3.5,2.2,1.1],[0,1.4,-2],'#626d60');radio.material=surfaces.get('wood');
+      for(const x of [-1,1]){const speaker=cylinder(group,.55,.55,.12,[x,1.4,-1.38],'#171d20',32);speaker.rotation.x=Math.PI/2;}
+      const display=box(group,[1,.45,.1],[0,1.9,-1.4],'#9bb79b',true);display.castShadow=false;
+      const antenna=cylinder(group,.025,.025,3.7,[1.3,3.5,-2],'#9a9d8b',8);antenna.rotation.z=-.25;
+      box(group,[4,.24,1.8],[0,.18,-2],'#5c5545').material=surfaces.get('wood');
+    } else if(i===3) {
+      for(const x of [-1.7,1.7])box(group,[.15,.9,1.6],[x,.3,-2.1],'#343d35');
+      box(group,[4.6,.18,1.7],[0,.8,-2.1],'#9d9471').material=surfaces.get('wood',3);
+      box(group,[4.6,1,.18],[0,1.35,-2.85],'#9d9471').material=surfaces.get('wood',3);
+      const plaque=new THREE.Mesh(new THREE.PlaneGeometry(3,.7),new THREE.MeshStandardMaterial({map:letteringTexture('DEMON DAYS / 2005',{height:128}),roughness:1}));plaque.position.set(0,.6,-.9);plaque.rotation.x=-.2;group.add(plaque);
+    } else {
+      box(group,[8,.45,4],[0,.1,-1.3],'#76664c').material=surfaces.get('wood',4,2);
+      for(const x of [-2.8,2.8]){box(group,[1.2,2,1],[x,1.3,-2.3],'#252c28');const cone=cylinder(group,.42,.42,.1,[x,1.3,-1.74],'#101916',24);cone.rotation.x=Math.PI/2;}
+      cylinder(group,.045,.045,3.3,[0,1.7,-1.1],'#9d9e8e',10);sphere(group,.18,[0,3.3,-1.1],'#252c28');
+    }
+    const beacon=new THREE.Mesh(new THREE.SphereGeometry(.18,12,8),material('#f5a9c6',true));beacon.position.set(0,5.5,-2.8);group.add(beacon);
+    return {group,glow,beacon};
   });
   // Raised solar disc at the vanishing point.
-  const sun = new THREE.Mesh(new THREE.CircleGeometry(45, 64), new THREE.MeshBasicMaterial({ color: '#f2559c', fog: false }));
-  sun.position.set(0, 80, -180); scene.add(sun);
-  // A sculptural starting island gathers the band around the car.
-  const island = new THREE.Group(); island.rotation.y = -Math.PI / 2; scene.add(island);
-  cylinder(island, 15, 13.8, .9, [0, -.5, 0], '#4e6257', 64);
-  const islandRock = cylinder(island, 13.8, 6, 7, [0, -4.4, 0], '#293b36', 9);
-  islandRock.rotation.y = .2;
-  const edge = new THREE.Mesh(new THREE.TorusGeometry(14.5, .06, 6, 96), material('#d2e2a8', true));
-  edge.rotation.x = Math.PI / 2; edge.position.y = .02; island.add(edge);
-  const portal = new THREE.Group(); portal.position.set(0, 8, -12); island.add(portal);
-  for (const radius of [10, 10.5, 11.2]) {
-    const ring = new THREE.Mesh(new THREE.TorusGeometry(radius, radius === 10 ? .18 : .04, 8, 96), material(radius === 10 ? '#d2e2a8' : '#e2d8c0', true));
-    portal.add(ring);
-  }
-  // Tiny satellites, floating stones and dust add depth without remote assets.
-  const satellites = new THREE.Group(); island.add(satellites);
-  for (let i = 0; i < 7; i++) {
-    const vinyl = cylinder(satellites, 1.2, 1.2, .12, [Math.cos(i * 1.7) * 18, 5 + i % 3 * 2.5, Math.sin(i * 1.7) * 16], '#202427', 32);
-    vinyl.rotation.x = .4 + i * .2; vinyl.rotation.z = i * .4;
-    const label = cylinder(vinyl, .4, .4, .14, [0, 0, 0], i % 2 ? '#f5a9c6' : '#d2e2a8', 24); label.castShadow = false;
-  }
-  for (let i = 0; i < 16; i++) {
-    const rock = new THREE.Mesh(new THREE.DodecahedronGeometry(.5 + i % 4 * .3, 0), material(i % 2 ? '#455f58' : '#554956'));
-    rock.position.set(Math.cos(i * 2.4) * (19 + i % 3 * 5), -1 + i % 5 * 2, Math.sin(i * 2.4) * 23); rock.rotation.set(i, i * .3, i * .7); island.add(rock);
-  }
+  const sun = new THREE.Mesh(new THREE.CircleGeometry(30, 64), new THREE.MeshBasicMaterial({ color: '#f2559c', fog: false }));
+  sun.position.set(-70, 100, -300); scene.add(sun);
+  const island=new THREE.Group();scene.add(island);
+  const satellites=new THREE.Group();island.add(satellites);
+  const portal=new THREE.Group();island.add(portal);
   const dustGeometry = new THREE.BufferGeometry();
   const dustPositions = new Float32Array(360 * 3);
   for (let i = 0; i < 360; i++) {
@@ -148,11 +169,11 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
   scene.add(dust);
   // Original provisional landmark, not the non-downloadable Sketchfab asset.
   const windmill = new THREE.Group(); windmill.position.set(80, 15, -163); scene.add(windmill);
-  const floatingRock = new THREE.Mesh(new THREE.DodecahedronGeometry(1, 0), material('#414d49'));
+  const floatingRock = new THREE.Mesh(new THREE.DodecahedronGeometry(1, 0), surfaces.get('earth',3));
   floatingRock.scale.set(17, 6, 14); floatingRock.position.y = -3; floatingRock.rotation.z = .12; windmill.add(floatingRock);
   cylinder(windmill, 14, 15, 1.4, [0, 0, 0], '#68806a', 12);
-  cylinder(windmill, 3, 4.7, 17, [0, 9, 0], '#a28c73', 8);
-  cylinder(windmill, 0, 5.4, 5.5, [0, 20.1, 0], '#485e64', 8);
+  cylinder(windmill, 3, 4.7, 17, [0, 9, 0], '#a28c73', 32).material=surfaces.get('plaster',3,5);
+  cylinder(windmill, 0, 5.4, 5.5, [0, 20.1, 0], '#485e64', 32).material=surfaces.get('roof',3);
   box(windmill, [1.7, 3.4, .15], [0, 3, 4.25], '#202b2e');
   for (const x of [-1.5, 1.5]) box(windmill, [1.1, 1.6, .15], [x, 9, 3.5], '#d2e2a8', true);
   const rotor = new THREE.Group(); rotor.position.set(0, 15, 4.8); windmill.add(rotor);
@@ -160,7 +181,7 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
   for (let i = 0; i < 4; i++) {
     const blade = new THREE.Group(); blade.rotation.z = i * Math.PI / 2; rotor.add(blade);
     box(blade, [.2, 12, .25], [0, 5.7, 0], '#303d39');
-    box(blade, [2.6, 7.5, .12], [1.1, 7.6, 0], '#c5bd9c');
+    box(blade, [2.6, 7.5, .12], [1.1, 7.6, 0], '#c5bd9c').material=surfaces.get('wood',1,3);
     for (let j = 0; j < 6; j++) box(blade, [2.7, .09, .2], [1.1, 4.2 + j * 1.3, .1], '#48584a');
   }
   for (let i = 0; i < 5; i++) {
@@ -362,7 +383,7 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
       const zone = activeEra;
       if (reduced) scene.background.copy(skyColors[zone]); else scene.background.lerp(skyColors[zone], blend * .35); scene.fog.color.copy(scene.background);
       scene.fog.density = THREE.MathUtils.lerp(scene.fog.density, overview ? .001 : landmarkView ? .002 : .0035, blend);
-      if (reduced) ground.material.color.copy(groundColors[zone]); else ground.material.color.lerp(groundColors[zone], blend * .18);
+      // Ground keeps its authored material palette; era changes affect atmosphere.
       island.visible = showcase; island.position.set(x,0,z);
       dust.position.set(x, 0, z);
       if (!reduced) { rotor.rotation.z = -t * .3; windmill.position.y = 15 + Math.sin(t * .65) * .5; dust.rotation.y = Math.sin(t * .025) * .15; satellites.rotation.y = Math.sin(t * .1) * .12; portal.rotation.z = Math.sin(t * .07) * .04; }
@@ -375,20 +396,21 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
       if (!modelWheels.length) wheels.forEach(wheel => { wheel.rotation.x -= travelled / .75; });
       previousDistance = vehicle.distanceTravelled;
       const mobile = container.clientWidth < 700;
-      const radius = (mobile ? (showcase ? 46 : 29) : (showcase ? 32 : 24)) * zoom + (reduced ? 0 : Math.abs(vehicle.speed)*.12);
+      const radius = (mobile ? (showcase ? 46 : 29) : (showcase ? 40 : 24)) * zoom + (reduced ? 0 : Math.abs(vehicle.speed)*.12);
       const travelHeading = heading + (vehicle.speed < -.2 ? Math.PI : 0);
       const angle = (orbit && !reduced ? t * .16 : showcase ? .48 : .16) + dragAngle;
       const cameraAngle = angle + travelHeading;
       desiredCamera.set(x + Math.sin(cameraAngle) * radius, (showcase ? 12 : 15) + dragElevation, z + Math.cos(cameraAngle) * radius);
       const ahead = showcase ? 1 : 9;
-      look.set(x - Math.sin(travelHeading) * ahead, mobile && showcase ? 3 : 2, z - Math.cos(travelHeading) * ahead);
-      if (landmarkView) { desiredCamera.set(110 * zoom, 47 + dragElevation, -110); look.set(80, 26, -163); }
+      const courtyardOffset=showcase?(mobile?-2:-8):0;
+      look.set(x + courtyardOffset*Math.cos(heading) - Math.sin(travelHeading) * ahead, mobile && showcase ? 3 : 2, z - courtyardOffset*Math.sin(heading) - Math.cos(travelHeading) * ahead);
+      if (landmarkView) { desiredCamera.set(125 * zoom, 38 + dragElevation, -98); look.set(84, 16, -152); }
       if (overview) { desiredCamera.set(0, 290 * zoom, -74); look.set(0, 0, -75); }
       const targetFov = reduced ? 46 : 46 + Math.abs(vehicle.speed) * .15;
       camera.fov = THREE.MathUtils.lerp(camera.fov,targetFov,blend); camera.updateProjectionMatrix();
       for (const [i, object] of discoveryObjects.entries()) {
         const found = known.has(DISCOVERIES[i].id); object.glow.material = material(found?'#d2e2a8':'#f5a9c6',true); object.beacon.material = material(found?'#d2e2a8':'#f5a9c6',true);
-        object.beacon.position.y = 7 + (reduced ? 0 : Math.sin(t*2+i)*.35); object.beacon.rotation.y = reduced ? 0 : t*.7;
+        object.beacon.position.y = 5.5 + (reduced ? 0 : Math.sin(t*2+i)*.35); object.beacon.rotation.y = reduced ? 0 : t*.7;
         const selected = nearby?.type === 'discovery' && nearby.index === i; object.beacon.scale.setScalar(selected?1.4:1);
       }
       if (!initialized || reduced) { camera.position.copy(desiredCamera); cameraTarget.copy(look); initialized = true; }
@@ -408,6 +430,8 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
         }
       }
       renderer.render(scene, camera);
+      renderer.domElement.dataset.triangles=String(renderer.info.render.triangles);
+      renderer.domElement.dataset.drawCalls=String(renderer.info.render.calls);
     },
   };
 }

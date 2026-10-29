@@ -56,7 +56,10 @@ export const BUILDINGS = [
   { x: 46, z: -48, radius: 8, height: 16 }, { x: 112, z: -54, radius: 7, height: 19 },
   { x: 8, z: -126, radius: 7, height: 9 },
 ];
-export const OBSTACLES = [...BUILDINGS, ...MEMBER_LOCATIONS.map(p => ({ ...p, radius: 1.5 })), { x: 80, z: -163, radius: 13 }];
+export const VISUAL_LANDMARKS = {
+  sculpture: { x: -18, y: .9, z: -6, radius: 2.7 },
+  diorama: { x: 97, y: 2.4, z: -144, radius: 2.8 },
+};
 export const distance = (a, b) => Math.hypot(a.x - b.x, a.z - b.z);
 export function nearestRoad(point) {
   let best = { distance: Infinity, x: 0, z: 0, heading: 0 };
@@ -78,3 +81,11 @@ export function clearPath(a, b) {
     return Math.hypot(a.x + dx * t - o.x, a.z + dz * t - o.z) < o.radius;
   });
 }
+export const TREE_LOCATIONS = Array.from({length:70},(_,i)=>({x:Math.sin(i*23.71)*126,z:-75+Math.cos(i*16.37)*112})).filter(at =>
+  nearestRoad(at).distance >= 15 && !DISCOVERIES.some(p=>distance(p,at)<15) &&
+  !BUILDINGS.some(p=>distance(p,at)<p.radius+4) && !Object.values(VISUAL_LANDMARKS).some(p=>distance(p,at)<9)
+);
+export const OBSTACLES = [
+  ...BUILDINGS, ...MEMBER_LOCATIONS.map(p=>({...p,radius:1.5})), {x:80,z:-163,radius:13},
+  ...Object.values(VISUAL_LANDMARKS), ...TREE_LOCATIONS.map(p=>({...p,radius:.35})),
+];

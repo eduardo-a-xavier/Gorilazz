@@ -1,0 +1,55 @@
+{
+  "assets": [
+    {
+      "author": "Leam / leamlld (scan publisher)",
+      "source": "https://sketchfab.com/3d-models/gorillaz-sculpture-cf1f323bba7d45ad8596eaa62ca60ce1",
+      "license": "CC Attribution indicated by indexed source; exact version not confirmed",
+      "sourceArchive": "gorillaz-sculpture.zip",
+      "originalTriangles": 129391,
+      "originalTextureMax": 8192,
+      "file": "2d-sculpture.glb",
+      "bytes": 1580892,
+      "sha256": "60e40672f6f726a0c4c29549e85aaee4ca811ad5ca82bdacf89d6587b82d238b",
+      "triangles": 33999,
+      "animated": false,
+      "rigged": false
+    },
+    {
+      "author": null,
+      "source": "https://sketchfab.com/search?features=downloadable&q=gorilaz&type=models",
+      "license": null,
+      "attributionStatus": "individual source under identification; supplied by user",
+      "sourceArchive": "noodle.zip",
+      "originalTriangles": 306208,
+      "file": "noodle-diorama.glb",
+      "bytes": 1251404,
+      "sha256": "b5f34c8e6f3e648fc2b7c02ad66b052764802c816d5763c7415ef6bbcf616642",
+      "triangles": 48000,
+      "animated": false,
+      "rigged": false
+    },
+    {
+      "author": "Original environment produced for this project",
+      "source": "scripts/build-visual-environment.py",
+      "license": "Project-authored",
+      "file": "kong-studio.glb",
+      "bytes": 668736,
+      "sha256": "6e1aa0b1480bbe29003a6c4dfec6a61c7fa7cee14a30dee8498bd92e6a3e36a4",
+      "triangles": 8680,
+      "animated": false,
+      "rigged": false
+    },
+    {
+      "author": "Original environment produced for this project",
+      "source": "scripts/build-visual-environment.py",
+      "license": "Project-authored",
+      "file": "broadleaf-tree.glb",
+      "bytes": 59516,
+      "sha256": "0feb47f9de5739b558dea95566af3b37d42304472c48124fa16b78a1d001cb3a",
+      "triangles": 692,
+      "animated": false,
+      "rigged": false
+    }
+  ],
+  "materials": "Original local artwork; no third-party material pack was downloaded."
+}
