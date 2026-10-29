@@ -1,6 +1,6 @@
 import * as THREE from './vendor/three.module.min.js';
 import { GLTFLoader } from './vendor/GLTFLoader.js';
-import { TRACK_RADIUS, routePose, wrapProgress, MEMBER_STOPS } from './route.js';
+import { ROADS, REGIONS, DISCOVERIES, MEMBER_LOCATIONS, BUILDINGS, nearestRoad } from './world-data.js';
 
 // Local credited Geep and Phase 7 models; original scenery and geometric fallbacks.
 export function createWorld(container, onMember, {onLost = () => {}, onRestored = () => {}, onViewReset = () => {}} = {}) {
@@ -44,47 +44,48 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
     const mesh = new THREE.Mesh(new THREE.CylinderGeometry(top, bottom, height, sides), material(color));
     mesh.position.set(...at); mesh.castShadow = true; parent.add(mesh); return mesh;
   }
-  const ground = cylinder(scene, TRACK_RADIUS + 43, TRACK_RADIUS + 35, 5, [0, -2.8, -TRACK_RADIUS], '#34433f', 96);
-  ground.receiveShadow = true;
-  const roadMesh = new THREE.Mesh(new THREE.RingGeometry(TRACK_RADIUS - 7, TRACK_RADIUS + 7, 192), material('#202333'));
-  roadMesh.rotation.x = -Math.PI / 2; roadMesh.position.set(0, -.1, -TRACK_RADIUS); roadMesh.receiveShadow = true; scene.add(roadMesh);
-  for (const radius of [TRACK_RADIUS - 7, TRACK_RADIUS + 7]) {
-    const edge = new THREE.Mesh(new THREE.TorusGeometry(radius, .08, 6, 192), material('#f5a9c6', true));
-    edge.rotation.x = Math.PI / 2; edge.position.set(0, 0, -TRACK_RADIUS); scene.add(edge);
+  const ocean = box(scene, [1800, 1, 1800], [0, -6, -75], '#203d49'); ocean.receiveShadow = true;
+  const ground = box(scene, [280, 5, 250], [0, -2.8, -75], '#34433f'); ground.receiveShadow = true;
+  for (const region of REGIONS) {
+    const plaza = cylinder(scene, 17, 17, .06, [region.x, -.15, region.z], region.id === 'murals' ? '#454253' : '#495448', 48); plaza.receiveShadow = true;
   }
-  for (let i = 0; i < 80; i++) {
-    const at = routePose(i / 80);
-    const dash = box(scene, [.18, .04, 2.4], [at.x, -.03, at.z], '#e2d8c0'); dash.rotation.y = at.heading;
-    for (const side of [-1, 1]) {
-      const marker = routePose(i / 80, side * 9);
-      box(scene, [.15, .8, .15], [marker.x, .4, marker.z], '#8d8ba4');
-      box(scene, [.23, .18, .23], [marker.x, .9, marker.z], '#7fa6ff', true);
-    }
-  }
-  for (let i = 0; i < 36; i++) {
-    for (const side of [-1, 1]) {
-      const at = routePose(i / 36 + .02, side * (19 + i % 3 * 3));
-      const height = 5 + i * 7 % 16;
-      if (i % 3) {
-        const tower = box(scene, [4 + i % 3, height, 4], [at.x, height / 2 - .4, at.z], i % 2 ? '#454b57' : '#35454c'); tower.rotation.y = at.heading;
-        for (let y = 3; y < height - 1; y += 5) box(tower, [1.6, .5, .08], [0, y - height / 2, 2.05], i % 2 ? '#f5a9c6' : '#7fa6ff', true);
-      } else {
-        cylinder(scene, .3, .6, 4, [at.x, 1.5, at.z], '#5b4562');
-        const tree = new THREE.Mesh(new THREE.ConeGeometry(2.7, 7, 5), material('#477b80')); tree.position.set(at.x, 6, at.z); scene.add(tree);
+  for (const road of ROADS) {
+    const vertices = [], indices = [], borders = [[], []];
+    road.samples.forEach((point, i) => {
+      const previous = road.samples[Math.max(0, i - 1)], next = road.samples[Math.min(road.samples.length - 1, i + 1)];
+      const dx = next.x - previous.x, dz = next.z - previous.z; const length = Math.hypot(dx, dz) || 1;
+      for (const [sideIndex, side] of [-1, 1].entries()) {
+        const x = point.x + dz / length * road.width / 2 * side, z = point.z - dx / length * road.width / 2 * side;
+        vertices.push(x, -.09, z); borders[sideIndex].push(new THREE.Vector3(x, -.04, z));
       }
-    }
+      if (i < road.samples.length - 1) { const n = i * 2; indices.push(n, n + 2, n + 1, n + 1, n + 2, n + 3); }
+      if (i % 7 === 3) { const dash = box(scene, [.16, .03, 1.7], [point.x, -.035, point.z], '#e2d8c0'); dash.rotation.y = Math.atan2(dx, dz); }
+    });
+    const geometry = new THREE.BufferGeometry(); geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3)); geometry.setIndex(indices); geometry.computeVertexNormals();
+    const mesh = new THREE.Mesh(geometry, material('#252b33')); mesh.material.side = THREE.DoubleSide; mesh.receiveShadow = true; scene.add(mesh);
+    for (const border of borders) scene.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(border), new THREE.LineBasicMaterial({color:'#a9bca0',transparent:true,opacity:.65})));
   }
-  // A central record makes the circuit legible in the aerial camera.
-  cylinder(scene, 24, 25, 1, [0, -.3, -TRACK_RADIUS], '#171d20', 96);
-  for (const radius of [12, 16, 20, 23]) {
-    const groove = new THREE.Mesh(new THREE.TorusGeometry(radius, .04, 4, 96), material('#566761'));
-    groove.rotation.x = Math.PI / 2; groove.position.set(0, .24, -TRACK_RADIUS); scene.add(groove);
+  for (const [i, building] of BUILDINGS.entries()) {
+    const {x, z, radius, height} = building;
+    const tower = box(scene, [radius * 1.35, height, radius * 1.35], [x, height / 2 - .3, z], i % 2 ? '#454b57' : '#35454c');
+    for (let y = 3; y < height - 1; y += 4) for (const side of [-1,1]) box(tower, [radius * .65, .6, .08], [0, y - height / 2, side * (radius * .675 + .05)], i % 2 ? '#f5a9c6' : '#7fa6ff', true);
+    box(tower, [radius * 1.5, .3, radius * 1.5], [0, height / 2, 0], '#202631');
   }
-  cylinder(scene, 7, 7, .12, [0, .3, -TRACK_RADIUS], '#f5a9c6', 64);
-  cylinder(scene, .6, .6, .15, [0, .4, -TRACK_RADIUS], '#141414', 16);
-  function sign(text, progress, lateral = 18, color = '#f2559c') {
-    const at = routePose(progress, lateral);
-    const signGroup = new THREE.Group(); signGroup.position.set(at.x, 0, at.z); signGroup.rotation.y = at.heading; scene.add(signGroup);
+  for (let i = 0; i < 70; i++) {
+    const at = { x: Math.sin(i * 23.71) * 126, z: -75 + Math.cos(i * 16.37) * 112 };
+    if (nearestRoad(at).distance < 15 || DISCOVERIES.some(p => Math.hypot(p.x-at.x,p.z-at.z)<15) || BUILDINGS.some(p => Math.hypot(p.x-at.x,p.z-at.z)<p.radius+4)) continue;
+    const height = 3 + i % 4;
+    cylinder(scene, .22, .4, 2, [at.x, .6, at.z], '#5b4562', 5);
+    const tree = new THREE.Mesh(new THREE.ConeGeometry(1.8 + i % 2, height, 5), material(i % 2 ? '#477b80' : '#547963')); tree.position.set(at.x, height / 2 + 1, at.z); scene.add(tree);
+  }
+  // Visible boundary stones mark the coast and recovery area.
+  for (let i = 0; i < 32; i++) {
+    const x = i < 16 ? -134 + i * 17.8 : (i % 2 ? -134 : 134);
+    const z = i < 16 ? (i % 2 ? -194 : 44) : -185 + (i - 16) * 14;
+    const rock = new THREE.Mesh(new THREE.DodecahedronGeometry(3, 0), material('#52635d')); rock.position.set(x, -.4, z); rock.scale.y = .55; scene.add(rock);
+  }
+  function sign(text, at, color = '#f2559c') {
+    const signGroup = new THREE.Group(); signGroup.position.set(at.x, 0, at.z); signGroup.rotation.y = at.heading || 0; scene.add(signGroup);
     const canvas = document.createElement('canvas'); canvas.width = 768; canvas.height = 256;
     const context = canvas.getContext('2d'); context.fillStyle = '#141414'; context.fillRect(0, 0, 768, 256);
     context.strokeStyle = color; context.lineWidth = 16; context.strokeRect(8, 8, 752, 240);
@@ -95,8 +96,20 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
     board.position.set(0, 8, 0); signGroup.add(board);
     for (const dx of [-5, 5]) box(signGroup, [.4, 7, .4], [dx, 3, 0], '#777487');
   }
-  const names = ['KONG STUDIOS|WELCOME TO THE ROAD', '1998 / LONDON|THE BEGINNING', 'MEET THE BAND|FOUR MINDS. ONE SOUND.', 'NO GENRE.|NO BOUNDARIES.', 'PLASTIC BEACH|WELCOME TO PARADISE', 'LIVE ON STAGE|TURN IT UP', 'A DIFFERENT WORLD|LISTEN CLOSER', 'MADE BY STUDENTS|DRIVEN BY MUSIC', 'NO REALITY.|JUST GORILLAZ.'];
-  names.forEach((name, i) => sign(name, i / 9 + .025, i % 2 ? -18 : 18));
+  sign('KONG STUDIOS|ESCOLHA SEU CAMINHO', {x:-26,z:1}, '#d2e2a8');
+  sign('MURAIS ←|MOINHO →', {x:7,z:-43}, '#7fa6ff');
+  const discoveryObjects = DISCOVERIES.map((point, i) => {
+    const group = new THREE.Group(); group.position.set(point.x, 0, point.z); scene.add(group);
+    cylinder(group, 4.8, 5.1, .18, [0, -.08, 0], '#465a50', 32);
+    const glow = new THREE.Mesh(new THREE.TorusGeometry(4.3, .09, 6, 40), material('#f5a9c6', true)); glow.rotation.x = Math.PI/2; glow.position.y=.08; group.add(glow);
+    box(group, [4.8, 3.5, .6], [0, 2, -2.8], i % 2 ? '#7fa6ff' : '#d2e2a8');
+    box(group, [3.8, .16, .8], [0, 1.9, -2.4], '#202631');
+    const vinyl = cylinder(group, 1.4, 1.4, .14, [0, 4.8, -2.8], '#202631', 32); vinyl.rotation.x = Math.PI/2;
+    const label = cylinder(vinyl, .5, .5, .18, [0, 0, 0], '#f5a9c6', 20); label.castShadow=false;
+    const beacon = new THREE.Mesh(new THREE.OctahedronGeometry(.7), material('#f5a9c6',true)); beacon.position.set(0,7,-2.8); group.add(beacon);
+    sign(point.label, {x:point.x,z:point.z-5}, REGIONS[point.region].color);
+    return { group, glow, beacon };
+  });
   // Raised solar disc at the vanishing point.
   const sun = new THREE.Mesh(new THREE.CircleGeometry(45, 64), new THREE.MeshBasicMaterial({ color: '#f2559c', fog: false }));
   sun.position.set(0, 80, -180); scene.add(sun);
@@ -133,13 +146,8 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
   dustGeometry.setAttribute('position', new THREE.BufferAttribute(dustPositions, 3));
   const dust = new THREE.Points(dustGeometry, new THREE.PointsMaterial({color:'#e2d8c0',size:.12,transparent:true,opacity:.45,depthWrite:false}));
   scene.add(dust);
-  for (let i = 0; i < 9; i++) {
-    const at = routePose(i / 9);
-    const gate = new THREE.Mesh(new THREE.TorusGeometry(10.5, .09, 6, 64), material(['#d2e2a8','#7fa6ff','#f5a9c6'][i % 3], true));
-    gate.position.set(at.x, 4, at.z); gate.rotation.y = at.heading; scene.add(gate);
-  }
   // Original provisional landmark, not the non-downloadable Sketchfab asset.
-  const windmill = new THREE.Group(); windmill.position.set(0, 15, -TRACK_RADIUS); scene.add(windmill);
+  const windmill = new THREE.Group(); windmill.position.set(80, 15, -163); scene.add(windmill);
   const floatingRock = new THREE.Mesh(new THREE.DodecahedronGeometry(1, 0), material('#414d49'));
   floatingRock.scale.set(17, 6, 14); floatingRock.position.y = -3; floatingRock.rotation.z = .12; windmill.add(floatingRock);
   cylinder(windmill, 14, 15, 1.4, [0, 0, 0], '#68806a', 12);
@@ -262,12 +270,11 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
     if (index === 3) { const drum = cylinder(g, .9, .9, .65, [0, 2.1, -1.05], '#3a68d8'); drum.rotation.x = Math.PI / 2; }
     return { group: g, arms };
   }
-  const people = MEMBER_STOPS.map((progress, index) => {
-    const at = routePose(progress, index % 2 ? 11 : -11);
+  const people = MEMBER_LOCATIONS.map((at, index) => {
     const actor = person(index); actor.group.position.set(at.x, 0, at.z); actor.group.rotation.y = at.heading + Math.PI;
     actor.group.userData.member = index; actor.group.traverse(object => { object.userData.member = index; }); scene.add(actor.group);
     const platform = cylinder(scene, 3.6, 4, .4, [at.x, -.08, at.z], '#3a68d8'); platform.receiveShadow = true;
-    sign(['2-D / VOCALS', 'MURDOC / BASS', 'NOODLE / GUITAR', 'RUSSEL / DRUMS'][index], progress, index % 2 ? 19 : -19, '#7fa6ff');
+    sign(['2-D / VOCALS', 'MURDOC / BASS', 'NOODLE / GUITAR', 'RUSSEL / DRUMS'][index], {x:at.x,z:at.z-6}, '#7fa6ff');
     return actor;
   });
   const bandStatus = document.querySelector('#band-status');
@@ -304,7 +311,7 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
   let dragging = null; let dragAngle = 0; let dragElevation = 0; let zoom = 1; let moved = false;
   renderer.domElement.style.cursor = 'grab';
   renderer.domElement.tabIndex = 0;
-  renderer.domElement.setAttribute('aria-label', 'Cenário 3D. Arraste para girar a câmera. Use A e D ou as setas para viajar. As fichas também estão disponíveis na galeria.');
+  renderer.domElement.setAttribute('aria-label', 'Mundo aberto 3D. W e S aceleram e freiam; A e D viram. E explora lugares próximos. Arraste para olhar ao redor. As histórias também estão disponíveis no diário.');
   renderer.domElement.addEventListener('pointerdown', event => {
     if (event.button !== 0) return;
     dragging = {x:event.clientX, y:event.clientY}; moved = false;
@@ -335,59 +342,65 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
     renderer.setSize(width, height, false); camera.aspect = width / height; camera.updateProjectionMatrix();
   }
   const observer = new ResizeObserver(resize); observer.observe(container); resize();
-  let previousProgress = 0;
+  let previousDistance = 0; let activeEra = 0;
   let overview = false;
-  let activeEra = 0;
   let landmarkView = false;
   const look = new THREE.Vector3();
   const cameraTarget = new THREE.Vector3();
   const desiredCamera = new THREE.Vector3();
   let previousTime = null; let initialized = false;
   return {
-    setEra(index) { activeEra = Math.max(0, Math.min(7, index)); },
+    setEra(index) { activeEra = Math.max(0, Math.min(7,index)); },
     setOverview(value) { overview = value; landmarkView = false; },
     focusWindmill(value) { landmarkView = value; overview = false; },
     zoomBy(amount) { zoom = THREE.MathUtils.clamp(zoom + amount, .7, 1.6); },
     resetCamera() { dragAngle = 0; dragElevation = 0; zoom = 1; overview = false; landmarkView = false; },
-    update(progress, time, moving, orbit, reduced, showcase) {
-      const pose = routePose(progress); const z = pose.z; const x = pose.x; const t = time / 1000;
+    update(vehicle, time, orbit, reduced, showcase, known, nearby) {
+      const {x,z,heading} = vehicle; const t = time / 1000; const moving = Math.abs(vehicle.speed) > .1;
       const dt = previousTime === null ? .016 : Math.min((time - previousTime) / 1000, .1); previousTime = time;
       const blend = reduced ? 1 : 1 - Math.exp(-dt * 4);
       const zone = activeEra;
-      if (reduced) scene.background.copy(skyColors[zone]); else scene.background.lerp(skyColors[zone], blend * .35);
-      scene.fog.color.copy(scene.background);
-      scene.fog.density = THREE.MathUtils.lerp(scene.fog.density, overview ? .0015 : landmarkView ? .003 : .007, blend);
-      if (reduced) ground.material.color.copy(groundColors[zone]); else ground.material.color.lerp(groundColors[zone], blend * .35);
-      island.visible = showcase && Math.min(wrapProgress(progress), 1 - wrapProgress(progress)) < .07;
+      if (reduced) scene.background.copy(skyColors[zone]); else scene.background.lerp(skyColors[zone], blend * .35); scene.fog.color.copy(scene.background);
+      scene.fog.density = THREE.MathUtils.lerp(scene.fog.density, overview ? .001 : landmarkView ? .002 : .0035, blend);
+      if (reduced) ground.material.color.copy(groundColors[zone]); else ground.material.color.lerp(groundColors[zone], blend * .18);
+      island.visible = showcase; island.position.set(x,0,z);
       dust.position.set(x, 0, z);
       if (!reduced) { rotor.rotation.z = -t * .3; windmill.position.y = 15 + Math.sin(t * .65) * .5; dust.rotation.y = Math.sin(t * .025) * .15; satellites.rotation.y = Math.sin(t * .1) * .12; portal.rotation.z = Math.sin(t * .07) * .04; }
-
-      car.position.x = x; car.position.z = z; car.rotation.y = pose.heading; car.position.y = moving && !reduced ? Math.sin(t * 14) * .035 : 0;
-      car.rotation.z = moving && !reduced ? Math.sin(t * 2) * .012 : 0;
-      const travelled = (progress - previousProgress) * Math.PI * 2 * TRACK_RADIUS;
-      modelWheels.forEach(wheel => { wheel.rotation.x -= travelled / wheel.userData.radius; });
+      car.position.set(x, moving && !reduced ? Math.sin(t * (vehicle.surface==='terra'?19:13)) * (vehicle.surface==='terra'?.07:.025) : 0, z);
+      car.rotation.y = heading;
+      car.rotation.z = reduced ? 0 : THREE.MathUtils.lerp(car.rotation.z, -vehicle.steering * vehicle.speed * .008, blend);
+      car.rotation.x = reduced ? 0 : THREE.MathUtils.lerp(car.rotation.x, THREE.MathUtils.clamp(vehicle.acceleration * -.006,-.06,.06), blend);
+      const travelled = vehicle.distanceTravelled - previousDistance;
+      modelWheels.forEach(wheel => { wheel.rotation.x -= travelled / wheel.userData.radius; wheel.rotation.y = wheel.position.z < 0 ? vehicle.steering : 0; });
       if (!modelWheels.length) wheels.forEach(wheel => { wheel.rotation.x -= travelled / .75; });
-      previousProgress = progress;
-      const angle = (orbit && !reduced ? t * .16 : .48) + dragAngle;
+      previousDistance = vehicle.distanceTravelled;
       const mobile = container.clientWidth < 700;
-      const radius = (mobile ? (showcase ? 46 : 32) : (showcase ? 32 : 26)) * zoom;
-      const cameraAngle = angle + pose.heading;
-      desiredCamera.set(x + Math.sin(cameraAngle) * radius, (orbit ? 13 : 12) + dragElevation, z + Math.cos(cameraAngle) * radius);
-      const localX = showcase && !mobile && !orbit ? -6.5 : 0;
-      const localZ = -(orbit || showcase ? 1 : 12);
-      look.set(x + localX * Math.cos(pose.heading) + localZ * Math.sin(pose.heading), mobile && showcase ? 3 : 2, z - localX * Math.sin(pose.heading) + localZ * Math.cos(pose.heading));
-      if (landmarkView) { desiredCamera.set(35 * zoom, 33 + dragElevation, -TRACK_RADIUS + 48 * zoom); look.set(0, 24, -TRACK_RADIUS); }
-      if (overview) { desiredCamera.set(0, 185 * zoom, -TRACK_RADIUS + .01); look.set(0, 0, -TRACK_RADIUS); }
+      const radius = (mobile ? (showcase ? 46 : 29) : (showcase ? 32 : 24)) * zoom + (reduced ? 0 : Math.abs(vehicle.speed)*.12);
+      const travelHeading = heading + (vehicle.speed < -.2 ? Math.PI : 0);
+      const angle = (orbit && !reduced ? t * .16 : showcase ? .48 : .16) + dragAngle;
+      const cameraAngle = angle + travelHeading;
+      desiredCamera.set(x + Math.sin(cameraAngle) * radius, (showcase ? 12 : 15) + dragElevation, z + Math.cos(cameraAngle) * radius);
+      const ahead = showcase ? 1 : 9;
+      look.set(x - Math.sin(travelHeading) * ahead, mobile && showcase ? 3 : 2, z - Math.cos(travelHeading) * ahead);
+      if (landmarkView) { desiredCamera.set(110 * zoom, 47 + dragElevation, -110); look.set(80, 26, -163); }
+      if (overview) { desiredCamera.set(0, 290 * zoom, -74); look.set(0, 0, -75); }
+      const targetFov = reduced ? 46 : 46 + Math.abs(vehicle.speed) * .15;
+      camera.fov = THREE.MathUtils.lerp(camera.fov,targetFov,blend); camera.updateProjectionMatrix();
+      for (const [i, object] of discoveryObjects.entries()) {
+        const found = known.has(DISCOVERIES[i].id); object.glow.material = material(found?'#d2e2a8':'#f5a9c6',true); object.beacon.material = material(found?'#d2e2a8':'#f5a9c6',true);
+        object.beacon.position.y = 7 + (reduced ? 0 : Math.sin(t*2+i)*.35); object.beacon.rotation.y = reduced ? 0 : t*.7;
+        const selected = nearby?.type === 'discovery' && nearby.index === i; object.beacon.scale.setScalar(selected?1.4:1);
+      }
       if (!initialized || reduced) { camera.position.copy(desiredCamera); cameraTarget.copy(look); initialized = true; }
       else { camera.position.lerp(desiredCamera, blend); cameraTarget.lerp(look, blend); }
       camera.lookAt(cameraTarget);
       sunlight.position.set(x - 35, 65, z + 20); sunlight.target.position.set(x, 0, z); sun.lookAt(camera.position);
       for (const [i, actor] of people.entries()) {
         const localSide = i % 2 ? 5.5 : -5.5; const localAlong = i < 2 ? -5 : 3;
-        const fixed = routePose(MEMBER_STOPS[i], i % 2 ? 11 : -11);
-        actor.group.position.x = showcase ? x + localSide * Math.cos(pose.heading) + localAlong * Math.sin(pose.heading) : fixed.x;
-        actor.group.position.z = showcase ? z - localSide * Math.sin(pose.heading) + localAlong * Math.cos(pose.heading) : fixed.z;
-        actor.group.rotation.y = (showcase ? pose.heading : fixed.heading) + Math.PI;
+        const fixed = MEMBER_LOCATIONS[i];
+        actor.group.position.x = showcase ? x + localSide * Math.cos(heading) + localAlong * Math.sin(heading) : fixed.x;
+        actor.group.position.z = showcase ? z - localSide * Math.sin(heading) + localAlong * Math.cos(heading) : fixed.z;
+        actor.group.rotation.y = (showcase ? heading : fixed.heading) + Math.PI;
         actor.group.position.y = reduced ? 0 : Math.sin(t * 2 + i) * .07;
         if (actor.arms.length) {
           actor.arms[0].rotation.z = reduced ? -.15 : Math.sin(t * 2 + i) * .12 - .15;

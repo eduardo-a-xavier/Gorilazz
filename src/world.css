@@ -1,0 +1,101 @@
+/* Open-world controls and discovery overlays. */
+.world-shell { height:calc(100svh - 92px); min-height:640px; }
+.chapter-card, .chapter-dock, .scene-corner { display:none !important; }
+#world canvas { touch-action:none; }
+.scene-shade { pointer-events:none; background:linear-gradient(180deg,#11141599,transparent 40%,transparent 65%,#111415cc); }
+.game-top { top:52px; bottom:auto; right:auto; }
+.game-top>span:first-child { display:none; }
+.exploration-hud { position:absolute; z-index:5; left:4%; top:91px; max-width:350px; pointer-events:none; text-shadow:0 2px 14px #000; }
+.exploration-hud>.eyebrow { font-size:8px; letter-spacing:2px; color:var(--acid); }
+.exploration-hud h2 { font:italic 37px/1.1 Georgia,serif; margin:13px 0 10px; letter-spacing:-1px; }
+.exploration-hud p { font-size:10px; margin:0 0 20px; max-width:290px; }
+.exploration-actions { display:flex; gap:8px; pointer-events:auto; flex-wrap:wrap; }
+.exploration-actions button { background:#111415aa; border:1px solid #e9e4d455; border-radius:24px; min-height:44px; padding:10px 14px; color:var(--cream); font:8px 'Courier New',monospace; backdrop-filter:blur(8px); }
+#journal-toggle { color:var(--acid); }
+#journal-count { padding-left:8px; }
+.mini-map { position:absolute; top:76px; right:4%; width:176px; z-index:5; border:1px solid #e9e4d433; border-radius:14px; padding:8px; background:#111415bb; pointer-events:none; backdrop-filter:blur(8px); }
+.mini-map svg { width:100%; height:auto; display:block; }
+#world-map { pointer-events:auto; }
+.mini-map>span { display:block; text-align:center; font:6px 'Courier New',monospace; letter-spacing:.4px; padding:8px 0 2px; opacity:.7; }
+#drive-hud { position:absolute; z-index:5; bottom:195px; right:4%; display:flex; align-items:center; gap:10px; pointer-events:none; text-shadow:0 2px 18px #000; }
+#drive-hud strong { font:54px/1 'Courier New',monospace; letter-spacing:-5px; font-weight:normal; }
+#drive-hud>span { font:8px/1.9 'Courier New',monospace; letter-spacing:1px; }
+#gear { color:var(--acid); font-weight:normal; }
+.controls { bottom:108px; left:4%; right:4%; justify-content:space-between; }
+.controls p { text-align:left; font-size:8px; line-height:1.8; opacity:.8; }
+.drive-buttons, .steer-buttons, .pedal-buttons { display:flex; gap:8px; }
+.drive-buttons { gap:22px; }
+.drive-buttons button { height:54px; width:54px; min-height:44px; min-width:44px; border-radius:16px; touch-action:none; background:#111415b8; }
+.pedal-buttons button { width:78px; font:9px 'Courier New',monospace; letter-spacing:.4px; }
+.pedal-buttons [data-drive=throttle] { border-color:#d2e2a888; color:var(--acid); }
+.drive-buttons button[aria-pressed=true] { color:var(--black); background:var(--acid); border-color:var(--acid); transform:translateY(2px); }
+.pedal-buttons [data-drive=brake][aria-pressed=true] { background:var(--pink); border-color:var(--pink); }
+.interaction-prompt { position:absolute; bottom:204px; left:50%; transform:translateX(-50%); z-index:6; max-width:min(420px,70%); min-height:48px; background:var(--acid); border:1px solid var(--acid); border-radius:26px; padding:14px 22px; color:var(--black); font:10px/1.5 'Courier New',monospace; box-shadow:0 4px 30px #0005; }
+.interaction-prompt:disabled { background:#111415cc; color:var(--cream); border-color:#e9e4d444; cursor:default; }
+.interaction-prompt[hidden] { display:none; }
+.experience-toolbar { bottom:24px; }
+.trip-meter { bottom:78px; }
+#jogo[data-entered=false] .exploration-hud,
+#jogo[data-entered=false] .mini-map,
+#jogo[data-entered=false] #drive-hud,
+#jogo[data-entered=false] .controls { visibility:hidden; pointer-events:none; }
+#discovery-dialog, #journal-dialog { width:min(680px,92vw); max-height:88svh; overflow:auto; }
+#discovery-dialog h2, #journal-dialog h2 { font-size:clamp(35px,5vw,55px); margin:24px 28px 25px 0; letter-spacing:-1.5px; }
+#discovery-dialog>p, #journal-dialog>p { font-size:13px; line-height:1.9; }
+#discovery-dialog>.eyebrow, #journal-dialog>.eyebrow { color:var(--acid); font-size:9px; letter-spacing:1px; }
+#discovery-saved { color:var(--acid); font-size:11px !important; }
+#discovery-source { display:inline-block; margin:10px 0 25px; font-size:9px; }
+#discovery-dialog .return { display:block; width:100%; margin-top:10px; min-height:48px; }
+#journal-list { list-style:none; padding:0; margin:30px 0; }
+#journal-list li { padding:22px 0; border-top:1px solid #e9e4d433; }
+#journal-list h3 { font:italic 25px Georgia,serif; margin:0 0 8px; }
+#journal-list p { font-size:10px; opacity:.65; }
+#journal-list button, #reset-journal { background:transparent; color:var(--cream); border:1px solid #e9e4d444; border-radius:22px; padding:12px 16px; font:9px 'Courier New',monospace; min-height:44px; margin:8px 8px 0 0; }
+#journal-list .found h3 { color:var(--acid); }
+#reset-journal { opacity:.7; }
+#reset-journey { display:block; opacity:.7; margin-top:14px; min-height:44px; }
+.map-only .landscape { display:none; }
+.map-only .world-overlay { display:block; }
+#jogo:has(.map-only) .mini-map { width:min(380px,65%); top:180px; right:15%; }
+#jogo:has(.map-only) .controls p { max-width:280px; }
+button:focus-visible, canvas:focus-visible { outline:2px solid var(--acid); outline-offset:4px; }
+@media(max-width:900px) {
+  .controls p { max-width:225px; font-size:7px; }
+  .drive-buttons { gap:14px; }
+}
+@media(max-width:700px) {
+  .world-shell { height:calc(100svh - 78px); min-height:600px; }
+  .exploration-hud { left:5%; top:70px; max-width:60%; }
+  .exploration-hud>.eyebrow { font-size:6px; letter-spacing:1px; }
+  .exploration-hud h2 { font-size:26px; margin:9px 0; }
+  .exploration-hud p { font-size:8px; max-width:185px; line-height:1.7; margin-bottom:10px; }
+  .exploration-actions { gap:5px; max-width:210px; }
+  .exploration-actions button { font-size:7px; padding:9px 10px; }
+  .mini-map { top:67px; right:5%; width:108px; padding:4px; border-radius:9px; }
+  .mini-map>span { font-size:5px; padding:4px 0; letter-spacing:0; }
+  .game-top { top:43px; left:5%; font-size:7px; }
+  #drive-hud { bottom:186px; right:5%; gap:8px; }
+  #drive-hud strong { font-size:42px; letter-spacing:-4px; }
+  #drive-hud>span { font-size:7px; }
+  .controls { left:5%; right:5%; bottom:104px; display:block; }
+  .controls p { position:absolute; bottom:69px; left:0; max-width:67%; font-size:6px; line-height:1.8; }
+  .controls p b { font-size:7px; }
+  .drive-buttons { justify-content:space-between; gap:8px; width:100%; }
+  .drive-buttons button { width:47px; height:56px; border-radius:14px; font-size:24px; }
+  .pedal-buttons button { width:65px; font-size:8px; }
+  .steer-buttons, .pedal-buttons { gap:7px; }
+  .interaction-prompt { bottom:238px; max-width:90%; width:max-content; padding:12px 16px; font-size:8px; min-height:44px; }
+  .experience-toolbar { bottom:22px; }
+  .experience-toolbar>div:last-child { width:100%; }
+  .experience-toolbar button { font-size:6px; padding:10px 7px; }
+  .trip-meter { bottom:80px; }
+  .trip-meter>span:last-child { font-size:5px; }
+  .camera-tools { top:43%; }
+  #discovery-dialog, #journal-dialog { padding:28px 22px; }
+  #discovery-dialog h2, #journal-dialog h2 { font-size:37px; margin-right:12px; }
+  #discovery-dialog>p, #journal-dialog>p { font-size:12px; }
+  #jogo:has(.map-only) .mini-map { top:240px; right:15%; width:70%; max-width:280px; }
+}
+@media(prefers-reduced-motion:reduce) {
+  .drive-buttons button { transition:none; }
+}

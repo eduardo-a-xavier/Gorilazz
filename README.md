@@ -1,28 +1,34 @@
-# Gorilazz — A estrada
+# Gorilazz — Um mundo para descobrir
 
-Uma experiência acadêmica para explorar o universo Gorillaz em um circuito 3D: dirija o Geep, encontre os quatro integrantes, visite nove paradas, explore oito eras de 1998 a 2023 e descubra onze sugestões de músicas.
+Uma experiência acadêmica de exploração em um mundo aberto compacto inspirado no universo Gorillaz. Dirija o Geep livremente, escolha caminhos entre três regiões, encontre cinco histórias e conheça os quatro integrantes. As nove categorias de conteúdo continuam acessíveis sem jogar.
 
-## Executar na sua máquina
+## Executar
 
-1. Instale **Node.js 20 ou superior**.
-2. Abra o terminal na pasta `Gorilazz`.
-3. Execute `npm run dev` (ou `npm start`). **Não precisa de `npm install`**.
-4. Abra http://localhost:3000 no mesmo computador.
+Requer **Node.js 20 ou superior**. Na pasta `Gorilazz`, execute:
 
-Mantenha o terminal aberto e use Ctrl+C para encerrar. A porta padrão é 3000; em shells compatíveis, `PORT=4000 npm start` escolhe outra. O servidor escuta em todas as interfaces e serve apenas os caminhos explicitamente permitidos.
+```sh
+npm run dev
+```
 
-## Explorar
+Abra http://localhost:3000 no mesmo computador. Não é necessário instalar dependências. A porta pode ser alterada com `PORT=4000 npm start` em shells compatíveis. O servidor serve somente arquivos de uma lista explícita.
 
-- “Entrar no universo” abre a experiência sem iniciar música ou deslocamento automático.
-- **← / → ou A / D**: avance e volte. No celular, segure os botões de direção; pelo teclado, foque um botão e segure Espaço ou Enter.
-- O circuito fecha uma volta completa, em qualquer sentido. As nove paradas usam posições distintas; clicar em uma escolhe o caminho mais curto.
-- Encontrar um integrante abre sua ficha e a sugestão de música. Escape, × ou “Voltar à estrada” fecham. Afaste-se antes de reencontrar o mesmo personagem.
-- O contador registra personagens únicos, inclusive pelas fichas da galeria e da parada Personagens. Não é necessário dirigir para acessar as informações.
-- “Tour automático” avança e pausa ao encontrar um integrante. Feche a ficha e ative o tour novamente para continuar.
-- Arraste o cenário para girar e elevar a câmera. + / − ajustam a distância; ↺ e Home (com o cenário focado) restauram a câmera.
-- “Ver circuito” mostra o anel por cima. “Ver moinho” aproxima o moinho provisório no centro. “Câmera orbital” gira em torno do veículo.
-- “Banda ao redor” reúne os integrantes perto do carro. Dirigir devolve os personagens aos pontos de encontro.
-- O rádio acompanha a região e também permite escolher músicas por anterior/próxima. “Abrir clipe” carrega o YouTube sob escolha, sem reprodução automática.
+## Dirigir e explorar
+
+- “Entrar no universo” revela os controles; não inicia música nem deslocamento automático.
+- **W / ↑:** acelerar. **S / ↓:** frear. **A/D / ←/→:** virar. Soltar o acelerador mantém inércia e reduz a velocidade gradualmente.
+- **Marcha à ré:** pare com o freio, solte o comando e pressione novamente. Segurar o freio continuamente não engata a ré. O freio tem prioridade sobre o acelerador.
+- No celular, segure os botões de direção e os pedais. Toques simultâneos permitem acelerar e virar. Botões focados também aceitam Espaço ou Enter.
+- O terreno fora do asfalto é transitável e oferece mais resistência. Construções, integrantes e limites da ilha têm colisões simplificadas. “Voltar ao caminho” recupera o carro na rua mais próxima.
+- O mapa tem **Kong Studios**, **Bairro dos murais** e **Mirante do moinho**, ligados por ruas curvas, cruzamentos, voltas alternativas e atalhos pelo terreno. Não existe ordem obrigatória de visita.
+- Ao encontrar um objeto de história ou integrante, reduza a velocidade e pressione **E** ou o botão **Explorar**. Passar perto não abre uma ficha automaticamente.
+- As cinco histórias abordam a criação da banda, seus integrantes, gêneros musicais, Demon Days e apresentações ao vivo. O cenário é autoral e não representa geografia oficial de Gorillaz.
+- **Diário:** releia descobertas e peça um passeio até um lugar já encontrado. O botão “Consultar conteúdo” também permite ler histórias ainda não encontradas, sem marcá-las como descobertas.
+- As descobertas ficam em `localStorage` neste navegador. Há confirmação em dois cliques para reiniciar o diário. Se o armazenamento estiver bloqueado, o diário continua funcionando em memória. A posição do Geep e os integrantes encontrados também são salvos; o progresso de integrantes da versão anterior é recuperado. A velocidade não é restaurada ao reabrir a página.
+- **Passeio guiado:** dirige até a próxima história não encontrada e para para você explorar. Acelerar, frear ou virar assume imediatamente a direção. O passeio não abre histórias nem reproduz música automaticamente.
+- Arraste o cenário para olhar ao redor; +/− ajustam a distância. ↺ e Home restauram a câmera. “Ver mundo” mostra a ilha por cima; “Ver moinho” enquadra o marco. A câmera de viagem acompanha também a marcha à ré.
+- “Banda ao redor” reúne os integrantes junto ao Geep. Dirigir os devolve aos locais de encontro.
+- Abrir um diálogo, ocultar a aba ou perder o foco limpa comandos e interrompe o veículo. O tempo em pausa não é recuperado pela física.
+- As nove categorias abaixo do cenário e a galeria continuam disponíveis para consultar conteúdo diretamente. O rádio acompanha a região e permite escolher faixas; clipes só carregam sob escolha.
 
 ## Modelos e créditos
 
@@ -38,21 +44,23 @@ As referências escolhidas no Sketchfab têm páginas e prévias oficiais sob cl
 
 Fontes verificadas, hashes e atribuições completas: [REFERENCES.md](REFERENCES.md).
 
-## Arquivos
+## Estrutura
 
-- `index.html`: página, cenário, fichas e diálogos de prévia.
-- `src/style.css`: visual, responsividade e movimento reduzido.
-- `src/app.js`: navegação, encontros, rádio, foco e prévias externas.
-- `src/content.js`: eras, faixas, perfis e referências históricas.
-- `src/progress.js`: leitura e gravação tolerante a falhas do progresso local.
-- `src/editorial.css`: linha do tempo, painéis de leitura e bastidores recolhíveis.
-- `src/route.js`: posição, tangente, normalização e distâncias do circuito.
-- `src/scene.js`: WebGL, modelos, iluminação, câmera e moinho provisório.
-- `src/vendor/`: Three.js 0.180.0, GLTFLoader e BufferGeometryUtils, com licença MIT. Só os caminhos de importação dos auxiliares foram adaptados.
-- `assets/models/`: GLB do Geep e da banda, modelos alternativos, créditos e metadados públicos das referências.
-- `assets/portraits/`: quatro retratos renderizados dos modelos Phase 7 para galeria e fichas.
-- `tests/`: 17 testes de geometria circular, integridade do conteúdo e progresso local.
-- `server.mjs`: servidor HTTP sem pacotes externos.
+- `index.html`, `src/style.css`, `src/world.css`: página, controles, mapa, diário e diálogos responsivos.
+- `src/app.js`: coordenação da exploração, fichas, conteúdo, câmera e rádio.
+- `src/world-data.js`: regiões, ruas suaves, cruzamentos, descobertas, obstáculos e posições compartilhadas entre mapa, física e cena.
+- `src/driving.js`: estado e física arcade do veículo, frenagem, ré deliberada e recuperação.
+- `src/input.js`: teclado, pedais, múltiplos ponteiros e cancelamento de entradas.
+- `src/discoveries.js`: proximidade espacial, visibilidade de interação e diário persistido.
+- `src/navigation.js`: caminhos pelo grafo de ruas e comandos do passeio guiado.
+- `src/scene.js`: Three.js, terreno, ruas, Geep, integrantes, moinho, rodas e câmera.
+- `src/content.js`, `src/editorial.css`: oito eras de 1998–2023, onze faixas e conteúdo histórico ampliado.
+- `src/progress.js`: persistência da posição no mundo e dos integrantes, com leitura do progresso anterior.
+- `src/route.js`: utilitários circulares legados, mantidos para compatibilidade com os dados da representação anterior; não controlam o Geep do mundo aberto.
+- `src/vendor/`: Three.js 0.180.0 e auxiliares locais, com licença MIT.
+- `assets/`: modelos, retratos e créditos preservados.
+- `tests/`: testes de condução, mapa, encontros, diário, navegação e geometria legada.
+- `docs/PLANO-INTERACAO.md`: direção do projeto e etapas de evolução.
 
 ## Verificar
 
@@ -61,19 +69,21 @@ npm run check
 npm test
 ```
 
-A sintaxe e os 17 testes automatizados passaram, incluindo seis testes da geometria do circuito. O Geep convertido passou no **Khronos glTF Validator 2.0.0-dev.3.10**, sem erros, avisos ou informações de problema. Também foi verificado no Chromium o carregamento do modelo, quatro pivôs de roda, circuito nos dois sentidos, download GLB, layout móvel e fallback Kenney.
+A física roda em passos fixos de 1/120 s, independentemente da renderização. Os testes cobrem inércia, freio e ré, direção, estabilidade entre passos de simulação, limites, colisões, conexão das ruas, persistência opcional e chegada aos cinco destinos pelo passeio guiado. Os modelos existentes não foram modificados nesta etapa.
 
-O moinho e a câmera foram verificados em WebGL. Os diálogos externos, créditos, Escape, limpeza de iframe e foco foram testados com respostas externas simuladas. A tentativa do visualizador real Sketchfab no Chromium apresentou erro de rede; não foi confirmada a renderização desses iframes nesta máquina. As páginas e os metadados da API puderam ser consultados por HTTP.
+A versão integrada passou nos 36 testes e na verificação de sintaxe. O Chromium verificou carregamento dos modelos, descobertas e diálogos; a alternativa sem WebGL também passou pelo fluxo de condução, diário e recarregamento. A emulação móvel verificou pedais simultâneos, cancelamento de toque e ausência de transbordamento horizontal.
 
 ## Limitações
 
-A cena e os arquivos incluídos funcionam com o servidor local, sem conexão externa. Vídeos, links e prévias do Sketchfab precisam de internet e dependem do serviço. Não há reprodução automática de música. A posição e os integrantes encontrados ficam salvos neste navegador quando o armazenamento local está disponível. “Reiniciar viagem” apaga esse progresso local. Se o navegador bloquear o armazenamento, a experiência continua funcionando durante a sessão.
+Este é um primeiro mundo aberto pequeno, com três regiões e cinco descobertas. A condução e as colisões são arcade, sem suspensão física completa, tráfego ou navegação a pé. Novas regiões, relevo, sons e derrapagem ficam para etapas posteriores.
 
-Sem WebGL há uma estrada 2D com fichas e paradas. Sem JavaScript há um resumo básico. A preferência por movimento reduzido desativa órbita e animações decorativas; o deslocamento explícito continua disponível. Não foi certificada conformidade de acessibilidade, reprodução externa de vídeo ou compatibilidade com aparelhos físicos; a validação móvel usou emulação.
+Sem WebGL, o mapa 2D, a condução simplificada, o diário e o conteúdo continuam acessíveis. Sem JavaScript há um resumo básico. A preferência por movimento reduzido desativa órbita e oscilações decorativas, preservando a direção explícita.
 
-A discografia é um recorte inicial até 2023 e precisa de atualização. Textos introdutórios precisam de revisão para uso acadêmico final.
+Cena e arquivos incluídos funcionam localmente; vídeos e prévias Sketchfab dependem de internet. Não há reprodução automática. Os testes de navegador desta implementação usam Chromium e emulação móvel; não substituem validação em aparelhos físicos.
 
-Projeto de **Eduardo Alves Xavier**, **Gedson de Souza Mancio Júnior** e **Rafael Machado Colnaghi**. Universo criado por Jamie Hewlett e Damon Albarn: https://www.gorillaz.com/. Projeto independente, sem vínculo oficial. Modelos externos e adaptações creditados na página; figuras geométricas autorais apenas como alternativa. Encontros cartunescos, sem violência gráfica.
+A discografia é um recorte inicial até 2023 e precisa de atualização. Os textos introdutórios precisam de revisão para uso acadêmico final. O moinho é uma interpretação geométrica provisória autoral.
+
+Projeto de **Eduardo Alves Xavier**, **Gedson de Souza Mancio Júnior** e **Rafael Machado Colnaghi**. Universo criado por Jamie Hewlett e Damon Albarn: https://www.gorillaz.com/. Projeto acadêmico independente, sem vínculo oficial. Autorias e adaptações dos modelos externos estão creditadas na página.
 
 ## Banda Phase 7 incorporada
 
@@ -91,12 +101,13 @@ Validação da banda: o GLB Phase 7 passou no Khronos glTF Validator sem erros, 
 
 ## Revisão histórica e de experiência
 
-A linha do tempo apresenta oito eras de **1998–2023**, com história real, narrativa virtual, uma interpretação para o circuito e sugestões de escuta. É um recorte editorial, sem afirmar que não existam lançamentos posteriores. As nove paradas temáticas continuam disponíveis e foram ampliadas; o menu de leitura não move o carro nem troca o texto sozinho. Os botões explícitos de viagem levam à estrada.
+
+A linha do tempo apresenta oito eras de **1998–2023**, com história real, narrativa virtual, uma interpretação para o mundo e sugestões de escuta. É um recorte editorial, sem afirmar que não existam lançamentos posteriores. As nove paradas temáticas continuam disponíveis e foram ampliadas; o menu de leitura não move o carro nem troca o texto sozinho. O botão de uma era leva a um local relacionado no mundo aberto.
 
 The Fall distingue a disponibilização digital de 2010 da edição física de 2011. As fichas separam personagens de intérpretes e colaboradores reais; o Geep é relacionado a 19-2000, e o moinho à ideia visual de Feel Good Inc. Os modelos Phase 7 permanecem em todas as eras, como informado na página.
 
 O rádio tem onze faixas. Para três escutas sem ID cadastrado, o botão abre uma busca pelo clipe oficial em vez de inventar um endereço de vídeo. As prévias existentes continuam sob clique e dependem do YouTube; sua reprodução externa não foi revalidada.
 
-A renderização 3D e o tour pausam fora da seção da estrada; no celular, a renderização é limitada a aproximadamente 30 quadros por segundo. A perda do contexto WebGL mostra a alternativa 2D, e a restauração reconecta a cena. Créditos e downloads permanecem disponíveis nos bastidores, com atribuições visíveis junto da banda.
+A renderização 3D e o tour pausam fora da seção da estrada; no celular, a renderização é limitada a aproximadamente 30 quadros por segundo. A perda do contexto WebGL mostra o mapa 2D, e a restauração reconecta a cena. Créditos e downloads permanecem disponíveis nos bastidores, com atribuições visíveis junto da banda.
 
 As consultas ao site oficial e à Britannica foram bloqueadas pela política de rede desta instância. A revisão editorial está implementada, mas a conferência documental online permanece pendente. Consulte [HISTORY_REVIEW.md](HISTORY_REVIEW.md) para escopo, fontes indicadas, evidências e limitações.
