@@ -103,3 +103,130 @@ button:focus-visible, canvas:focus-visible { outline:2px solid var(--acid); outl
 @media(prefers-reduced-motion:reduce) {
   .drive-buttons button { transition:none; }
 }
+
+/* Entry and itinerary: the scene stays central; actions appear when needed. */
+#jogo[data-entered=false] .experience-toolbar,
+#jogo[data-entered=false] .camera-tools,
+#jogo[data-entered=false] .trip-meter,
+#jogo[data-entered=false] .game-top,
+#jogo[data-entered=false] .journey { visibility:hidden; pointer-events:none; }
+#jogo[data-entered=false] .scene-shade { background:linear-gradient(90deg,#14221eed 0%,#14221e99 35%,transparent 72%); }
+.scene-intro { max-width:570px; }
+.scene-intro .hero-description { font:15px/1.7 Arial,sans-serif; max-width:370px; }
+.entry-actions { display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin-top:28px; }
+.scene-intro .entry-actions .cta { position:static; width:auto; height:auto; min-height:50px; border-radius:5px; padding:15px 22px; font:600 13px Arial,sans-serif; background:var(--acid); color:var(--black); gap:20px; }
+.scene-intro .entry-actions .cta span { font-size:20px; }
+#start-guided { min-height:50px; padding:15px 20px; border:1px solid #e9e4d477; border-radius:5px; background:#14221e99; color:var(--cream); font:13px Arial,sans-serif; }
+.entry-reading { display:inline-block; margin-top:22px; font:13px Arial,sans-serif; text-underline-offset:5px; }
+.scene-intro .hero-footnote { display:block; font:11px Arial,sans-serif; opacity:.65; margin-top:24px; }
+.journey { position:absolute; z-index:6; left:4%; top:300px; width:310px; padding:20px; background:#172822ed; border:1px solid #e9e4d433; border-left:3px solid var(--acid); border-radius:4px; }
+.journey-heading,.journey-footer { display:flex; align-items:center; justify-content:space-between; gap:12px; }
+.journey-heading>span { color:var(--acid); font:12px Arial,sans-serif; }
+.journey button { min-height:44px; font:12px Arial,sans-serif; cursor:pointer; }
+#route-toggle { border:0; color:var(--cream); background:transparent; padding:0 4px; text-decoration:underline; text-underline-offset:4px; }
+.journey h3 { margin:12px 0; font:600 24px/1.12 Arial,sans-serif; letter-spacing:-.6px; }
+.journey p { font:13px/1.6 Arial,sans-serif; margin:0 0 16px; color:#d5dcd7; }
+.journey-footer>span { max-width:155px; font:11px/1.5 Arial,sans-serif; color:#d5dcd7; }
+#journey-action { flex-shrink:0; border:0; background:var(--acid); color:var(--black); border-radius:3px; padding:10px 14px; }
+#route-list { list-style:none; padding:8px 0 0; margin:16px 0 0; border-top:1px solid #e9e4d433; max-height:220px; overflow:auto; }
+#route-list[hidden] { display:none; }
+#route-list button { width:100%; text-align:left; border:0; background:transparent; color:var(--cream); padding:10px 8px; line-height:1.5; }
+#route-list button[aria-current] { background:#d2e2a81a; color:var(--acid); }
+#jogo[data-touring=true] .controls p { visibility:hidden; }
+@media(max-width:700px) {
+ .scene-intro { max-width:none; right:5%; }
+ .scene-intro .hero-description { max-width:290px; font-size:13px; }
+ .entry-actions { gap:8px; margin-top:18px; }
+ .scene-intro .entry-actions .cta,#start-guided { padding:13px 15px; font-size:12px; }
+ .scene-intro .hero-footnote { font-size:10px; margin-top:16px; }
+ .entry-reading { margin-top:18px; font-size:12px; }
+ .journey { top:230px; left:5%; width:calc(90% - 50px); padding:12px 14px; }
+ .journey-heading>span { font-size:11px; }
+ .journey h3 { font-size:18px; margin:2px 0 10px; }
+ .journey p { display:none; }
+ .journey-footer>span { font-size:10px; }
+ #route-list { max-height:140px; margin-top:10px; }
+ #jogo:has(.map-only) .journey { top:195px; }
+ #jogo:has(.map-only) .mini-map { top:365px; width:130px; right:5%; }
+ .controls p { display:none; }
+ .interaction-prompt { bottom:204px; }
+}
+@media(min-width:701px) and (max-height:850px) {
+ .journey { top:245px; padding:12px 18px; }
+ .journey h3 { font-size:20px; margin:2px 0 8px; }
+ .journey p { display:none; }
+ #route-list { max-height:135px; }
+}
+.scene-intro .entry-actions .cta { flex-direction:row; align-items:center; }
+.scene-intro .entry-actions .cta:hover { transform:none; }
+#start-guided,.entry-reading { pointer-events:auto; }
+@media(max-width:400px) {
+ .radio-info,.radio-art { min-width:0; }
+ .radio-art { gap:16px; padding:20px; }
+ .radio-art .vinyl { width:140px; flex-shrink:0; }
+ .radio-art>span { min-width:0; overflow-wrap:anywhere; }
+ .radio-actions { flex-wrap:wrap; }
+ .journey { width:calc(90% - 44px); }
+}
+@media(max-width:400px) {
+ #stop-menu { grid-template-columns:repeat(2,minmax(0,1fr)); }
+ #stop-menu button { min-width:0; white-space:normal; overflow-wrap:anywhere; }
+}
+@media(max-width:700px) {
+ #jogo:has(.map-only) .world-shell { min-height:700px; }
+ #jogo:has(.map-only) .journey { top:230px; }
+ #jogo:has(.map-only) .mini-map { top:400px; width:110px; }
+}
+/* Road instruments and camera view. */
+#drive-hud { display:block; min-width:170px; padding:15px 18px 12px; border:1px solid #e9e4d455; border-radius:12px; background:#101d1ce0; backdrop-filter:blur(10px); }
+.speed-readout { display:flex; align-items:end; gap:12px; }
+#drive-hud strong { color:var(--cream); }
+.speed-track { height:5px; background:#e9e4d433; border-radius:5px; margin-top:12px; overflow:hidden; }
+#speed-fill { display:block; width:0; height:100%; background:var(--acid); transition:width .12s linear; }
+.road-radio { position:absolute; z-index:6; left:4%; bottom:124px; display:flex; align-items:center; gap:8px; max-width:380px; padding:8px; background:#101d1ce8; border:1px solid #e9e4d444; border-radius:10px; backdrop-filter:blur(10px); }
+.road-radio>div { min-width:135px; display:flex; flex-direction:column; gap:2px; }
+.road-radio span,.road-radio small { color:#d2e2a8; font:9px Arial,sans-serif; }
+.road-radio strong { color:var(--cream); font:600 13px Arial,sans-serif; overflow:hidden; white-space:nowrap; text-overflow:ellipsis; }
+.road-radio button,.road-radio a { min-height:38px; min-width:38px; display:grid; place-items:center; padding:6px; border:1px solid #e9e4d455; border-radius:6px; color:var(--cream); background:transparent; text-decoration:none; font:12px Arial,sans-serif; }
+.camera-tools #first-person { width:auto; min-width:128px; border-radius:25px; font:8px Arial,sans-serif; padding:10px 14px; }
+#jogo[data-entered=false] .road-radio { visibility:hidden; pointer-events:none; }
+@media(max-width:700px) {
+ #drive-hud { bottom:190px; right:5%; min-width:106px; padding:8px 10px; }
+ #drive-hud strong { font-size:35px; }
+ .road-radio { left:5%; right:5%; bottom:170px; max-width:none; justify-content:space-between; }
+ .road-radio>div { min-width:0; flex:1; }
+ .road-radio a { min-width:54px; }
+ .camera-tools #first-person { min-width:110px; }
+ .controls { bottom:102px; }
+}
+.camera-tools { z-index:9; }
+@media(max-width:700px) { .camera-tools { top:58%; } }
+@media(max-width:700px) { #drive-hud { left:5%; right:auto; bottom:235px; } }
+/* A compact instrument strip keeps the world visible. */
+#fullscreen-toggle { font-size:20px; }
+#jogo:fullscreen { background:#101d1c; width:100vw; height:100vh; overflow:hidden; }
+#jogo:fullscreen .world-shell { height:100vh; min-height:0; }
+#jogo:fullscreen .experience-toolbar { bottom:14px; }
+#jogo:fullscreen .controls { bottom:100px; }
+#jogo:fullscreen .road-radio { bottom:116px; }
+.road-radio .radio-import { cursor:pointer; color:var(--acid); font:11px Arial,sans-serif; text-align:center; padding:7px; border:1px solid #d2e2a866; border-radius:6px; max-width:70px; }
+.road-radio #road-radio-play { color:var(--acid); }
+.cockpit { position:absolute; z-index:5; inset:0; pointer-events:none; overflow:hidden; }
+.cockpit[hidden] { display:none; }
+.cockpit-dash { position:absolute; bottom:-20px; left:16%; width:68%; height:155px; border-radius:45% 45% 0 0; background:linear-gradient(#24332f,#0a100f); border:2px solid #59645c; box-shadow:0 -12px 45px #101816cc; }
+#steering-wheel { position:absolute; width:170px; height:170px; border:14px solid #161c1b; border-radius:50%; bottom:40px; left:calc(50% - 85px); display:grid; place-items:center; color:var(--acid); font:900 38px Arial,sans-serif; background:radial-gradient(circle,#26342f 0 24%,transparent 25%),linear-gradient(90deg,transparent 44%,#151e1a 45% 55%,transparent 56%); box-shadow:0 2px 0 #7d877f inset,0 8px 18px #000a; transform:rotate(var(--wheel-angle,0deg)); pointer-events:auto; touch-action:none; cursor:grab; }
+#steering-wheel:active { cursor:grabbing; }
+#steering-wheel:focus-visible { outline:3px solid var(--acid); }
+.cockpit p { position:absolute; bottom:8px; left:0; right:0; text-align:center; color:var(--cream); font:11px Arial,sans-serif; text-shadow:0 1px 5px #000; }
+#jogo[data-entered=false] #fullscreen-toggle { visibility:hidden; }
+@media(max-width:700px) {
+ .road-radio { gap:4px; }
+ .road-radio .radio-import { font-size:9px; max-width:56px; }
+ .road-radio>div { min-width:0; }
+ .road-radio button,.road-radio a { min-width:34px; padding:4px; }
+ .road-radio #road-radio-listen { display:none; }
+ .cockpit-dash { left:0; width:100%; height:110px; }
+ #steering-wheel { width:120px; height:120px; left:calc(50% - 60px); bottom:60px; border-width:10px; }
+ .cockpit p { bottom:48px; }
+ #jogo:fullscreen .world-shell { height:100vh; }
+}

@@ -9,15 +9,15 @@ export function stepVehicle(state, input, dt) {
   const brake = Boolean(input.brake), throttle = Boolean(input.throttle);
   if (!brake && state.brakeWasDown && Math.abs(state.speed) < .05) state.reverseReady = true;
   if (throttle) state.reverseReady = false;
-  state.surface = nearestRoad(state).distance <= 6.5 ? 'asfalto' : 'terra';
+  state.surface = nearestRoad(state).distance <= 7.5 ? 'asfalto' : 'terra';
   const rough = state.surface === 'terra';
   if (brake) {
     if (state.reverseReady && state.speed <= .05) state.speed = Math.max(-6, state.speed - 4 * dt);
     else state.speed = approach(state.speed, 0, 12 * dt);
   } else if (throttle) {
-    state.speed = state.speed < 0 ? Math.min(0, state.speed + 12 * dt) : Math.min(22, state.speed + 6 * dt);
+    state.speed = state.speed < 0 ? Math.min(0, state.speed + 12 * dt) : Math.min(30, state.speed + 8 * dt);
   } else state.speed = approach(state.speed, 0, ((rough ? 2 : .65) + state.speed ** 2 * (rough ? .025 : .008)) * dt);
-  if (rough && state.speed > 13) state.speed = Math.max(13, state.speed - 8 * dt);
+  if (rough && state.speed > 17) state.speed = Math.max(17, state.speed - 9 * dt);
   const maxSteer = .6 / (1 + Math.abs(state.speed) * .035);
   state.steering = approach(state.steering, clamp(input.steer || 0, -1, 1) * maxSteer, dt * 2.4);
   state.heading += state.speed / 4 * Math.tan(state.steering) * dt;

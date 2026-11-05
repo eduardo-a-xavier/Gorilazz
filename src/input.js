@@ -1,5 +1,6 @@
-export function createInput({ onManual, onInteract }) {
+export function createInput({ onManual, onInteract, enabled = () => true }) {
   const held = new Set(), pointers = new Map();
+  let wheelSteer = 0;
   const keys = { w: 'throttle', ArrowUp: 'throttle', s: 'brake', ArrowDown: 'brake', a: 'left', ArrowLeft: 'left', d: 'right', ArrowRight: 'right' };
   const interactive = target => target instanceof Element && target.closest('input, textarea, select, button, a, [contenteditable]');
   const modal = () => Boolean(document.querySelector('dialog[open]'));
@@ -9,9 +10,9 @@ export function createInput({ onManual, onInteract }) {
     for (const button of buttons) button.setAttribute('aria-pressed', String(active.has(button.dataset.drive)));
     return active;
   }
-  function clear() { held.clear(); pointers.clear(); refresh(); }
+  function clear() { held.clear(); pointers.clear(); wheelSteer = 0; refresh(); }
   window.addEventListener('keydown', event => {
-    if (modal() || interactive(event.target) || event.ctrlKey || event.metaKey || event.altKey) return;
+    if (!enabled() || modal() || interactive(event.target) || event.ctrlKey || event.metaKey || event.altKey) return;
     const key = event.key.length === 1 ? event.key.toLowerCase() : event.key;
     if (key === 'e' && !event.repeat) { event.preventDefault(); onInteract(); }
     if (keys[key]) { event.preventDefault(); held.add(keys[key]); refresh(); onManual(); }
@@ -34,5 +35,5 @@ export function createInput({ onManual, onInteract }) {
     button.addEventListener('keyup', event => { if ([' ', 'Enter'].includes(event.key)) { event.preventDefault(); pointers.delete(button); refresh(); } });
     button.addEventListener('blur', () => { pointers.delete(button); refresh(); });
   }
-  return { clear, read() { const active = refresh(); return { throttle: active.has('throttle'), brake: active.has('brake'), steer: Number(active.has('left')) - Number(active.has('right')), active: active.size > 0 }; } };
+  return { clear, setWheelSteer(value) { wheelSteer = Math.max(-1, Math.min(1, value)); if (wheelSteer) onManual(); }, read() { const active = refresh(); return { throttle: active.has('throttle'), brake: active.has('brake'), steer: active.has('left') || active.has('right') ? Number(active.has('left')) - Number(active.has('right')) : wheelSteer, active: active.size > 0 || Math.abs(wheelSteer) > .05 }; } };
 }

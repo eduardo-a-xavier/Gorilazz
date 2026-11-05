@@ -8,7 +8,7 @@ import { installEnvironment } from './environment.js';
 // Local credited Geep and Phase 7 models; original scenery and geometric fallbacks.
 export function createWorld(container, onMember, {onLost = () => {}, onRestored = () => {}, onViewReset = () => {}} = {}) {
   const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
-  renderer.setPixelRatio(Math.min(devicePixelRatio, container.clientWidth < 700 ? 1.25 : 1.5));
+  renderer.setPixelRatio(Math.min(devicePixelRatio, container.clientWidth < 700 ? 1.5 : 1.75));
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   renderer.outputColorSpace = THREE.SRGBColorSpace;
@@ -34,7 +34,7 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
   scene.add(new THREE.HemisphereLight('#c6d7ff', '#626c55', 1.55));
   const sunlight = new THREE.DirectionalLight('#ffe4c2', 2.8);
   sunlight.position.set(-35, 65, 15); sunlight.castShadow = true;
-  sunlight.shadow.mapSize.set(1024, 1024);
+  sunlight.shadow.mapSize.set(container.clientWidth < 700 ? 1024 : 2048, container.clientWidth < 700 ? 1024 : 2048);
   Object.assign(sunlight.shadow.camera, { left: -45, right: 45, top: 45, bottom: -45, far: 180 });
   sunlight.shadow.normalBias = .03; scene.add(sunlight); scene.add(sunlight.target);
   const materials = new Map();
@@ -71,18 +71,20 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
         vertices.push(x, -.09, z); uvs.push(sideIndex * road.width/3,along/3); if(i>=7 && i<road.samples.length-7) borders[sideIndex].push(new THREE.Vector3(x, -.04, z));
       }
       if (i < road.samples.length - 1) { const n = i * 2; indices.push(n, n + 2, n + 1, n + 1, n + 2, n + 3); }
-      if (i % 7 === 3 && !NODES.some(node=>Math.hypot(point.x-node.x,point.z-node.z)<8)) { const dash = box(scene, [.16, .03, 1.7], [point.x, -.035, point.z], '#e2d8c0'); dash.rotation.y = Math.atan2(dx, dz); }
+      if (i % 8 === 3 && !NODES.some(node=>Math.hypot(point.x-node.x,point.z-node.z)<8)) { const dash = box(scene, [.17, .03, 2.2], [point.x, -.035, point.z], '#e2d8c0'); dash.rotation.y = Math.atan2(dx, dz); }
     });
     const geometry = new THREE.BufferGeometry(); geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3)); geometry.setAttribute('uv',new THREE.Float32BufferAttribute(uvs,2)); geometry.setIndex(indices); geometry.computeVertexNormals();
     const mesh = new THREE.Mesh(geometry, surfaces.get('asphalt')); mesh.material.side = THREE.DoubleSide; mesh.receiveShadow = true; scene.add(mesh);
     for (const border of borders) scene.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(border), new THREE.LineBasicMaterial({color:'#a9bca0',transparent:true,opacity:.65})));
   }
-  for(const node of NODES){const junction=new THREE.Mesh(new THREE.CircleGeometry(7,40),surfaces.get('asphalt',4));junction.rotation.x=-Math.PI/2;junction.position.set(node.x,-.015,node.z);junction.receiveShadow=true;scene.add(junction);}
+  for(const node of NODES){const junction=new THREE.Mesh(new THREE.CircleGeometry(8,40),surfaces.get('asphalt',4));junction.rotation.x=-Math.PI/2;junction.position.set(node.x,-.015,node.z);junction.receiveShadow=true;scene.add(junction);}
   const city=new THREE.Group();scene.add(city);
   for (const [i, building] of BUILDINGS.entries()) {
     const {x, z, radius, height} = building;
     if(i===0) continue;
     const tower = box(city, [radius * 1.35, height, radius * 1.35], [x, height / 2 - .3, z], i % 2 ? '#454b57' : '#35454c');
+    box(tower, [radius * .48, 2.6, .14], [0, 1.2 - height / 2, -radius * .68], '#1b2424');
+    box(tower, [radius * 1.42, .24, radius * 1.42], [0, -height / 2 + 2.8, 0], '#626b66');
     tower.material = surfaces.get(i%2?'plaster':'brick',2,3);
     for (let y = 3; y < height - 1; y += 4) for (const side of [-1,1]) box(tower, [radius * .65, .6, .08], [0, y - height / 2, side * (radius * .675 + .05)], i % 2 ? '#f5a9c6' : '#7fa6ff', true);
     box(tower, [radius * 1.5, .3, radius * 1.5], [0, height / 2, 0], '#202631');
@@ -235,6 +237,7 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
     const wheelGroups = wheelMeshes.map(mesh => {
       const box = new THREE.Box3().setFromObject(mesh); const center = box.getCenter(new THREE.Vector3());
       const pivot = new THREE.Group(); pivot.position.copy(car.worldToLocal(center));
+      const rolling = new THREE.Group(); pivot.add(rolling); pivot.userData.rolling = rolling;
       pivot.userData.radius = Math.max(.2, box.getSize(new THREE.Vector3()).y / 2);
       car.add(pivot); pivot.updateWorldMatrix(true, false);
       return { mesh, pivot };
@@ -242,9 +245,9 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
     for (const detail of details) {
       const center = car.worldToLocal(new THREE.Box3().setFromObject(detail).getCenter(new THREE.Vector3()));
       const closest = wheelGroups.reduce((best, item) => !best || item.pivot.position.distanceToSquared(center) < best.pivot.position.distanceToSquared(center) ? item : best, null);
-      closest?.pivot.attach(detail);
+      closest?.pivot.userData.rolling.attach(detail);
     }
-    for (const {mesh, pivot} of wheelGroups) { pivot.attach(mesh); modelWheels.push(pivot); }
+    for (const {mesh, pivot} of wheelGroups) { pivot.userData.rolling.attach(mesh); modelWheels.push(pivot); }
     vehicleStatus.textContent = kind === 'geep' ? 'GEEP / SHABAEV / CC BY 4.0' : 'SUV KENNEY / CC0 · VEÍCULO ALTERNATIVO';
     vehicleStatus.dataset.loaded = 'true'; vehicleStatus.dataset.model = kind; vehicleStatus.dataset.wheels = String(modelWheels.length);
   }
@@ -312,6 +315,7 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
       const center = bounds[index].getCenter(new THREE.Vector3());
       const centered = new THREE.Group(); centered.add(model); centered.position.set(-center.x, -bounds[index].min.y, -center.z);
       const visual = new THREE.Group(); visual.add(centered); visual.scale.setScalar(scale); visual.rotation.y = Math.PI;
+      visual.position.y = .03;
       visual.traverse(object => {
         object.userData.member = index;
         if (object.isMesh) { object.castShadow = true; object.receiveShadow = true; }
@@ -319,6 +323,20 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
       const actor = people[index];
       actor.group.traverse(object => { if (object.isMesh) object.geometry.dispose(); });
       actor.group.clear(); actor.group.add(visual); actor.arms = [];
+      if (index === 1 || index === 2) {
+        const instrument = new THREE.Group();
+        instrument.position.set(.25, 2.3, -1.0);
+        instrument.rotation.z = -.34;
+        const body = new THREE.Mesh(new THREE.CylinderGeometry(.42, .5, .22, 12), material(index === 1 ? '#442a46' : '#c78b4e'));
+        body.rotation.x = Math.PI / 2; body.castShadow = true; instrument.add(body);
+        const neck = box(instrument, [.16, 2.1, .16], [.38, 1.05, 0], '#a7794b');
+        neck.rotation.z = -.25;
+        actor.group.add(instrument); actor.instrument = instrument;
+      }
+      if (index === 3) {
+        const drum = cylinder(actor.group, .7, .7, .48, [0, 1.95, -1.05], '#345c75');
+        drum.rotation.x = Math.PI / 2;
+      }
     });
     bandStatus.textContent = 'PHASE 7 / QUATRO INTEGRANTES NO CIRCUITO';
     bandStatus.dataset.loaded = 'true'; bandStatus.dataset.count = '4';
@@ -365,6 +383,7 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
   const observer = new ResizeObserver(resize); observer.observe(container); resize();
   let previousDistance = 0; let activeEra = 0;
   let overview = false;
+  let firstPerson = false;
   let landmarkView = false;
   const look = new THREE.Vector3();
   const cameraTarget = new THREE.Vector3();
@@ -372,10 +391,11 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
   let previousTime = null; let initialized = false;
   return {
     setEra(index) { activeEra = Math.max(0, Math.min(7,index)); },
-    setOverview(value) { overview = value; landmarkView = false; },
+    setOverview(value) { overview = value; landmarkView = false; firstPerson = false; },
+    setFirstPerson(value) { firstPerson = value; overview = false; landmarkView = false; initialized = false; },
     focusWindmill(value) { landmarkView = value; overview = false; },
     zoomBy(amount) { zoom = THREE.MathUtils.clamp(zoom + amount, .7, 1.6); },
-    resetCamera() { dragAngle = 0; dragElevation = 0; zoom = 1; overview = false; landmarkView = false; },
+    resetCamera() { firstPerson = false; dragAngle = 0; dragElevation = 0; zoom = 1; overview = false; landmarkView = false; },
     update(vehicle, time, orbit, reduced, showcase, known, nearby) {
       const {x,z,heading} = vehicle; const t = time / 1000; const moving = Math.abs(vehicle.speed) > .1;
       const dt = previousTime === null ? .016 : Math.min((time - previousTime) / 1000, .1); previousTime = time;
@@ -392,7 +412,7 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
       car.rotation.z = reduced ? 0 : THREE.MathUtils.lerp(car.rotation.z, -vehicle.steering * vehicle.speed * .008, blend);
       car.rotation.x = reduced ? 0 : THREE.MathUtils.lerp(car.rotation.x, THREE.MathUtils.clamp(vehicle.acceleration * -.006,-.06,.06), blend);
       const travelled = vehicle.distanceTravelled - previousDistance;
-      modelWheels.forEach(wheel => { wheel.rotation.x -= travelled / wheel.userData.radius; wheel.rotation.y = wheel.position.z < 0 ? vehicle.steering : 0; });
+      modelWheels.forEach(wheel => { wheel.userData.rolling.rotation.x -= travelled / wheel.userData.radius; wheel.rotation.y = wheel.position.z < 0 ? vehicle.steering : 0; });
       if (!modelWheels.length) wheels.forEach(wheel => { wheel.rotation.x -= travelled / .75; });
       previousDistance = vehicle.distanceTravelled;
       const mobile = container.clientWidth < 700;
@@ -406,6 +426,8 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
       look.set(x + courtyardOffset*Math.cos(heading) - Math.sin(travelHeading) * ahead, mobile && showcase ? 3 : 2, z - courtyardOffset*Math.sin(heading) - Math.cos(travelHeading) * ahead);
       if (landmarkView) { desiredCamera.set(125 * zoom, 38 + dragElevation, -98); look.set(84, 16, -152); }
       if (overview) { desiredCamera.set(0, 290 * zoom, -74); look.set(0, 0, -75); }
+      if (firstPerson) { desiredCamera.set(x - Math.sin(heading) * 1.6, 2.35, z - Math.cos(heading) * 1.6); look.set(x - Math.sin(heading) * 30, 2.2, z - Math.cos(heading) * 30); }
+      car.visible = !firstPerson;
       const targetFov = reduced ? 46 : 46 + Math.abs(vehicle.speed) * .15;
       camera.fov = THREE.MathUtils.lerp(camera.fov,targetFov,blend); camera.updateProjectionMatrix();
       for (const [i, object] of discoveryObjects.entries()) {
@@ -423,7 +445,16 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
         actor.group.position.x = showcase ? x + localSide * Math.cos(heading) + localAlong * Math.sin(heading) : fixed.x;
         actor.group.position.z = showcase ? z - localSide * Math.sin(heading) + localAlong * Math.cos(heading) : fixed.z;
         actor.group.rotation.y = (showcase ? heading : fixed.heading) + Math.PI;
-        actor.group.position.y = reduced ? 0 : Math.sin(t * 2 + i) * .07;
+        const hitDistance = Math.hypot(actor.group.position.x - x, actor.group.position.z - z);
+        const reacting = !showcase && hitDistance < 3.4 && Math.abs(vehicle.speed) > 3;
+        actor.group.position.y = reacting ? .4 + Math.abs(Math.sin(t * 18)) * .35 : reduced ? 0 : Math.sin(t * 2 + i) * .07;
+        actor.group.rotation.z = reacting ? Math.sin(t * 15) * .23 : 0;
+        if (actor.instrument) actor.instrument.rotation.z = -.34 + (reduced ? 0 : Math.sin(t * 5 + i) * .035);
+        if (actor.arms.length) {
+          actor.arms[0].rotation.z = i === 1 || i === 2 ? -.55 + Math.sin(t * 8) * .16 : i === 3 ? -.25 + Math.sin(t * 10) * .35 : -.1;
+          actor.arms[1].rotation.z = i === 1 || i === 2 ? .45 + Math.cos(t * 8) * .13 : i === 3 ? .25 + Math.cos(t * 10) * .35 : .1;
+        }
+        if (actor.instrument) actor.instrument.rotation.z = -.34 + (reduced ? 0 : Math.sin(t * 5 + i) * .035);
         if (actor.arms.length) {
           actor.arms[0].rotation.z = reduced ? -.15 : Math.sin(t * 2 + i) * .12 - .15;
           actor.arms[1].rotation.z = reduced ? .15 : Math.cos(t * 2 + i) * .12 + .15;

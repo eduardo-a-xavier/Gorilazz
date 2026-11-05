@@ -6,6 +6,8 @@ import { createVehicle, stepVehicle, haltVehicle, recoverVehicle } from './drivi
 import { createInput } from './input.js';
 import { createJournal, nearbyInteraction } from './discoveries.js';
 import { planPath, navigationInput } from './navigation.js';
+import { createLocalRadio } from './local-radio.js';
+import { createJourneyGuide } from './journey-guide.js';
 const members = [
   { name: '2-D', role: 'Voz e teclados', skin: '#e2d8c0', hair: '#3a68d8', shirt: '#f2559c', position: MEMBER_STOPS[0], description: 'Stuart Pot, conhecido como 2-D, é a voz da banda virtual. Seu cabelo azul e olhos escuros compõem sua identidade visual. Sua personalidade sensível contrasta com o caos ao redor.', song: 'Tomorrow Comes Today' },
   { name: 'Murdoc', role: 'Baixo', skin: '#91a568', hair: '#141414', shirt: '#373737', position: MEMBER_STOPS[1], description: 'Murdoc Niccals é o baixista e autoproclamado líder da banda. Provocador e ligado ao rock, está no centro de várias histórias do universo Gorillaz.', song: 'Feel Good Inc.' },
@@ -39,14 +41,14 @@ const dialog = document.querySelector('#character-dialog');
 const discoveryDialog = document.querySelector('#discovery-dialog');
 const journalDialog = document.querySelector('#journal-dialog');
 const modalOpen = () => Boolean(document.querySelector('dialog[open]'));
-let entered = false, showcase = true, orbital = false, overview = false, landmarkView = false;
+let entered = false, showcase = true, orbital = false, overview = false, landmarkView = false, firstPerson = false;
 let world = null, destination = null, touring = false, previousFocus = null, nearby = null;
 let lastTime, accumulator = 0, currentRegion = -1, tourIndex = 0;
 const tourButton = document.querySelector('#tour-toggle');
 const bandToggle = document.querySelector('#band-toggle');
-const input = createInput({ onManual() {
+const input = createInput({ enabled: () => entered && worldVisible, onManual() {
   enterWorld(); destination = null; setTour(false); setShowcase(false);
-  if (overview || landmarkView) { overview = false; landmarkView = false; world?.setOverview(false); syncCameraModes(); }
+  if (overview || landmarkView) { overview = false; landmarkView = false; firstPerson = false; world?.setFirstPerson(false); world?.setOverview(false); syncCameraModes(); }
 }, onInteract: interact });
 
 function announce(text) { document.querySelector('#announcement').textContent = text; }
@@ -56,10 +58,12 @@ function enterWorld() {
   entered = true;
   document.querySelector('#jogo').dataset.entered = 'true';
   document.querySelector('.scene-intro').classList.add('leaving');
+  document.querySelector('.scene-intro').inert = true;
 }
 function setShowcase(value) { showcase = value; bandToggle.setAttribute('aria-pressed', String(value)); }
 function setTour(value) {
-  touring = value; tourButton.setAttribute('aria-pressed', String(value));
+  touring = value;
+  sceneSection.dataset.touring = String(value); tourButton.setAttribute('aria-pressed', String(value));
   tourButton.textContent = value ? 'Ⅱ PAUSAR PASSEIO' : '▶ PASSEIO GUIADO';
 }
 function stop() { input.clear(); haltVehicle(vehicle); destination = null; accumulator = 0; setTour(false); persistJourney(); }
@@ -69,10 +73,14 @@ document.querySelector('#enter-world').addEventListener('click', () => { enterWo
 bandToggle.addEventListener('click', () => { stop(); setShowcase(!showcase); });
 document.querySelector('#recover-car').addEventListener('click', () => { stop(); recoverVehicle(vehicle); setShowcase(false); announce('Geep reposicionado no caminho mais próximo.'); });
 function startNavigation(point) {
-  stop(); enterWorld(); setShowcase(false); overview = false; landmarkView = false; world?.setOverview(false); syncCameraModes();
-  destination = planPath(vehicle, point); announce(`Passeio até ${point.title}. Você pode assumir a direção a qualquer momento.`);
+  stop(); enterWorld(); setShowcase(false); overview = false; landmarkView = false; firstPerson = false; world?.setFirstPerson(false); world?.setOverview(false); syncCameraModes();
+  destination = planPath(vehicle, point); setTour(true); announce(`Passeio até ${point.title}. Você pode assumir a direção a qualquer momento.`);
   focusWorld();
 }
+document.querySelector('#start-guided').addEventListener('click', () => {
+  startNavigation(DISCOVERIES.find(point => !journal.known.has(point.id)) || DISCOVERIES[0]);
+});
+const guide = createJourneyGuide({ points: DISCOVERIES, regions: REGIONS, onNavigate: startNavigation, onStop: stop, onExplore: interact });
 tourButton.addEventListener('click', () => {
   if (touring || destination) { stop(); return; }
   const point = DISCOVERIES.find(d => !journal.known.has(d.id)) || DISCOVERIES[tourIndex++ % DISCOVERIES.length];
@@ -88,24 +96,62 @@ function setCameraMenu(value) {
   cameraTools.dataset.expanded = String(value); cameraMenuToggle.setAttribute('aria-expanded', String(value));
   cameraMenuToggle.setAttribute('aria-label', value ? 'Fechar controles da câmera' : 'Abrir controles da câmera');
 }
+const fullscreenButton = document.querySelector('#fullscreen-toggle');
+fullscreenButton.addEventListener('click', async () => {
+  try {
+    if (document.fullscreenElement) await document.exitFullscreen();
+    else await sceneSection.requestFullscreen();
+  } catch { announce('A tela cheia não está disponível neste navegador.'); }
+});
+document.addEventListener('fullscreenchange', () => {
+  const active = document.fullscreenElement === sceneSection;
+  fullscreenButton.setAttribute('aria-pressed', String(active));
+  fullscreenButton.setAttribute('aria-label', active ? 'Sair da tela cheia' : 'Abrir tela cheia');
+  fullscreenButton.textContent = active ? '×' : '⛶';
+});
 cameraMenuToggle.addEventListener('click', () => setCameraMenu(cameraTools.dataset.expanded !== 'true'));
 document.addEventListener('pointerdown', event => { if (!cameraTools.contains(event.target)) setCameraMenu(false); });
 document.addEventListener('keydown', event => { if (event.key === 'Escape') setCameraMenu(false); });
 function resetViewControls() {
-  overview = false; landmarkView = false; orbital = false;
+  overview = false; landmarkView = false; orbital = false; firstPerson = false;
+  world?.setFirstPerson(false); cockpit.hidden = true; steerWheel(0); document.querySelector('#first-person').setAttribute('aria-pressed','false');
   const button = document.querySelector('#camera-toggle'); button.setAttribute('aria-pressed','false'); button.textContent = '↻ CÂMERA ORBITAL'; syncCameraModes();
 }
 function syncCameraModes() {
+  document.querySelector('#first-person').setAttribute('aria-pressed', String(firstPerson));
+  document.querySelector('#first-person').textContent = firstPerson ? '↙ VOLTAR AO CARRO' : '◉ 1ª PESSOA';
   document.querySelector('#overview-toggle').setAttribute('aria-pressed', String(overview));
   document.querySelector('#overview-toggle').textContent = overview ? '↙ VOLTAR AO JIPE' : '◎ VER MUNDO';
   document.querySelector('#windmill-focus').setAttribute('aria-pressed', String(landmarkView));
   document.querySelector('#windmill-focus').textContent = landmarkView ? '↙ VOLTAR AO JIPE' : '✦ VER MOINHO';
 }
+const cockpit = document.querySelector('#cockpit');
+const steeringWheel = document.querySelector('#steering-wheel');
+let wheelPointer = null;
+function steerWheel(value) {
+  const amount = Math.max(-1, Math.min(1, value));
+  steeringWheel.style.setProperty('--wheel-angle', `${amount * -110}deg`);
+  steeringWheel.setAttribute('aria-valuenow', String(Math.round(amount * 100)));
+  input.setWheelSteer(amount);
+}
+steeringWheel.addEventListener('pointerdown', event => {
+  wheelPointer = event.pointerId; steeringWheel.setPointerCapture(event.pointerId); event.preventDefault();
+});
+steeringWheel.addEventListener('pointermove', event => {
+  if (wheelPointer !== event.pointerId) return;
+  steerWheel((steeringWheel.getBoundingClientRect().left + steeringWheel.offsetWidth / 2 - event.clientX) / 80);
+});
+for (const type of ['pointerup', 'pointercancel', 'lostpointercapture']) steeringWheel.addEventListener(type, event => { if (wheelPointer === event.pointerId) { wheelPointer = null; steerWheel(0); } });
+steeringWheel.addEventListener('keydown', event => { if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') { event.preventDefault(); steerWheel(event.key === 'ArrowLeft' ? 1 : -1); } });
+steeringWheel.addEventListener('keyup', event => { if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') steerWheel(0); });
+document.querySelector('#first-person').addEventListener('click', event => {
+  enterWorld(); firstPerson = !firstPerson; showcase = false; setShowcase(false); world?.setFirstPerson(firstPerson); cockpit.hidden = !firstPerson; if (!firstPerson) steerWheel(0); event.currentTarget.setAttribute('aria-pressed', String(firstPerson)); syncCameraModes();
+});
 document.querySelector('#zoom-in').addEventListener('click', () => world?.zoomBy(-.15));
 document.querySelector('#zoom-out').addEventListener('click', () => world?.zoomBy(.15));
 document.querySelector('#reset-camera').addEventListener('click', () => { world?.resetCamera(); resetViewControls(); });
-document.querySelector('#overview-toggle').addEventListener('click', () => { overview = !overview; landmarkView = false; world?.setOverview(overview); syncCameraModes(); });
-document.querySelector('#windmill-focus').addEventListener('click', () => { enterWorld(); stop(); landmarkView = !landmarkView; overview = false; world?.focusWindmill(landmarkView); syncCameraModes(); });
+document.querySelector('#overview-toggle').addEventListener('click', () => { firstPerson = false; world?.setFirstPerson(false); cockpit.hidden = true; steerWheel(0); document.querySelector('#first-person').setAttribute('aria-pressed','false'); overview = !overview; landmarkView = false; world?.setOverview(overview); syncCameraModes(); });
+document.querySelector('#windmill-focus').addEventListener('click', () => { enterWorld(); stop(); firstPerson = false; world?.setFirstPerson(false); cockpit.hidden = true; steerWheel(0); document.querySelector('#first-person').setAttribute('aria-pressed','false'); landmarkView = !landmarkView; overview = false; world?.focusWindmill(landmarkView); syncCameraModes(); });
 document.querySelector('#read-chapter').addEventListener('click', () => { document.querySelector('#paradas').scrollIntoView({behavior: reducedMotion.matches ? 'instant' : 'smooth'}); document.querySelector('#panel').focus({preventScroll:true}); });
 
 const actors = members.map((member, index) => {
@@ -251,8 +297,10 @@ function frame(time) {
   if (nearby) { interaction.disabled = Math.abs(vehicle.speed) >= 2; interaction.textContent = interaction.disabled ? `Reduza para explorar · ${nearby.title}` : `E / EXPLORAR — ${nearby.title}`; }
   const unfound = DISCOVERIES.filter(d => !journal.known.has(d.id)).sort((a, b) => distance(vehicle, a) - distance(vehicle, b))[0];
   document.querySelector('#exploration-hint').textContent = destination ? `Passeio guiado · ${destination.target.title}` : unfound ? `${unfound.kind.toLowerCase()} a ${Math.round(distance(vehicle, unfound))} m · escolha seu caminho` : 'Todas as histórias encontradas. Continue explorando.';
+  guide.update({ vehicle, known: journal.known, destination: destination?.target, nearby });
   const speed = Math.round(Math.abs(vehicle.speed) * 3.6);
   document.querySelector('#speed').textContent = String(speed).padStart(2, '0');
+  document.querySelector('#speed-fill').style.width = `${Math.min(speed / 110 * 100, 100)}%`;
   document.querySelector('#gear').textContent = vehicle.speed < -.1 ? 'RÉ' : vehicle.braking ? 'FREIO' : Math.abs(vehicle.speed) < .1 ? 'PARADO' : vehicle.surface.toUpperCase();
   const hud = document.querySelector('#drive-hud'); hud.dataset.x = vehicle.x.toFixed(2); hud.dataset.z = vehicle.z.toFixed(2); hud.dataset.speed = vehicle.speed.toFixed(3); hud.dataset.heading = vehicle.heading.toFixed(3);
   document.querySelector('#map-car').setAttribute('transform', `translate(${vehicle.x},${vehicle.z}) rotate(${-vehicle.heading * 180 / Math.PI})`);
@@ -323,6 +371,9 @@ function setTrack(index) {
   trackIndex = (index + tracks.length) % tracks.length;
   const track = tracks[trackIndex];
   document.querySelector('#radio-title').textContent = track.name;
+  if (!localRadio.hasFiles()) document.querySelector('#road-radio-track').textContent = track.name;
+  if (!localRadio.hasFiles()) document.querySelector('#road-radio-album').textContent = `${track.album} · ${track.year}`;
+  document.querySelector('#road-radio-listen').href = listeningUrl(track);
   document.querySelector('#track-album').textContent = `${track.album} · ${track.year}`;
   document.querySelector('#track-description').textContent = track.text;
   document.querySelector('#track-number').textContent = `${String(trackIndex + 1).padStart(2, '0')} — ${String(tracks.length).padStart(2, '0')}`;
@@ -334,6 +385,12 @@ function setTrack(index) {
   document.querySelector('#video-slot').replaceChildren();
   document.querySelector('#play-track').textContent = track.video ? '▶ ABRIR CLIPE' : 'BUSCAR CLIPE ↗';
 }
+const localRadio = createLocalRadio({
+  input: document.querySelector('#radio-files'), playButton: document.querySelector('#road-radio-play'),
+  previousButton: document.querySelector('#road-radio-prev'), nextButton: document.querySelector('#road-radio-next'),
+  title: document.querySelector('#road-radio-track'), album: document.querySelector('#road-radio-album'),
+  status: document.querySelector('#track-status'),
+});
 document.querySelector('#previous-track').addEventListener('click', () => { manualTrack = true; setTrack(trackIndex - 1); });
 document.querySelector('#next-track').addEventListener('click', () => { manualTrack = true; setTrack(trackIndex + 1); });
 document.querySelector('#play-track').addEventListener('click', () => {

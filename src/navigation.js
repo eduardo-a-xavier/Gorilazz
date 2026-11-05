@@ -16,7 +16,7 @@ export function planPath(start, target) {
   while (cursor !== from && previous.has(cursor)) { const edge = previous.get(cursor); segments.unshift(edge.road.to === cursor ? edge.road.samples : [...edge.road.samples].reverse()); cursor = edge.at; }
   // Join the closest street first; ordinary manual driving stays unconstrained.
   const first = nearestRoad(start);
-  const path = [first, NODES[from], ...segments.flatMap(samples => samples.filter((_, i) => i % 5 === 0)), target];
+  const path = [first, NODES[from], ...segments.flatMap(samples => samples.filter((_, i) => i % 2 === 0)), target];
   return { points: path, index: distance(start, first) < 5 ? 1 : 0, target };
 }
 export function navigationInput(vehicle, navigation) {

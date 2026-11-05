@@ -26,7 +26,7 @@ test('frear continuamente não engata ré; soltar e pressionar novamente engata'
 test('freio tem prioridade sobre acelerador e os limites de velocidade são respeitados', () => {
   const vehicle = createVehicle(); vehicle.speed = 12;
   drive(vehicle, { throttle: true, brake: true }, .5); assert.ok(vehicle.speed < 7);
-  vehicle.speed = 22; stepVehicle(vehicle, { throttle: true }, 1 / 120); assert.ok(vehicle.speed <= 22);
+  vehicle.speed = 30; stepVehicle(vehicle, { throttle: true }, 1 / 120); assert.ok(vehicle.speed <= 30);
   vehicle.speed = -6; vehicle.reverseReady = true; stepVehicle(vehicle, { brake: true }, 1 / 120); assert.ok(vehicle.speed >= -6);
 });
 test('direção muda a trajetória nos dois sentidos e não gira o carro parado', () => {

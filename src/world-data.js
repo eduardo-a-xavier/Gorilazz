@@ -26,7 +26,7 @@ export const ROADS = connections.map(([from, to, controls], id) => {
   const points = [NODES[from], ...controls.map(([x, z]) => ({ x, z })), NODES[to]];
   const samples = Array.from({ length: 81 }, (_, i) => interpolate(points, i / 80));
   const length = samples.slice(1).reduce((sum, p, i) => sum + Math.hypot(p.x - samples[i].x, p.z - samples[i].z), 0);
-  return { id, from, to, samples, length, width: 12 };
+  return { id, from, to, samples, length, width: 14 };
 });
 export const MEMBER_LOCATIONS = [
   { x: -68, z: -73, heading: -.5 }, { x: -55, z: -131, heading: 1 },
@@ -86,6 +86,6 @@ export const TREE_LOCATIONS = Array.from({length:70},(_,i)=>({x:Math.sin(i*23.71
   !BUILDINGS.some(p=>distance(p,at)<p.radius+4) && !Object.values(VISUAL_LANDMARKS).some(p=>distance(p,at)<9)
 );
 export const OBSTACLES = [
-  ...BUILDINGS, ...MEMBER_LOCATIONS.map(p=>({...p,radius:1.5})), {x:80,z:-163,radius:13},
+  ...BUILDINGS, {x:80,z:-163,radius:13},
   ...Object.values(VISUAL_LANDMARKS), ...TREE_LOCATIONS.map(p=>({...p,radius:.35})),
 ];

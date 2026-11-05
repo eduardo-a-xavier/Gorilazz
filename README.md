@@ -115,3 +115,15 @@ O rádio tem onze faixas. Para três escutas sem ID cadastrado, o botão abre um
 A renderização 3D e o tour pausam fora da seção da estrada; no celular, a renderização é limitada a aproximadamente 30 quadros por segundo. A perda do contexto WebGL mostra o mapa 2D, e a restauração reconecta a cena. Créditos e downloads permanecem disponíveis nos bastidores, com atribuições visíveis junto da banda.
 
 As consultas ao site oficial e à Britannica foram bloqueadas pela política de rede desta instância. A revisão editorial está implementada, mas a conferência documental online permanece pendente. Consulte [HISTORY_REVIEW.md](HISTORY_REVIEW.md) para escopo, fontes indicadas, evidências e limitações.
+
+## Evoluir e validar a interface
+
+O roteiro agora oferece entrada por direção livre ou passeio guiado, escolha entre cinco destinos e orientação ao chegar. A leitura direta continua disponível na entrada.
+
+Veja [o processo de evolução](docs/PROCESSO-DE-EVOLUCAO.md) para prioridades, critérios de aceitação e divisão dos módulos. Com o servidor ativo, `python scripts/smoke-browser.py` verifica os fluxos em desktop, telas de 390 e 320 px e modo sem 3D. Esse teste requer Python Playwright com Chromium; não é uma dependência da aplicação. As capturas ficam em `artifacts/browser`, ou na pasta definida por `SCREENSHOT_DIR`.
+
+## Rádio local, câmera e tela cheia
+
+No rádio da estrada, **Carregar músicas** aceita arquivos de áudio do computador. Depois da escolha, ▶ toca ou pausa, ←/→ mudam a faixa e a lista continua automaticamente ao terminar uma música. Os arquivos ficam só nesta aba e precisam ser selecionados novamente após recarregar. Os títulos editoriais do Gorillaz continuam com links para clipes. A aplicação não inclui gravações comerciais.
+
+O botão ⛶ abre a experiência em tela cheia. Em **1ª pessoa**, arraste o volante ou use ←/→ para virar, mantendo W/S ou os pedais para acelerar e frear. Veja [o roteiro da experiência](docs/ROTEIRO-DA-EXPERIENCIA.md) para a relação entre mundo, histórias e próximas etapas.
