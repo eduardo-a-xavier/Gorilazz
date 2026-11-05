@@ -243,7 +243,7 @@ document.querySelector('#reset-journal').addEventListener('click', event => {
   journal.reset(); resetArmed = false; event.currentTarget.textContent = 'Reiniciar diário'; updateJournal(); announce('Diário reiniciado.');
 });
 const map = document.querySelector('#world-map');
-map.innerHTML = `<rect x="-140" y="-200" width="280" height="250" rx="22" fill="#263831"/>${ROADS.map(r => `<polyline points="${r.samples.map(p => `${p.x},${p.z}`).join(' ')}" fill="none" stroke="#e2d8c055" stroke-width="6" stroke-linecap="round"/>`).join('')}${REGIONS.map((r, i) => `<text x="${r.x}" y="${r.z + (i === 0 ? 27 : -24)}" text-anchor="middle" fill="${r.color}" font-size="7">${['KONG', 'MURAIS', 'MOINHO'][i]}</text>`).join('')}${DISCOVERIES.map(d => `<g data-map-poi="${d.id}"><circle cx="${d.x}" cy="${d.z}" r="4" fill="#f5a9c6"/></g>`).join('')}<path id="map-car" d="M0 -7 5 5 0 3 -5 5Z" fill="#d2e2a8" stroke="#111415" stroke-width="1.2"/>`;
+map.innerHTML = `<rect x="-140" y="-200" width="280" height="250" rx="22" fill="#263831"/>${ROADS.map(r => `<polyline points="${r.samples.map(p => `${p.x},${p.z}`).join(' ')}" fill="none" stroke="#e2d8c055" stroke-width="${r.width*.46}" stroke-linecap="round"/>`).join('')}${REGIONS.map((r, i) => `<text x="${r.x}" y="${r.z + (i === 0 ? 27 : -24)}" text-anchor="middle" fill="${r.color}" font-size="7">${['KONG', 'MURAIS', 'MOINHO'][i]}</text>`).join('')}${DISCOVERIES.map(d => `<g data-map-poi="${d.id}"><circle cx="${d.x}" cy="${d.z}" r="4" fill="#f5a9c6"/></g>`).join('')}<path id="map-car" d="M0 -7 5 5 0 3 -5 5Z" fill="#d2e2a8" stroke="#111415" stroke-width="1.2"/>`;
 import('./scene.js').then(({createWorld}) => {
   world = createWorld(document.querySelector('#world'), index => {
     if (showcase || distance(vehicle, MEMBER_LOCATIONS[index]) < 13 && Math.abs(vehicle.speed) < 2) openMember(index);
@@ -305,7 +305,7 @@ function frame(time) {
   document.querySelector('#speed').textContent = String(speed).padStart(2, '0');
   document.querySelector('#speed-fill').style.width = `${Math.min(speed / 110 * 100, 100)}%`;
   document.querySelector('#gear').textContent = vehicle.speed < -.1 ? 'RÉ' : vehicle.braking ? 'FREIO' : Math.abs(vehicle.speed) < .1 ? 'PARADO' : vehicle.surface.toUpperCase();
-  const hud = document.querySelector('#drive-hud'); hud.dataset.x = vehicle.x.toFixed(2); hud.dataset.z = vehicle.z.toFixed(2); hud.dataset.speed = vehicle.speed.toFixed(3); hud.dataset.heading = vehicle.heading.toFixed(3);
+  const hud = document.querySelector('#drive-hud'); hud.classList.toggle('is-braking', vehicle.braking && Math.abs(vehicle.speed) > .1); hud.dataset.x = vehicle.x.toFixed(2); hud.dataset.z = vehicle.z.toFixed(2); hud.dataset.speed = vehicle.speed.toFixed(3); hud.dataset.heading = vehicle.heading.toFixed(3);
   document.querySelector('#map-car').setAttribute('transform', `translate(${vehicle.x},${vehicle.z}) rotate(${-vehicle.heading * 180 / Math.PI})`);
   for (const point of DISCOVERIES) {
     const marker = map.querySelector(`[data-map-poi="${point.id}"]`); marker.style.opacity = destination?.target === point || journal.known.has(point.id) ? '1' : distance(vehicle, point) < 48 ? '.6' : '0';

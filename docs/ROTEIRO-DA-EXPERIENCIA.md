@@ -29,3 +29,11 @@ A linha do tempo abaixo do mundo organiza oito eras entre 1998 e 2023. Ela separ
 4. **Polimento.** Testar em celular real, medir tempo de quadro, memória e tempo de carregamento. Ajustar nível de detalhe e quantidade de objetos segundo essas medidas.
 
 Para qualquer mudança, executar `npm run check`, `npm test` e o fluxo de navegador em desktop, celular e modo sem 3D. Inspecionar ao menos uma captura da estrada e uma da perspectiva interna.
+
+## Estradas e bairros
+
+O mapa, o asfalto e a condução usam as mesmas três larguras: 15 unidades nas avenidas, 13 no acesso ao estúdio e 10 nas ligações secundárias. As marcas centrais seguem a distância percorrida pela curva. Calçadas, acostamentos e postes acompanham as tangentes. As fachadas do bairro dos murais recebem pintura lateral; os prédios do mirante têm marquises em tom de argila. O relevo distante é visual e a área dirigível continua plana.
+
+A aceleração perde força à medida que o carro ganha velocidade. O volante retorna ao centro mais rápido do que entra na curva, e a câmera de viagem olha mais à frente conforme a velocidade. A frenagem muda a cor do arco do velocímetro.
+
+Toda a geometria nova foi criada em código. Arbustos usam instâncias e elementos urbanos estáticos são agrupados por material. Os 39 testes incluem frenagem, colisão, ré e chegada aos cinco destinos. [Captura da avenida em Kong](visual/avenida-kong.jpg). Contadores de renderização variam conforme o enquadramento; o desempenho em celular físico ainda precisa ser medido.

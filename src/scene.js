@@ -60,8 +60,9 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
   for (const region of REGIONS) {
     const plaza = cylinder(scene, 17, 17, .06, [region.x, -.15, region.z], region.id === 'murals' ? '#454253' : '#495448', 48); plaza.material = surfaces.get('earth',8); plaza.receiveShadow = true;
   }
+  const city = new THREE.Group(); scene.add(city);
   for (const road of ROADS) {
-    const vertices = [], indices = [], uvs = [], borders = [[], []]; let along = 0;
+    const vertices = [], indices = [], uvs = [], borders = [[], []]; let along = 0, nextDash = 6;
     road.samples.forEach((point, i) => {
       const previous = road.samples[Math.max(0, i - 1)], next = road.samples[Math.min(road.samples.length - 1, i + 1)];
       const dx = next.x - previous.x, dz = next.z - previous.z; const length = Math.hypot(dx, dz) || 1;
@@ -71,14 +72,49 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
         vertices.push(x, -.09, z); uvs.push(sideIndex * road.width/3,along/3); if(i>=7 && i<road.samples.length-7) borders[sideIndex].push(new THREE.Vector3(x, -.04, z));
       }
       if (i < road.samples.length - 1) { const n = i * 2; indices.push(n, n + 2, n + 1, n + 1, n + 2, n + 3); }
-      if (i % 8 === 3 && !NODES.some(node=>Math.hypot(point.x-node.x,point.z-node.z)<8)) { const dash = box(scene, [.17, .03, 2.2], [point.x, -.035, point.z], '#e2d8c0'); dash.rotation.y = Math.atan2(dx, dz); }
+      if (along >= nextDash) {
+        nextDash += 6;
+        if (road.kind !== 'lane' && !NODES.some(node => Math.hypot(point.x-node.x,point.z-node.z)<9)) {
+          const stripe = box(city,[.15,.025,2.8],[point.x,-.035,point.z],'#e8d8aa');
+          stripe.rotation.y = Math.atan2(dx,dz);
+        }
+      }
     });
     const geometry = new THREE.BufferGeometry(); geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3)); geometry.setAttribute('uv',new THREE.Float32BufferAttribute(uvs,2)); geometry.setIndex(indices); geometry.computeVertexNormals();
     const mesh = new THREE.Mesh(geometry, surfaces.get('asphalt')); mesh.material.side = THREE.DoubleSide; mesh.receiveShadow = true; scene.add(mesh);
+    // Continuous shoulders share the asphalt centreline, including its banking-free bends.
+    for (const [side, border] of borders.entries()) {
+      const positions = [], faces = [];
+      const width = road.kind === 'lane' ? .8 : 2;
+      border.forEach((edge, j) => {
+        const centre = road.samples[j+7];
+        const factor = 1 + width / (road.width / 2);
+        const outerX = centre.x + (edge.x-centre.x)*factor;
+        const outerZ = centre.z + (edge.z-centre.z)*factor;
+        positions.push(edge.x,-.075,edge.z,outerX,-.075,outerZ);
+        const clearOfJunction = [road.from,road.to].every(id =>
+          Math.hypot(centre.x-NODES[id].x, centre.z-NODES[id].z) > 12);
+        if (j && clearOfJunction) {
+          const k = j*2;
+          faces.push(k-2,k-1,k,k,k-1,k+1);
+        }
+        if (side === 0 && j === 36 && road.kind !== 'lane') {
+          box(city,[.18,5,.18],[outerX,2.45,outerZ],'#47564f');
+          box(city,[1.4,.17,.45],[outerX+.5,5,outerZ],'#f1d49e',true);
+        }
+      });
+      const strip = new THREE.BufferGeometry();
+      strip.setAttribute('position',new THREE.Float32BufferAttribute(positions,3));
+      strip.setIndex(faces); strip.computeVertexNormals();
+      const finish = material(road.kind === 'lane' ? '#968873' : '#a79f90');
+      finish.side = THREE.DoubleSide;
+      const shoulder = new THREE.Mesh(strip,finish);
+      shoulder.receiveShadow = true; city.add(shoulder);
+    }
     for (const border of borders) scene.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(border), new THREE.LineBasicMaterial({color:'#a9bca0',transparent:true,opacity:.65})));
   }
   for(const node of NODES){const junction=new THREE.Mesh(new THREE.CircleGeometry(8,40),surfaces.get('asphalt',4));junction.rotation.x=-Math.PI/2;junction.position.set(node.x,-.015,node.z);junction.receiveShadow=true;scene.add(junction);}
-  const city=new THREE.Group();scene.add(city);
+
   for (const [i, building] of BUILDINGS.entries()) {
     const {x, z, radius, height} = building;
     if(i===0) continue;
@@ -88,6 +124,35 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
     tower.material = surfaces.get(i%2?'plaster':'brick',2,3);
     for (let y = 3; y < height - 1; y += 4) for (const side of [-1,1]) box(tower, [radius * .65, .6, .08], [0, y - height / 2, side * (radius * .675 + .05)], i % 2 ? '#f5a9c6' : '#7fa6ff', true);
     box(tower, [radius * 1.5, .3, radius * 1.5], [0, height / 2, 0], '#202631');
+  }
+  // A rehearsal warehouse, mural shops and lookout terraces have different rooflines.
+  for (const [i, site] of BUILDINGS.entries()) {
+    if (!i) continue;
+    const {x,z,radius:r,height:h} = site;
+    const accent = x < -50 ? '#51818a' : x > 40 ? '#ae7856' : '#697445';
+    box(city,[r*1.8,.24,r*1.8],[x,-.05,z],'#b5aa99');
+    box(city,[r*.83,.22,1.8],[x,3,z-r*.68-.6],accent);
+    for (const sign of [-1,1]) {
+      box(city,[.14,2.8,.14],[x+sign*r*.39,1.4,z-r*.68-1.2],'#50635d');
+      box(city,[r*.28,1.55,.14],[x+sign*r*.44,2.2,z-r*.68],'#709496');
+    }
+    box(city,[r*.55,1.25,r*.52],[x+r*.2,h+.5,z+r*.14],accent);
+    if (x < -50) {
+      for (let k=0;k<5;k++) {
+        const mural=box(city,[.14,3.6,.57],[x+r*.68,4+k*.42,z-2+k],k%2?'#d99782':'#95b2a5');
+        mural.rotation.x=.28;
+      }
+    } else {
+      box(city,[.4,3.8,.4],[x-r*.38,h+1.8,z],'#726458');
+    }
+  }
+  // The hills sit beyond the drivable boundary; the road surface stays level.
+  for (let i=0;i<23;i++) {
+    const angle=i*Math.PI*2/23;
+    const hill=new THREE.Mesh(new THREE.IcosahedronGeometry(1,1),material(i%2?'#5f7666':'#71867a'));
+    hill.position.set(Math.cos(angle)*235,-6,-75+Math.sin(angle)*205);
+    hill.scale.set(33+i%4*6,14+i%5*4,24+i%3*5);
+    hill.rotation.y=angle;city.add(hill);
   }
   city.updateMatrixWorld(true);
   const cityBatches=new Map();city.traverse(object=>{if(!object.isMesh)return;const key=object.material.uuid;const batch=cityBatches.get(key)||{material:object.material,geometries:[]};batch.geometries.push(object.geometry.clone().applyMatrix4(object.matrixWorld));cityBatches.set(key,batch);});
@@ -420,8 +485,8 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
       const travelHeading = heading + (vehicle.speed < -.2 ? Math.PI : 0);
       const angle = (orbit && !reduced ? t * .16 : showcase ? .48 : .16) + dragAngle;
       const cameraAngle = angle + travelHeading;
-      desiredCamera.set(x + Math.sin(cameraAngle) * radius, (showcase ? 12 : 15) + dragElevation, z + Math.cos(cameraAngle) * radius);
-      const ahead = showcase ? 1 : 9;
+      desiredCamera.set(x + Math.sin(cameraAngle) * radius, (showcase ? 12 : 11.8) + dragElevation, z + Math.cos(cameraAngle) * radius);
+      const ahead = showcase ? 1 : 7 + Math.min(Math.abs(vehicle.speed)*.27,7);
       const courtyardOffset=showcase?(mobile?-2:-8):0;
       look.set(x + courtyardOffset*Math.cos(heading) - Math.sin(travelHeading) * ahead, mobile && showcase ? 3 : 2, z - courtyardOffset*Math.sin(heading) - Math.cos(travelHeading) * ahead);
       if (landmarkView) { desiredCamera.set(125 * zoom, 38 + dragElevation, -98); look.set(84, 16, -152); }
@@ -433,12 +498,12 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
       for (const [i, object] of discoveryObjects.entries()) {
         const found = known.has(DISCOVERIES[i].id); object.glow.material = material(found?'#d2e2a8':'#f5a9c6',true); object.beacon.material = material(found?'#d2e2a8':'#f5a9c6',true);
         object.beacon.position.y = 5.5 + (reduced ? 0 : Math.sin(t*2+i)*.35); object.beacon.rotation.y = reduced ? 0 : t*.7;
-        const selected = nearby?.type === 'discovery' && nearby.index === i; object.beacon.scale.setScalar(selected?1.4:1);
+        const selected = nearby?.type === 'discovery' && nearby.index === i; object.beacon.scale.setScalar(selected?2.2:1);
       }
       if (!initialized || reduced) { camera.position.copy(desiredCamera); cameraTarget.copy(look); initialized = true; }
       else { camera.position.lerp(desiredCamera, blend); cameraTarget.lerp(look, blend); }
       camera.lookAt(cameraTarget);
-      sunlight.position.set(x - 35, 65, z + 20); sunlight.target.position.set(x, 0, z); sun.lookAt(camera.position);
+      sunlight.position.set(x - 44, 54, z + 26); sunlight.target.position.set(x, 0, z); sun.lookAt(camera.position);
       for (const [i, actor] of people.entries()) {
         const localSide = i % 2 ? 5.5 : -5.5; const localAlong = i < 2 ? -5 : 3;
         const fixed = MEMBER_LOCATIONS[i];

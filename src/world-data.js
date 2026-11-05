@@ -11,7 +11,7 @@ export const NODES = [
   { x: 80, z: -50 }, { x: 27, z: -91 },
 ];
 const connections = [
-  [0, 1, [[-8, -23]]], [1, 2, [[-35, -43]]], [2, 3, [[-95, -84]]],
+  [0, 1, [[-2, -24]]], [1, 2, [[-37, -54]]], [2, 3, [[-83, -84]]],
   [3, 4, [[-57, -144]]], [4, 5, [[36, -161]]], [5, 6, [[96, -91]]],
   [6, 0, [[69, -9], [30, 8]]], [1, 7, [[3, -78]]], [7, 5, [[49, -101]]],
   [3, 7, [[-42, -103]]], [7, 6, [[55, -73]]],
@@ -26,7 +26,8 @@ export const ROADS = connections.map(([from, to, controls], id) => {
   const points = [NODES[from], ...controls.map(([x, z]) => ({ x, z })), NODES[to]];
   const samples = Array.from({ length: 81 }, (_, i) => interpolate(points, i / 80));
   const length = samples.slice(1).reduce((sum, p, i) => sum + Math.hypot(p.x - samples[i].x, p.z - samples[i].z), 0);
-  return { id, from, to, samples, length, width: 14 };
+  const kind = id === 0 ? 'studio' : id < 7 ? 'avenue' : 'lane';
+  return { id, from, to, samples, length, kind, width: { studio: 13, avenue: 15, lane: 10 }[kind] };
 });
 export const MEMBER_LOCATIONS = [
   { x: -68, z: -73, heading: -.5 }, { x: -55, z: -131, heading: 1 },

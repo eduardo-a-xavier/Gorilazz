@@ -1,6 +1,6 @@
 import * as THREE from './vendor/three.module.min.js';
 import { GLTFLoader } from './vendor/GLTFLoader.js';
-import { TREE_LOCATIONS, VISUAL_LANDMARKS } from './world-data.js';
+import { nearestRoad, TREE_LOCATIONS, VISUAL_LANDMARKS } from './world-data.js';
 import { letteringTexture } from './materials.js';
 
 export function installEnvironment(scene, renderer, surfaces) {
@@ -38,6 +38,25 @@ export function installEnvironment(scene, renderer, surfaces) {
     const plaque=new THREE.Mesh(new THREE.PlaneGeometry(3.8,.8),new THREE.MeshStandardMaterial({map:letteringTexture(label,{height:128}),roughness:.9}));plaque.position.set(point.x,.8,point.z+2.76);scene.add(plaque);
   }
   // Shared prototype geometry/materials: repeated trees use only a few draw calls.
+  // Low planting beds follow the tree groves but leave the shoulders clear.
+  const shrubs = [];
+  for (const [i, tree] of TREE_LOCATIONS.entries()) {
+    for (let j=0; j<3; j++) {
+      const angle=i*2.39+j*1.91;
+      const x=tree.x+Math.cos(angle)*(2+j), z=tree.z+Math.sin(angle)*(2+j);
+      if (nearestRoad({x,z}).distance>12) shrubs.push({x,z,angle});
+    }
+  }
+  const shrubMesh=new THREE.InstancedMesh(new THREE.IcosahedronGeometry(1,0),
+    new THREE.MeshStandardMaterial({roughness:1,flatShading:true}),shrubs.length);
+  const pose=new THREE.Object3D();
+  shrubs.forEach(({x,z,angle},i)=>{
+    pose.position.set(x,.28,z); pose.rotation.y=angle;
+    pose.scale.set(1.4+i%3*.3,.65+i%4*.14,1.15); pose.updateMatrix();
+    shrubMesh.setMatrixAt(i,pose.matrix);
+    shrubMesh.setColorAt(i,new THREE.Color(['#63764b','#83915b','#536e52'][i%3]));
+  });
+  shrubMesh.receiveShadow=true;scene.add(shrubMesh);
   const treesPromise=loader.loadAsync('/assets/environment/broadleaf-tree.glb').then(gltf=>{
     gltf.scene.updateMatrixWorld(true);
     gltf.scene.traverse(part=>{
@@ -46,7 +65,7 @@ export function installEnvironment(scene, renderer, surfaces) {
       const placement=new THREE.Matrix4();const position=new THREE.Vector3();const rotation=new THREE.Quaternion();const scale=new THREE.Vector3();
       TREE_LOCATIONS.forEach((point,i)=>{
         position.set(point.x,-.3,point.z);rotation.setFromAxisAngle(new THREE.Vector3(0,1,0),i*2.39);
-        const factor=.8+(i%5)*.13;scale.set(factor,factor,factor);placement.compose(position,rotation,scale);placement.multiply(part.matrixWorld);instances.setMatrixAt(i,placement);
+        const factor=.8+(i%5)*.13;scale.set(factor*(.86+i%3*.12),factor*(.83+i%4*.13),factor);placement.compose(position,rotation,scale);placement.multiply(part.matrixWorld);instances.setMatrixAt(i,placement);
       });
       instances.computeBoundingSphere();scene.add(instances);
     });report('trees','ready');
