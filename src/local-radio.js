@@ -1,4 +1,9 @@
 export function createLocalRadio({ input, playButton, previousButton, nextButton, title, album, status }) {
+  const playlist = document.createElement('select');
+  playlist.setAttribute('aria-label', 'Escolher faixa local');
+  playlist.hidden = true;
+  document.querySelector('#road-radio').append(playlist);
+  playlist.addEventListener('change', () => select(Number(playlist.value)));
   const audio = new Audio();
   audio.preload = 'metadata';
   let files = [];
@@ -27,6 +32,7 @@ export function createLocalRadio({ input, playButton, previousButton, nextButton
   function select(next) {
     if (!files.length) return false;
     index = (next + files.length) % files.length;
+    playlist.value = String(index);
     audio.src = files[index].url;
     audio.load();
     show();
@@ -38,6 +44,8 @@ export function createLocalRadio({ input, playButton, previousButton, nextButton
     for (const file of files) URL.revokeObjectURL(file.url);
     files = [...input.files].filter(file => file.type.startsWith('audio/') || /\.(mp3|m4a|ogg|wav)$/i.test(file.name))
       .map(file => ({ name: file.name, url: URL.createObjectURL(file) }));
+    playlist.replaceChildren(...files.map((file, i) => new Option(file.name, String(i))));
+    playlist.hidden = !files.length;
     index = 0;
     playing = false;
     if (files.length) { select(0); play(); }

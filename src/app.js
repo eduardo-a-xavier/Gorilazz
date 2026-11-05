@@ -74,6 +74,7 @@ bandToggle.addEventListener('click', () => { stop(); setShowcase(!showcase); });
 document.querySelector('#recover-car').addEventListener('click', () => { stop(); recoverVehicle(vehicle); setShowcase(false); announce('Geep reposicionado no caminho mais próximo.'); });
 function startNavigation(point) {
   stop(); enterWorld(); setShowcase(false); overview = false; landmarkView = false; firstPerson = false; world?.setFirstPerson(false); world?.setOverview(false); syncCameraModes();
+  toggleHudMenu(null);
   destination = planPath(vehicle, point); setTour(true); announce(`Passeio até ${point.title}. Você pode assumir a direção a qualquer momento.`);
   focusWorld();
 }
@@ -285,6 +286,8 @@ function frame(time) {
       stepVehicle(vehicle, controls, 1 / 120); accumulator -= 1 / 120;
     }
   } else accumulator = 0;
+  if (time - lastHudTime >= 80) {
+  lastHudTime = time;
   let region = regionAt(vehicle);
   if (currentRegion >= 0 && region !== currentRegion && distance(vehicle, REGIONS[region]) + 8 >= distance(vehicle, REGIONS[currentRegion])) region = currentRegion;
   if (region !== currentRegion) {
@@ -305,11 +308,22 @@ function frame(time) {
   const hud = document.querySelector('#drive-hud'); hud.dataset.x = vehicle.x.toFixed(2); hud.dataset.z = vehicle.z.toFixed(2); hud.dataset.speed = vehicle.speed.toFixed(3); hud.dataset.heading = vehicle.heading.toFixed(3);
   document.querySelector('#map-car').setAttribute('transform', `translate(${vehicle.x},${vehicle.z}) rotate(${-vehicle.heading * 180 / Math.PI})`);
   for (const point of DISCOVERIES) {
-    const marker = map.querySelector(`[data-map-poi="${point.id}"]`); marker.style.opacity = journal.known.has(point.id) ? '1' : distance(vehicle, point) < 48 ? '.6' : '0';
+    const marker = map.querySelector(`[data-map-poi="${point.id}"]`); marker.style.opacity = destination?.target === point || journal.known.has(point.id) ? '1' : distance(vehicle, point) < 48 ? '.6' : '0';
     marker.querySelector('circle').setAttribute('fill', journal.known.has(point.id) ? '#d2e2a8' : '#f5a9c6');
   }
   const moving = Math.abs(vehicle.speed) > .1;
   document.querySelector('#radio').classList.toggle('playing', moving && !reducedMotion.matches && !paused);
+  if (mapZoomed) map.setAttribute('viewBox', `${vehicle.x-65} ${vehicle.z-58} 130 116`);
+  const state = modalOpen() || sceneSection.classList.contains('menu-open') ? 'menu' : overview || landmarkView ? 'exploring' : moving ? 'driving' : 'stopped';
+  if (sceneSection.dataset.hudState !== state) sceneSection.dataset.hudState = state;
+  document.querySelector('#dial-value').style.strokeDasharray = `${Math.min(speed/110,1)*76} 100`;
+  if (lastRoute !== destination || lastRouteIndex !== destination?.index) {
+    routeLine.setAttribute('points', destination ? [vehicle,...destination.points.slice(destination.index)].map(p => `${p.x},${p.z}`).join(' ') : '');
+    lastRoute = destination;
+    lastRouteIndex = destination?.index;
+  }
+  }
+  const moving = Math.abs(vehicle.speed) > .1;
   const renderInterval = window.innerWidth <= 700 ? 1000/30 : 1000/60;
   if (world && worldAvailable && !paused && time-lastRenderTime+.5 >= renderInterval) {
     world.update(vehicle, time, orbital, reducedMotion.matches, showcase, journal.known, nearby); lastRenderTime = time;
@@ -372,7 +386,7 @@ function setTrack(index) {
   const track = tracks[trackIndex];
   document.querySelector('#radio-title').textContent = track.name;
   if (!localRadio.hasFiles()) document.querySelector('#road-radio-track').textContent = track.name;
-  if (!localRadio.hasFiles()) document.querySelector('#road-radio-album').textContent = `${track.album} · ${track.year}`;
+  if (!localRadio.hasFiles()) document.querySelector('#road-radio-album').textContent = `Gorillaz · ${track.album}`;
   document.querySelector('#road-radio-listen').href = listeningUrl(track);
   document.querySelector('#track-album').textContent = `${track.album} · ${track.year}`;
   document.querySelector('#track-description').textContent = track.text;
@@ -474,4 +488,57 @@ modelDialog.addEventListener('close', () => {
   modelPreviousFocus?.focus({preventScroll:true});
 });
 
+// Reuse the existing controls and their listeners inside the compact HUD.
+const navMenu = document.createElement('div');
+navMenu.id = 'hud-navigation';
+document.querySelector('#journey').append(navMenu);
+for (const selector of ['.journey-heading','#journey-description','#journey-action','#route-list','.exploration-hud','.experience-toolbar','.camera-tools','.game-top','.trip-meter']) {
+  navMenu.append(document.querySelector(selector));
+}
+const radioMenu = document.createElement('div');
+radioMenu.id = 'hud-radio-menu';
+document.querySelector('#road-radio').append(radioMenu);
+for (const selector of ['#road-radio-prev','#road-radio-next','.radio-import','#road-radio-listen','#road-radio select']) {
+  radioMenu.append(document.querySelector(selector));
+}
+const hudMenus = [[document.querySelector('#hud-nav'), navMenu], [document.querySelector('#hud-radio-toggle'), radioMenu]];
+function toggleHudMenu(open) {
+  for (const [button, menu] of hudMenus) {
+    menu.hidden = menu !== open;
+    button.setAttribute('aria-expanded', String(!menu.hidden));
+  }
+  sceneSection.classList.toggle('menu-open', Boolean(open));
+}
+toggleHudMenu(null);
+for (const [button, menu] of hudMenus) {
+  button.addEventListener('click', () => toggleHudMenu(menu.hidden ? menu : null));
+}
+sceneSection.addEventListener('pointerdown', event => {
+  if (!event.target.closest('#journey,#road-radio')) toggleHudMenu(null);
+});
+document.addEventListener('keydown', event => {
+  if (event.key !== 'Escape') return;
+  const active = hudMenus.find(([,menu]) => !menu.hidden);
+  if (active) { toggleHudMenu(null); active[0].focus(); }
+});
+let idleTimer;
+function wakeHud() {
+  sceneSection.classList.remove('hud-idle');
+  clearTimeout(idleTimer);
+  idleTimer = setTimeout(() => sceneSection.classList.add('hud-idle'), 5000);
+}
+for (const type of ['pointermove','pointerdown','keydown','focusin']) sceneSection.addEventListener(type, wakeHud);
+wakeHud();
+const routeLine = document.createElementNS('http://www.w3.org/2000/svg','polyline');
+for (const [key,value] of Object.entries({fill:'none',stroke:'#c4dc9d','stroke-width':'3','stroke-linejoin':'round'})) routeLine.setAttribute(key,value);
+map.insertBefore(routeLine, document.querySelector('#map-car'));
+let mapZoomed = false;
+document.querySelector('#map-zoom').addEventListener('click', event => {
+  mapZoomed = !mapZoomed;
+  event.currentTarget.setAttribute('aria-pressed', String(mapZoomed));
+  event.currentTarget.setAttribute('aria-label', mapZoomed ? 'Ver mapa inteiro' : 'Aproximar minimapa');
+  event.currentTarget.textContent = mapZoomed ? '−' : '+';
+  if (!mapZoomed) map.setAttribute('viewBox','-145 -205 290 260');
+});
+let lastRoute, lastRouteIndex, lastHudTime = -Infinity;
 updateJournal();

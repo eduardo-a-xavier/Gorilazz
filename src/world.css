@@ -230,3 +230,70 @@ button:focus-visible, canvas:focus-visible { outline:2px solid var(--acid); outl
  .cockpit p { bottom:48px; }
  #jogo:fullscreen .world-shell { height:100vh; }
 }
+
+/* Driving HUD. The four instruments share one viewport and one set of insets. */
+#jogo { --glass:#101b1ced; --ink:#e3eddb; --mint:#c4dc9d; --line:#a9bdb24d; --pad:clamp(12px,2vw,32px); --left:max(var(--pad),env(safe-area-inset-left)); --right:max(var(--pad),env(safe-area-inset-right)); --top:max(var(--pad),env(safe-area-inset-top)); --bottom:max(var(--pad),env(safe-area-inset-bottom)); }
+#jogo[data-entered=true] .world-overlay { display:none; }
+#jogo[data-entered=true] .world-shell { height:calc(100svh - 92px); min-height:0; }
+#jogo:fullscreen[data-entered=true] .world-shell { height:100svh; }
+#jogo .journey,#jogo .mini-map,#jogo #road-radio,#jogo #drive-hud { background:var(--glass); color:var(--ink); border:1px solid var(--line); box-shadow:0 4px 16px #0003; backdrop-filter:none; text-shadow:none; transition:opacity .18s; }
+#jogo .journey { top:var(--top); left:var(--left); width:clamp(215px,22vw,340px); padding:12px 16px; border-radius:14px 5px 18px 5px; border-left:3px solid var(--mint); z-index:12; }
+#hud-nav { width:100%; display:flex; align-items:center; justify-content:space-between; gap:12px; border:0; background:none; color:var(--mint); padding:2px 0; font:italic 800 clamp(17px,2vw,24px)/1 Arial,sans-serif; text-align:left; }
+#jogo .journey h3 { font:600 15px/1.25 Arial,sans-serif; margin:6px 0 3px; }
+#jogo .journey-footer>span { max-width:none; color:#a9bdb2; font-size:12px; }
+#hud-navigation,#hud-radio-menu { margin-top:10px; border-top:1px solid var(--line); padding-top:8px; }
+#hud-navigation { max-height:calc(100svh - 240px); overflow:auto; }
+#hud-navigation[hidden],#hud-radio-menu[hidden] { display:none; }
+#hud-navigation .exploration-hud,#hud-navigation .experience-toolbar,#hud-navigation .camera-tools,#hud-navigation .game-top,#hud-navigation .trip-meter { position:static; inset:auto; width:auto; max-width:none; margin:8px 0 0; pointer-events:auto; text-shadow:none; }
+#hud-navigation .camera-tools { display:flex; flex-direction:row; flex-wrap:wrap; gap:4px; }
+#hud-navigation .camera-options { display:contents; }
+#hud-navigation #camera-menu-toggle,#hud-navigation .experience-toolbar>div:first-child,#hud-navigation .eyebrow,#hud-navigation #exploration-hint,#hud-navigation .trip-meter>span:last-child { display:none; }
+#hud-navigation .experience-toolbar>div:last-child { display:flex; flex-wrap:wrap; gap:4px; }
+#hud-navigation button { min-height:40px; font:12px Arial,sans-serif; }
+#hud-navigation .exploration-hud h2 { font:600 15px Arial,sans-serif; margin:8px 0; }
+#jogo .mini-map { top:var(--top); right:var(--right); width:clamp(104px,13vw,180px); border-radius:18px 7px 18px 7px; padding:6px 9px; }
+.map-north { display:block; text-align:center; font:700 11px Arial; color:var(--mint); }
+#jogo .mini-map>span { font:11px Arial; }
+#jogo #drive-hud { left:auto; right:var(--right); bottom:var(--bottom); width:clamp(88px,10vw,144px); min-width:0; aspect-ratio:1; border-radius:50%; padding:0; display:grid; place-content:center; }
+.dial { position:absolute; inset:0; width:100%; height:100%; transform:rotate(133deg); fill:none; stroke-width:4; }
+.dial-base { stroke:#496052; stroke-dasharray:76 100; }
+#dial-value { stroke:var(--mint); stroke-dasharray:0 100; }
+#jogo .speed-readout { display:grid; text-align:center; gap:1px; }
+#jogo #drive-hud strong { font:italic 700 clamp(29px,3vw,48px)/1 Arial,sans-serif; font-variant-numeric:tabular-nums; letter-spacing:-2px; }
+.speed-readout span { font:10px/1.4 Arial,sans-serif; }
+#jogo .speed-track { display:none; }
+#jogo #road-radio { left:var(--left); right:auto; bottom:var(--bottom); width:clamp(210px,23vw,315px); max-width:none; padding:10px 12px; display:grid; grid-template-columns:minmax(0,1fr) auto auto; gap:6px; border-radius:5px 15px 5px 15px; z-index:11; }
+#jogo #road-radio>div { min-width:0; }
+#road-radio>div:first-of-type { border-left:3px solid var(--mint); padding-left:9px; }
+#road-radio strong { font-size:15px; }
+#road-radio small { color:#a9bdb2; }
+#hud-radio-menu:not([hidden]) { grid-column:1/-1; display:flex; flex-wrap:wrap; align-items:center; gap:4px; }
+#jogo .radio-import { max-width:none; }
+#jogo .controls { bottom:var(--bottom); left:50%; right:auto; transform:translateX(-50%); pointer-events:none; }
+#jogo .controls p { font:10px/1.4 Arial; text-align:center; }
+#jogo .drive-buttons { pointer-events:auto; }
+@media (hover:hover) and (pointer:fine) and (not (any-pointer:coarse)) { #jogo .drive-buttons { display:none; } }
+@media (any-pointer:coarse),(max-width:700px) {
+ #jogo { --instrument-bottom:calc(var(--bottom) + 68px); }
+ #jogo .controls { left:var(--left); right:var(--right); transform:none; }
+ #jogo .controls p { display:none; }
+ #jogo #drive-hud,#jogo #road-radio { bottom:var(--instrument-bottom); }
+ #jogo .drive-buttons { justify-content:space-between; width:100%; }
+}
+@media(max-width:700px) {
+ #jogo[data-entered=true] .world-shell { height:calc(100svh - 78px); }
+ #jogo .journey { width:calc(100% - 136px); max-width:270px; padding:8px 10px; }
+ #jogo .mini-map { width:96px; }
+ #jogo #road-radio { width:205px; padding:6px; }
+ #jogo #drive-hud { width:78px; }
+}
+#jogo .interaction-prompt { bottom:calc(var(--bottom) + 145px); }
+#jogo.hud-idle:not(.menu-open):not(:focus-within)[data-hud-state=driving] :is(.journey,.mini-map,#drive-hud,#road-radio) { opacity:.18; }
+#jogo[data-hud-state=exploring] :is(#drive-hud,#road-radio) { opacity:.4; }
+#jogo[data-entered=false] #road-radio,#jogo[data-entered=false] #drive-hud { visibility:hidden; }
+@media(prefers-reduced-motion:reduce) { #jogo :is(.journey,.mini-map,#drive-hud,#road-radio) { transition:none; } }
+#hud-radio-menu select { width:100%; min-height:40px; color:#e3eddb; background:#253536; border:1px solid #698071; }
+#jogo.hud-idle:not(.menu-open)[data-hud-state=driving]:has(canvas:focus) :is(.journey,.mini-map,#drive-hud,#road-radio) { opacity:.18; }
+#jogo #drive-hud { overflow:hidden; }
+#map-zoom { pointer-events:auto; position:absolute; right:3px; top:2px; width:34px; height:34px; border:0; background:transparent; color:var(--mint); font:20px Arial; }
+@media(any-pointer:coarse) { #map-zoom,#jogo #road-radio button,#hud-nav { min-width:44px; min-height:44px; } }

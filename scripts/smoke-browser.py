@@ -28,6 +28,7 @@ with sync_playwright() as p:
         page.wait_for_timeout(250)
         assert page.locator('#jogo').get_attribute('data-touring') == 'true'
         page.screenshot(path=str(output / f'{name}-journey.png'))
+        page.locator('#hud-nav').click()
         page.locator('#journey-action').click()
         page.locator('#route-toggle').click()
         assert page.locator('#route-list button').count() == 5
@@ -37,10 +38,9 @@ with sync_playwright() as p:
         assert 'Demon Days' in page.locator('#journey-title').inner_text()
         assert page.locator('#jogo').get_attribute('data-touring') == 'true'
         # Explicit manual input must cancel the tour.
-        page.locator('[data-drive="throttle"]').focus()
-        page.keyboard.down('Space')
+        page.keyboard.down('w')
         page.wait_for_timeout(100)
-        page.keyboard.up('Space')
+        page.keyboard.up('w')
         assert page.locator('#jogo').get_attribute('data-touring') == 'false'
         page.locator('#eras').scroll_into_view_if_needed()
         page.wait_for_timeout(200)
@@ -63,6 +63,7 @@ with sync_playwright() as p:
     page.locator('#enter-world').click()
     page.wait_for_timeout(200)
     assert page.locator('#journey-status').inner_text() == 'Você chegou'
+    page.locator('#hud-nav').click()
     page.locator('#journey-action').click()
     assert page.locator('#discovery-dialog').is_visible()
     assert 'Nova descoberta' in page.locator('#discovery-saved').inner_text()
