@@ -1,6 +1,10 @@
 import http from 'node:http';
 import { readFile } from 'node:fs/promises';
 const routes = new Map([
+  ['/src/city.js', ['src/city.js', 'text/javascript; charset=utf-8']],
+  ['/src/cabin.js', ['src/cabin.js', 'text/javascript; charset=utf-8']],
+  ['/assets/radio/concreto.mp3', ['assets/radio/concreto.mp3', 'audio/mpeg']],
+  ['/assets/radio/mare.mp3', ['assets/radio/mare.mp3', 'audio/mpeg']],
   ['/', ['index.html', 'text/html; charset=utf-8']],
   ['/index.html', ['index.html', 'text/html; charset=utf-8']],
   ['/src/style.css', ['src/style.css', 'text/css; charset=utf-8']],

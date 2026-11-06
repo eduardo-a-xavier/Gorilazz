@@ -86,7 +86,185 @@ export const TREE_LOCATIONS = Array.from({length:70},(_,i)=>({x:Math.sin(i*23.71
   nearestRoad(at).distance >= 15 && !DISCOVERIES.some(p=>distance(p,at)<15) &&
   !BUILDINGS.some(p=>distance(p,at)<p.radius+4) && !Object.values(VISUAL_LANDMARKS).some(p=>distance(p,at)<9)
 );
+
+// ---------------------------------------------------------------------------
+// Cidade: lotes gerados ao longo das ruas. Física, mapa e cenário usam os mesmos dados.
+function seeded(seed) {
+  let s = seed >>> 0;
+  return () => { s = (s + 0x6D2B79F5) | 0; let t = Math.imul(s ^ (s >>> 15), 1 | s); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
+}
+/** Menor folga entre um ponto e a borda de qualquer rua (negativo = sobre o asfalto). */
+export function roadGap(point) {
+  let gap = Infinity;
+  for (const road of ROADS) for (let i = 1; i < road.samples.length; i++) {
+    const a = road.samples[i - 1], b = road.samples[i]; const dx = b.x - a.x, dz = b.z - a.z;
+    const t = Math.max(0, Math.min(1, ((point.x - a.x) * dx + (point.z - a.z) * dz) / (dx * dx + dz * dz || 1)));
+    gap = Math.min(gap, Math.hypot(point.x - a.x - dx * t, point.z - a.z - dz * t) - road.width / 2);
+  }
+  return gap;
+}
+function lotCorners(lot, pad = 0) {
+  const c = Math.cos(lot.rotation), s = Math.sin(lot.rotation); const hw = lot.w / 2 + pad, hd = lot.d / 2 + pad;
+  return [[-hw, -hd], [hw, -hd], [hw, hd], [-hw, hd]].map(([u, v]) => ({ x: lot.x + u * c + v * s, z: lot.z - u * s + v * c }));
+}
+function distanceToLot(point, lot) {
+  const c = Math.cos(lot.rotation), s = Math.sin(lot.rotation); const dx = point.x - lot.x, dz = point.z - lot.z;
+  const u = dx * c - dz * s, v = dx * s + dz * c;
+  return Math.hypot(Math.max(0, Math.abs(u) - lot.w / 2), Math.max(0, Math.abs(v) - lot.d / 2));
+}
+function lotsOverlap(a, b, gap) {
+  const A = lotCorners(a, gap / 2), B = lotCorners(b, gap / 2);
+  for (const poly of [A, B]) for (let i = 0; i < 4; i++) {
+    const p = poly[i], q = poly[(i + 1) % 4]; const nx = q.z - p.z, nz = p.x - q.x;
+    const project = pts => pts.map(k => k.x * nx + k.z * nz);
+    const pa = project(A), pb = project(B);
+    if (Math.max(...pa) < Math.min(...pb) || Math.max(...pb) < Math.min(...pa)) return false;
+  }
+  return true;
+}
+const CITY_KEEP_OPEN = [
+  ...REGIONS.map(r => ({ x: r.x, z: r.z, radius: r.id === 'windmill' ? 50 : 21 })),
+  ...DISCOVERIES.map(d => ({ x: d.x, z: d.z, radius: 15 })),
+  ...MEMBER_LOCATIONS.map(m => ({ x: m.x, z: m.z, radius: 11 })),
+  ...Object.values(VISUAL_LANDMARKS).map(p => ({ x: p.x, z: p.z, radius: 10 })),
+  ...NODES.map(n => ({ x: n.x, z: n.z, radius: 13 })),
+  ...BUILDINGS.map(b => ({ x: b.x, z: b.z, radius: b.radius * 1.05 + 2.5 })),
+  ...TREE_LOCATIONS.map(t => ({ x: t.x, z: t.z, radius: 3.2 })),
+  { x: 80, z: -163, radius: 20 },
+];
+/** 0 = campo aberto, 1 = centro urbano. */
+export function urbanity(point) {
+  const murals = 1 - distance(point, REGIONS[1]) / 95, kong = 1 - distance(point, REGIONS[0]) / 85;
+  const windmill = distance(point, REGIONS[2]) < 70 ? -.6 : 0;
+  return Math.max(0, Math.min(1, Math.max(murals * 1.15, kong * .9, .22) + windmill));
+}
+// Bairros por época: a cidade conta a história da banda em quatro atos (1998–2026).
+export const CITY_ERAS = [
+  { id: 'explosao', act: 1, title: 'A explosão', years: '2000–2006', color: '#e0a43a', anchor: { x: -35, z: 8 },
+    albums: 'Gorillaz (2001) · Demon Days (2005)', summary: 'Tijolo, caixas-d\'água e grafite: a Londres decadente de Kong Studios.' },
+  { id: 'plastic', act: 2, title: 'O auge ambicioso', years: '2007–2011', color: '#7fd6cf', anchor: { x: 95, z: -45 },
+    albums: 'Plastic Beach (2010) · The Fall (2010)', summary: 'Fachadas pastel, lixo plástico colorido e clima de ilha à beira-mar.' },
+  { id: 'hiato', act: 3, title: 'A briga e o hiato', years: '2012–2016', color: '#9aa0a6', anchor: { x: 0, z: -135 },
+    albums: 'DoYaThing (2012) · pausa até 2016', summary: 'Prédios fechados, janelas tapadas e andaimes: a cidade em pausa.' },
+  { id: 'reinvencao', act: 4, title: 'A reinvenção', years: '2017–2026', color: '#f2559c', anchor: { x: -90, z: -110 },
+    albums: 'Humanz · The Now Now · Song Machine · Cracker Island · The Mountain', summary: 'Torres de vidro, telões de LED e neon: o Gorillaz do streaming e da realidade aumentada.' },
+];
+export function eraAt(point) {
+  return CITY_ERAS.reduce((best, era, i) => distance(point, era.anchor) < distance(point, CITY_ERAS[best].anchor) ? i : best, 0);
+}
+const ERA_STYLES = [
+  rng => rng() < .6 ? 'brick' : 'plaster',
+  rng => rng() < .8 ? 'pastel' : 'plaster',
+  rng => rng() < .75 ? 'abandoned' : 'concrete',
+  rng => rng() < .6 ? 'glass' : 'concrete',
+];
+function buildCity() {
+  const rng = seeded(19022005), lots = [];
+  const fits = lot => {
+    const corners = lotCorners(lot);
+    const probes = [...corners, { x: lot.x, z: lot.z }];
+    if (probes.some(p => p.x < WORLD_BOUNDS.minX + 5 || p.x > WORLD_BOUNDS.maxX - 5 || p.z < WORLD_BOUNDS.minZ + 5 || p.z > WORLD_BOUNDS.maxZ - 5)) return false;
+    if (probes.some(p => roadGap(p) < 3)) return false;
+    if (CITY_KEEP_OPEN.some(zone => distanceToLot(zone, lot) < zone.radius)) return false;
+    if (lotObstacles(lot).some(o => roadGap(o) - o.radius - 2.4 < 0)) return false;
+    return !lots.some(other => lotsOverlap(lot, other, .5));
+  };
+  const describe = (lot, urban, row) => {
+    const era = eraAt(lot), style = ERA_STYLES[era](rng);
+    let floors = 2 + Math.floor(rng() * 2) + Math.round(urban * 3) + row;
+    if (era === 1) floors = Math.min(floors, 4);
+    if (era === 3) floors += 2 + Math.floor(rng() * 3) + (rng() < .35 ? 5 : 0);
+    return { ...lot, era, style, floors, tint: Math.floor(rng() * 5), shop: row === 0 && rng() < .35 + urban * .4,
+      seed: Math.floor(rng() * 1e9), mural: era === 0 ? rng() < .55 : era === 3 && rng() < .25,
+      tank: era < 2 && rng() < .6, escape: era === 0 ? style === 'brick' && rng() < .75 : era === 2 && rng() < .4,
+      junk: era === 1, scaffold: era === 2 && rng() < .5, screen: era === 3 && rng() < .65, neon: era === 3 };
+  };
+  for (const road of ROADS) {
+    const cumulative = [0]; for (let i = 1; i < road.samples.length; i++) cumulative.push(cumulative[i - 1] + distance(road.samples[i], road.samples[i - 1]));
+    const at = along => {
+      let i = 1; while (i < cumulative.length - 1 && cumulative[i] < along) i++;
+      const a = road.samples[i - 1], b = road.samples[i]; const t = (along - cumulative[i - 1]) / (cumulative[i] - cumulative[i - 1] || 1);
+      const len = distance(a, b) || 1; return { x: a.x + (b.x - a.x) * t, z: a.z + (b.z - a.z) * t, tx: (b.x - a.x) / len, tz: (b.z - a.z) / len };
+    };
+    for (const side of [-1, 1]) {
+      let along = 4 + rng() * 6;
+      while (along < road.length - 6) {
+        const w = 7 + rng() * 5.5, d = 7.5 + rng() * 4;
+        const p = at(along + w / 2); const nx = p.tz * side, nz = -p.tx * side;
+        const urban = urbanity(p);
+        if (rng() > .55 + urban * .8) { along += w + 3; continue; }
+        const offset = road.width / 2 + 4 + d / 2;
+        // A frente (+z local) aponta para a rua.
+        const front = { x: -nx, z: -nz };
+        const lot = { x: p.x + nx * offset, z: p.z + nz * offset, rotation: Math.atan2(front.x, front.z), w, d, road: road.id };
+        if (!fits(lot)) {
+          // Tenta um lote menor antes de desistir do trecho.
+          const small = { ...lot, w: w * .72, d: d * .8 }; const off2 = road.width / 2 + 4 + small.d / 2;
+          Object.assign(small, { x: p.x + nx * off2, z: p.z + nz * off2 });
+          if (fits(small)) { lots.push(describe(small, urban, 0)); along += small.w + .8 + rng() * 2; } else along += 3;
+          continue;
+        }
+        {
+          lots.push(describe(lot, urban, 0));
+          // Segunda fileira nos bairros densos: prédios mais altos ao fundo.
+          if (urban > .45 && rng() < .75) {
+            const d2 = 8 + rng() * 4, back = { ...lot, d: d2, w: w * (.8 + rng() * .4), x: lot.x + nx * (d / 2 + 2.5 + d2 / 2), z: lot.z + nz * (d / 2 + 2.5 + d2 / 2) };
+            if (fits(back)) lots.push(describe(back, urban, 1));
+          }
+        }
+        along += w + .6 + rng() * 2.4;
+      }
+    }
+  }
+  // Miolo dos quarteirões: preenche as áreas urbanas, alinhado à rua mais próxima.
+  for (let gz = WORLD_BOUNDS.minZ + 8; gz < WORLD_BOUNDS.maxZ - 6; gz += 8) {
+    for (let gx = WORLD_BOUNDS.minX + 8; gx < WORLD_BOUNDS.maxX - 6; gx += 8) {
+      const p = { x: gx + (rng() - .5) * 4, z: gz + (rng() - .5) * 4 }; const urban = urbanity(p);
+      if (urban < .36 || rng() > .35 + urban) continue;
+      const road = nearestRoad(p); const front = { x: road.x - p.x, z: road.z - p.z };
+      const lot = { ...p, rotation: Math.atan2(front.x, front.z), w: 7 + rng() * 4, d: 7 + rng() * 4, road: road.road };
+      if (fits(lot)) lots.push(describe(lot, urban, 1));
+    }
+  }
+  // Os prédios-marco existentes recebem o mesmo acabamento, mantendo posição e altura.
+  BUILDINGS.forEach((b, i) => {
+    if (!i) return;
+    const road = nearestRoad(b); const size = b.radius * 1.35;
+    const front = { x: road.x - b.x, z: road.z - b.z };
+    const era = eraAt(b), lrng = seeded(i * 7919);
+    lots.push({ x: b.x, z: b.z, rotation: Math.atan2(front.x, front.z), w: size, d: size, landmark: true, era,
+      style: ERA_STYLES[era](lrng), floors: Math.max(3, Math.round(b.height / 3.2)), tint: i % 5, shop: i % 2 === 0,
+      seed: i * 7919, mural: era === 0 || (era === 3 && i % 2 === 1), tank: era < 2, escape: era === 0 || (era === 2 && i % 2 === 0),
+      junk: era === 1, scaffold: era === 2, screen: era === 3, neon: era === 3 });
+  });
+  return lots;
+}
+export const CITY_LOTS = buildCity();
+/** Um portal de entrada por bairro, sobre a rua mais próxima do centro da época. */
+export const ERA_GATES = CITY_ERAS.map((era, index) => {
+  let best = null;
+  for (const road of ROADS) for (let i = 4; i < road.samples.length - 4; i++) {
+    const p = road.samples[i];
+    if (eraAt(p) !== index || NODES.some(n => distance(n, p) < 16) || DISCOVERIES.some(d => distance(d, p) < 30) || MEMBER_LOCATIONS.some(m => distance(m, p) < 16)) continue;
+    const score = distance(p, era.anchor);
+    if (!best || score < best.score) { const q = road.samples[i + 1]; best = { x: p.x, z: p.z, heading: Math.atan2(q.x - p.x, q.z - p.z), width: road.width, score, era: index }; }
+  }
+  return best;
+}).filter(Boolean);
+const gatePoles = ERA_GATES.flatMap(g => [-1, 1].map(s => ({ x: g.x + Math.cos(g.heading) * s * (g.width / 2 + 3), z: g.z - Math.sin(g.heading) * s * (g.width / 2 + 3), radius: .3 })));
+function lotObstacles(lot) {
+  const along = lot.w >= lot.d; const long = Math.max(lot.w, lot.d), short = Math.min(lot.w, lot.d);
+  const n = Math.max(1, Math.ceil(long / short * 1.6));
+  const radius = short / 2;
+  const c = Math.cos(lot.rotation), s = Math.sin(lot.rotation);
+  return Array.from({ length: n }, (_, i) => {
+    const k = (i + .5) / n - .5; const u = along ? k * long : 0, v = along ? 0 : k * long;
+    return { x: lot.x + u * c + v * s, z: lot.z - u * s + v * c, radius };
+  });
+}
+
 export const OBSTACLES = [
   ...BUILDINGS, {x:80,z:-163,radius:13},
   ...Object.values(VISUAL_LANDMARKS), ...TREE_LOCATIONS.map(p=>({...p,radius:.35})),
+  ...CITY_LOTS.filter(l => !l.landmark).flatMap(lotObstacles), ...gatePoles,
 ];

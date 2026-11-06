@@ -1,12 +1,14 @@
+import { createCabin } from './cabin.js';
 import * as THREE from './vendor/three.module.min.js';
 import { GLTFLoader } from './vendor/GLTFLoader.js';
-import { ROADS, NODES, REGIONS, DISCOVERIES, MEMBER_LOCATIONS, BUILDINGS } from './world-data.js';
+import { ROADS, NODES, REGIONS, DISCOVERIES, MEMBER_LOCATIONS } from './world-data.js';
 import { mergeGeometries } from './vendor/BufferGeometryUtils.js';
 import { createSurfaceLibrary, letteringTexture } from './materials.js';
 import { installEnvironment } from './environment.js';
+import { installCity } from './city.js';
 
 // Local credited Geep and Phase 7 models; original scenery and geometric fallbacks.
-export function createWorld(container, onMember, {onLost = () => {}, onRestored = () => {}, onViewReset = () => {}} = {}) {
+export function createWorld(container, onMember, {onLost = () => {}, onRestored = () => {}, onViewReset = () => {}, radio, onRadio, onSteer} = {}) {
   const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
   renderer.setPixelRatio(Math.min(devicePixelRatio, container.clientWidth < 700 ? 1.5 : 1.75));
   renderer.shadowMap.enabled = true;
@@ -115,37 +117,7 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
   }
   for(const node of NODES){const junction=new THREE.Mesh(new THREE.CircleGeometry(8,40),surfaces.get('asphalt',4));junction.rotation.x=-Math.PI/2;junction.position.set(node.x,-.015,node.z);junction.receiveShadow=true;scene.add(junction);}
 
-  for (const [i, building] of BUILDINGS.entries()) {
-    const {x, z, radius, height} = building;
-    if(i===0) continue;
-    const tower = box(city, [radius * 1.35, height, radius * 1.35], [x, height / 2 - .3, z], i % 2 ? '#454b57' : '#35454c');
-    box(tower, [radius * .48, 2.6, .14], [0, 1.2 - height / 2, -radius * .68], '#1b2424');
-    box(tower, [radius * 1.42, .24, radius * 1.42], [0, -height / 2 + 2.8, 0], '#626b66');
-    tower.material = surfaces.get(i%2?'plaster':'brick',2,3);
-    for (let y = 3; y < height - 1; y += 4) for (const side of [-1,1]) box(tower, [radius * .65, .6, .08], [0, y - height / 2, side * (radius * .675 + .05)], i % 2 ? '#f5a9c6' : '#7fa6ff', true);
-    box(tower, [radius * 1.5, .3, radius * 1.5], [0, height / 2, 0], '#202631');
-  }
-  // A rehearsal warehouse, mural shops and lookout terraces have different rooflines.
-  for (const [i, site] of BUILDINGS.entries()) {
-    if (!i) continue;
-    const {x,z,radius:r,height:h} = site;
-    const accent = x < -50 ? '#51818a' : x > 40 ? '#ae7856' : '#697445';
-    box(city,[r*1.8,.24,r*1.8],[x,-.05,z],'#b5aa99');
-    box(city,[r*.83,.22,1.8],[x,3,z-r*.68-.6],accent);
-    for (const sign of [-1,1]) {
-      box(city,[.14,2.8,.14],[x+sign*r*.39,1.4,z-r*.68-1.2],'#50635d');
-      box(city,[r*.28,1.55,.14],[x+sign*r*.44,2.2,z-r*.68],'#709496');
-    }
-    box(city,[r*.55,1.25,r*.52],[x+r*.2,h+.5,z+r*.14],accent);
-    if (x < -50) {
-      for (let k=0;k<5;k++) {
-        const mural=box(city,[.14,3.6,.57],[x+r*.68,4+k*.42,z-2+k],k%2?'#d99782':'#95b2a5');
-        mural.rotation.x=.28;
-      }
-    } else {
-      box(city,[.4,3.8,.4],[x-r*.38,h+1.8,z],'#726458');
-    }
-  }
+  // Prédios: gerados por city.js a partir de CITY_LOTS (inclui os marcos de BUILDINGS).
   // The hills sit beyond the drivable boundary; the road surface stays level.
   for (let i=0;i<23;i++) {
     const angle=i*Math.PI*2/23;
@@ -177,6 +149,7 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
     for (const dx of [-2.6, 2.6]) box(signGroup, [.18, 3.5, .18], [dx, 1.5, 0], '#777487');
   }
   installEnvironment(scene, renderer, surfaces);
+  installCity(scene, surfaces);
   sign('MURAIS ←|MOINHO →', {x:7,z:-43}, '#7fa6ff');
   const discoveryObjects = DISCOVERIES.map((point, i) => {
     const group = new THREE.Group(); group.position.set(point.x,0,point.z); scene.add(group);
@@ -257,6 +230,7 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
   }
   const skyColors = ['#202b2a','#272333','#254347','#3b3330','#2d293f','#304050','#273f3c','#352b3d'].map(color => new THREE.Color(color));
   const groundColors = ['#34433f','#423b4f','#365b57','#5b4940','#443d57','#44586a','#3b5b50','#50414c'].map(color => new THREE.Color(color));
+  const cabin = createCabin(); scene.add(cabin.root);
   const car = new THREE.Group(); scene.add(car);
   box(car, [3.5, .95, 6.8], [0, 1.15, 0], '#e2d8c0');
   box(car, [3.2, .6, 2], [0, 1.65, -2.1], '#e2d8c0');
@@ -290,6 +264,7 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
     vehicle.add(model); vehicle.rotation.y = Math.PI;
     const wheelMeshes = []; const details = [];
     model.traverse(object => {
+      if (kind === "geep") cabin.reuse(object);
       if (object.isMesh) { object.castShadow = true; object.receiveShadow = true; }
       if (!object.isMesh) return;
       if (kind === 'geep' ? /^Wheel(?:_\d+)?$/i.test(object.name) : /wheel-(front|back)-(left|right)/.test(object.name)) wheelMeshes.push(object);
@@ -416,21 +391,53 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
   renderer.domElement.style.cursor = 'grab';
   renderer.domElement.tabIndex = 0;
   renderer.domElement.setAttribute('aria-label', 'Mundo aberto 3D. W e S aceleram e freiam; A e D viram. E explora lugares próximos. Arraste para olhar ao redor. As histórias também estão disponíveis no diário.');
+  let yaw = 0, pitch = 0, smoothYaw = 0, smoothPitch = 0, interacting = false, steeringDrag = false;
+  let sensitivity = 1, motion = 1, highlighted = null;
+  function hitAt(event, objects) {
+    const bounds = renderer.domElement.getBoundingClientRect();
+    pointer.set((event.clientX-bounds.left)/bounds.width*2-1,1-(event.clientY-bounds.top)/bounds.height*2);
+    raycaster.setFromCamera(pointer,camera);
+    return raycaster.intersectObjects(objects,true)[0]?.object;
+  }
+  function highlight(object) {
+    if (highlighted) highlighted.material.color.set(0xffffff);
+    highlighted = object;
+    if (object) object.material.color.set(0xa2ff7c);
+  }
   renderer.domElement.addEventListener('pointerdown', event => {
     if (event.button !== 0) return;
-    dragging = {x:event.clientX, y:event.clientY}; moved = false;
+    moved = false;
+    if (firstPerson && interacting) return;
+    steeringDrag = firstPerson && Boolean(hitAt(event,[cabin.wheel]));
+    dragging = {x:event.clientX, y:event.clientY, origin:event.clientX};
     renderer.domElement.setPointerCapture(event.pointerId); renderer.domElement.style.cursor = 'grabbing';
   });
   renderer.domElement.addEventListener('pointermove', event => {
+    if (firstPerson && interacting) {
+      const hit = hitAt(event,cabin.controls); highlight(hit);
+      renderer.domElement.style.cursor = hit ? 'pointer' : 'default'; return;
+    }
     if (!dragging) return;
     const dx = event.clientX - dragging.x; const dy = event.clientY - dragging.y;
     if (Math.abs(dx) + Math.abs(dy) > 3) moved = true;
+    if (firstPerson) {
+      if (steeringDrag) onSteer(THREE.MathUtils.clamp((dragging.origin-event.clientX)/80,-1,1));
+      else {
+        yaw = THREE.MathUtils.clamp(yaw-dx*.005*sensitivity,-1.35,1.35);
+        pitch = THREE.MathUtils.clamp(pitch-dy*.005*sensitivity,-.84,.48);
+      }
+      dragging.x = event.clientX; dragging.y = event.clientY; return;
+    }
     dragAngle -= dx * .006; dragElevation = THREE.MathUtils.clamp(dragElevation + dy * .035, -3, 14);
     dragging = {x:event.clientX, y:event.clientY};
   });
-  function release() { dragging = null; renderer.domElement.style.cursor = 'grab'; }
+  function release() { if (steeringDrag) onSteer(0); steeringDrag = false; dragging = null; renderer.domElement.style.cursor = 'grab'; }
   for (const event of ['pointerup', 'pointercancel', 'lostpointercapture']) renderer.domElement.addEventListener(event, release);
   renderer.domElement.addEventListener('click', event => {
+    if (firstPerson) {
+      if (interacting) { const action = hitAt(event,cabin.controls)?.userData.action; if (action) onRadio(action); }
+      return;
+    }
     if (moved) return;
     const bounds = renderer.domElement.getBoundingClientRect(); pointer.set((event.clientX - bounds.left) / bounds.width * 2 - 1, -(event.clientY - bounds.top) / bounds.height * 2 + 1);
     raycaster.setFromCamera(pointer, camera);
@@ -457,7 +464,10 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
   return {
     setEra(index) { activeEra = Math.max(0, Math.min(7,index)); },
     setOverview(value) { overview = value; landmarkView = false; firstPerson = false; },
-    setFirstPerson(value) { firstPerson = value; overview = false; landmarkView = false; initialized = false; },
+    setInteraction(value) { interacting = firstPerson && value; highlight(null); release(); },
+    recenter() { yaw = pitch = 0; },
+    configureLook(gain, intensity) { sensitivity = gain; motion = intensity; },
+    setFirstPerson(value) { interacting = false; yaw = pitch = smoothYaw = smoothPitch = 0; highlight(null); release(); firstPerson = value; overview = false; landmarkView = false; initialized = false; },
     focusWindmill(value) { landmarkView = value; overview = false; },
     zoomBy(amount) { zoom = THREE.MathUtils.clamp(zoom + amount, .7, 1.6); },
     resetCamera() { firstPerson = false; dragAngle = 0; dragElevation = 0; zoom = 1; overview = false; landmarkView = false; },
@@ -491,16 +501,29 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
       look.set(x + courtyardOffset*Math.cos(heading) - Math.sin(travelHeading) * ahead, mobile && showcase ? 3 : 2, z - courtyardOffset*Math.sin(heading) - Math.cos(travelHeading) * ahead);
       if (landmarkView) { desiredCamera.set(125 * zoom, 38 + dragElevation, -98); look.set(84, 16, -152); }
       if (overview) { desiredCamera.set(0, 290 * zoom, -74); look.set(0, 0, -75); }
-      if (firstPerson) { desiredCamera.set(x - Math.sin(heading) * 1.6, 2.35, z - Math.cos(heading) * 1.6); look.set(x - Math.sin(heading) * 30, 2.2, z - Math.cos(heading) * 30); }
+      cabin.root.visible = firstPerson;
       car.visible = !firstPerson;
-      const targetFov = reduced ? 46 : 46 + Math.abs(vehicle.speed) * .15;
+      if (firstPerson) {
+        cabin.root.rotation.set(car.rotation.x * motion,heading,car.rotation.z * motion,car.rotation.order);
+        cabin.root.position.set(-.54,2.18,.48).applyQuaternion(cabin.root.quaternion).add(car.position);
+        cabin.root.position.y -= car.position.y * (1-motion);
+        cabin.root.updateMatrixWorld();
+        desiredCamera.copy(cabin.root.position);
+        const gain = reduced ? 0 : motion;
+        desiredCamera.y += gain * Math.min(.026,Math.abs(vehicle.acceleration)*.003);
+        smoothYaw = THREE.MathUtils.lerp(smoothYaw,interacting ? -.61 : yaw,blend);
+        smoothPitch = THREE.MathUtils.lerp(smoothPitch,interacting ? -.56 : pitch-.09,blend);
+        look.set(-Math.sin(smoothYaw)*Math.cos(smoothPitch), Math.sin(smoothPitch), -Math.cos(smoothYaw)*Math.cos(smoothPitch)).applyQuaternion(cabin.root.quaternion).add(desiredCamera);
+        cabin.update(vehicle,radio.read());
+      }
+      const targetFov = firstPerson ? 76 : reduced ? 46 : 46 + Math.abs(vehicle.speed) * .15;
       camera.fov = THREE.MathUtils.lerp(camera.fov,targetFov,blend); camera.updateProjectionMatrix();
       for (const [i, object] of discoveryObjects.entries()) {
         const found = known.has(DISCOVERIES[i].id); object.glow.material = material(found?'#d2e2a8':'#f5a9c6',true); object.beacon.material = material(found?'#d2e2a8':'#f5a9c6',true);
         object.beacon.position.y = 5.5 + (reduced ? 0 : Math.sin(t*2+i)*.35); object.beacon.rotation.y = reduced ? 0 : t*.7;
         const selected = nearby?.type === 'discovery' && nearby.index === i; object.beacon.scale.setScalar(selected?2.2:1);
       }
-      if (!initialized || reduced) { camera.position.copy(desiredCamera); cameraTarget.copy(look); initialized = true; }
+      if (!initialized || reduced || firstPerson) { camera.position.copy(desiredCamera); cameraTarget.copy(look); initialized = true; }
       else { camera.position.lerp(desiredCamera, blend); cameraTarget.lerp(look, blend); }
       camera.lookAt(cameraTarget);
       sunlight.position.set(x - 44, 54, z + 26); sunlight.target.position.set(x, 0, z); sun.lookAt(camera.position);
@@ -519,11 +542,7 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
           actor.arms[0].rotation.z = i === 1 || i === 2 ? -.55 + Math.sin(t * 8) * .16 : i === 3 ? -.25 + Math.sin(t * 10) * .35 : -.1;
           actor.arms[1].rotation.z = i === 1 || i === 2 ? .45 + Math.cos(t * 8) * .13 : i === 3 ? .25 + Math.cos(t * 10) * .35 : .1;
         }
-        if (actor.instrument) actor.instrument.rotation.z = -.34 + (reduced ? 0 : Math.sin(t * 5 + i) * .035);
-        if (actor.arms.length) {
-          actor.arms[0].rotation.z = reduced ? -.15 : Math.sin(t * 2 + i) * .12 - .15;
-          actor.arms[1].rotation.z = reduced ? .15 : Math.cos(t * 2 + i) * .12 + .15;
-        }
+
       }
       renderer.render(scene, camera);
       renderer.domElement.dataset.triangles=String(renderer.info.render.triangles);

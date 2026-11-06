@@ -28,7 +28,7 @@ Abra http://localhost:3000 no mesmo computador. Não é necessário instalar dep
 - Arraste o cenário para olhar ao redor; +/− ajustam a distância. ↺ e Home restauram a câmera. “Ver mundo” mostra a ilha por cima; “Ver moinho” enquadra o marco. A câmera de viagem acompanha também a marcha à ré.
 - “Banda ao redor” reúne os integrantes junto ao Geep. Dirigir os devolve aos locais de encontro.
 - Abrir um diálogo, ocultar a aba ou perder o foco limpa comandos e interrompe o veículo. O tempo em pausa não é recuperado pela física.
-- As nove categorias abaixo do cenário e a galeria continuam disponíveis para consultar conteúdo diretamente. O rádio acompanha a região e permite escolher faixas; clipes só carregam sob escolha.
+- As nove categorias abaixo do cenário e a galeria continuam disponíveis para consultar conteúdo diretamente. A seleção de clipes acompanha a região; clipes só carregam sob escolha.
 
 ## Modelos e créditos
 
@@ -110,7 +110,7 @@ A linha do tempo apresenta oito eras de **1998–2023**, com história real, nar
 
 The Fall distingue a disponibilização digital de 2010 da edição física de 2011. As fichas separam personagens de intérpretes e colaboradores reais; o Geep é relacionado a 19-2000, e o moinho à ideia visual de Feel Good Inc. Os modelos Phase 7 permanecem em todas as eras, como informado na página.
 
-O rádio tem onze faixas. Para três escutas sem ID cadastrado, o botão abre uma busca pelo clipe oficial em vez de inventar um endereço de vídeo. As prévias existentes continuam sob clique e dependem do YouTube; sua reprodução externa não foi revalidada.
+A seleção editorial reúne onze faixas. Para três escutas sem ID cadastrado, o botão abre uma busca pelo clipe oficial em vez de inventar um endereço de vídeo. As prévias existentes continuam sob clique e dependem do YouTube; sua reprodução externa não foi revalidada.
 
 A renderização 3D e o tour pausam fora da seção da estrada; no celular, a renderização é limitada a aproximadamente 30 quadros por segundo. A perda do contexto WebGL mostra o mapa 2D, e a restauração reconecta a cena. Créditos e downloads permanecem disponíveis nos bastidores, com atribuições visíveis junto da banda.
 
@@ -127,3 +127,12 @@ Veja [o processo de evolução](docs/PROCESSO-DE-EVOLUCAO.md) para prioridades, 
 No rádio da estrada, **Carregar músicas** aceita arquivos de áudio do computador. Depois da escolha, ▶ toca ou pausa, ←/→ mudam a faixa e a lista continua automaticamente ao terminar uma música. Os arquivos ficam só nesta aba e precisam ser selecionados novamente após recarregar. Os títulos editoriais do Gorillaz continuam com links para clipes. A aplicação não inclui gravações comerciais.
 
 O botão ⛶ abre a experiência em tela cheia. Em **1ª pessoa**, arraste o volante ou use ←/→ para virar, mantendo W/S ou os pedais para acelerar e frear. Veja [o roteiro da experiência](docs/ROTEIRO-DA-EXPERIENCIA.md) para a relação entre mundo, histórias e próximas etapas.
+
+
+## Cidade das épocas e cabine do Geep
+
+O mapa do ZIP organiza a história em quatro bairros. No ato 1, os prédios de tijolo e o grafite apresentam a explosão de 2000–2006. O ato 2 usa cores pastel para a fase de Plastic Beach (2007–2011). No ato 3 aparecem vitrines fechadas e andaimes durante o hiato (2012–2016). As fachadas de vidro e o neon marcam a reinvenção no ato 4 (2017–2026). Os números no minimapa correspondem aos portais na rua. As cinco paradas do diário podem ser visitadas em qualquer ordem.
+
+Entre no mundo e pressione **V** para sentar ao volante. Arraste a paisagem para olhar e **C** para centralizar. Ajuste sensibilidade e movimento em **Controles**. Pressione **R** para olhar o console e clicar em tocar, pausar, trocar faixa, ajustar volume ou abrir a lista. **Esc** devolve a visão da estrada.
+
+A Kong FM começa pausada e inclui dois instrumentais originais, **Concreto** e **Maré de plástico**. O painel e o HUD controlam o mesmo áudio. A playlist também aceita arquivos do computador.

@@ -213,11 +213,6 @@ button:focus-visible, canvas:focus-visible { outline:2px solid var(--acid); outl
 .road-radio #road-radio-play { color:var(--acid); }
 .cockpit { position:absolute; z-index:5; inset:0; pointer-events:none; overflow:hidden; }
 .cockpit[hidden] { display:none; }
-.cockpit-dash { position:absolute; bottom:-20px; left:16%; width:68%; height:155px; border-radius:45% 45% 0 0; background:linear-gradient(#24332f,#0a100f); border:2px solid #59645c; box-shadow:0 -12px 45px #101816cc; }
-#steering-wheel { position:absolute; width:170px; height:170px; border:14px solid #161c1b; border-radius:50%; bottom:40px; left:calc(50% - 85px); display:grid; place-items:center; color:var(--acid); font:900 38px Arial,sans-serif; background:radial-gradient(circle,#26342f 0 24%,transparent 25%),linear-gradient(90deg,transparent 44%,#151e1a 45% 55%,transparent 56%); box-shadow:0 2px 0 #7d877f inset,0 8px 18px #000a; transform:rotate(var(--wheel-angle,0deg)); pointer-events:auto; touch-action:none; cursor:grab; }
-#steering-wheel:active { cursor:grabbing; }
-#steering-wheel:focus-visible { outline:3px solid var(--acid); }
-.cockpit p { position:absolute; bottom:8px; left:0; right:0; text-align:center; color:var(--cream); font:11px Arial,sans-serif; text-shadow:0 1px 5px #000; }
 #jogo[data-entered=false] #fullscreen-toggle { visibility:hidden; }
 @media(max-width:700px) {
  .road-radio { gap:4px; }
@@ -225,9 +220,6 @@ button:focus-visible, canvas:focus-visible { outline:2px solid var(--acid); outl
  .road-radio>div { min-width:0; }
  .road-radio button,.road-radio a { min-width:34px; padding:4px; }
  .road-radio #road-radio-listen { display:none; }
- .cockpit-dash { left:0; width:100%; height:110px; }
- #steering-wheel { width:120px; height:120px; left:calc(50% - 60px); bottom:60px; border-width:10px; }
- .cockpit p { bottom:48px; }
  #jogo:fullscreen .world-shell { height:100vh; }
 }
 
@@ -299,3 +291,17 @@ button:focus-visible, canvas:focus-visible { outline:2px solid var(--acid); outl
 @media(any-pointer:coarse) { #map-zoom,#jogo #road-radio button,#hud-nav { min-width:44px; min-height:44px; } }
 
 #drive-hud.is-braking #dial-value { stroke:#e2b67c; }
+
+.cabin-tools { position:absolute; left:50%; bottom:12px; transform:translateX(-50%); display:flex; align-items:center; gap:6px; pointer-events:auto; color:#e8ead3; font:600 12px system-ui; }
+.cabin-tools button,.cabin-tools details { border:1px solid #74876b; border-radius:5px; background:#15241ff2; color:inherit; padding:7px 10px; white-space:nowrap; }
+.cabin-tools details[open] { position:absolute; bottom:100%; width:min(260px,78vw); white-space:normal; }
+.cabin-tools summary { cursor:pointer; }
+.cabin-tools small,.cabin-tools label { display:block; margin-top:6px; }
+.inside-geep #drive-hud { visibility:hidden; }
+.inside-geep #road-radio:not(:focus-within):has(#hud-radio-menu[hidden]) { opacity:.65; }
+@media(max-width:700px) { .cabin-tools { bottom:78px; } }
+
+.inside-geep .controls > p { display:none; }
+
+.radio-volume { display:flex; align-items:center; gap:.5em; }
+.radio-volume input { width:72px; accent-color:#9ccc65; }

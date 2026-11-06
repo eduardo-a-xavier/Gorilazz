@@ -1,65 +1,71 @@
+const station = [
+  { name: 'Concreto', artist: 'Kong FM · instrumental original', url: '/assets/radio/concreto.mp3' },
+  { name: 'Maré de plástico', artist: 'Kong FM · instrumental original', url: '/assets/radio/mare.mp3' },
+];
+
 export function createLocalRadio({ input, playButton, previousButton, nextButton, title, album, status }) {
   const playlist = document.createElement('select');
-  playlist.setAttribute('aria-label', 'Escolher faixa local');
-  playlist.hidden = true;
+  playlist.setAttribute('aria-label', 'Escolher e tocar faixa');
   document.querySelector('#road-radio').append(playlist);
-  playlist.addEventListener('change', () => select(Number(playlist.value)));
   const audio = new Audio();
   audio.preload = 'metadata';
-  let files = [];
+  let tracks = station.slice();
   let index = 0;
-  let playing = false;
-
   function show() {
-    if (!files.length) return;
-    title.textContent = files[index].name.replace(/\.[^.]+$/, '');
-    album.textContent = `${index + 1} / ${files.length} · Arquivo local`;
-    playButton.textContent = playing ? 'Ⅱ' : '▶';
-    playButton.setAttribute('aria-label', playing ? 'Pausar rádio' : 'Tocar rádio');
-    status.textContent = playing ? 'Tocando arquivo local.' : 'Arquivo local pronto para tocar.';
-  }
-  async function play() {
-    try {
-      await audio.play();
-      playing = true;
-      show();
-    } catch {
-      playing = false;
-      show();
-      status.textContent = 'O áudio não pôde tocar. Escolha outro arquivo e pressione ▶.';
-    }
-  }
-  function select(next) {
-    if (!files.length) return false;
-    index = (next + files.length) % files.length;
+    const track = tracks[index];
+    title.textContent = track.name;
+    album.textContent = track.artist;
+    playButton.textContent = audio.paused ? '▶' : 'Ⅱ';
+    playButton.setAttribute('aria-label', audio.paused ? 'Tocar rádio' : 'Pausar rádio');
     playlist.value = String(index);
-    audio.src = files[index].url;
-    audio.load();
-    show();
-    if (playing) play();
-    return true;
   }
-  input.addEventListener('change', () => {
-    audio.pause();
-    for (const file of files) URL.revokeObjectURL(file.url);
-    files = [...input.files].filter(file => file.type.startsWith('audio/') || /\.(mp3|m4a|ogg|wav)$/i.test(file.name))
-      .map(file => ({ name: file.name, url: URL.createObjectURL(file) }));
-    playlist.replaceChildren(...files.map((file, i) => new Option(file.name, String(i))));
-    playlist.hidden = !files.length;
-    index = 0;
-    playing = false;
-    if (files.length) { select(0); play(); }
-    else status.textContent = 'Escolha arquivos de áudio para tocar na estrada.';
-  });
-  playButton.addEventListener('click', () => {
-    if (!files.length) { input.click(); return; }
-    if (playing) { audio.pause(); playing = false; show(); }
-    else play();
-  });
-  previousButton.addEventListener('click', () => select(index - 1));
-  nextButton.addEventListener('click', () => select(index + 1));
-  audio.addEventListener('ended', () => { playing = true; select(index + 1); });
-  audio.addEventListener('error', () => { playing = false; status.textContent = 'Este arquivo não pôde ser reproduzido.'; playButton.textContent = '▶'; });
-  window.addEventListener('pagehide', () => { audio.pause(); for (const file of files) URL.revokeObjectURL(file.url); });
-  return { hasFiles: () => files.length > 0, next: () => select(index + 1), previous: () => select(index - 1) };
+  function rebuildList() {
+    playlist.replaceChildren(...tracks.map((track, i) => new Option(track.name, String(i))));
+  }
+  function play() {
+    audio.play().catch(error => {
+      if (error.name !== 'AbortError') status.textContent = 'Falha na reprodução. Tente outra faixa.';
+    });
+  }
+  function select(next, autoplay = !audio.paused) {
+    index = (next + tracks.length) % tracks.length;
+    audio.src = tracks[index].url;
+    show();
+    if (autoplay) play();
+  }
+  const actions = {
+    play() { if (audio.paused) play(); else audio.pause(); },
+    next() { select(index + 1); }, prev() { select(index - 1); },
+    louder() { audio.volume = Math.min(1, audio.volume + .1); },
+    quieter() { audio.volume = Math.max(0, audio.volume - .1); },
+  };
+  playlist.onchange = () => select(Number(playlist.value), true);
+  input.onchange = () => {
+    const files = [...input.files].filter(f => f.type.startsWith('audio/') || /\.(mp3|m4a|ogg|wav)$/i.test(f.name));
+    if (!files.length) return;
+    const old = tracks.slice(station.length);
+    tracks = station.concat(files.map(f => ({ name: f.name.replace(/\.[^.]+$/, ''), artist: 'Arquivo local', url: URL.createObjectURL(f) })));
+    rebuildList(); select(station.length, true);
+    for (const track of old) URL.revokeObjectURL(track.url);
+  };
+  playButton.onclick = actions.play;
+  previousButton.onclick = actions.prev;
+  nextButton.onclick = actions.next;
+  audio.onplay = audio.onpause = show;
+  audio.onended = () => select(index + 1, true);
+  audio.onerror = () => { status.textContent = 'Este arquivo não pôde ser reproduzido.'; show(); };
+  const volumeControl = document.createElement('label');
+  volumeControl.className = 'radio-volume';
+  const volume = document.createElement('input');
+  volume.type = 'range'; volume.min = '0'; volume.max = '100'; volume.value = '65';
+  volumeControl.append('Volume ', volume);
+  playlist.after(volumeControl);
+  volume.oninput = () => { audio.volume = Number(volume.value) / 100; };
+  audio.onvolumechange = () => { volume.value = String(Math.round(audio.volume * 100)); };
+  audio.volume = .65;
+  rebuildList(); select(0, false);
+  return {
+    actions, playlist,
+    read: () => ({ ...tracks[index], playing: !audio.paused, seconds: Math.floor(audio.currentTime), volume: Math.round(audio.volume * 100) }),
+  };
 }

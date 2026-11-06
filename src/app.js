@@ -1,7 +1,7 @@
 import { eras, tracks, sources, memberStories, trackById, listeningUrl } from './content.js';
 import { loadJourney, loadWorldJourney, saveWorldJourney } from './progress.js';
 import { MEMBER_STOPS } from './route.js';
-import { DISCOVERIES, MEMBER_LOCATIONS, REGIONS, ROADS, distance, regionAt } from './world-data.js';
+import { CITY_ERAS, CITY_LOTS, DISCOVERIES, ERA_GATES, MEMBER_LOCATIONS, REGIONS, ROADS, distance, eraAt, regionAt } from './world-data.js';
 import { createVehicle, stepVehicle, haltVehicle, recoverVehicle } from './driving.js';
 import { createInput } from './input.js';
 import { createJournal, nearbyInteraction } from './discoveries.js';
@@ -43,7 +43,7 @@ const journalDialog = document.querySelector('#journal-dialog');
 const modalOpen = () => Boolean(document.querySelector('dialog[open]'));
 let entered = false, showcase = true, orbital = false, overview = false, landmarkView = false, firstPerson = false;
 let world = null, destination = null, touring = false, previousFocus = null, nearby = null;
-let lastTime, accumulator = 0, currentRegion = -1, tourIndex = 0;
+let lastTime, accumulator = 0, currentRegion = -1, currentDistrict = -1, tourIndex = 0;
 const tourButton = document.querySelector('#tour-toggle');
 const bandToggle = document.querySelector('#band-toggle');
 const input = createInput({ enabled: () => entered && worldVisible, onManual() {
@@ -115,10 +115,13 @@ document.addEventListener('pointerdown', event => { if (!cameraTools.contains(ev
 document.addEventListener('keydown', event => { if (event.key === 'Escape') setCameraMenu(false); });
 function resetViewControls() {
   overview = false; landmarkView = false; orbital = false; firstPerson = false;
-  world?.setFirstPerson(false); cockpit.hidden = true; steerWheel(0); document.querySelector('#first-person').setAttribute('aria-pressed','false');
+  world?.setFirstPerson(false); cockpit.hidden = true; input.setWheelSteer(0); document.querySelector('#first-person').setAttribute('aria-pressed','false');
   const button = document.querySelector('#camera-toggle'); button.setAttribute('aria-pressed','false'); button.textContent = '↻ CÂMERA ORBITAL'; syncCameraModes();
 }
 function syncCameraModes() {
+  cockpit.hidden = !firstPerson;
+  sceneSection.classList.toggle('inside-geep',firstPerson);
+  if (!firstPerson) { focusRadio(false); input.setWheelSteer(0); }
   document.querySelector('#first-person').setAttribute('aria-pressed', String(firstPerson));
   document.querySelector('#first-person').textContent = firstPerson ? '↙ VOLTAR AO CARRO' : '◉ 1ª PESSOA';
   document.querySelector('#overview-toggle').setAttribute('aria-pressed', String(overview));
@@ -127,32 +130,38 @@ function syncCameraModes() {
   document.querySelector('#windmill-focus').textContent = landmarkView ? '↙ VOLTAR AO JIPE' : '✦ VER MOINHO';
 }
 const cockpit = document.querySelector('#cockpit');
-const steeringWheel = document.querySelector('#steering-wheel');
-let wheelPointer = null;
-function steerWheel(value) {
-  const amount = Math.max(-1, Math.min(1, value));
-  steeringWheel.style.setProperty('--wheel-angle', `${amount * -110}deg`);
-  steeringWheel.setAttribute('aria-valuenow', String(Math.round(amount * 100)));
-  input.setWheelSteer(amount);
+let radioFocused = false;
+const consoleFocus = document.querySelector('#console-focus');
+function focusRadio(value) {
+  radioFocused = firstPerson && value;
+  world?.setInteraction(radioFocused);
+  consoleFocus.setAttribute('aria-pressed',String(radioFocused));
+  consoleFocus.textContent = radioFocused ? 'Esc · Voltar à estrada' : 'R · Sintonizar';
 }
-steeringWheel.addEventListener('pointerdown', event => {
-  wheelPointer = event.pointerId; steeringWheel.setPointerCapture(event.pointerId); event.preventDefault();
+consoleFocus.onclick = () => { focusRadio(!radioFocused); focusWorld(); };
+for (const slider of cockpit.querySelectorAll('input')) slider.oninput = () => {
+  world?.configureLook(Number(document.querySelector('#look-gain').value), Number(document.querySelector('#motion-gain').value));
+};
+document.querySelector('#first-person').addEventListener('click', () => {
+  if (!worldAvailable) return;
+  enterWorld(); firstPerson = !firstPerson; overview = landmarkView = false;
+  setShowcase(false); world.setFirstPerson(firstPerson); syncCameraModes(); focusWorld();
+  if (!reducedMotion.matches) document.querySelector('#world canvas')?.animate([{opacity:.45},{opacity:1}],{duration:220});
 });
-steeringWheel.addEventListener('pointermove', event => {
-  if (wheelPointer !== event.pointerId) return;
-  steerWheel((steeringWheel.getBoundingClientRect().left + steeringWheel.offsetWidth / 2 - event.clientX) / 80);
-});
-for (const type of ['pointerup', 'pointercancel', 'lostpointercapture']) steeringWheel.addEventListener(type, event => { if (wheelPointer === event.pointerId) { wheelPointer = null; steerWheel(0); } });
-steeringWheel.addEventListener('keydown', event => { if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') { event.preventDefault(); steerWheel(event.key === 'ArrowLeft' ? 1 : -1); } });
-steeringWheel.addEventListener('keyup', event => { if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') steerWheel(0); });
-document.querySelector('#first-person').addEventListener('click', event => {
-  enterWorld(); firstPerson = !firstPerson; showcase = false; setShowcase(false); world?.setFirstPerson(firstPerson); cockpit.hidden = !firstPerson; if (!firstPerson) steerWheel(0); event.currentTarget.setAttribute('aria-pressed', String(firstPerson)); syncCameraModes();
+document.addEventListener('keydown', event => {
+  if (!worldVisible || !worldAvailable || !entered || modalOpen() || event.repeat || event.ctrlKey || event.metaKey || event.altKey) return;
+  const key = event.key.toLowerCase();
+  if (key === 'escape' && radioFocused) { focusRadio(false); toggleHudMenu(null); focusWorld(); return; }
+  if (event.target.closest('input,select,textarea,[contenteditable]')) return;
+  if (key === 'v') document.querySelector('#first-person').click();
+  if (firstPerson && key === 'r') consoleFocus.click();
+  if (firstPerson && key === 'c') { focusRadio(false); world.recenter(); }
 });
 document.querySelector('#zoom-in').addEventListener('click', () => world?.zoomBy(-.15));
 document.querySelector('#zoom-out').addEventListener('click', () => world?.zoomBy(.15));
 document.querySelector('#reset-camera').addEventListener('click', () => { world?.resetCamera(); resetViewControls(); });
-document.querySelector('#overview-toggle').addEventListener('click', () => { firstPerson = false; world?.setFirstPerson(false); cockpit.hidden = true; steerWheel(0); document.querySelector('#first-person').setAttribute('aria-pressed','false'); overview = !overview; landmarkView = false; world?.setOverview(overview); syncCameraModes(); });
-document.querySelector('#windmill-focus').addEventListener('click', () => { enterWorld(); stop(); firstPerson = false; world?.setFirstPerson(false); cockpit.hidden = true; steerWheel(0); document.querySelector('#first-person').setAttribute('aria-pressed','false'); landmarkView = !landmarkView; overview = false; world?.focusWindmill(landmarkView); syncCameraModes(); });
+document.querySelector('#overview-toggle').addEventListener('click', () => { firstPerson = false; world?.setFirstPerson(false); cockpit.hidden = true; input.setWheelSteer(0); document.querySelector('#first-person').setAttribute('aria-pressed','false'); overview = !overview; landmarkView = false; world?.setOverview(overview); syncCameraModes(); });
+document.querySelector('#windmill-focus').addEventListener('click', () => { enterWorld(); stop(); firstPerson = false; world?.setFirstPerson(false); cockpit.hidden = true; input.setWheelSteer(0); document.querySelector('#first-person').setAttribute('aria-pressed','false'); landmarkView = !landmarkView; overview = false; world?.focusWindmill(landmarkView); syncCameraModes(); });
 document.querySelector('#read-chapter').addEventListener('click', () => { document.querySelector('#paradas').scrollIntoView({behavior: reducedMotion.matches ? 'instant' : 'smooth'}); document.querySelector('#panel').focus({preventScroll:true}); });
 
 const actors = members.map((member, index) => {
@@ -243,13 +252,18 @@ document.querySelector('#reset-journal').addEventListener('click', event => {
   journal.reset(); resetArmed = false; event.currentTarget.textContent = 'Reiniciar diário'; updateJournal(); announce('Diário reiniciado.');
 });
 const map = document.querySelector('#world-map');
-map.innerHTML = `<rect x="-140" y="-200" width="280" height="250" rx="22" fill="#263831"/>${ROADS.map(r => `<polyline points="${r.samples.map(p => `${p.x},${p.z}`).join(' ')}" fill="none" stroke="#e2d8c055" stroke-width="${r.width*.46}" stroke-linecap="round"/>`).join('')}${REGIONS.map((r, i) => `<text x="${r.x}" y="${r.z + (i === 0 ? 27 : -24)}" text-anchor="middle" fill="${r.color}" font-size="7">${['KONG', 'MURAIS', 'MOINHO'][i]}</text>`).join('')}${DISCOVERIES.map(d => `<g data-map-poi="${d.id}"><circle cx="${d.x}" cy="${d.z}" r="4" fill="#f5a9c6"/></g>`).join('')}<path id="map-car" d="M0 -7 5 5 0 3 -5 5Z" fill="#d2e2a8" stroke="#111415" stroke-width="1.2"/>`;
+map.innerHTML = `<rect x="-140" y="-200" width="280" height="250" rx="22" fill="#263831"/>${CITY_LOTS.map(l => `<rect x="${-l.w/2}" y="${-l.d/2}" width="${l.w}" height="${l.d}" fill="${CITY_ERAS[l.era].color}" fill-opacity=".45" transform="translate(${l.x.toFixed(1)} ${l.z.toFixed(1)}) rotate(${(-l.rotation*180/Math.PI).toFixed(1)})"/>`).join('')}${ERA_GATES.map(g => `<text x="${g.x.toFixed(1)}" y="${(g.z+3).toFixed(1)}" text-anchor="middle" fill="${CITY_ERAS[g.era].color}" font-size="6" font-weight="bold">${CITY_ERAS[g.era].act}</text>`).join('')}${ROADS.map(r => `<polyline points="${r.samples.map(p => `${p.x},${p.z}`).join(' ')}" fill="none" stroke="#e2d8c055" stroke-width="${r.width*.46}" stroke-linecap="round"/>`).join('')}${REGIONS.map((r, i) => `<text x="${r.x}" y="${r.z + (i === 0 ? 27 : -24)}" text-anchor="middle" fill="${r.color}" font-size="7">${['KONG', 'MURAIS', 'MOINHO'][i]}</text>`).join('')}${DISCOVERIES.map(d => `<g data-map-poi="${d.id}"><circle cx="${d.x}" cy="${d.z}" r="4" fill="#f5a9c6"/></g>`).join('')}<path id="map-car" d="M0 -7 5 5 0 3 -5 5Z" fill="#d2e2a8" stroke="#111415" stroke-width="1.2"/>`;
 import('./scene.js').then(({createWorld}) => {
   world = createWorld(document.querySelector('#world'), index => {
     if (showcase || distance(vehicle, MEMBER_LOCATIONS[index]) < 13 && Math.abs(vehicle.speed) < 2) openMember(index);
     else announce('Aproxime-se e reduza a velocidade para conhecer este integrante.');
   }, {
     onViewReset: resetViewControls,
+    radio: localRadio, onSteer: value => input.setWheelSteer(value),
+    onRadio(action) {
+      if (action === 'playlist') { toggleHudMenu(radioMenu); localRadio.playlist.focus(); }
+      else localRadio.actions[action]?.();
+    },
     onLost() {
       stop(); worldAvailable = false;
       document.querySelector('.world-shell').classList.remove('has-3d'); document.querySelector('.world-shell').classList.add('map-only');
@@ -290,8 +304,15 @@ function frame(time) {
   lastHudTime = time;
   let region = regionAt(vehicle);
   if (currentRegion >= 0 && region !== currentRegion && distance(vehicle, REGIONS[region]) + 8 >= distance(vehicle, REGIONS[currentRegion])) region = currentRegion;
+  const district = eraAt(vehicle);
+  if (district !== currentDistrict && region === currentRegion) {
+    currentDistrict = district; const era = CITY_ERAS[district];
+    document.querySelector('#scene-label').textContent = `${REGIONS[region].name.toUpperCase()} · ATO ${era.act} · ${era.title.toUpperCase()} (${era.years})`;
+    if (entered) document.querySelector('#announcement').textContent = `Ato ${era.act}: ${era.title}, ${era.years}. ${era.summary}`;
+  }
   if (region !== currentRegion) {
-    currentRegion = region; document.querySelector('#scene-label').textContent = REGIONS[region].name.toUpperCase();
+    currentRegion = region; currentDistrict = eraAt(vehicle); const era = CITY_ERAS[currentDistrict];
+    document.querySelector('#scene-label').textContent = `${REGIONS[region].name.toUpperCase()} · ATO ${era.act} · ${era.title.toUpperCase()} (${era.years})`;
     document.querySelector('#region-name').textContent = REGIONS[region].name; if (!manualTrack) setTrack(REGIONS[region].track); world?.setEra(tracks[REGIONS[region].track].era);
   }
   nearby = nearbyInteraction(vehicle);
@@ -385,8 +406,6 @@ function setTrack(index) {
   trackIndex = (index + tracks.length) % tracks.length;
   const track = tracks[trackIndex];
   document.querySelector('#radio-title').textContent = track.name;
-  if (!localRadio.hasFiles()) document.querySelector('#road-radio-track').textContent = track.name;
-  if (!localRadio.hasFiles()) document.querySelector('#road-radio-album').textContent = `Gorillaz · ${track.album}`;
   document.querySelector('#road-radio-listen').href = listeningUrl(track);
   document.querySelector('#track-album').textContent = `${track.album} · ${track.year}`;
   document.querySelector('#track-description').textContent = track.text;
@@ -498,7 +517,7 @@ for (const selector of ['.journey-heading','#journey-description','#journey-acti
 const radioMenu = document.createElement('div');
 radioMenu.id = 'hud-radio-menu';
 document.querySelector('#road-radio').append(radioMenu);
-for (const selector of ['#road-radio-prev','#road-radio-next','.radio-import','#road-radio-listen','#road-radio select']) {
+for (const selector of ['#road-radio-prev','#road-radio-next','.radio-import','#road-radio-listen','#road-radio select','.radio-volume']) {
   radioMenu.append(document.querySelector(selector));
 }
 const hudMenus = [[document.querySelector('#hud-nav'), navMenu], [document.querySelector('#hud-radio-toggle'), radioMenu]];
