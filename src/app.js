@@ -287,7 +287,7 @@ import('./scene.js').then(({createWorld}) => {
       document.querySelector('#render-status').textContent = 'MUNDO ABERTO / 3D EM TEMPO REAL'; focusWorld();
     },
   });
-  worldAvailable = true; world.setEra(tracks[REGIONS[regionAt(vehicle)].track].era);
+  worldAvailable = true;
   document.querySelector('.world-shell').classList.add('has-3d');
   document.querySelector('#render-status').textContent = 'MUNDO ABERTO / 3D EM TEMPO REAL';
 }).catch(error => {
@@ -325,7 +325,7 @@ function frame(time) {
   if (region !== currentRegion) {
     currentRegion = region; currentDistrict = eraAt(vehicle); const era = CITY_ERAS[currentDistrict];
     document.querySelector('#scene-label').textContent = `${REGIONS[region].name.toUpperCase()} · ATO ${era.act} · ${era.title.toUpperCase()} (${era.years})`;
-    document.querySelector('#region-name').textContent = REGIONS[region].name; if (!manualTrack) setTrack(REGIONS[region].track); world?.setEra(tracks[REGIONS[region].track].era);
+    document.querySelector('#region-name').textContent = REGIONS[region].name; if (!manualTrack) setTrack(REGIONS[region].track);
   }
   nearby = interactionAtCar();
   const interaction = document.querySelector('#interact');
@@ -469,7 +469,7 @@ document.querySelector('#era-menu').addEventListener('keydown', event => {
 });
 document.querySelector('#era-drive').addEventListener('click', () => {
   const related = [0,3,2,2,4,1,4,1][selectedEraIndex];
-  startNavigation(DISCOVERIES[related]); world?.setEra(selectedEraIndex);
+  startNavigation(DISCOVERIES[related]);
   sceneSection.scrollIntoView({behavior:reducedMotion.matches ? 'instant' : 'smooth'});
 });
 document.querySelector('#era-listen').addEventListener('click', () => { manualTrack = false; setTrack(tracks.findIndex(track => track.id === eras[selectedEraIndex].track)); });

@@ -140,13 +140,13 @@ export function urbanity(point) {
 }
 // Bairros por época: a cidade conta a história da banda em quatro atos (1998–2026).
 export const CITY_ERAS = [
-  { id: 'explosao', act: 1, title: 'A explosão', years: '2000–2006', color: '#e0a43a', anchor: { x: -35, z: 8 },
+  { id: 'explosao', act: 1, title: 'A explosão', years: '2000–2006', color: '#e0a43a', light: { sun: '#ffc06a', sky: '#ffe2a5', haze: '#b09a76' }, anchor: { x: -35, z: 8 },
     albums: 'Gorillaz (2001) · Demon Days (2005)', summary: 'Tijolo, caixas-d\'água e grafite: a Londres decadente de Kong Studios.' },
-  { id: 'plastic', act: 2, title: 'O auge ambicioso', years: '2007–2011', color: '#7fd6cf', anchor: { x: 95, z: -45 },
+  { id: 'plastic', act: 2, title: 'O auge ambicioso', years: '2007–2011', color: '#7fd6cf', light: { sun: '#75e7de', sky: '#b6f4ed', haze: '#83bcb9' }, anchor: { x: 95, z: -45 },
     albums: 'Plastic Beach (2010) · The Fall (2010)', summary: 'Fachadas pastel, lixo plástico colorido e clima de ilha à beira-mar.' },
-  { id: 'hiato', act: 3, title: 'A briga e o hiato', years: '2012–2016', color: '#9aa0a6', anchor: { x: 0, z: -135 },
+  { id: 'hiato', act: 3, title: 'A briga e o hiato', years: '2012–2016', color: '#9cacbd', light: { sun: '#acc1d8', sky: '#cbd6e8', haze: '#8996a8' }, anchor: { x: 0, z: -135 },
     albums: 'DoYaThing (2012) · pausa até 2016', summary: 'Prédios fechados, janelas tapadas e andaimes: a cidade em pausa.' },
-  { id: 'reinvencao', act: 4, title: 'A reinvenção', years: '2017–2026', color: '#f2559c', anchor: { x: -90, z: -110 },
+  { id: 'reinvencao', act: 4, title: 'A reinvenção', years: '2017–2026', color: '#e782dd', light: { sun: '#f899e1', sky: '#dac2ff', haze: '#ac8caf' }, anchor: { x: -90, z: -110 },
     albums: 'Humanz · The Now Now · Song Machine · Cracker Island · The Mountain', summary: 'Torres de vidro, telões de LED e neon: o Gorillaz do streaming e da realidade aumentada.' },
 ];
 export function eraAt(point) {

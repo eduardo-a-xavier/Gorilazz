@@ -1,7 +1,7 @@
 import { createCabin } from './cabin.js';
 import * as THREE from './vendor/three.module.min.js';
 import { GLTFLoader } from './vendor/GLTFLoader.js';
-import { ROADS, NODES, REGIONS, DISCOVERIES, MEMBER_LOCATIONS } from './world-data.js';
+import { CITY_ERAS, eraAt, ROADS, NODES, REGIONS, DISCOVERIES, MEMBER_LOCATIONS } from './world-data.js';
 import { mergeGeometries } from './vendor/BufferGeometryUtils.js';
 import { createSurfaceLibrary, letteringTexture } from './materials.js';
 import { installEnvironment } from './environment.js';
@@ -33,7 +33,8 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
   const skyTexture=new THREE.CanvasTexture(skyCanvas);skyTexture.colorSpace=THREE.SRGBColorSpace;
   const sky=new THREE.Mesh(new THREE.SphereGeometry(480,32,16),new THREE.MeshBasicMaterial({map:skyTexture,side:THREE.BackSide,fog:false,depthWrite:false}));sky.renderOrder=-1;scene.add(sky);
   const camera = new THREE.PerspectiveCamera(46, 1, .1, 650);
-  scene.add(new THREE.HemisphereLight('#c6d7ff', '#626c55', 1.55));
+  const skylight = new THREE.HemisphereLight('#ffffff', '#69685e', 1.55);
+  scene.add(skylight);
   const sunlight = new THREE.DirectionalLight('#ffe4c2', 2.8);
   sunlight.position.set(-35, 65, 15); sunlight.castShadow = true;
   sunlight.shadow.mapSize.set(container.clientWidth < 700 ? 1024 : 2048, container.clientWidth < 700 ? 1024 : 2048);
@@ -228,7 +229,9 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
     const tuft = new THREE.Mesh(new THREE.ConeGeometry(1.5, 4 + i % 2, 5), material('#4c6d5b'));
     tuft.position.set(Math.cos(i * 1.3) * 10, 2, Math.sin(i * 1.3) * 9); windmill.add(tuft);
   }
-  const skyColors = ['#202b2a','#272333','#254347','#3b3330','#2d293f','#304050','#273f3c','#352b3d'].map(color => new THREE.Color(color));
+  const districtLights = CITY_ERAS.map(({light}) => ({
+    sun: new THREE.Color(light.sun), sky: new THREE.Color(light.sky), haze: new THREE.Color(light.haze),
+  }));
   const groundColors = ['#34433f','#423b4f','#365b57','#5b4940','#443d57','#44586a','#3b5b50','#50414c'].map(color => new THREE.Color(color));
   const cabin = createCabin(); scene.add(cabin.root);
   const car = new THREE.Group(); scene.add(car);
@@ -453,7 +456,7 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
     renderer.setSize(width, height, false); camera.aspect = width / height; camera.updateProjectionMatrix();
   }
   const observer = new ResizeObserver(resize); observer.observe(container); resize();
-  let previousDistance = 0; let activeEra = 0;
+  let previousDistance = 0; let lightingReady = false;
   let overview = false;
   let firstPerson = false;
   let landmarkView = false;
@@ -462,7 +465,6 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
   const desiredCamera = new THREE.Vector3();
   let previousTime = null; let initialized = false;
   return {
-    setEra(index) { activeEra = Math.max(0, Math.min(7,index)); },
     setOverview(value) { overview = value; landmarkView = false; firstPerson = false; },
     setInteraction(value) { interacting = firstPerson && value; highlight(null); release(); },
     recenter() { yaw = pitch = 0; },
@@ -475,10 +477,16 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
       const {x,z,heading} = vehicle; const t = time / 1000; const moving = Math.abs(vehicle.speed) > .1;
       const dt = previousTime === null ? .016 : Math.min((time - previousTime) / 1000, .1); previousTime = time;
       const blend = reduced ? 1 : 1 - Math.exp(-dt * 4);
-      const zone = activeEra;
-      if (reduced) scene.background.copy(skyColors[zone]); else scene.background.lerp(skyColors[zone], blend * .35); scene.fog.color.copy(scene.background);
+      const light = districtLights[eraAt(vehicle)];
+      const fade = lightingReady ? 1 - Math.exp(-dt * 1.6) : 1;
+      sunlight.color.lerp(light.sun, fade);
+      skylight.color.lerp(light.sky, fade);
+      sky.material.color.copy(skylight.color);
+      sun.material.color.copy(sunlight.color);
+      scene.fog.color.lerp(light.haze, fade);
+      scene.background.copy(scene.fog.color);
+      lightingReady = true;
       scene.fog.density = THREE.MathUtils.lerp(scene.fog.density, overview ? .001 : landmarkView ? .002 : .0035, blend);
-      // Ground keeps its authored material palette; era changes affect atmosphere.
       island.visible = showcase; island.position.set(x,0,z);
       dust.position.set(x, 0, z);
       if (!reduced) { rotor.rotation.z = -t * .3; windmill.position.y = 15 + Math.sin(t * .65) * .5; dust.rotation.y = Math.sin(t * .025) * .15; satellites.rotation.y = Math.sin(t * .1) * .12; portal.rotation.z = Math.sin(t * .07) * .04; }
