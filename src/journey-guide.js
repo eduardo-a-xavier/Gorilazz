@@ -37,7 +37,7 @@ export function createJourneyGuide({ points, regions, onNavigate, onStop, onExpl
   return {
     update({ vehicle, known, destination, nearby }) {
       const next = points.find(point => !known.has(point.id));
-      const close = nearby?.type === 'discovery' ? points[nearby.index] : null;
+      const close = nearby?.type === 'archive' ? nearby : nearby?.type === 'discovery' ? points[nearby.index] : null;
       current = destination || close || next || points[0];
       mode = destination ? 'travel' : close && Math.abs(vehicle.speed) < 2 ? 'arrived' : 'ready';
       write(status, mode === 'travel' ? 'A caminho' : mode === 'arrived' ? 'Você chegou' : next ? 'Seu próximo destino' : 'Roteiro completo');

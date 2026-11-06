@@ -86,3 +86,20 @@ for (const target of DISCOVERIES) test(`passeio chega a ${target.id} e freia sem
   assert.ok(arrived); assert.ok(distance(vehicle, target) < 8); assert.ok(Math.abs(vehicle.speed) < 1);
   assert.equal(nearbyInteraction(vehicle)?.id, target.id);
 });
+test('os quatro portais podem ser percorridos em sequência pela malha viária', async () => {
+  const { archiveStops } = await import('../src/discoveries.js');
+  const vehicle = createVehicle();
+  assert.deepEqual(archiveStops.map(stop => stop.era.act), [1, 2, 3, 4]);
+  for (const stop of archiveStops) {
+    const path = planPath(vehicle, stop);
+    let arrived = false;
+    for (let tick = 0; tick < 120 * 90; tick++) {
+      const input = navigationInput(vehicle, path);
+      if (input.arrived) { arrived = true; break; }
+      stepVehicle(vehicle, input, 1 / 120);
+    }
+    assert.ok(arrived, stop.title);
+    assert.ok(distance(vehicle,stop) < 8);
+    assert.equal(nearbyInteraction(vehicle), null);
+  }
+});

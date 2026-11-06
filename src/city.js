@@ -461,6 +461,25 @@ export function installCity(scene, surfaces) {
     for (const s of [-1, 1]) { cyl(base, mat.metal, .28, .32, 8.4, [s * span / 2, 4.2, 0], 10); box(base, color, [.8, .5, .8], [s * span / 2, .25, 0]); }
     box(base, mat.metal, [span + .6, 2.2, .3], [0, 7.4, 0]);
     box(base, color, [span + .6, .18, .5], [0, 8.6, 0]);
+    // Mounted on the portal, the objects stay clear of the vehicle lane.
+    const top = 9.65;
+    if (row === 0) {
+      box(base,mat.wood,[3,1.9,1.1],[0,top,0]);
+      for (const side of [-1,1]) box(base,mat.glow,[2.35,1.32,.08],[0,top,side*.56]);
+      for (const side of [-1,1]) box(base,mat.steel,[.06,1.25,.06],[side*.33,top+1.4,0],[0,0,-side*.52]);
+    } else if (row === 1) {
+      cyl(base,plastic[0],.52,.92,1.05,[0,top-.45,0]);
+      cyl(base,mat.trim,.52,.52,.42,[0,top+.29,0]);
+      cyl(base,mat.red,.24,.5,.8,[0,top+.9,0]);
+    } else if (row === 2) {
+      box(base,mat.dead,[3.1,2,.38],[0,top,0]);
+      for (const side of [-1,1]) for (const y of [-.45,.45])
+        box(base,mat.plank,[3.3,.29,.12],[0,top+y,side*.24],[0,0,.12]);
+    } else {
+      cyl(base,mat.steel,.09,.3,3.6,[0,top+.65,0]);
+      for (let i=0;i<3;i++) box(base,mat.neonCyan,[2.3-i*.55,.1,.14],[0,top+i*.68,0]);
+      cyl(base,mat.red,.12,.12,.23,[0,top+2.5,0]);
+    }
     for (const s of [1, -1]) plane(base, mat.gate, Math.min(span - 1, 8), 2, [0, 7.4, s * .17], s < 0 ? [0, Math.PI, 0] : null, atlasUV(row, CITY_ERAS.length));
   }
 

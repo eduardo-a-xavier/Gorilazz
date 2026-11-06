@@ -4,7 +4,7 @@ import { MEMBER_STOPS } from './route.js';
 import { CITY_ERAS, CITY_LOTS, DISCOVERIES, ERA_GATES, MEMBER_LOCATIONS, REGIONS, ROADS, distance, eraAt, regionAt } from './world-data.js';
 import { createVehicle, stepVehicle, haltVehicle, recoverVehicle } from './driving.js';
 import { createInput } from './input.js';
-import { createJournal, nearbyInteraction } from './discoveries.js';
+import { createJournal, archiveStops, createEraArchive, nearbyInteraction } from './discoveries.js';
 import { planPath, navigationInput } from './navigation.js';
 import { createLocalRadio } from './local-radio.js';
 import { createJourneyGuide } from './journey-guide.js';
@@ -211,11 +211,23 @@ function openDiscovery(index, collect = true) {
   setTrack(point.track); updateJournal(); discoveryDialog.showModal(); discoveryDialog.querySelector('.close').focus();
   if (fresh) announce(`Nova descoberta: ${point.title}. ${journal.known.size} de 5 histórias.`);
 }
+const eraArchive = createEraArchive(document.querySelector('#era-archive'), point => {
+  journalNextAction = () => startNavigation(point); journalDialog.close();
+});
+function interactionAtCar() {
+  const nearby = nearbyInteraction(vehicle);
+  if (nearby) return nearby;
+  const index = archiveStops.findIndex(stop => distance(vehicle,stop) < 10);
+  return index < 0 ? null : { ...archiveStops[index], type:'archive', index };
+}
 function interact() {
   if (modalOpen() || !entered) return;
-  nearby = nearbyInteraction(vehicle);
+  nearby = interactionAtCar();
   if (!nearby) return;
   if (Math.abs(vehicle.speed) >= 2) { announce('Reduza a velocidade para explorar este lugar.'); return; }
+  if (nearby.type === 'archive') {
+    document.querySelector('#journal-toggle').click(); eraArchive.open(nearby.index); return;
+  }
   if (nearby.type === 'member') openMember(nearby.index); else openDiscovery(nearby.index);
 }
 document.querySelector('#interact').addEventListener('click', interact);
@@ -315,7 +327,7 @@ function frame(time) {
     document.querySelector('#scene-label').textContent = `${REGIONS[region].name.toUpperCase()} · ATO ${era.act} · ${era.title.toUpperCase()} (${era.years})`;
     document.querySelector('#region-name').textContent = REGIONS[region].name; if (!manualTrack) setTrack(REGIONS[region].track); world?.setEra(tracks[REGIONS[region].track].era);
   }
-  nearby = nearbyInteraction(vehicle);
+  nearby = interactionAtCar();
   const interaction = document.querySelector('#interact');
   interaction.hidden = !nearby || !entered || paused;
   if (nearby) { interaction.disabled = Math.abs(vehicle.speed) >= 2; interaction.textContent = interaction.disabled ? `Reduza para explorar · ${nearby.title}` : `E / EXPLORAR — ${nearby.title}`; }

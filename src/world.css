@@ -305,3 +305,12 @@ button:focus-visible, canvas:focus-visible { outline:2px solid var(--acid); outl
 
 .radio-volume { display:flex; align-items:center; gap:.5em; }
 .radio-volume input { width:72px; accent-color:#9ccc65; }
+
+#era-archive { margin:1.5rem 0; }
+#era-archive h3 { font:italic 1.6rem Georgia,serif; }
+#era-archive p { font: .9rem/1.6 system-ui,sans-serif; }
+#era-archive details { border-bottom:1px solid #78857a66; padding:.5rem 0; }
+#era-archive summary { cursor:pointer; padding:.65rem .5rem; border-left:3px solid var(--act-color); font-weight:bold; }
+#era-archive h4 { color:var(--act-color); margin:1rem 0 .2rem; }
+#era-archive h4 + p { margin:0; }
+#era-archive button { margin:1rem 0 .5rem; padding:.65rem 1rem; background:var(--act-color); color:#141914; border:0; border-radius:4px; cursor:pointer; }

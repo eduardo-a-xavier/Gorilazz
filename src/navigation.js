@@ -1,22 +1,43 @@
 import { NODES, ROADS, distance, nearestRoad } from './world-data.js';
 const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
 export function planPath(start, target) {
-  const nearest = point => NODES.reduce((best, node, i) => distance(point, node) < distance(point, NODES[best]) ? i : best, 0);
-  const from = nearest(start), to = nearest(target);
-  const costs = NODES.map(() => Infinity), previous = new Map(), remaining = new Set(NODES.map((_, i) => i)); costs[from] = 0;
+  const first = nearestRoad(start), last = nearestRoad(target);
+  const startRoad = ROADS[first.road], endRoad = ROADS[last.road];
+  const nearestIndex = (road, point) => road.samples.reduce((best, p, i) =>
+    distance(p,point) < distance(road.samples[best],point) ? i : best, 0);
+  const startIndex = nearestIndex(startRoad, first), endIndex = nearestIndex(endRoad, last);
+  const graph = NODES.map(() => []);
+  const origin = graph.push([]) - 1, goal = graph.push([]) - 1;
+  function edge(from,to,points) {
+    const cost = points.slice(1).reduce((sum,p,i) => sum + distance(points[i],p),0);
+    graph[from].push({ to, points, cost });
+  }
+  for (const road of ROADS) {
+    edge(road.from, road.to, road.samples);
+    edge(road.to, road.from, road.samples.slice().reverse());
+  }
+  edge(origin,startRoad.from,startRoad.samples.slice(0,startIndex+1).reverse());
+  edge(origin,startRoad.to,startRoad.samples.slice(startIndex));
+  edge(endRoad.from,goal,endRoad.samples.slice(0,endIndex+1));
+  edge(endRoad.to,goal,endRoad.samples.slice(endIndex).reverse());
+  if (startRoad === endRoad) {
+    const segment = startRoad.samples.slice(Math.min(startIndex,endIndex),Math.max(startIndex,endIndex)+1);
+    edge(origin,goal,startIndex <= endIndex ? segment : segment.reverse());
+  }
+  const costs = graph.map(() => Infinity), paths = graph.map(() => []), remaining = new Set(graph.keys());
+  costs[origin] = 0;
   while (remaining.size) {
-    const at = [...remaining].reduce((a, b) => costs[a] < costs[b] ? a : b); remaining.delete(at);
-    if (at === to) break;
-    for (const road of ROADS.filter(r => r.from === at || r.to === at)) {
-      const next = road.from === at ? road.to : road.from;
-      if (costs[at] + road.length < costs[next]) { costs[next] = costs[at] + road.length; previous.set(next, { at, road }); }
+    const at = [...remaining].reduce((a,b) => costs[a] < costs[b] ? a : b);
+    if (at === goal) break;
+    remaining.delete(at);
+    for (const edge of graph[at]) {
+      const cost = costs[at] + edge.cost;
+      if (cost >= costs[edge.to]) continue;
+      costs[edge.to] = cost;
+      paths[edge.to] = paths[at].concat(edge.points);
     }
   }
-  const segments = []; let cursor = to;
-  while (cursor !== from && previous.has(cursor)) { const edge = previous.get(cursor); segments.unshift(edge.road.to === cursor ? edge.road.samples : [...edge.road.samples].reverse()); cursor = edge.at; }
-  // Join the closest street first; ordinary manual driving stays unconstrained.
-  const first = nearestRoad(start);
-  const path = [first, NODES[from], ...segments.flatMap(samples => samples.filter((_, i) => i % 2 === 0)), target];
+  const path = [first, ...paths[goal].filter((_, i) => i % 2 === 0), last, target];
   return { points: path, index: distance(start, first) < 5 ? 1 : 0, target };
 }
 export function navigationInput(vehicle, navigation) {
