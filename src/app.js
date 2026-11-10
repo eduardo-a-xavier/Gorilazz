@@ -16,6 +16,8 @@ const members = [
 ];
 members.forEach((member, index) => Object.assign(member, memberStories[index], {song: trackById(memberStories[index].track).name}));
 const memberKeys = ['twod', 'murdoc', 'noodle', 'russel'];
+// Mesmas cores das placas e dos fachos de luz de cada integrante no mundo.
+const MEMBER_ACCENTS = ['#7fa6ff', '#9dd66b', '#f5a9c6', '#ffcc4d'];
 function memberPhoto(index) { return `<img src="/assets/portraits/phase7-${memberKeys[index]}.png" alt="" width="384" height="512" loading="lazy">`; }
 function portrait(member, index) {
   return `<svg viewBox="0 0 70 110" aria-hidden="true"><path d="M22 76 18 108M47 76l5 32" stroke="#141414" stroke-width="10"/><path d="M${index === 3 ? 10 : 17} 79V54Q35 36 ${index === 3 ? 60 : 53} 54v25Z" fill="${member.shirt}" stroke="#141414" stroke-width="3"/><path d="M18 55 8 80m45-25 9 25" stroke="${member.skin}" stroke-width="8"/><ellipse cx="35" cy="28" rx="${index === 3 ? 24 : 19}" ry="24" fill="${member.skin}" stroke="#141414" stroke-width="3"/><path d="M15 24 13 7 26 9 34 0 41 9 56 5 54 30 44 15 34 21 26 15Z" fill="${member.hair}"/><g fill="#141414"><ellipse cx="27" cy="29" rx="4" ry="5"/><ellipse cx="43" cy="29" rx="4" ry="5"/></g><path d="m28 42 15-2" stroke="#141414" stroke-width="2"/></svg>`;
@@ -128,7 +130,18 @@ function syncCameraModes() {
   document.querySelector('#overview-toggle').textContent = overview ? '↙ VOLTAR AO JIPE' : '◎ VER MUNDO';
   document.querySelector('#windmill-focus').setAttribute('aria-pressed', String(landmarkView));
   document.querySelector('#windmill-focus').textContent = landmarkView ? '↙ VOLTAR AO JIPE' : '✦ VER MOINHO';
+  quickFirstPerson.setAttribute('aria-pressed', String(firstPerson));
+  quickFirstPerson.textContent = firstPerson ? '↙ Ver o Geep · V' : '◉ 1ª pessoa · V';
 }
+// Atalhos sempre à vista: 1ª pessoa e tela cheia, sem precisar abrir o menu.
+const quickView = document.createElement('div');
+quickView.className = 'quick-view'; quickView.setAttribute('role', 'group'); quickView.setAttribute('aria-label', 'Vista');
+const quickFirstPerson = document.createElement('button'); quickFirstPerson.type = 'button'; quickFirstPerson.textContent = '◉ 1ª pessoa · V'; quickFirstPerson.setAttribute('aria-pressed', 'false');
+const quickFullscreen = document.createElement('button'); quickFullscreen.type = 'button'; quickFullscreen.textContent = '⛶ Tela cheia · F'; quickFullscreen.title = 'Ou dê dois cliques no cenário';
+quickView.append(quickFirstPerson, quickFullscreen); document.querySelector('.world-shell').append(quickView);
+quickFirstPerson.addEventListener('click', () => document.querySelector('#first-person').click());
+quickFullscreen.addEventListener('click', () => fullscreenButton.click());
+document.addEventListener('fullscreenchange', () => { quickFullscreen.textContent = document.fullscreenElement === sceneSection ? '× Sair da tela cheia · F' : '⛶ Tela cheia · F'; });
 const cockpit = document.querySelector('#cockpit');
 let radioFocused = false;
 const consoleFocus = document.querySelector('#console-focus');
@@ -154,6 +167,7 @@ document.addEventListener('keydown', event => {
   if (key === 'escape' && radioFocused) { focusRadio(false); toggleHudMenu(null); focusWorld(); return; }
   if (event.target.closest('input,select,textarea,[contenteditable]')) return;
   if (key === 'v') document.querySelector('#first-person').click();
+  if (key === 'f') fullscreenButton.click();
   if (firstPerson && key === 'r') consoleFocus.click();
   if (firstPerson && key === 'c') { focusRadio(false); world.recenter(); }
 });
@@ -185,6 +199,7 @@ function openMember(index) {
   discovered.add(index); actors[index].classList.add('discovered'); persistJourney();
   document.querySelector('#counter').textContent = `${String(discovered.size).padStart(2, '0')} / 04 PERSONAGENS`;
   announce(`${member.name} encontrado. ${discovered.size} de 4 personagens.`);
+  dialog.style.setProperty('--place', MEMBER_ACCENTS[index]);
   dialog.showModal(); dialog.querySelector('.close').focus();
 }
 dialog.querySelector('.close').addEventListener('click', () => dialog.close());
@@ -202,7 +217,9 @@ function openDiscovery(index, collect = true) {
   if (modalOpen()) return;
   stop(); previousFocus = document.activeElement; const point = DISCOVERIES[index];
   const fresh = collect && journal.discover(point.id);
-  document.querySelector('#discovery-kind').textContent = `${point.kind} / ${point.label}`;
+  // A ficha leva a cor do bairro onde a história está e diz em que ponto do percurso ela fica.
+  const place = CITY_ERAS[eraAt(point)]; discoveryDialog.style.setProperty('--place', place.color);
+  document.querySelector('#discovery-kind').textContent = `HISTÓRIA ${index + 1} DE ${DISCOVERIES.length} · ${point.kind} / ${point.label} · ATO ${place.act}`;
   document.querySelector('#discovery-title').textContent = point.title;
   document.querySelector('#discovery-text').textContent = point.text;
   document.querySelector('#discovery-detail').textContent = point.detail;
@@ -279,13 +296,15 @@ document.querySelector('#reset-journal').addEventListener('click', event => {
   journal.reset(); resetArmed = false; event.currentTarget.textContent = 'Reiniciar diário'; updateJournal(); announce('Diário reiniciado.');
 });
 const map = document.querySelector('#world-map');
-map.innerHTML = `<rect x="-140" y="-200" width="280" height="250" rx="22" fill="#263831"/>${CITY_LOTS.map(l => `<rect x="${-l.w/2}" y="${-l.d/2}" width="${l.w}" height="${l.d}" fill="${CITY_ERAS[l.era].color}" fill-opacity=".45" transform="translate(${l.x.toFixed(1)} ${l.z.toFixed(1)}) rotate(${(-l.rotation*180/Math.PI).toFixed(1)})"/>`).join('')}${ERA_GATES.map(g => `<text x="${g.x.toFixed(1)}" y="${(g.z+3).toFixed(1)}" text-anchor="middle" fill="${CITY_ERAS[g.era].color}" font-size="6" font-weight="bold">${CITY_ERAS[g.era].act}</text>`).join('')}${ROADS.map(r => `<polyline points="${r.samples.map(p => `${p.x},${p.z}`).join(' ')}" fill="none" stroke="#e2d8c055" stroke-width="${r.width*.46}" stroke-linecap="round"/>`).join('')}${REGIONS.map((r, i) => `<text x="${r.x}" y="${r.z + (i === 0 ? 27 : -24)}" text-anchor="middle" fill="${r.color}" font-size="7">${['KONG', 'MURAIS', 'MOINHO'][i]}</text>`).join('')}${DISCOVERIES.map(d => `<g data-map-poi="${d.id}"><circle cx="${d.x}" cy="${d.z}" r="4" fill="#f5a9c6"/></g>`).join('')}<path id="map-car" d="M0 -7 5 5 0 3 -5 5Z" fill="#d2e2a8" stroke="#111415" stroke-width="1.2"/>`;
+map.innerHTML = `<rect x="-140" y="-200" width="280" height="250" rx="22" fill="#263831"/>${CITY_LOTS.map(l => `<rect x="${-l.w/2}" y="${-l.d/2}" width="${l.w}" height="${l.d}" fill="${CITY_ERAS[l.era].color}" fill-opacity=".45" transform="translate(${l.x.toFixed(1)} ${l.z.toFixed(1)}) rotate(${(-l.rotation*180/Math.PI).toFixed(1)})"/>`).join('')}${ERA_GATES.map(g => `<text x="${g.x.toFixed(1)}" y="${(g.z+3).toFixed(1)}" text-anchor="middle" fill="${CITY_ERAS[g.era].color}" font-size="6" font-weight="bold">${CITY_ERAS[g.era].act}</text>`).join('')}${ROADS.map(r => `<polyline points="${r.samples.map(p => `${p.x},${p.z}`).join(' ')}" fill="none" stroke="#e2d8c055" stroke-width="${r.width*.46}" stroke-linecap="round"/>`).join('')}${REGIONS.map((r, i) => `<text x="${r.x}" y="${r.z + (i === 0 ? 27 : -24)}" text-anchor="middle" fill="${r.color}" font-size="7">${['KONG', 'MURAIS', 'MOINHO'][i]}</text>`).join('')}${DISCOVERIES.map(d => `<g data-map-poi="${d.id}"><circle cx="${d.x}" cy="${d.z}" r="4" fill="#f5a9c6"/></g>`).join('')}${MEMBER_LOCATIONS.map((m, i) => `<g data-map-member="${i}"><title>${['2-D','Murdoc','Noodle','Russel'][i]}</title><rect x="${m.x-3}" y="${m.z-3}" width="6" height="6" rx="1.2" transform="rotate(45 ${m.x} ${m.z})" fill="${MEMBER_ACCENTS[i]}" stroke="#111415" stroke-width="1"/></g>`).join('')}<path id="map-car" d="M0 -7 5 5 0 3 -5 5Z" fill="#d2e2a8" stroke="#111415" stroke-width="1.2"/>`;
 import('./scene.js').then(({createWorld}) => {
   world = createWorld(document.querySelector('#world'), index => {
     if (showcase || distance(vehicle, MEMBER_LOCATIONS[index]) < 13 && Math.abs(vehicle.speed) < 2) openMember(index);
     else announce('Aproxime-se e reduza a velocidade para conhecer este integrante.');
   }, {
     onViewReset: resetViewControls,
+    onFullscreen: () => fullscreenButton.click(),
+    onExplore: () => interact(),
     radio: localRadio, onSteer: value => input.setWheelSteer(value),
     onRadio(action) {
       if (action === 'playlist') { toggleHudMenu(radioMenu); localRadio.playlist.focus(); }

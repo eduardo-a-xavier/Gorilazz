@@ -1,29 +1,15 @@
 import * as THREE from './vendor/three.module.min.js';
-import { REGIONS, OBSTACLES, DISCOVERIES, MEMBER_LOCATIONS, roadGap, distance } from './world-data.js';
+import { GRAVEYARD } from './world-data.js';
 import { letteringTexture } from './materials.js';
 
 // Referências autorais ao universo da banda, feitas só com geometria simples:
 //   · a ilha rosa de Plastic Beach no mar, vista do bairro do Ato 2;
 //   · o cemitério de Clint Eastwood perto de Kong, com um fantasma azul que flutua;
 //   · os helicópteros de El Mañana rondando o moinho flutuante.
-// São interpretações geométricas, não reproduções da arte original. Nada aqui tem colisão.
+// São interpretações geométricas, não reproduções da arte original. O cemitério é sólido
+// (colisor em world-data.js); a ilha fica no mar e os helicópteros no ar, fora do alcance do carro.
 
 const PLASTIC = ['#ff5f8f', '#38c2b5', '#ffcc4d', '#6aa2ff', '#f4efe2', '#9dff8a'];
-
-/** Ponto livre mais próximo de `near`: longe de ruas, prédios, árvores, histórias e integrantes. */
-export function freeSpot(near, clearance) {
-  let best = null;
-  for (let dz = -60; dz <= 60; dz += 4) for (let dx = -60; dx <= 60; dx += 4) {
-    const point = { x: near.x + dx, z: near.z + dz };
-    if (roadGap(point) < clearance + 3.5) continue;
-    if (OBSTACLES.some(o => distance(o, point) < o.radius + clearance + 1)) continue;
-    if (DISCOVERIES.some(d => distance(d, point) < clearance + 12) || MEMBER_LOCATIONS.some(m => distance(m, point) < clearance + 8)) continue;
-    if (REGIONS.some(r => distance(r, point) < 17 + clearance)) continue;
-    const score = Math.hypot(dx, dz);
-    if (!best || score < best.score) best = { ...point, score };
-  }
-  return best;
-}
 
 export function installLandmarks(scene, material, bake) {
   const solid = (parent, geometry, color, position, { scale = [1, 1, 1], rotation = [0, 0, 0], glow = false, shadow = true } = {}) => {
@@ -65,7 +51,7 @@ export function installLandmarks(scene, material, bake) {
   animated.push((t, reduced) => { if (!reduced) { beacon.scale.setScalar(1.1 + Math.sin(t * 2.2) * .35); beach.position.y = -5.6 + Math.sin(t * .4) * .12; } });
 
   // ---------------------------------------------------------------- cemitério de Clint Eastwood
-  const plot = freeSpot({ x: -38, z: -46 }, 8);
+  const plot = GRAVEYARD;
   if (plot) {
     const yard = new THREE.Group(); yard.position.set(plot.x, 0, plot.z); yard.name = 'graveyard'; scene.add(yard);
     solid(yard, tube, '#3a4138', [0, -.2, 0], { scale: [8, .12, 8], shadow: false });

@@ -1,7 +1,7 @@
 import { createCabin } from './cabin.js';
 import * as THREE from './vendor/three.module.min.js';
 import { GLTFLoader } from './vendor/GLTFLoader.js';
-import { CITY_ERAS, CITY_LOTS, ERA_GATES, eraAt, ROADS, NODES, REGIONS, DISCOVERIES, MEMBER_LOCATIONS } from './world-data.js';
+import { CITY_ERAS, CITY_LOTS, ERA_GATES, eraAt, ROADS, NODES, REGIONS, DISCOVERIES, MEMBER_LOCATIONS, behind } from './world-data.js';
 import { mergeGeometries } from './vendor/BufferGeometryUtils.js';
 import { createSurfaceLibrary, letteringTexture } from './materials.js';
 import { installEnvironment } from './environment.js';
@@ -10,6 +10,7 @@ import { createAtmosphere } from './atmosphere.js';
 import { createPostFX } from './postfx.js';
 import { buildRoads } from './roads.js';
 import { installLandmarks } from './landmarks.js';
+import { rigBand } from './band-pose.js';
 
 const SHADOW_SPAN = 90;
 // Funde as malhas estáticas de um grupo por material: uma chamada de desenho por material.
@@ -40,7 +41,7 @@ function bake(group, keep = []) {
 }
 
 // Local credited Geep and Phase 7 models; original scenery and geometric fallbacks.
-export function createWorld(container, onMember, {onLost = () => {}, onRestored = () => {}, onViewReset = () => {}, radio, onRadio, onSteer} = {}) {
+export function createWorld(container, onMember, {onLost = () => {}, onRestored = () => {}, onViewReset = () => {}, onFullscreen = () => {}, onExplore = () => {}, radio, onRadio, onSteer} = {}) {
   // Perfil gráfico: automático por padrão; ?qualidade=leve ou ?qualidade=alta força um perfil.
   const requested = new URLSearchParams(location.search).get('qualidade');
   const compact = container.clientWidth > 0 && container.clientWidth < 700;
@@ -138,10 +139,118 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
     context.strokeStyle = color; context.lineWidth = 16; context.strokeRect(8, 8, 752, 240);
     context.fillStyle = '#e2d8c0'; context.font = 'bold 55px monospace'; context.textAlign = 'center';
     text.split('|').forEach((line, index, lines) => context.fillText(line, 384, lines.length === 1 ? 150 : 105 + index * 72, 700));
-    const texture = new THREE.CanvasTexture(canvas); texture.colorSpace = THREE.SRGBColorSpace;
-    const board = new THREE.Mesh(new THREE.BoxGeometry(8, 2.65, .18), new THREE.MeshStandardMaterial({ map: texture, roughness: .7 }));
-    board.position.set(0, 4.1, 0); signGroup.add(board);
+    const texture = new THREE.CanvasTexture(canvas); texture.colorSpace = THREE.SRGBColorSpace; texture.anisotropy = 8;
+    // Chapa com acabamento próprio nas bordas; a arte fica só na frente e no verso, legível dos dois lados.
+    box(signGroup, [8.16, 2.81, .16], [0, 4.1, 0], '#23282b');
+    const art = new THREE.MeshStandardMaterial({ map: texture, roughness: .7 });
+    for (const turn of [0, Math.PI]) {
+      const face = new THREE.Mesh(new THREE.PlaneGeometry(8, 2.65), art);
+      face.position.set(0, 4.1, turn ? -.085 : .085); face.rotation.y = turn; face.receiveShadow = true; signGroup.add(face);
+    }
     for (const dx of [-2.6, 2.6]) box(signGroup, [.18, 3.5, .18], [dx, 1.5, 0], '#777487');
+    return { canvas, context, texture };
+  }
+  // Palco de rua de cada integrante: muro de concreto com o nome em spray e o retrato colado como
+  // lambe-lambe, tablado de madeira, caixas de som e os objetos de quem toca ali. Fica voltado
+  // para a rua; o integrante se apresenta na frente do próprio muro.
+  const MEMBER_SET = [
+    { name: '2-D', role: 'VOCAL · TECLADOS', accent: '#7fa6ff', key: 'twod', tag: 'TOMORROW' },
+    { name: 'MURDOC', role: 'BAIXO', accent: '#9dd66b', key: 'murdoc', tag: 'KONG' },
+    { name: 'NOODLE', role: 'GUITARRA', accent: '#f5a9c6', key: 'noodle', tag: 'DARE' },
+    { name: 'RUSSEL', role: 'BATERIA', accent: '#ffcc4d', key: 'russel', tag: '19-2000' },
+  ];
+  function concrete(context, width, height, seed) {
+    const noise = n => { const v = Math.sin(n * 127.1 + seed * 311.7) * 43758.5453; return v - Math.floor(v); };
+    context.fillStyle = '#8d908b'; context.fillRect(0, 0, width, height);
+    for (let i = 0; i < 2600; i++) { context.fillStyle = noise(i) < .5 ? 'rgba(0,0,0,.07)' : 'rgba(255,255,255,.06)'; context.fillRect(noise(i + .3) * width, noise(i + .7) * height, 2 + noise(i + .1) * 7, 2 + noise(i + .9) * 5); }
+    for (let x = 0; x < width; x += width / 4) { context.fillStyle = 'rgba(0,0,0,.18)'; context.fillRect(x, 0, 3, height); }
+    const grime = context.createLinearGradient(0, height * .55, 0, height); grime.addColorStop(0, 'rgba(30,34,30,0)'); grime.addColorStop(1, 'rgba(30,34,30,.55)');
+    context.fillStyle = grime; context.fillRect(0, 0, width, height);
+    return noise;
+  }
+  const wallBack = (() => {
+    const canvas = document.createElement('canvas'); canvas.width = 1024; canvas.height = 512; const context = canvas.getContext('2d');
+    concrete(context, 1024, 512, 9);
+    context.save(); context.translate(512, 270); context.rotate(-.05); context.textAlign = 'center';
+    context.font = 'bold 170px Impact, "Arial Black", sans-serif'; context.lineWidth = 16; context.strokeStyle = '#111415'; context.strokeText('KONG', 0, 0); context.fillStyle = '#e2d8c0'; context.fillText('KONG', 0, 0);
+    context.font = 'bold 44px monospace'; context.fillStyle = '#111415'; context.fillText('NO REALITY · JUST NOISE', 0, 90); context.restore();
+    const texture = new THREE.CanvasTexture(canvas); texture.colorSpace = THREE.SRGBColorSpace; texture.anisotropy = 8;
+    return new THREE.MeshStandardMaterial({ map: texture, roughness: .95 });
+  })();
+  function memberStage(index, at) {
+    const set = MEMBER_SET[index], stage = new THREE.Group(); stage.position.set(at.x, 0, at.z); stage.rotation.y = at.facing; city.add(stage);
+    const canvas = document.createElement('canvas'); canvas.width = 1024; canvas.height = 512; const context = canvas.getContext('2d');
+    const texture = new THREE.CanvasTexture(canvas); texture.colorSpace = THREE.SRGBColorSpace; texture.anisotropy = 8;
+    function paint(image) {
+      const noise = concrete(context, 1024, 512, index + 1);
+      // Rabiscos e respingos de fundo.
+      context.lineCap = 'round';
+      for (let i = 0; i < 9; i++) { context.strokeStyle = i % 2 ? 'rgba(17,20,21,.55)' : 'rgba(241,236,220,.5)'; context.lineWidth = 5 + noise(i) * 6; context.beginPath(); const x = 380 + noise(i + 2) * 600, y = 330 + noise(i + 5) * 150; context.moveTo(x, y); context.bezierCurveTo(x + 40, y - 50 * noise(i + 1), x + 70, y + 40, x + 110 * noise(i + 4), y - 10); context.stroke(); }
+      for (let i = 0; i < 70; i++) { context.fillStyle = i % 3 ? set.accent : '#111415'; context.globalAlpha = .5; context.beginPath(); context.arc(noise(i + 20) * 1024, noise(i + 40) * 512, 1 + noise(i + 60) * 5, 0, Math.PI * 2); context.fill(); }
+      context.globalAlpha = 1;
+      // Lambe-lambe: papel colado torto com o retrato em close sobre retícula.
+      context.save(); context.translate(190, 262); context.rotate(-.06);
+      context.fillStyle = 'rgba(0,0,0,.35)'; context.fillRect(-148, -212, 310, 440);
+      context.fillStyle = '#ece6d4'; context.fillRect(-155, -220, 310, 440);
+      context.fillStyle = set.accent; context.fillRect(-140, -205, 280, 330);
+      context.fillStyle = 'rgba(17,20,21,.28)'; for (let y = -200; y < 120; y += 14) for (let x = -135 + (y / 14 % 2) * 7; x < 135; x += 14) { context.beginPath(); context.arc(x, y, 2.6 + (y + 200) / 90, 0, Math.PI * 2); context.fill(); }
+      if (image) context.drawImage(image, image.width * .14, image.height * .02, image.width * .72, image.height * .52, -140, -205, 280, 330);
+      context.fillStyle = '#111415'; context.font = 'bold 54px Impact, "Arial Black", sans-serif'; context.textAlign = 'center'; context.fillText(set.role.split(' · ')[0], 0, 185, 270);
+      context.font = 'bold 20px monospace'; context.fillText('AO VIVO · KONG STUDIOS', 0, 210, 270);
+      context.fillStyle = 'rgba(214,202,150,.85)'; for (const [x, y, turn] of [[-150, -215, -.6], [150, -215, .6], [-150, 215, .6], [150, 215, -.6]]) { context.save(); context.translate(x, y); context.rotate(turn); context.fillRect(-34, -11, 68, 22); context.restore(); }
+      context.restore();
+      // Nome em spray, com contorno grosso e tinta escorrida.
+      context.save(); context.translate(690, 235); context.rotate(.035); context.textAlign = 'center';
+      context.font = `bold ${set.name.length > 4 ? 190 : 250}px Impact, "Arial Black", sans-serif`; context.lineJoin = 'round';
+      context.shadowColor = set.accent; context.shadowBlur = 38; context.fillStyle = set.accent; context.fillText(set.name, 0, 0, 600); context.shadowBlur = 0;
+      context.lineWidth = 16; context.strokeStyle = '#111415'; context.strokeText(set.name, 0, 0, 600); context.fillStyle = set.accent; context.fillText(set.name, 0, 0, 600);
+      context.fillStyle = '#f1ecdc'; context.fillRect(-250, -30 - (set.name.length > 4 ? 140 : 185), 90, 9);
+      for (let i = 0; i < 8; i++) { const x = -270 + noise(i + 80) * 540, length = 30 + noise(i + 90) * 90; context.fillStyle = set.accent; context.fillRect(x, 0, 7, length); context.beginPath(); context.arc(x + 3.5, length, 6, 0, Math.PI * 2); context.fill(); }
+      context.restore();
+      // Função em estêncil e uma assinatura de canto.
+      context.fillStyle = '#111415'; context.font = 'bold 52px monospace'; context.textAlign = 'left'; context.fillText(set.role, 400, 400, 590);
+      context.fillRect(400, 414, 200, 7);
+      context.save(); context.translate(900, 470); context.rotate(-.1); context.font = 'bold 40px Impact, sans-serif'; context.fillStyle = '#f1ecdc'; context.fillText(set.tag, -90, 0); context.restore();
+      texture.needsUpdate = true;
+    }
+    paint(null);
+    const image = new Image(); image.onload = () => paint(image); image.src = `/assets/portraits/phase7-${set.key}.png`;
+    // Muro, arte na frente, pichação genérica no verso e um tubo de luz na cor do integrante.
+    box(stage, [8.8, 4.5, .4], [0, 1.95, -3.6], '#7c7f7a');
+    const front = new THREE.Mesh(new THREE.PlaneGeometry(8.6, 4.3), new THREE.MeshStandardMaterial({ map: texture, roughness: .95 })); front.position.set(0, 2, -3.39); front.receiveShadow = true; stage.add(front);
+    const back = new THREE.Mesh(new THREE.PlaneGeometry(8.6, 4.3), wallBack); back.position.set(0, 2, -3.81); back.rotation.y = Math.PI; stage.add(back);
+    box(stage, [8.8, .12, .12], [0, 4.32, -3.3], set.accent, true).castShadow = false;
+    // Tablado de paletes: tampo de madeira e saia escura com frestas.
+    const deck = box(stage, [8, .26, 5.6], [0, -.13, -.4], '#8b6a45'); deck.material = surfaces.get('wood', 4, 3); deck.castShadow = false;
+    for (let i = 0; i < 7; i++) box(stage, [.9, .24, .08], [-3.3 + i * 1.1, -.14, 2.42], '#2a2420').castShadow = false;
+    // Caixas de som empilhadas nos dois lados.
+    for (const side of [-1, 1]) for (const [y, size] of [[.75, 1.5], [2.05, 1.05]]) {
+      box(stage, [size, size, 1], [side * 3.45, y, -2.6], '#17191b');
+      const cone = cylinder(stage, size * .33, size * .33, .08, [side * 3.45, y, -2.07], '#2e3236', 20); cone.rotation.x = Math.PI / 2; cone.castShadow = false;
+      const cap = cylinder(stage, size * .12, size * .12, .1, [side * 3.45, y, -2.05], set.accent, 12); cap.rotation.x = Math.PI / 2; cap.castShadow = false;
+    }
+    // Engradados e um cabo no chão.
+    box(stage, [.8, .6, .8], [-2.5, .3, 1.5], set.accent); box(stage, [.8, .6, .8], [-2.7, .9, 1.45], '#2a3036').rotation.y = .3;
+    box(stage, [2.6, .05, .08], [1.2, .03, 1.2], '#111415').rotation.y = .4;
+    if (index === 0) {
+      // 2-D: estojos de teclado e um retorno de palco.
+      box(stage, [2.4, .5, .8], [2, .25, 1.2], '#17191b').rotation.y = .2; box(stage, [2.2, .08, .08], [2, .52, 1.2], set.accent).rotation.y = .2;
+      box(stage, [1.1, .7, .8], [-1.4, .35, 1.6], '#2a3036').rotation.x = -.35;
+    } else if (index === 1) {
+      // Murdoc: cabeçote de baixo, tambor de óleo e pneus.
+      box(stage, [1.3, .45, .7], [2.2, .23, .2], '#2a3036'); box(stage, [1.1, .1, .05], [2.2, .3, .56], set.accent, true).castShadow = false;
+      cylinder(stage, .55, .55, 1.3, [-2.2, .65, .3], '#6a4632', 16); cylinder(stage, .57, .57, .08, [-2.2, 1.0, .3], '#3a2a20', 16);
+      for (let i = 0; i < 3; i++) { const tyre = new THREE.Mesh(new THREE.TorusGeometry(.5, .2, 8, 18), material('#151618')); tyre.rotation.x = Math.PI / 2; tyre.position.set(2.6, .2 + i * .38, 1.7); tyre.castShadow = true; stage.add(tyre); }
+    } else if (index === 2) {
+      // Noodle: amplificador pequeno, pedaleira e lanternas de papel.
+      box(stage, [1.1, .95, .6], [2.1, .48, .3], '#2a3036'); box(stage, [.95, .6, .04], [2.1, .42, .62], '#c9b98f');
+      box(stage, [1.5, .08, .5], [.4, .04, 1.6], '#17191b'); for (let i = 0; i < 4; i++) box(stage, [.24, .1, .32], [-.1 + i * .34, .11, 1.6], ['#f5a9c6', '#ffcc4d', '#7fa6ff', '#9dd66b'][i]);
+      for (let i = 0; i < 4; i++) { cylinder(stage, .012, .012, .7, [-2.4 + i * 1.6, 3.95, -3.05], '#111415', 5); sphere(stage, .3, [-2.4 + i * 1.6, 3.45, -3.05], i % 2 ? '#f5a9c6' : '#fff4c7', [1, 1.15, 1]).material = material(i % 2 ? '#f5a9c6' : '#fff4c7', true); }
+    } else {
+      // Russel: estojos de bateria empilhados e um toca-fitas.
+      for (const [x, y, r] of [[-1.9, .45, .9], [-1.9, 1.25, .7]]) cylinder(stage, r, r, .7, [x, y, 1.1], '#17191b', 18);
+      box(stage, [1.3, .6, .4], [2.3, .3, 1.3], '#2a3036'); for (const side of [-1, 1]) { const grille = cylinder(stage, .2, .2, .05, [2.3 + side * .38, .3, 1.52], '#9a9d8b', 14); grille.rotation.x = Math.PI / 2; }
+    }
   }
   // Modelos densos só entram no mapa de sombras perto do carro; longe, a sombra não seria vista.
   // Ao longe, viram um cartaz: uma foto do próprio modelo, tirada uma única vez na carga,
@@ -176,9 +285,9 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
   installEnvironment(scene, renderer, surfaces, heavyCaster);
   installCity(scene, surfaces);
   const landmarks = installLandmarks(scene, material, bake);
-  sign('MURAIS ←|MOINHO →', {x:7,z:-43}, '#7fa6ff');
+  sign('MURAIS ←|MOINHO →', {x:11,z:-40.5,heading:.25}, '#7fa6ff');
   const discoveryObjects = DISCOVERIES.map((point, i) => {
-    const group = new THREE.Group(); group.position.set(point.x,0,point.z); scene.add(group);
+    const group = new THREE.Group(); group.position.set(point.x,0,point.z); group.rotation.y = point.facing; scene.add(group);
     const paving = cylinder(group,4.5,4.7,.14,[0,-.11,0],'#687463',40);paving.material=surfaces.get('earth',3);
     const glow = new THREE.Mesh(new THREE.TorusGeometry(3.9,.035,6,40),material('#f5a9c6',true));glow.rotation.x=Math.PI/2;glow.position.y=.01;group.add(glow);
     if(i===0) {
@@ -257,7 +366,8 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
     sun: new THREE.Color(light.sun), sky: new THREE.Color(light.sky), haze: new THREE.Color(light.haze),
   }));
   const groundColors = ['#34433f','#423b4f','#365b57','#5b4940','#443d57','#44586a','#3b5b50','#50414c'].map(color => new THREE.Color(color));
-  const cabin = createCabin(); scene.add(cabin.root);
+  const cabin = createCabin();
+  let steeringPivot = null, steeringSign = 1; const steeringRest = new THREE.Quaternion(), steeringTurn = new THREE.Quaternion(), cabinFrame = new THREE.Quaternion(), cabinEuler = new THREE.Euler();
   const car = new THREE.Group(); scene.add(car);
   box(car, [3.5, .95, 6.8], [0, 1.15, 0], '#e2d8c0');
   box(car, [3.2, .6, 2], [0, 1.65, -2.1], '#e2d8c0');
@@ -280,6 +390,25 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
     const wheel = cylinder(car, .75, .75, .5, [x, .75, z], '#11131c'); wheel.rotation.z = Math.PI / 2; wheels.push(wheel);
     const hub = cylinder(car, .36, .36, .52, [x * 1.04, .75, z], '#f2559c'); hub.rotation.z = Math.PI / 2;
   }
+  // Motorista: boneco autoral nas cores do site, sentado no banco esquerdo. Fora do carro vê-se
+  // o corpo inteiro; em primeira pessoa ele some e ficam só os braços da cabine (cabin.js).
+  const driver = new THREE.Group(); driver.position.set(-.54, .12, .42); driver.scale.setScalar(1.22); driver.name = 'driver';
+  box(driver, [.66, .78, .38], [0, 1.52, .06], '#e2d8c0');
+  box(driver, [.7, .12, .4], [0, 1.2, .06], '#f2559c');
+  box(driver, [.2, .16, .2], [0, 1.97, .04], '#d9a37c');
+  const driverHead = new THREE.Group(); driverHead.position.set(0, 2.24, .02); driver.add(driverHead);
+  sphere(driverHead, .27, [0, 0, 0], '#d9a37c', [1, 1.08, 1]);
+  sphere(driverHead, .285, [0, .1, .03], '#f2559c', [1.02, .78, 1.04]);
+  box(driverHead, [.6, .07, .12], [0, .02, -.2], '#f2559c');
+  for (const side of [-1, 1]) sphere(driverHead, .05, [side * .1, -.02, -.25], '#141414', [1, 1.3, .5]);
+  box(driverHead, [.14, .03, .03], [0, -.14, -.25], '#141414');
+  for (const side of [-1, 1]) { box(driver, [.24, .22, .7], [side * .17, 1.12, -.3], '#2a3036'); box(driver, [.22, .6, .22], [side * .17, .8, -.62], '#2a3036'); }
+  const driverArms = new THREE.Group(); driverArms.position.set(0, 1.62, -.5); driver.add(driverArms);
+  for (const side of [-1, 1]) {
+    const arm = box(driverArms, [.17, .17, .62], [side * .27, .1, .3], '#e2d8c0'); arm.rotation.set(.28, side * -.2, 0);
+    sphere(driverArms, .085, [side * .19, 0, 0], '#d9a37c');
+  }
+  car.add(driver, cabin.root);
   let modelWheels = [];
   const vehicleStatus = document.querySelector('#vehicle-status');
   function installVehicle(gltf, kind) {
@@ -289,11 +418,12 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
     const vehicle = new THREE.Group();
     model.scale.setScalar(scale); model.position.set(-center.x * scale, -bounds.min.y * scale, -center.z * scale);
     vehicle.add(model); vehicle.rotation.y = Math.PI;
-    const wheelMeshes = []; const details = [];
+    const wheelMeshes = []; const details = []; let steeringMesh = null; const seats = [];
     model.traverse(object => {
-      if (kind === "geep") cabin.reuse(object);
       if (object.isMesh) { object.castShadow = true; object.receiveShadow = true; }
       if (!object.isMesh) return;
+      if (kind === 'geep' && object.name === 'Steering_Wheel') steeringMesh = object;
+      if (kind === 'geep' && /^Seat_Driver/.test(object.name)) seats.push(object);
       if (kind === 'geep' ? /^Wheel(?:_\d+)?$/i.test(object.name) : /wheel-(front|back)-(left|right)/.test(object.name)) wheelMeshes.push(object);
       if (kind === 'geep' && /^Wheel_selection/i.test(object.name)) details.push(object);
     });
@@ -316,7 +446,19 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
     }
     for (const {mesh, pivot} of wheelGroups) { pivot.userData.rolling.attach(mesh); modelWheels.push(pivot); }
     // Com as rodas já nos eixos, a carroceria (dezenas de peças) é fundida por material.
-    bake(vehicle);
+    // O volante do modelo ganha um eixo próprio e informa à cabine onde ficam aro, olhos e banco.
+    steeringPivot = null;
+    if (steeringMesh) {
+      const bounds = new THREE.Box3().setFromObject(steeringMesh), centre = car.worldToLocal(bounds.getCenter(new THREE.Vector3())), extent = bounds.getSize(new THREE.Vector3());
+      const toCar = car.getWorldQuaternion(new THREE.Quaternion()).invert(), pose = steeringMesh.getWorldQuaternion(new THREE.Quaternion()).premultiply(toCar);
+      const normal = new THREE.Vector3(0, 1, 0).applyQuaternion(pose); steeringSign = normal.z < 0 ? -1 : 1; normal.multiplyScalar(steeringSign);
+      steeringPivot = new THREE.Group(); steeringPivot.position.copy(centre); steeringPivot.quaternion.copy(pose); steeringRest.copy(pose);
+      car.add(steeringPivot); steeringPivot.updateWorldMatrix(true, false); steeringPivot.attach(steeringMesh);
+      const seat = seats.map(mesh => new THREE.Box3().setFromObject(mesh)).find(box => car.worldToLocal(box.getCenter(new THREE.Vector3())).x * centre.x > 0);
+      cabin.attach({ centre, normal, radius: Math.max(extent.x, extent.y, extent.z) / 2 - .02, seatTop: seat ? car.worldToLocal(new THREE.Vector3(seat.min.x, seat.max.y, seat.min.z)).y : undefined });
+      driver.position.set(cabin.eye.x, cabin.eye.y - 2.24 * driver.scale.y, cabin.eye.z - .02);
+    }
+    bake(vehicle); car.add(driver, cabin.root);
     vehicleStatus.textContent = kind === 'geep' ? 'GEEP / SHABAEV / CC BY 4.0' : 'SUV KENNEY / CC0 · VEÍCULO ALTERNATIVO';
     vehicleStatus.dataset.loaded = 'true'; vehicleStatus.dataset.model = kind; vehicleStatus.dataset.wheels = String(modelWheels.length);
   }
@@ -366,11 +508,48 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
   const people = MEMBER_LOCATIONS.map((at, index) => {
     const actor = person(index); actor.group.position.set(at.x, 0, at.z); actor.group.rotation.y = at.heading + Math.PI;
     actor.group.userData.member = index; actor.group.traverse(object => { object.userData.member = index; }); scene.add(actor.group);
-    const platform = cylinder(city, 3.6, 4, .4, [at.x, -.08, at.z], '#3a68d8'); platform.castShadow = false; platform.receiveShadow = true;
-    sign(['2-D / VOCALS', 'MURDOC / BASS', 'NOODLE / GUITAR', 'RUSSEL / DRUMS'][index], {x:at.x,z:at.z-6}, '#7fa6ff');
+    memberStage(index, at);
     return actor;
   });
   bake(city);
+  // Cor de bairro no chão: cada época tinge o terreno do seu território com a cor que já usa
+  // no portal e no minimapa, com transição suave nas divisas.
+  {
+    const size = 96, tint = document.createElement('canvas'); tint.width = tint.height = size;
+    const context = tint.getContext('2d');
+    for (let j = 0; j < size; j++) for (let i = 0; i < size; i++) {
+      context.fillStyle = CITY_ERAS[eraAt({ x: -140 + i / (size - 1) * 280, z: -200 + j / (size - 1) * 250 })].color; context.fillRect(i, j, 1, 1);
+    }
+    const soft = document.createElement('canvas'); soft.width = soft.height = size * 2;
+    const blur = soft.getContext('2d'); blur.filter = 'blur(7px)'; blur.drawImage(tint, 0, 0, size * 2, size * 2); blur.filter = 'none';
+    blur.globalAlpha = .5; blur.drawImage(tint, 0, 0, size * 2, size * 2);
+    const map = new THREE.CanvasTexture(soft); map.colorSpace = THREE.SRGBColorSpace;
+    const wash = new THREE.Mesh(new THREE.PlaneGeometry(280, 250), new THREE.MeshStandardMaterial({ map, transparent: true, opacity: .38, roughness: 1, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -1, polygonOffsetUnits: -1 }));
+    wash.rotation.x = -Math.PI / 2; wash.position.set(0, -.295, -75); wash.receiveShadow = true; wash.renderOrder = 1; scene.add(wash);
+  }
+  // Pontos de valor: um facho de luz e uma etiqueta acima de cada história e de cada integrante,
+  // visíveis de longe. Rosa = história a encontrar, verde = já no diário, cor própria = integrante.
+  const MEMBER_ACCENTS = ['#7fa6ff', '#9dd66b', '#f5a9c6', '#ffcc4d'];
+  function valueMarker(at, text, color) {
+    const group = new THREE.Group(); group.position.set(at.x, 0, at.z); scene.add(group);
+    const beamMaterial = new THREE.MeshBasicMaterial({ color, transparent: true, opacity: .2, depthWrite: false, side: THREE.DoubleSide });
+    const beam = new THREE.Mesh(new THREE.CylinderGeometry(.25, .8, 30, 12, 1, true), beamMaterial); beam.position.y = 21; group.add(beam);
+    const canvas = document.createElement('canvas'); canvas.width = 512; canvas.height = 128;
+    const texture = new THREE.CanvasTexture(canvas); texture.colorSpace = THREE.SRGBColorSpace;
+    const label = new THREE.Mesh(new THREE.PlaneGeometry(6, 1.5), new THREE.MeshBasicMaterial({ map: texture, transparent: true, depthWrite: false })); label.position.y = 9.2; group.add(label);
+    const context = canvas.getContext('2d');
+    function paint(line, accent) {
+      context.clearRect(0, 0, 512, 128); context.fillStyle = '#111415e6'; context.beginPath(); context.roundRect(4, 14, 504, 100, 18); context.fill();
+      context.strokeStyle = accent; context.lineWidth = 6; context.stroke();
+      context.fillStyle = accent; context.beginPath(); context.arc(52, 64, 16, 0, Math.PI * 2); context.fill();
+      context.fillStyle = '#f1ecdc'; context.font = 'bold 44px Arial, sans-serif'; context.textBaseline = 'middle'; context.fillText(line, 86, 66, 410);
+      texture.needsUpdate = true; beamMaterial.color.set(accent);
+    }
+    paint(text, color);
+    return { group, label, paint, state: null };
+  }
+  const storyMarkers = DISCOVERIES.map((point, i) => valueMarker(behind(point, 3), `HISTÓRIA ${i + 1} · ${point.kind}`, '#f5a9c6'));
+  const memberMarkers = MEMBER_LOCATIONS.map((at, i) => valueMarker(at, ['2-D', 'MURDOC', 'NOODLE', 'RUSSEL'][i], MEMBER_ACCENTS[i]));
   const bandStatus = document.querySelector('#band-status');
   async function loadBand() {
     try {
@@ -393,25 +572,14 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
         if (object.isMesh) { object.castShadow = true; object.receiveShadow = true; }
       });
       // Cada integrante chega em várias malhas com o mesmo material: fundidas, viram uma chamada.
-      bake(visual); visual.traverse(object => { object.userData.member = index; });
-      const actor = people[index];
+      bake(visual);
+      // Braços em pose de tocar e instrumento na escala do corpo (band-pose.js); as baquetas ficam soltas para acompanhar as mãos.
+      const rig = rigBand(visual, index, material); bake(rig.kit, rig.sticks);
+      visual.traverse(object => { object.userData.member = index; });
+      const actor = people[index]; actor.rig = rig;
       heavyCaster(visual, actor.group.position, -1);
       actor.group.traverse(object => { if (object.isMesh) object.geometry.dispose(); });
       actor.group.clear(); actor.group.add(visual); actor.arms = [];
-      if (index === 1 || index === 2) {
-        const instrument = new THREE.Group();
-        instrument.position.set(.25, 2.3, -1.0);
-        instrument.rotation.z = -.34;
-        const body = new THREE.Mesh(new THREE.CylinderGeometry(.42, .5, .22, 12), material(index === 1 ? '#442a46' : '#c78b4e'));
-        body.rotation.x = Math.PI / 2; body.castShadow = true; instrument.add(body);
-        const neck = box(instrument, [.16, 2.1, .16], [.38, 1.05, 0], '#a7794b');
-        neck.rotation.z = -.25;
-        actor.group.add(instrument); actor.instrument = instrument;
-      }
-      if (index === 3) {
-        const drum = cylinder(actor.group, .7, .7, .48, [0, 1.95, -1.05], '#345c75');
-        drum.rotation.x = Math.PI / 2;
-      }
     });
     bandStatus.textContent = 'PHASE 7 / QUATRO INTEGRANTES NO CIRCUITO';
     bandStatus.dataset.loaded = 'true'; bandStatus.dataset.count = '4';
@@ -434,6 +602,16 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
     raycaster.setFromCamera(pointer,camera);
     return raycaster.intersectObjects(objects,true)[0]?.object;
   }
+  const live = { vehicle: null, showcase: true, nearby: null }; let hoverAt = 0;
+  function actionAt(event) {
+    if (firstPerson || overview || !live.vehicle) return null;
+    const slow = Math.abs(live.vehicle.speed) < 2;
+    if (live.nearby?.type === 'discovery' && slow && hitAt(event, [discoveryObjects[live.nearby.index].group])) return { type: 'discovery' };
+    const member = hitAt(event, people.filter(actor => actor.group.position.distanceTo(camera.position) < 60).map(actor => actor.group))?.userData.member;
+    if (member === undefined) return null;
+    const spot = MEMBER_LOCATIONS[member];
+    return live.showcase || slow && Math.hypot(spot.x - live.vehicle.x, spot.z - live.vehicle.z) < 13 ? { type: 'member', index: member } : null;
+  }
   function highlight(object) {
     if (highlighted) highlighted.material.color.set(0xffffff);
     highlighted = object;
@@ -452,7 +630,11 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
       const hit = hitAt(event,cabin.controls); highlight(hit);
       renderer.domElement.style.cursor = hit ? 'pointer' : 'default'; return;
     }
-    if (!dragging) return;
+    if (!dragging) {
+      // Mão de arrastar por padrão; o cursor de ação só aparece onde um clique faria algo agora.
+      if (event.timeStamp - hoverAt > 100) { hoverAt = event.timeStamp; renderer.domElement.style.cursor = actionAt(event) ? 'pointer' : 'grab'; }
+      return;
+    }
     const dx = event.clientX - dragging.x; const dy = event.clientY - dragging.y;
     if (Math.abs(dx) + Math.abs(dy) > 3) moved = true;
     if (firstPerson) {
@@ -470,15 +652,17 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
   for (const event of ['pointerup', 'pointercancel', 'lostpointercapture']) renderer.domElement.addEventListener(event, release);
   renderer.domElement.addEventListener('click', event => {
     if (firstPerson) {
-      if (interacting) { const action = hitAt(event,cabin.controls)?.userData.action; if (action) onRadio(action); }
+      if (interacting) { const action = hitAt(event,cabin.controls)?.userData.action; if (action) { cabin.pressKey(action); onRadio(action); } }
       return;
     }
     if (moved) return;
-    const bounds = renderer.domElement.getBoundingClientRect(); pointer.set((event.clientX - bounds.left) / bounds.width * 2 - 1, -(event.clientY - bounds.top) / bounds.height * 2 + 1);
-    raycaster.setFromCamera(pointer, camera);
-    const hit = raycaster.intersectObjects(people.map(actor => actor.group), true)[0];
-    if (hit) onMember(hit.object.userData.member);
+    // Clicar na peça de uma descoberta próxima equivale ao botão Explorar (mesmas regras de distância e velocidade).
+    if (actionAt(event)?.type === 'discovery') { onExplore(); return; }
+    const hit = hitAt(event, people.filter(actor => actor.group.position.distanceTo(camera.position) < 60).map(actor => actor.group));
+    if (hit) onMember(hit.userData.member);
   });
+  // Duplo clique alterna a tela cheia, menos enquanto se aperta as teclas do rádio na cabine.
+  renderer.domElement.addEventListener('dblclick', event => { if (firstPerson && interacting) return; event.preventDefault(); onFullscreen(); });
   renderer.domElement.addEventListener('keydown', event => {
     if (event.key === 'Home') { dragAngle = 0; dragElevation = 0; zoom = 1; overview = false; landmarkView = false; onViewReset(); event.preventDefault(); }
   });
@@ -552,6 +736,7 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
     zoomBy(amount) { zoom = THREE.MathUtils.clamp(zoom + amount, .7, 1.6); },
     resetCamera() { firstPerson = false; dragAngle = 0; dragElevation = 0; zoom = 1; overview = false; landmarkView = false; },
     update(vehicle, time, orbit, reduced, showcase, known, nearby) {
+      live.vehicle = vehicle; live.showcase = showcase; live.nearby = nearby;
       const {x,z,heading} = vehicle; const t = time / 1000; const moving = Math.abs(vehicle.speed) > .1;
       const dt = previousTime === null ? .016 : Math.max(0, Math.min((time - previousTime) / 1000, .1)); previousTime = time;
       const blend = reduced ? 1 : 1 - Math.exp(-dt * 4);
@@ -576,6 +761,8 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
       modelWheels.forEach(wheel => { wheel.userData.rolling.rotation.x -= travelled / wheel.userData.radius; wheel.rotation.y = wheel.position.z < 0 ? vehicle.steering : 0; });
       if (!modelWheels.length) wheels.forEach(wheel => { wheel.rotation.x -= travelled / .75; });
       previousDistance = vehicle.distanceTravelled;
+      // O motorista gira os braços com o volante e olha para dentro da curva.
+      driverArms.rotation.z = vehicle.steering * 1.1; driverHead.rotation.y = THREE.MathUtils.lerp(driverHead.rotation.y, vehicle.steering * .9, blend);
       const mobile = container.clientWidth < 700;
       const radius = (mobile ? (showcase ? 46 : 29) : (showcase ? 40 : 24)) * zoom + (reduced ? 0 : Math.abs(vehicle.speed)*.12);
       const travelHeading = heading + (vehicle.speed < -.2 ? Math.PI : 0);
@@ -595,27 +782,32 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
       if (opening) look.set(x - Math.cos(viewAngle) * 7.5, 3.2, z + Math.sin(viewAngle) * 7.5);
       if (landmarkView) { desiredCamera.set(125 * zoom, 38 + dragElevation, -98); look.set(84, 16, -152); }
       if (overview) { desiredCamera.set(0, 290 * zoom, -74); look.set(0, 0, -75); }
-      cabin.root.visible = firstPerson;
-      car.visible = !firstPerson;
+      // Primeira pessoa: o mesmo Geep continua visível; some apenas o boneco, e os olhos ficam
+      // no banco do motorista. Não há segundo modelo de cabine para divergir do carro de fora.
+      cabin.root.visible = firstPerson; driver.visible = !firstPerson;
+      if (steeringPivot) steeringPivot.quaternion.copy(steeringRest).multiply(steeringTurn.setFromAxisAngle(upAxis, THREE.MathUtils.clamp(vehicle.steering * 1.9, -1.05, 1.05) * steeringSign));
       if (firstPerson) {
-        cabin.root.rotation.set(car.rotation.x * motion,heading,car.rotation.z * motion,car.rotation.order);
-        cabin.root.position.set(-.54,2.18,.48).applyQuaternion(cabin.root.quaternion).add(car.position);
-        cabin.root.position.y -= car.position.y * (1-motion);
-        cabin.root.updateMatrixWorld();
-        desiredCamera.copy(cabin.root.position);
-        const gain = reduced ? 0 : motion;
-        desiredCamera.y += gain * Math.min(.026,Math.abs(vehicle.acceleration)*.003);
-        smoothYaw = THREE.MathUtils.lerp(smoothYaw,interacting ? -.61 : yaw,blend);
-        smoothPitch = THREE.MathUtils.lerp(smoothPitch,interacting ? -.56 : pitch-.09,blend);
-        look.set(-Math.sin(smoothYaw)*Math.cos(smoothPitch), Math.sin(smoothPitch), -Math.cos(smoothYaw)*Math.cos(smoothPitch)).applyQuaternion(cabin.root.quaternion).add(desiredCamera);
-        cabin.update(vehicle,radio.read());
+        car.updateMatrixWorld(true);
+        desiredCamera.copy(cabin.eye).applyMatrix4(car.matrixWorld);
+        cabinFrame.setFromEuler(cabinEuler.set(car.rotation.x * motion, heading, car.rotation.z * motion, car.rotation.order));
+        smoothYaw = THREE.MathUtils.lerp(smoothYaw,interacting ? -.63 : yaw,blend);
+        smoothPitch = THREE.MathUtils.lerp(smoothPitch,interacting ? -.54 : pitch-.06,blend);
+        look.set(-Math.sin(smoothYaw)*Math.cos(smoothPitch), Math.sin(smoothPitch), -Math.cos(smoothYaw)*Math.cos(smoothPitch)).applyQuaternion(cabinFrame).add(desiredCamera);
+        cabin.update(vehicle,radio.read(),{interacting,dt,t,reduced});
       }
-      const targetFov = firstPerson ? 76 : reduced ? 46 : 46 + Math.abs(vehicle.speed) * .15;
+      const targetFov = firstPerson ? 70 : reduced ? 46 : 46 + Math.abs(vehicle.speed) * .15;
       camera.fov = THREE.MathUtils.lerp(camera.fov,targetFov,blend); camera.updateProjectionMatrix();
       for (const [i, object] of discoveryObjects.entries()) {
         const found = known.has(DISCOVERIES[i].id); object.glow.material = material(found?'#d2e2a8':'#f5a9c6',true); object.beacon.material = material(found?'#d2e2a8':'#f5a9c6',true);
         object.beacon.position.y = 5.5 + (reduced ? 0 : Math.sin(t*2+i)*.35); object.beacon.rotation.y = reduced ? 0 : t*.7;
         const selected = nearby?.type === 'discovery' && nearby.index === i; object.beacon.scale.setScalar(selected?2.2:1);
+        const marker = storyMarkers[i];
+        if (marker.state !== found) { marker.state = found; marker.paint(found ? `✓ ${DISCOVERIES[i].kind} NO DIÁRIO` : `HISTÓRIA ${i + 1} · ${DISCOVERIES[i].kind}`, found ? '#d2e2a8' : '#f5a9c6'); }
+      }
+      // Etiquetas viradas para a câmera; somem na cabine de perto e com a banda reunida.
+      for (const marker of [...storyMarkers, ...memberMarkers]) {
+        marker.group.visible = !(showcase && memberMarkers.includes(marker)) && Math.hypot(marker.group.position.x - camera.position.x, marker.group.position.z - camera.position.z) > 9;
+        marker.label.rotation.y = Math.atan2(camera.position.x - marker.group.position.x, camera.position.z - marker.group.position.z);
       }
       if (!initialized || reduced || firstPerson) { camera.position.copy(desiredCamera); cameraTarget.copy(look); initialized = true; }
       else { camera.position.lerp(desiredCamera, blend); cameraTarget.lerp(look, blend); }
@@ -701,7 +893,8 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
           actor.group.quaternion.setFromAxisAngle(knock.axis, knock.angle).multiply(tumbleYaw.setFromAxisAngle(upAxis, knock.yaw));
           if (knock.sway) actor.group.rotateZ(knock.sway);
         }
-        if (actor.instrument) actor.instrument.rotation.z = -.34 + (reduced ? 0 : Math.sin(t * 5 + i) * .035);
+        // Só anima os braços de quem está perto o bastante para ser visto como malha.
+        if (actor.rig && place.distanceTo(camera.position) < 85) actor.rig.pose(t + i, reduced || Boolean(actor.knock));
         if (actor.arms.length) {
           actor.arms[0].rotation.z = i === 1 || i === 2 ? -.55 + Math.sin(t * 8) * .16 : i === 3 ? -.25 + Math.sin(t * 10) * .35 : -.1;
           actor.arms[1].rotation.z = i === 1 || i === 2 ? .45 + Math.cos(t * 8) * .13 : i === 3 ? .25 + Math.cos(t * 10) * .35 : .1;
@@ -709,6 +902,7 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
 
       }
       renderer.info.reset();
+      if (firstPerson) cabin.renderMirror(renderer, scene);
       if (postfx) postfx.render(scene, camera); else { renderer.setRenderTarget(null); renderer.render(scene, camera); }
       renderer.domElement.dataset.triangles=String(renderer.info.render.triangles);
       renderer.domElement.dataset.drawCalls=String(renderer.info.render.calls);

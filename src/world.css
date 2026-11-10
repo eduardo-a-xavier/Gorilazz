@@ -340,3 +340,21 @@ input:focus-visible, select:focus-visible, summary:focus-visible { outline:3px s
 #era-archive h4 { color:var(--act-color); margin:1rem 0 .2rem; }
 #era-archive h4 + p { margin:0; }
 #era-archive button { margin:1rem 0 .5rem; padding:.65rem 1rem; background:var(--act-color); color:#141914; border:0; border-radius:4px; cursor:pointer; }
+
+/* Atalhos de vista: sempre visíveis depois de entrar no mundo. */
+.quick-view { position:absolute; z-index:6; top:14px; left:50%; transform:translateX(-50%); display:flex; gap:6px; }
+.quick-view button { min-height:36px; padding:6px 12px; font:inherit; font-size:11px; letter-spacing:.4px; color:#e2d8c0; background:#111415cc; border:1px solid #e2d8c055; border-radius:3px; cursor:pointer; backdrop-filter:blur(6px); white-space:nowrap; }
+.quick-view button:hover, .quick-view button:focus-visible, .quick-view button[aria-pressed=true] { color:#111415; background:var(--acid); border-color:var(--acid); }
+#jogo[data-entered=false] .quick-view, .map-only .quick-view { display:none; }
+@media(max-width:700px){ .quick-view { top:auto; bottom:132px; } .quick-view button { min-height:44px; font-size:10px; padding:6px 9px; } }
+
+/* Na cabine o rádio 3D é o principal: a versão HTML fica só com tocar/pausar e o menu de opções. */
+.inside-geep #road-radio > div:not(#hud-radio-menu) { display:none; }
+.inside-geep #road-radio { min-width:0; width:auto; }
+
+/* Fichas com a cor do lugar: bairro da história ou cor do integrante. */
+#discovery-dialog, #character-dialog { border-top:6px solid var(--place, var(--acid)); }
+#discovery-dialog > .eyebrow, #character-dialog .eyebrow { color:var(--place, var(--acid)); }
+.map-legend { display:flex; align-items:center; justify-content:center; gap:5px; flex-wrap:wrap; font-size:9px; }
+.map-legend i { display:inline-block; width:8px; height:8px; background:#f5a9c6; }
+.map-legend .dot { border-radius:50%; } .map-legend .gem { background:#7fa6ff; transform:rotate(45deg); margin-left:5px; }

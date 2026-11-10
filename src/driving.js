@@ -1,4 +1,6 @@
 import { nearestRoad, ROADS, OBSTACLES, WORLD_BOUNDS } from './world-data.js';
+export const MAX_REVERSE_SPEED_KMH = 15;
+const MAX_REVERSE_SPEED = MAX_REVERSE_SPEED_KMH / 3.6;
 const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
 const approach = (n, target, delta) => n < target ? Math.min(target, n + delta) : Math.max(target, n - delta);
 export function createVehicle() {
@@ -13,7 +15,7 @@ export function stepVehicle(state, input, dt) {
   state.surface = road.distance <= ROADS[road.road].width / 2 ? 'asfalto' : 'terra';
   const rough = state.surface === 'terra';
   if (brake) {
-    if (state.reverseReady && state.speed <= .05) state.speed = Math.max(-6, state.speed - 4 * dt);
+    if (state.reverseReady && state.speed <= .05) state.speed = Math.max(-MAX_REVERSE_SPEED, state.speed - 4 * dt);
     else state.speed = approach(state.speed, 0, 12 * dt);
   } else if (throttle) {
     state.speed = state.speed < 0 ? Math.min(0, state.speed + 12 * dt) : Math.min(30, state.speed + (8.8 - .13 * Math.max(0, state.speed)) * dt);

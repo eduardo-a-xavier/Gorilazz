@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { createVehicle, stepVehicle, haltVehicle, recoverVehicle } from '../src/driving.js';
+import { createVehicle, stepVehicle, haltVehicle, recoverVehicle, MAX_REVERSE_SPEED_KMH } from '../src/driving.js';
 import { createJournal, nearbyInteraction } from '../src/discoveries.js';
 import { DISCOVERIES, ROADS, NODES, OBSTACLES, WORLD_BOUNDS, MEMBER_LOCATIONS, nearestRoad, distance } from '../src/world-data.js';
 import { planPath, navigationInput } from '../src/navigation.js';
@@ -9,6 +9,22 @@ function drive(vehicle, input, seconds, dt = 1 / 120) {
   for (let elapsed = 0; elapsed < seconds - dt / 2; elapsed += dt) stepVehicle(vehicle, input, dt);
   return vehicle;
 }
+
+test('ré atinge no máximo 15 km/h em diferentes passos e desacelera ao soltar', () => {
+  assert.equal(MAX_REVERSE_SPEED_KMH, 15);
+  for (const dt of [1 / 30, 1 / 60, 1 / 120]) {
+    const vehicle = createVehicle(); vehicle.reverseReady = true;
+    // Keep the vehicle at the open starting point to measure acceleration without hitting map boundaries.
+    for (let t = 0; t < 5; t += dt) {
+      vehicle.x = 0; vehicle.z = 0;
+      stepVehicle(vehicle, {brake: true}, dt);
+      assert.ok(Math.abs(vehicle.speed) * 3.6 <= 15 + 1e-9);
+    }
+    assert.ok(Math.abs(vehicle.speed * 3.6 + 15) < 1e-9);
+    const speed = Math.abs(vehicle.speed); stepVehicle(vehicle, {}, dt);
+    assert.ok(Math.abs(vehicle.speed) < speed);
+  }
+});
 test('acelerar ganha velocidade; soltar preserva inércia e frear para', () => {
   const vehicle = createVehicle(); drive(vehicle, { throttle: true }, 1.5);
   assert.ok(vehicle.speed > 5 && vehicle.speed < 12);
@@ -47,6 +63,31 @@ test('colisões e limites impedem atravessar prédios ou sair da ilha', () => {
   vehicle.x = WORLD_BOUNDS.maxX - 3.01; vehicle.z = 0; vehicle.heading = -Math.PI / 2; vehicle.speed = 10;
   stepVehicle(vehicle, {}, 1 / 120); assert.equal(vehicle.speed, 0); assert.ok(vehicle.x <= WORLD_BOUNDS.maxX - 3);
   recoverVehicle(vehicle); assert.ok(nearestRoad(vehicle).distance < .001); assert.equal(vehicle.speed, 0);
+});
+test('peças das descobertas e o cemitério são sólidos sem bloquear ruas nem a chegada', async () => {
+  const { DISCOVERY_SOLIDS, GRAVEYARD, roadGap, behind } = await import('../src/world-data.js');
+  assert.equal(DISCOVERY_SOLIDS.length, DISCOVERIES.length * 3);
+  // Disposição: histórias e integrantes ficam recuados da rua, fora da calçada, e olham para ela.
+  for (const point of DISCOVERIES) assert.ok(Math.abs(roadGap(point) - 9.5) < .3);
+  for (const point of MEMBER_LOCATIONS) {
+    assert.ok(Math.abs(roadGap(point) - 8.5) < .3);
+    assert.ok(roadGap(behind(point, -3)) < roadGap(point), 'a frente do integrante aponta para a rua');
+  }
+  // O ponto de chegada de cada história continua livre para o carro parar nele.
+  for (const point of DISCOVERIES) assert.ok(!OBSTACLES.some(o => distance(o, point) < o.radius + 2.3));
+  for (const solid of [...DISCOVERY_SOLIDS, { ...GRAVEYARD, radius: 7.4 }]) {
+    assert.ok(OBSTACLES.some(o => o.x === solid.x && o.z === solid.z && o.radius === solid.radius));
+    assert.ok(roadGap(solid) > solid.radius + 2.3, 'o colisor não invade o asfalto');
+  }
+  // De frente para o mural, o carro para antes da parede e a história continua ao alcance.
+  const story = DISCOVERIES[0], wall = behind(story, 3.6);
+  const vehicle = createVehicle(); Object.assign(vehicle, { ...behind(story, -9), heading: story.facing, speed: 20 });
+  drive(vehicle, { throttle: true }, 3);
+  assert.equal(vehicle.speed, 0); assert.ok(distance(vehicle, wall) >= 1.1 + 2.2);
+  assert.equal(nearbyInteraction(vehicle)?.id, story.id);
+  // Por trás da parede a ficha não abre.
+  Object.assign(vehicle, behind(story, 8));
+  assert.notEqual(nearbyInteraction(vehicle)?.id, DISCOVERIES[0].id);
 });
 test('ruas compartilham cruzamentos, têm desvios e deixam os integrantes fora da pista', () => {
   for (const road of ROADS) {

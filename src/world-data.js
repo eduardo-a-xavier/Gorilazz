@@ -37,10 +37,26 @@ export const ROADS = connections.map(([from, to, controls], id) => {
   const [name, short] = ROAD_NAMES[id];
   return { id, from, to, samples, length, kind, name, short, width: { studio: 13, avenue: 15, lane: 10 }[kind] };
 });
+// Disposição: cada ponto é recuado até uma distância fixa da borda da rua mais próxima e passa
+// a olhar para ela (`facing`). Nada fica na calçada, no asfalto ou de costas para quem chega.
+function settle(point, setback) {
+  let p = { x: point.x, z: point.z };
+  for (let i = 0; i < 10; i++) {
+    const road = nearestRoad(p), away = Math.hypot(p.x - road.x, p.z - road.z) || 1, move = setback - roadGap(p);
+    if (Math.abs(move) < .05) break;
+    p = { x: p.x + (p.x - road.x) / away * move, z: p.z + (p.z - road.z) / away * move };
+  }
+  const road = nearestRoad(p), x = Math.round(p.x * 10) / 10, z = Math.round(p.z * 10) / 10;
+  return { ...point, x, z, facing: Math.atan2(road.x - x, road.z - z) };
+}
+/** Ponto `back` metros atrás de um lugar (lado oposto à rua) e `side` metros para a sua direita. */
+export function behind(place, back, side = 0) {
+  return { x: place.x - Math.sin(place.facing) * back + Math.cos(place.facing) * side, z: place.z - Math.cos(place.facing) * back - Math.sin(place.facing) * side };
+}
 export const MEMBER_LOCATIONS = [
   { x: -68, z: -73, heading: -.5 }, { x: -55, z: -131, heading: 1 },
-  { x: 42, z: -110, heading: -1 }, { x: 62, z: -98, heading: .5 },
-];
+  { x: 42, z: -110, heading: -1 }, { x: 62, z: -98, heading: .5 },
+].map(point => { const placed = settle(point, 8.5); return { ...placed, heading: placed.facing }; /* o grupo do integrante gira heading + π e a frente do modelo é −z */ });
 export const DISCOVERIES = [
   { id: 'beginning', x: -16, z: -25, title: 'Duas mentes, um universo', label: 'O COMEÇO / 1998', kind: 'MURAL', region: 0, track: 0, chapter: 1,
     text: 'Em Londres, em 1998, Damon Albarn e Jamie Hewlett criaram Gorillaz. Música e desenho passaram a contar uma história juntos: uma banda virtual com integrantes, personalidades e um mundo próprio.',
@@ -57,7 +73,7 @@ export const DISCOVERIES = [
   { id: 'live', x: 19, z: -105, title: 'Quando o desenho encontra o palco', label: 'PÁTIO DE ENSAIO', kind: 'PALCO', region: 2, track: 4, chapter: 5,
     text: 'Nos shows, músicos reais e convidados dão vida ao repertório. Projeções e imagens dos personagens conectam a apresentação ao universo visual da banda, em formatos que variam entre turnês.',
     detail: 'A música pode continuar além desta descoberta. Escolha uma faixa no rádio ou procure os integrantes próximos ao pátio. Você decide a ordem do passeio.', source: 'https://www.gorillaz.com/' },
-];
+].map(point => settle(point, 9.5));
 export const BUILDINGS = [
   { x: -28, z: 6, radius: 10, height: 16 }, { x: -44, z: -17, radius: 8, height: 23 },
   { x: -112, z: -48, radius: 8, height: 17 }, { x: -112, z: -119, radius: 8, height: 22 },
@@ -276,3 +292,26 @@ export const OBSTACLES = [
   ...Object.values(VISUAL_LANDMARKS), ...TREE_LOCATIONS.map(p=>({...p,radius:.35})),
   ...CITY_LOTS.filter(l => !l.landmark).flatMap(lotObstacles), ...gatePoles,
 ];
+// Peças sólidas de cada descoberta (mural, arquivo, rádio, banco, palco): ficam atrás do anel de
+// parada, então o carro para diante delas em vez de atravessá-las ou esconder o texto sob o painel.
+// Uma peça que encosta no asfalto (o banco do mirante) fica sem colisor para não travar quem passa na rua.
+export const DISCOVERY_SOLIDS = DISCOVERIES.flatMap(d => [-3, 0, 3].map(side => ({ ...behind(d, 3.6, side), radius: 1.1 })))
+  .filter(solid => roadGap(solid) > solid.radius + 2.6);
+OBSTACLES.push(...DISCOVERY_SOLIDS);
+/** Ponto livre mais próximo de `near`: longe de ruas, prédios, árvores, histórias e integrantes. */
+export function freeSpot(near, clearance) {
+  let best = null;
+  for (let dz = -60; dz <= 60; dz += 4) for (let dx = -60; dx <= 60; dx += 4) {
+    const point = { x: near.x + dx, z: near.z + dz };
+    if (roadGap(point) < clearance + 3.5) continue;
+    if (OBSTACLES.some(o => distance(o, point) < o.radius + clearance + 1)) continue;
+    if (DISCOVERIES.some(d => distance(d, point) < clearance + 12) || MEMBER_LOCATIONS.some(m => distance(m, point) < clearance + 8)) continue;
+    if (REGIONS.some(r => distance(r, point) < 17 + clearance)) continue;
+    const score = Math.hypot(dx, dz);
+    if (!best || score < best.score) best = { ...point, score };
+  }
+  return best;
+}
+// Cemitério de Clint Eastwood: a cerca, as lápides e a árvore seca formam um volume sólido único.
+export const GRAVEYARD = freeSpot({ x: -38, z: -46 }, 8);
+if (GRAVEYARD) OBSTACLES.push({ x: GRAVEYARD.x, z: GRAVEYARD.z, radius: 7.4 });

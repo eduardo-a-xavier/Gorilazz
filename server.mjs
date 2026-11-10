@@ -3,6 +3,7 @@ import { readFile, stat } from 'node:fs/promises';
 import { gzipSync } from 'node:zlib';
 const routes = new Map([
   ['/src/atmosphere.js', ['src/atmosphere.js', 'text/javascript; charset=utf-8']],
+  ['/src/band-pose.js', ['src/band-pose.js', 'text/javascript; charset=utf-8']],
   ['/src/roads.js', ['src/roads.js', 'text/javascript; charset=utf-8']],
   ['/src/landmarks.js', ['src/landmarks.js', 'text/javascript; charset=utf-8']],
   ['/src/postfx.js', ['src/postfx.js', 'text/javascript; charset=utf-8']],
