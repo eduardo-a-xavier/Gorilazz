@@ -78,3 +78,15 @@
 }
 .era-columns p:not(.layer-label),.era-insight{font-size:13px}#panel>p{font-size:14px}@media(max-width:700px){.era-columns p:not(.layer-label),.era-insight{font-size:12px}#panel>p{font-size:13px}}
 #reset-journey{min-height:44px}@media(max-width:700px){.game-top{bottom:250px}}
+
+/* Comfortable reading sizes across both desktop and small screens. */
+.era-introduction, .era-columns p:not(.layer-label), .era-insight,
+#panel p, .theme-grid p, .album-guide p, .radio-info>#track-description {
+  font-size:15px; line-height:1.8; max-width:70ch;
+}
+#era-menu button strong, #era-menu button span, #stop-menu button,
+.era-actions button, .era-actions>a, #era-source-links a,
+.editorial-note, .band-credit, .history-sources p { font-size:12px; }
+.editorial-note, .band-credit { opacity:.85; }
+#reset-journey { font-size:12px; min-height:44px; }
+#eras, #radio, #paradas, #band-title { scroll-margin-top:24px; }

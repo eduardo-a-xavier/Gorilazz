@@ -16,7 +16,7 @@ const members = [
 ];
 members.forEach((member, index) => Object.assign(member, memberStories[index], {song: trackById(memberStories[index].track).name}));
 const memberKeys = ['twod', 'murdoc', 'noodle', 'russel'];
-function memberPhoto(index) { return `<img src="/assets/portraits/phase7-${memberKeys[index]}.png" alt="" loading="lazy">`; }
+function memberPhoto(index) { return `<img src="/assets/portraits/phase7-${memberKeys[index]}.png" alt="" width="384" height="512" loading="lazy">`; }
 function portrait(member, index) {
   return `<svg viewBox="0 0 70 110" aria-hidden="true"><path d="M22 76 18 108M47 76l5 32" stroke="#141414" stroke-width="10"/><path d="M${index === 3 ? 10 : 17} 79V54Q35 36 ${index === 3 ? 60 : 53} 54v25Z" fill="${member.shirt}" stroke="#141414" stroke-width="3"/><path d="M18 55 8 80m45-25 9 25" stroke="${member.skin}" stroke-width="8"/><ellipse cx="35" cy="28" rx="${index === 3 ? 24 : 19}" ry="24" fill="${member.skin}" stroke="#141414" stroke-width="3"/><path d="M15 24 13 7 26 9 34 0 41 9 56 5 54 30 44 15 34 21 26 15Z" fill="${member.hair}"/><g fill="#141414"><ellipse cx="27" cy="29" rx="4" ry="5"/><ellipse cx="43" cy="29" rx="4" ry="5"/></g><path d="m28 42 15-2" stroke="#141414" stroke-width="2"/></svg>`;
 }
@@ -55,7 +55,7 @@ function announce(text) { document.querySelector('#announcement').textContent = 
 function focusWorld() { (document.querySelector('#world canvas') || document.querySelector('#world-map'))?.focus({preventScroll:true}); }
 function enterWorld() {
   if (entered) return;
-  entered = true;
+  entered = true; world?.setIntro(false);
   document.querySelector('#jogo').dataset.entered = 'true';
   document.querySelector('.scene-intro').classList.add('leaving');
   document.querySelector('.scene-intro').inert = true;
@@ -208,9 +208,24 @@ function openDiscovery(index, collect = true) {
   document.querySelector('#discovery-detail').textContent = point.detail;
   document.querySelector('#discovery-source').href = point.source;
   document.querySelector('#discovery-saved').textContent = journal.known.has(point.id) ? (fresh ? '✓ Nova descoberta salva no seu diário.' : '✓ Esta história já está no seu diário.') : 'Consulta livre. Encontre este lugar no mundo para registrar a descoberta.';
+  // Fecho do percurso: na quinta descoberta, a ficha resume o caminho e aponta os próximos passos.
+  const complete = fresh && journal.known.size === DISCOVERIES.length;
+  discoveryFinale.hidden = !complete;
   setTrack(point.track); updateJournal(); discoveryDialog.showModal(); discoveryDialog.querySelector('.close').focus();
-  if (fresh) announce(`Nova descoberta: ${point.title}. ${journal.known.size} de 5 histórias.`);
+  if (complete) announce(`Percurso completo: você encontrou as ${DISCOVERIES.length} histórias. O diário guarda todas elas.`);
+  else if (fresh) announce(`Nova descoberta: ${point.title}. ${journal.known.size} de 5 histórias.`);
 }
+const discoveryFinale = document.createElement('div');
+discoveryFinale.id = 'discovery-finale'; discoveryFinale.hidden = true;
+discoveryFinale.innerHTML = '<p class="eyebrow">PERCURSO COMPLETO / 5 DE 5</p><p>Você passou pela criação da banda, pelos quatro integrantes, pela mistura de gêneros, por Demon Days e pelo palco. O diário guarda as cinco histórias neste navegador.</p><div class="finale-actions"><button type="button" id="finale-journal">Abrir o diário</button><button type="button" id="finale-eras">Ler a história em oito eras</button></div>';
+document.querySelector('#discovery-saved').after(discoveryFinale);
+// As ações rodam depois do evento close, quando o foco já voltou ao mundo.
+const afterDiscovery = action => { discoveryDialog.addEventListener('close', action, { once: true }); discoveryDialog.close(); };
+discoveryFinale.querySelector('#finale-journal').addEventListener('click', () => afterDiscovery(() => document.querySelector('#journal-toggle').click()));
+discoveryFinale.querySelector('#finale-eras').addEventListener('click', () => afterDiscovery(() => {
+  const heading = document.querySelector('#eras-title'); heading.tabIndex = -1;
+  document.querySelector('#eras').scrollIntoView({ behavior: reducedMotion.matches ? 'auto' : 'smooth' }); heading.focus({ preventScroll: true });
+}));
 const eraArchive = createEraArchive(document.querySelector('#era-archive'), point => {
   journalNextAction = () => startNavigation(point); journalDialog.close();
 });
@@ -287,7 +302,7 @@ import('./scene.js').then(({createWorld}) => {
       document.querySelector('#render-status').textContent = 'MUNDO ABERTO / 3D EM TEMPO REAL'; focusWorld();
     },
   });
-  worldAvailable = true;
+  worldAvailable = true; world.setIntro(!entered);
   // ?perf expõe a cena para medições (scripts/ e console); não altera a experiência.
   if (new URLSearchParams(location.search).has('perf')) window.__gorilazz = { world, vehicle, known: journal.known };
   document.querySelector('.world-shell').classList.add('has-3d');
@@ -375,7 +390,7 @@ const stops = [
   ['Álbuns', 'Oito discos. Oito portas.', '<div class="album-guide">' + eras.map((era, index) => `<article><span>${era.label}</span><h4>${era.album}</h4><p>${era.title}</p><button type="button" data-era="${index}">LER ESTA ERA ↗</button></article>`).join('') + '</div><p class="editorial-note">Recorte de oito álbuns até 2023. The Fall tem lançamento digital em 2010 e edição física em 2011. EPs, compilações e lançamentos posteriores ficam fora desta seleção.</p>', 'Escolha um disco para conhecer seu contexto e uma sugestão de escuta.'],
   ['Ao vivo', 'Quando o universo encontra o palco.', '<p>Os shows de Gorillaz reúnem músicos reais, vocalistas e convidados. Imagens e projeções conectam o palco aos integrantes virtuais, em formatos que variam entre apresentações e turnês.</p><p>Essa passagem para o palco evidencia a dimensão coletiva do projeto: os personagens dão unidade ao universo visual, enquanto uma equipe de artistas transforma as gravações em performance.</p>', 'Músicos reais, convidados e imagens colocam o universo virtual em contato com o público.'],
   ['Temas', 'O mundo no retrovisor.', '<div class="theme-grid"><article><h4>Solidão e cidade</h4><p>Tomorrow Comes Today oferece uma escuta para a melancolia e a vida urbana.</p></article><article><h4>Consumo e mídia</h4><p>A torre e o moinho de Feel Good Inc. permitem discutir isolamento, aparência e liberdade.</p></article><article><h4>Ambiente e descarte</h4><p>Plastic Beach transforma uma ilha de detritos em cenário. É uma porta para conversar sobre consumo e meio ambiente.</p></article><article><h4>Crença e imagem</h4><p>Cracker Island trabalha uma narrativa de cultos e rituais numa Los Angeles ficcional.</p></article></div><p class="editorial-note">São leituras propostas por este projeto. Uma canção ou imagem pode permitir interpretações diferentes; os temas não explicam sozinhos toda a obra.</p>', 'Uma proposta de leitura sobre cidade, consumo, meio ambiente e as imagens em que escolhemos acreditar.'],
-  ['Projeto', 'Uma estrada feita por nós.', '<p>Projeto acadêmico de <strong>Eduardo Alves Xavier</strong>, <strong>Gedson de Souza Mancio Júnior</strong> e <strong>Rafael Machado Colnaghi</strong>.</p><p>O mundo aberto conecta descobertas e permite consultar oito eras e nove pontos de vista sobre a banda. As cores das eras e o moinho provisório são interpretações do projeto. O Geep aproxima a viagem da iconografia de 19-2000; o moinho remete à ideia visual de Feel Good Inc.</p><p>Os modelos Phase 7 foram publicados por Redtricity, que os atribui ao Gorillaz, com CC BY 4.0 indicada na fonte. O Geep é de shabaev, sob CC BY 4.0. <a href="#backstage">Créditos, arquivos e adaptações estão nos bastidores ↗</a>.</p>', 'Uma experiência acadêmica que usa a estrada para conectar música, contexto e personagens.'],
+  ['Projeto', 'Uma estrada feita por nós.', '<p>Projeto acadêmico de <strong>Eduardo Alves Xavier</strong>, <strong>Gedson de Souza Mancio Júnior</strong> e <strong>Rafael Machado Colnaghi</strong>.</p><p>O mundo aberto conecta descobertas e permite consultar oito eras e nove pontos de vista sobre a banda. As cores das eras e o moinho são interpretações do projeto. O Geep aproxima a viagem da iconografia de 19-2000; o moinho remete à ideia visual de Feel Good Inc.</p><p>Os modelos Phase 7 foram publicados por Redtricity, que os atribui ao Gorillaz, com CC BY 4.0 indicada na fonte. O Geep é de shabaev, sob CC BY 4.0. <a href="#backstage">Créditos, arquivos e adaptações estão nos bastidores ↗</a>.</p>', 'Uma experiência acadêmica que usa a estrada para conectar música, contexto e personagens.'],
   ['Fontes', 'A viagem continua na pesquisa.', '<p>Este percurso cobre 1998–2023. A seleção separa fatos da produção musical, a narrativa dos personagens e as interpretações do projeto.</p><ul class="history-sources">' + sources.map(source => `<li><a href="${source.url}" target="_blank" rel="noopener noreferrer">${source.label} ↗</a><p>${source.detail}</p></li>`).join('') + '</ul><p>Os links são referências para consulta e atualização. A atribuição dos arquivos 3D está nos <a href="#backstage">créditos e modelos</a>. Projeto acadêmico independente, sem vínculo oficial com Gorillaz.</p>', 'Consulte as fontes e os créditos. História real, ficção e interpretações estão identificadas no percurso.'],
 ];
 const menu = document.querySelector('#stop-menu');
@@ -525,11 +540,12 @@ modelDialog.addEventListener('close', () => {
 const navMenu = document.createElement('div');
 navMenu.id = 'hud-navigation';
 document.querySelector('#journey').append(navMenu);
-for (const selector of ['.journey-heading','#journey-description','#journey-action','#route-list','.exploration-hud','.experience-toolbar','.camera-tools','.game-top','.trip-meter']) {
+for (const selector of ['#route-toggle','#journey-description','#route-list','.exploration-hud','.experience-toolbar','.camera-tools','.game-top','.trip-meter']) {
   navMenu.append(document.querySelector(selector));
 }
 const radioMenu = document.createElement('div');
 radioMenu.id = 'hud-radio-menu';
+document.querySelector('.radio-import').addEventListener('click', () => document.querySelector('#radio-files').click());
 document.querySelector('#road-radio').append(radioMenu);
 for (const selector of ['#road-radio-prev','#road-radio-next','.radio-import','#road-radio-listen','#road-radio select','.radio-volume']) {
   radioMenu.append(document.querySelector(selector));

@@ -44,6 +44,12 @@
 #discovery-dialog>p, #journal-dialog>p { font-size:13px; line-height:1.9; }
 #discovery-dialog>.eyebrow, #journal-dialog>.eyebrow { color:var(--acid); font-size:9px; letter-spacing:1px; }
 #discovery-saved { color:var(--acid); font-size:11px !important; }
+#discovery-finale { margin:14px 0 6px; padding:14px 16px; border:1px solid var(--acid); border-radius:4px; }
+#discovery-finale p { font-size:13px; line-height:1.8; margin:0 0 10px; }
+#discovery-finale .eyebrow { color:var(--acid); font-size:10px; letter-spacing:1px; }
+#discovery-finale .finale-actions { display:flex; flex-wrap:wrap; gap:8px; }
+#discovery-finale button { min-height:44px; padding:8px 14px; font:inherit; font-size:11px; letter-spacing:.5px; color:var(--acid); background:transparent; border:1px solid var(--acid); border-radius:3px; cursor:pointer; }
+#discovery-finale button:hover, #discovery-finale button:focus-visible { color:#111415; background:var(--acid); }
 #discovery-source { display:inline-block; margin:10px 0 25px; font-size:9px; }
 #discovery-dialog .return { display:block; width:100%; margin-top:10px; min-height:48px; }
 #journal-list { list-style:none; padding:0; margin:30px 0; }
@@ -264,7 +270,7 @@ button:focus-visible, canvas:focus-visible { outline:2px solid var(--acid); outl
 #jogo .controls { bottom:var(--bottom); left:50%; right:auto; transform:translateX(-50%); pointer-events:none; }
 #jogo .controls p { font:10px/1.4 Arial; text-align:center; }
 #jogo .drive-buttons { pointer-events:auto; }
-@media (hover:hover) and (pointer:fine) and (not (any-pointer:coarse)) { #jogo .drive-buttons { display:none; } }
+@media (min-width:701px) and (hover:hover) and (pointer:fine) and (not (any-pointer:coarse)) { #jogo .drive-buttons { display:none; } }
 @media (any-pointer:coarse),(max-width:700px) {
  #jogo { --instrument-bottom:calc(var(--bottom) + 68px); }
  #jogo .controls { left:var(--left); right:var(--right); transform:none; }
@@ -305,6 +311,26 @@ button:focus-visible, canvas:focus-visible { outline:2px solid var(--acid); outl
 
 .radio-volume { display:flex; align-items:center; gap:.5em; }
 .radio-volume input { width:72px; accent-color:#9ccc65; }
+
+/* Delivery polish: the next action belongs on the route, outside settings. */
+#jogo .journey-heading { margin-top:8px; }
+#jogo .journey-footer { flex-wrap:wrap; gap:8px; margin-top:8px; }
+#jogo .journey-footer>span { flex-basis:100%; line-height:1.4; }
+#jogo #journey-action { width:100%; min-height:44px; font-weight:600; }
+#hud-nav { font:600 14px/1.4 Arial,sans-serif; min-height:44px; }
+#hud-navigation { max-height:max(100px,calc(100svh - 460px)); overscroll-behavior:contain; }
+#hud-navigation #route-toggle { width:100%; text-align:left; }
+dialog, #route-list { overscroll-behavior:contain; }
+input:focus-visible, select:focus-visible, summary:focus-visible { outline:3px solid var(--acid); outline-offset:4px; }
+#jogo .radio-import { min-height:44px; }
+#road-radio #hud-radio-menu { flex-direction:row; }
+@media(max-width:700px) {
+ #jogo .journey h3 { font-size:14px; line-height:1.4; }
+ #jogo .journey-heading>span { font-size:11px; }
+ #jogo .journey-footer>span { font-size:11px; }
+ #jogo:has(.map-only) .journey { top:var(--top); }
+ #jogo:has(.map-only) .mini-map { top:var(--top); right:var(--right); width:96px; }
+}
 
 #era-archive { margin:1.5rem 0; }
 #era-archive h3 { font:italic 1.6rem Georgia,serif; }

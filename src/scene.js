@@ -496,7 +496,7 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
   const cameraTarget = new THREE.Vector3();
   const desiredCamera = new THREE.Vector3();
   let previousTime = null; let initialized = false;
-  let impact = 0; const tumbleYaw = new THREE.Quaternion(), upAxis = new THREE.Vector3(0, 1, 0);
+  let impact = 0, intro = false; const tumbleYaw = new THREE.Quaternion(), upAxis = new THREE.Vector3(0, 1, 0);
   // Prédios como caixas orientadas: a câmera de viagem encurta o braço em vez de atravessar fachadas.
   const blockers = [...CITY_LOTS.map(lot => ({ x: lot.x, z: lot.z, cos: Math.cos(lot.rotation), sin: Math.sin(lot.rotation), halfW: lot.w / 2 + 1.2, halfD: lot.d / 2 + 1.2, top: lot.floors * 3.2 + 1.5 })),
     ...ERA_GATES.map(gate => ({ x: gate.x, z: gate.z, cos: Math.cos(gate.heading), sin: Math.sin(gate.heading), halfW: gate.width / 2 + 4, halfD: 1.5, top: 12 })),
@@ -542,6 +542,8 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
     // Usado por ?perf e pelos scripts de medição.
     debug: { renderer, scene, camera, setSize(width, height) { renderer.setSize(width, height, false); camera.aspect = width / height; camera.updateProjectionMatrix(); } },
     setOverview(value) { overview = value; landmarkView = false; firstPerson = false; },
+    // Abertura: câmera mais baixa e deslocada, para o Geep e a banda ficarem no terço direito e o título respirar.
+    setIntro(value) { intro = value; },
     setInteraction(value) { interacting = firstPerson && value; highlight(null); release(); },
     recenter() { yaw = pitch = 0; },
     configureLook(gain, intensity) { sensitivity = gain; motion = intensity; },
@@ -578,7 +580,8 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
       const radius = (mobile ? (showcase ? 46 : 29) : (showcase ? 40 : 24)) * zoom + (reduced ? 0 : Math.abs(vehicle.speed)*.12);
       const travelHeading = heading + (vehicle.speed < -.2 ? Math.PI : 0);
       const angle = (orbit && !reduced ? t * .16 : showcase ? .48 : .16) + dragAngle;
-      const cameraAngle = angle + travelHeading, cameraHeight = (showcase ? 12 : 11.8) + dragElevation;
+      const opening = intro && showcase && !mobile && !overview && !landmarkView;
+      const cameraAngle = angle + travelHeading, cameraHeight = (opening ? 8.5 : showcase ? 12 : 11.8) + dragElevation;
       // Dirigindo, a câmera só se aproxima; com a banda reunida, procura um ângulo livre para manter o enquadramento.
       let reach = clearReach(x, z, cameraAngle, radius, cameraHeight), viewAngle = cameraAngle;
       if (showcase && reach < radius) for (const turn of [.45, -.45, .9, -.9, 1.35, -1.35, 1.8, -1.8]) {
@@ -589,6 +592,7 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
       const ahead = showcase ? 1 : 7 + Math.min(Math.abs(vehicle.speed)*.27,7);
       const courtyardOffset=showcase?(mobile?-2:-8):0;
       look.set(x + courtyardOffset*Math.cos(heading) - Math.sin(travelHeading) * ahead, mobile && showcase ? 3 : 2, z - courtyardOffset*Math.sin(heading) - Math.cos(travelHeading) * ahead);
+      if (opening) look.set(x - Math.cos(viewAngle) * 7.5, 3.2, z + Math.sin(viewAngle) * 7.5);
       if (landmarkView) { desiredCamera.set(125 * zoom, 38 + dragElevation, -98); look.set(84, 16, -152); }
       if (overview) { desiredCamera.set(0, 290 * zoom, -74); look.set(0, 0, -75); }
       cabin.root.visible = firstPerson;
