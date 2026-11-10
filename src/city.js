@@ -290,7 +290,9 @@ export function installCity(scene, surfaces) {
   const paving = ['#a8a397', '#d9c9a3', '#8f8c85', '#7e8790'].map(pavingMaterial);
   const awnings = ERA_AWNINGS.map(colors => colors.map(stripeMaterial));
   const plastic = PLASTIC.map(color => new THREE.MeshStandardMaterial({ color, roughness: .45 }));
-  const batches = new Map(), skyline = new Map();
+  const batches = new Map(), skyline = new Map(), casters = [];
+  // Sombra por volumes simples: uma caixa por prédio projeta a sombra no lugar de todos os detalhes.
+  const caster = (base, size, position) => casters.push(place(base, new THREE.BoxGeometry(...size), position));
   const put = (target, material, geometry) => { if (!target.has(material)) target.set(material, []); target.get(material).push(geometry); };
   const local = new THREE.Matrix4(), euler = new THREE.Euler(), quat = new THREE.Quaternion(), one = new THREE.Vector3(1, 1, 1);
   const frame = (x, y, z, rotation) => new THREE.Matrix4().compose(new THREE.Vector3(x, y, z), new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), rotation), one);
@@ -348,6 +350,7 @@ export function installCity(scene, surfaces) {
     box(base, mat.stone, [w + .3, .25, .3], [0, .22, d / 2 + 3.6]);
     // Corpo, embasamento, frisos e platibanda.
     walls(base, facadeMaterial(style, lot.tint), w, d, floors, rng);
+    caster(base, [w - .06, h + .8, d - .06], [0, (h + .8) / 2, 0]);
     const trim = modern ? mat.trimDark : mat.trim;
     box(base, modern ? mat.trimDark : mat.stone, [w + .24, .9, d + .24], [0, .45, 0]);
     if (style !== 'glass') box(base, trim, [w + .3, .28, d + .3], [0, FLOOR, 0]);
@@ -416,6 +419,7 @@ export function installCity(scene, surfaces) {
       box(base, mat.metal, [2.3, .14, 2.3], [tx, y + 1.75, tz]);
       cyl(base, era === 1 ? pick(rng, plastic) : mat.wood, 1.05, 1.1, 2.3, [tx, y + 2.97, tz], 16);
       cyl(base, mat.metal, 0, 1.2, .8, [tx, y + 4.5, tz], 16);
+      caster(base, [1.9, 4.6, 1.9], [tx, y + 2.3, tz]);
       for (const k of [.5, 1.6]) cyl(base, mat.metal, 1.12, 1.12, .08, [tx, y + 1.82 + k, tz], 16);
     }
     if (era === 0) {
@@ -448,6 +452,7 @@ export function installCity(scene, surfaces) {
     if (lot.shop) {
       const lx = (rng() < .5 ? -1 : 1) * (w / 2 + .4);
       cyl(base, mat.metal, .09, .14, 5.2, [lx, 2.8, d / 2 + 3.1], 8);
+      caster(base, [.2, 5.2, .2], [lx, 2.8, d / 2 + 3.1]);
       box(base, mat.metal, [.08, .08, 1.3], [lx, 5.3, d / 2 + 2.5]);
       box(base, dark ? mat.dead : modern ? mat.neonCyan : mat.glow, [.45, .18, .7], [lx, 5.2, d / 2 + 2.1]);
     }
@@ -461,6 +466,8 @@ export function installCity(scene, surfaces) {
     for (const s of [-1, 1]) { cyl(base, mat.metal, .28, .32, 8.4, [s * span / 2, 4.2, 0], 10); box(base, color, [.8, .5, .8], [s * span / 2, .25, 0]); }
     box(base, mat.metal, [span + .6, 2.2, .3], [0, 7.4, 0]);
     box(base, color, [span + .6, .18, .5], [0, 8.6, 0]);
+    caster(base, [span + .6, 2.2, .3], [0, 7.4, 0]);
+    for (const s of [-1, 1]) caster(base, [.5, 8.4, .5], [s * span / 2, 4.2, 0]);
     // Mounted on the portal, the objects stay clear of the vehicle lane.
     const top = 9.65;
     if (row === 0) {
@@ -501,8 +508,11 @@ export function installCity(scene, surfaces) {
   const group = new THREE.Group(); group.name = 'city';
   for (const [target, shadows] of [[batches, true], [skyline, false]]) for (const [material, geometries] of target) {
     const mesh = new THREE.Mesh(mergeGeometries(geometries), material); geometries.forEach(g => g.dispose());
-    mesh.castShadow = shadows; mesh.receiveShadow = shadows; group.add(mesh);
+    mesh.receiveShadow = shadows; group.add(mesh);
   }
+  // Invisível para a câmera (não escreve cor nem profundidade), presente só no mapa de sombras.
+  const shadowVolumes = new THREE.Mesh(mergeGeometries(casters), new THREE.MeshBasicMaterial({ colorWrite: false, depthWrite: false }));
+  casters.forEach(g => g.dispose()); shadowVolumes.castShadow = true; shadowVolumes.name = 'city-shadow-volumes'; group.add(shadowVolumes);
   scene.add(group);
   return group;
 }

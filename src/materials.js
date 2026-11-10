@@ -4,7 +4,7 @@ import * as THREE from './vendor/three.module.min.js';
 export function createSurfaceLibrary() {
   const loader = new THREE.TextureLoader(), cache = new Map();
   const definitions = {
-    asphalt: ['#9baba3', .96], earth: ['#b9b19b', 1], grass: ['#b6c69d', 1],
+    asphalt: ['#dfe3dc', .93], earth: ['#b9b19b', 1], grass: ['#b6c69d', 1],
     plaster: ['#e3dfca', .94], brick: ['#dbc2ad', .97], wood: ['#d6c7a1', .91],
     foliage: ['#c1d0a7', .94], roof: ['#b3c6bd', .85],
   };

@@ -1,6 +1,12 @@
 import http from 'node:http';
-import { readFile } from 'node:fs/promises';
+import { readFile, stat } from 'node:fs/promises';
+import { gzipSync } from 'node:zlib';
 const routes = new Map([
+  ['/src/atmosphere.js', ['src/atmosphere.js', 'text/javascript; charset=utf-8']],
+  ['/src/roads.js', ['src/roads.js', 'text/javascript; charset=utf-8']],
+  ['/src/landmarks.js', ['src/landmarks.js', 'text/javascript; charset=utf-8']],
+  ['/src/postfx.js', ['src/postfx.js', 'text/javascript; charset=utf-8']],
+  ['/assets/models/gorillaz-phase7-web.glb', ['assets/models/gorillaz-phase7-web.glb', 'model/gltf-binary']],
   ['/src/city.js', ['src/city.js', 'text/javascript; charset=utf-8']],
   ['/src/cabin.js', ['src/cabin.js', 'text/javascript; charset=utf-8']],
   ['/assets/radio/concreto.mp3', ['assets/radio/concreto.mp3', 'audio/mpeg']],
@@ -60,6 +66,7 @@ const routes = new Map([
   ['/src/vendor/three.module.min.js', ['src/vendor/three.module.min.js', 'text/javascript; charset=utf-8']],
   ['/src/vendor/three.core.min.js', ['src/vendor/three.core.min.js', 'text/javascript; charset=utf-8']],
 ]);
+const cache = new Map();
 const port = Number(process.env.PORT ?? 3000);
 if (!Number.isInteger(port) || port < 0 || port > 65535) throw new Error('PORT inválida');
 const server = http.createServer(async (req, res) => {
@@ -72,8 +79,21 @@ const server = http.createServer(async (req, res) => {
   catch { res.writeHead(400, headers); return res.end('Requisição inválida'); }
   if (!route) { res.writeHead(404, headers); return res.end('Não encontrado'); }
   try {
-    const body = await readFile(new URL(route[0], import.meta.url));
-    res.writeHead(200, { ...headers, 'Content-Type': route[1], 'Content-Length': body.length });
+    // Cada arquivo fica em memória enquanto não muda no disco. O navegador revalida por ETag
+    // (304 sem corpo) e textos seguem comprimidos: recarregar a página não baixa 19 MB de novo.
+    const file = new URL(route[0], import.meta.url), { mtimeMs, size } = await stat(file);
+    const etag = `"${size.toString(36)}-${Math.round(mtimeMs).toString(36)}"`;
+    let entry = cache.get(route[0]);
+    if (entry?.etag !== etag) {
+      const body = await readFile(file);
+      entry = { etag, body, gzip: /^text\//.test(route[1]) && body.length > 1024 ? gzipSync(body) : null };
+      cache.set(route[0], entry);
+    }
+    Object.assign(headers, { ETag: etag, 'Cache-Control': 'no-cache', Vary: 'Accept-Encoding' });
+    if (req.headers['if-none-match'] === etag) { res.writeHead(304, headers); return res.end(); }
+    const compressed = entry.gzip && /\bgzip\b/.test(req.headers['accept-encoding'] ?? '');
+    const body = compressed ? entry.gzip : entry.body;
+    res.writeHead(200, { ...headers, 'Content-Type': route[1], 'Content-Length': body.length, ...(compressed ? { 'Content-Encoding': 'gzip' } : {}) });
     res.end(req.method === 'HEAD' ? undefined : body);
   } catch (error) {
     console.error('Erro ao servir arquivo:', error.code);

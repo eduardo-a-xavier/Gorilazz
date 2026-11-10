@@ -3,7 +3,7 @@ import { GLTFLoader } from './vendor/GLTFLoader.js';
 import { nearestRoad, TREE_LOCATIONS, VISUAL_LANDMARKS } from './world-data.js';
 import { letteringTexture } from './materials.js';
 
-export function installEnvironment(scene, renderer, surfaces) {
+export function installEnvironment(scene, renderer, surfaces, onModel = () => {}) {
   const loader=new GLTFLoader(); const status=document.querySelector('#environment-status');
   const states={studio:'loading',sculpture:'loading',diorama:'loading',trees:'loading'};
   function report(key,state) {
@@ -14,7 +14,7 @@ export function installEnvironment(scene, renderer, surfaces) {
     return loader.loadAsync(url).then(gltf=>{
       const model=gltf.scene;model.name=key;model.position.set(at.x,at.y||0,at.z);
       model.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true;}});
-      scene.add(model);report(key,'ready');return model;
+      scene.add(model);onModel(model,at);report(key,'ready');return model;
     }).catch(error=>{console.warn(`Peça ${key} indisponível:`,error.message);report(key,'fallback');return null;});
   }
   const studioPromise=addModel('studio','/assets/environment/kong-studio.glb',{x:-28,y:-.3,z:6}).then(model=>{

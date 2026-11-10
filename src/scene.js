@@ -1,21 +1,60 @@
 import { createCabin } from './cabin.js';
 import * as THREE from './vendor/three.module.min.js';
 import { GLTFLoader } from './vendor/GLTFLoader.js';
-import { CITY_ERAS, eraAt, ROADS, NODES, REGIONS, DISCOVERIES, MEMBER_LOCATIONS } from './world-data.js';
+import { CITY_ERAS, CITY_LOTS, ERA_GATES, eraAt, ROADS, NODES, REGIONS, DISCOVERIES, MEMBER_LOCATIONS } from './world-data.js';
 import { mergeGeometries } from './vendor/BufferGeometryUtils.js';
 import { createSurfaceLibrary, letteringTexture } from './materials.js';
 import { installEnvironment } from './environment.js';
 import { installCity } from './city.js';
+import { createAtmosphere } from './atmosphere.js';
+import { createPostFX } from './postfx.js';
+import { buildRoads } from './roads.js';
+import { installLandmarks } from './landmarks.js';
+
+const SHADOW_SPAN = 90;
+// Funde as malhas estáticas de um grupo por material: uma chamada de desenho por material.
+// Objetos em `keep` (animados ou com material trocado em execução) ficam intactos.
+function bake(group, keep = []) {
+  for (const object of keep) group.remove(object);
+  group.updateMatrixWorld(true);
+  const toLocal = new THREE.Matrix4().copy(group.matrixWorld).invert(), relative = new THREE.Matrix4(), batches = new Map();
+  group.traverse(object => {
+    if (!object.isMesh) return;
+    const key = `${object.material.uuid}/${object.castShadow}/${object.receiveShadow}`;
+    if (!batches.has(key)) batches.set(key, { object, geometries: [] });
+    batches.get(key).geometries.push(object.geometry.clone().applyMatrix4(relative.multiplyMatrices(toLocal, object.matrixWorld)));
+  });
+  group.traverse(object => { if (object.isMesh) object.geometry.dispose(); }); group.clear();
+  for (const { object, geometries } of batches.values()) {
+    // mergeGeometries exige os mesmos atributos e o mesmo tipo de indexação em todas as peças.
+    const indexed = geometries.every(geometry => geometry.index);
+    const parts = indexed ? geometries : geometries.map(geometry => geometry.index ? geometry.toNonIndexed() : geometry);
+    const shared = Object.keys(parts[0].attributes).filter(name => parts.every(part => part.attributes[name]));
+    for (const part of parts) for (const name of Object.keys(part.attributes)) if (!shared.includes(name)) part.deleteAttribute(name);
+    const mesh = new THREE.Mesh(mergeGeometries(parts), object.material);
+    mesh.castShadow = object.castShadow; mesh.receiveShadow = object.receiveShadow; group.add(mesh);
+    for (const geometry of new Set([...geometries, ...parts])) geometry.dispose();
+  }
+  for (const object of keep) group.add(object);
+  return group;
+}
 
 // Local credited Geep and Phase 7 models; original scenery and geometric fallbacks.
 export function createWorld(container, onMember, {onLost = () => {}, onRestored = () => {}, onViewReset = () => {}, radio, onRadio, onSteer} = {}) {
-  const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
-  renderer.setPixelRatio(Math.min(devicePixelRatio, container.clientWidth < 700 ? 1.5 : 1.75));
+  // Perfil gráfico: automático por padrão; ?qualidade=leve ou ?qualidade=alta força um perfil.
+  const requested = new URLSearchParams(location.search).get('qualidade');
+  const compact = container.clientWidth > 0 && container.clientWidth < 700;
+  const light = requested === 'leve' || (requested !== 'alta' && compact);
+  const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false, powerPreference: 'high-performance' });
+  const maxRatio = Math.min(devicePixelRatio, light ? 1.5 : 1.75), minRatio = Math.min(maxRatio, .7);
+  let pixelRatio = maxRatio;
+  renderer.setPixelRatio(pixelRatio);
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.05;
+  renderer.info.autoReset = false;
   container.append(renderer.domElement);
   renderer.domElement.setAttribute('aria-label', 'Estrada 3D com carro, personagens e cenários musicais');
   renderer.domElement.setAttribute('role', 'img');
@@ -25,25 +64,36 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
   const surfaces = createSurfaceLibrary();
   scene.background = new THREE.Color('#202631');
   scene.fog = new THREE.FogExp2('#202631', .007);
-  const skyCanvas=document.createElement('canvas');skyCanvas.width=1024;skyCanvas.height=512;
-  const skyContext=skyCanvas.getContext('2d');const skyGradient=skyContext.createLinearGradient(0,0,0,512);
-  skyGradient.addColorStop(0,'#253c4a');skyGradient.addColorStop(.46,'#8c9e96');skyGradient.addColorStop(.62,'#b0b2a0');skyGradient.addColorStop(1,'#677b77');
-  skyContext.fillStyle=skyGradient;skyContext.fillRect(0,0,1024,512);
-  for(let i=0;i<18;i++){skyContext.fillStyle=`rgba(218,222,200,${.025+i%3*.012})`;skyContext.beginPath();skyContext.ellipse((i*173)%1024,100+(i*47)%120,100+i%4*25,12+i%3*4,0,0,Math.PI*2);skyContext.fill();}
-  const skyTexture=new THREE.CanvasTexture(skyCanvas);skyTexture.colorSpace=THREE.SRGBColorSpace;
-  const sky=new THREE.Mesh(new THREE.SphereGeometry(480,32,16),new THREE.MeshBasicMaterial({map:skyTexture,side:THREE.BackSide,fog:false,depthWrite:false}));sky.renderOrder=-1;scene.add(sky);
+  scene.environmentIntensity = .9;
+  const atmosphere = createAtmosphere(scene, renderer);
+  let postfx = light ? null : createPostFX(renderer);
+  renderer.domElement.dataset.quality = light ? 'leve' : postfx ? 'alta' : 'padrao';
   const camera = new THREE.PerspectiveCamera(46, 1, .1, 650);
-  const skylight = new THREE.HemisphereLight('#ffffff', '#69685e', 1.55);
+  const skylight = new THREE.HemisphereLight('#ffffff', '#69685e', 1.3);
   scene.add(skylight);
-  const sunlight = new THREE.DirectionalLight('#ffe4c2', 2.8);
-  sunlight.position.set(-35, 65, 15); sunlight.castShadow = true;
-  sunlight.shadow.mapSize.set(container.clientWidth < 700 ? 1024 : 2048, container.clientWidth < 700 ? 1024 : 2048);
-  Object.assign(sunlight.shadow.camera, { left: -45, right: 45, top: 45, bottom: -45, far: 180 });
-  sunlight.shadow.normalBias = .03; scene.add(sunlight); scene.add(sunlight.target);
+  const sunlight = new THREE.DirectionalLight('#ffe4c2', 3.1);
+  sunlight.castShadow = true;
+  const shadowSize = light ? 1024 : 2048;
+  sunlight.shadow.mapSize.set(shadowSize, shadowSize);
+  Object.assign(sunlight.shadow.camera, { left: -SHADOW_SPAN / 2, right: SHADOW_SPAN / 2, top: SHADOW_SPAN / 2, bottom: -SHADOW_SPAN / 2, near: 1, far: 260 });
+  sunlight.shadow.normalBias = .05; sunlight.shadow.bias = -.0003;
+  // A sombra é redesenhada em quadros alternados e presa à grade de texels: metade do custo, sem cintilar.
+  sunlight.shadow.autoUpdate = false; scene.add(sunlight); scene.add(sunlight.target);
+  const lightRight = new THREE.Vector3().crossVectors(new THREE.Vector3(0, 1, 0), atmosphere.sunDirection).normalize();
+  const lightUp = new THREE.Vector3().crossVectors(atmosphere.sunDirection, lightRight);
+  const shadowCentre = new THREE.Vector3(); let frameCount = 0;
+  function aimSun(x, z) {
+    const texel = SHADOW_SPAN / shadowSize; shadowCentre.set(x, 0, z);
+    const right = Math.round(shadowCentre.dot(lightRight) / texel) * texel, up = Math.round(shadowCentre.dot(lightUp) / texel) * texel;
+    const depth = shadowCentre.dot(atmosphere.sunDirection);
+    sunlight.target.position.set(0, 0, 0).addScaledVector(lightRight, right).addScaledVector(lightUp, up).addScaledVector(atmosphere.sunDirection, depth);
+    sunlight.position.copy(sunlight.target.position).addScaledVector(atmosphere.sunDirection, 130);
+    sunlight.shadow.needsUpdate = true;
+  }
   const materials = new Map();
   function material(color, glow = false) {
     const key = color + glow;
-    if (!materials.has(key)) materials.set(key, new THREE.MeshStandardMaterial({ color, roughness: .88, metalness: 0, ...(glow ? { emissive: color, emissiveIntensity: .65 } : {}) }));
+    if (!materials.has(key)) materials.set(key, new THREE.MeshStandardMaterial({ color, roughness: .88, metalness: 0, ...(glow ? { emissive: color, emissiveIntensity: 1.6 } : {}) }));
     return materials.get(key);
   }
   function box(parent, size, at, color, glow = false) {
@@ -58,65 +108,13 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
     const mesh = new THREE.Mesh(new THREE.CylinderGeometry(top, bottom, height, sides), material(color));
     mesh.position.set(...at); mesh.castShadow = true; parent.add(mesh); return mesh;
   }
-  const ocean = box(scene, [1800, 1, 1800], [0, -6, -75], '#203d49'); ocean.receiveShadow = true;
-  const ground = box(scene, [280, 5, 250], [0, -2.8, -75], '#34433f'); ground.material = surfaces.get('grass',90,80); ground.receiveShadow = true;
-  for (const region of REGIONS) {
-    const plaza = cylinder(scene, 17, 17, .06, [region.x, -.15, region.z], region.id === 'murals' ? '#454253' : '#495448', 48); plaza.material = surfaces.get('earth',8); plaza.receiveShadow = true;
-  }
+  const ground = box(scene, [280, 5, 250], [0, -2.8, -75], '#34433f'); ground.material = surfaces.get('grass',90,80); ground.castShadow = false;
+  // Tudo o que é estático entra em `city` e é fundido por material mais abaixo.
   const city = new THREE.Group(); scene.add(city);
-  for (const road of ROADS) {
-    const vertices = [], indices = [], uvs = [], borders = [[], []]; let along = 0, nextDash = 6;
-    road.samples.forEach((point, i) => {
-      const previous = road.samples[Math.max(0, i - 1)], next = road.samples[Math.min(road.samples.length - 1, i + 1)];
-      const dx = next.x - previous.x, dz = next.z - previous.z; const length = Math.hypot(dx, dz) || 1;
-      if(i) along += Math.hypot(point.x-previous.x,point.z-previous.z);
-      for (const [sideIndex, side] of [-1, 1].entries()) {
-        const x = point.x + dz / length * road.width / 2 * side, z = point.z - dx / length * road.width / 2 * side;
-        vertices.push(x, -.09, z); uvs.push(sideIndex * road.width/3,along/3); if(i>=7 && i<road.samples.length-7) borders[sideIndex].push(new THREE.Vector3(x, -.04, z));
-      }
-      if (i < road.samples.length - 1) { const n = i * 2; indices.push(n, n + 2, n + 1, n + 1, n + 2, n + 3); }
-      if (along >= nextDash) {
-        nextDash += 6;
-        if (road.kind !== 'lane' && !NODES.some(node => Math.hypot(point.x-node.x,point.z-node.z)<9)) {
-          const stripe = box(city,[.15,.025,2.8],[point.x,-.035,point.z],'#e8d8aa');
-          stripe.rotation.y = Math.atan2(dx,dz);
-        }
-      }
-    });
-    const geometry = new THREE.BufferGeometry(); geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3)); geometry.setAttribute('uv',new THREE.Float32BufferAttribute(uvs,2)); geometry.setIndex(indices); geometry.computeVertexNormals();
-    const mesh = new THREE.Mesh(geometry, surfaces.get('asphalt')); mesh.material.side = THREE.DoubleSide; mesh.receiveShadow = true; scene.add(mesh);
-    // Continuous shoulders share the asphalt centreline, including its banking-free bends.
-    for (const [side, border] of borders.entries()) {
-      const positions = [], faces = [];
-      const width = road.kind === 'lane' ? .8 : 2;
-      border.forEach((edge, j) => {
-        const centre = road.samples[j+7];
-        const factor = 1 + width / (road.width / 2);
-        const outerX = centre.x + (edge.x-centre.x)*factor;
-        const outerZ = centre.z + (edge.z-centre.z)*factor;
-        positions.push(edge.x,-.075,edge.z,outerX,-.075,outerZ);
-        const clearOfJunction = [road.from,road.to].every(id =>
-          Math.hypot(centre.x-NODES[id].x, centre.z-NODES[id].z) > 12);
-        if (j && clearOfJunction) {
-          const k = j*2;
-          faces.push(k-2,k-1,k,k,k-1,k+1);
-        }
-        if (side === 0 && j === 36 && road.kind !== 'lane') {
-          box(city,[.18,5,.18],[outerX,2.45,outerZ],'#47564f');
-          box(city,[1.4,.17,.45],[outerX+.5,5,outerZ],'#f1d49e',true);
-        }
-      });
-      const strip = new THREE.BufferGeometry();
-      strip.setAttribute('position',new THREE.Float32BufferAttribute(positions,3));
-      strip.setIndex(faces); strip.computeVertexNormals();
-      const finish = material(road.kind === 'lane' ? '#968873' : '#a79f90');
-      finish.side = THREE.DoubleSide;
-      const shoulder = new THREE.Mesh(strip,finish);
-      shoulder.receiveShadow = true; city.add(shoulder);
-    }
-    for (const border of borders) scene.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(border), new THREE.LineBasicMaterial({color:'#a9bca0',transparent:true,opacity:.65})));
+  for (const region of REGIONS) {
+    const plaza = cylinder(city, 17, 17, .06, [region.x, -.15, region.z], region.id === 'murals' ? '#454253' : '#495448', 48); plaza.material = surfaces.get('earth',8); plaza.castShadow = false; plaza.receiveShadow = true;
   }
-  for(const node of NODES){const junction=new THREE.Mesh(new THREE.CircleGeometry(8,40),surfaces.get('asphalt',4));junction.rotation.x=-Math.PI/2;junction.position.set(node.x,-.015,node.z);junction.receiveShadow=true;scene.add(junction);}
+  buildRoads(city, surfaces, material);
 
   // Prédios: gerados por city.js a partir de CITY_LOTS (inclui os marcos de BUILDINGS).
   // The hills sit beyond the drivable boundary; the road surface stays level.
@@ -127,18 +125,14 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
     hill.scale.set(33+i%4*6,14+i%5*4,24+i%3*5);
     hill.rotation.y=angle;city.add(hill);
   }
-  city.updateMatrixWorld(true);
-  const cityBatches=new Map();city.traverse(object=>{if(!object.isMesh)return;const key=object.material.uuid;const batch=cityBatches.get(key)||{material:object.material,geometries:[]};batch.geometries.push(object.geometry.clone().applyMatrix4(object.matrixWorld));cityBatches.set(key,batch);});
-  city.traverse(object=>{if(object.isMesh)object.geometry.dispose();});city.clear();
-  for(const batch of cityBatches.values()){const geometry=mergeGeometries(batch.geometries);batch.geometries.forEach(g=>g.dispose());const mesh=new THREE.Mesh(geometry,batch.material);mesh.castShadow=mesh.receiveShadow=true;city.add(mesh);}
   // Visible boundary stones mark the coast and recovery area.
   for (let i = 0; i < 32; i++) {
     const x = i < 16 ? -134 + i * 17.8 : (i % 2 ? -134 : 134);
     const z = i < 16 ? (i % 2 ? -194 : 44) : -185 + (i - 16) * 14;
-    const rock = new THREE.Mesh(new THREE.DodecahedronGeometry(3, 0), material('#52635d')); rock.position.set(x, -.4, z); rock.scale.y = .55; scene.add(rock);
+    const rock = new THREE.Mesh(new THREE.DodecahedronGeometry(3, 0), material('#52635d')); rock.position.set(x, -.4, z); rock.scale.y = .55; city.add(rock);
   }
   function sign(text, at, color = '#f2559c') {
-    const signGroup = new THREE.Group(); signGroup.position.set(at.x, 0, at.z); signGroup.rotation.y = at.heading || 0; scene.add(signGroup);
+    const signGroup = new THREE.Group(); signGroup.position.set(at.x, 0, at.z); signGroup.rotation.y = at.heading || 0; city.add(signGroup);
     const canvas = document.createElement('canvas'); canvas.width = 768; canvas.height = 256;
     const context = canvas.getContext('2d'); context.fillStyle = '#141414'; context.fillRect(0, 0, 768, 256);
     context.strokeStyle = color; context.lineWidth = 16; context.strokeRect(8, 8, 752, 240);
@@ -149,8 +143,39 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
     board.position.set(0, 4.1, 0); signGroup.add(board);
     for (const dx of [-2.6, 2.6]) box(signGroup, [.18, 3.5, .18], [dx, 1.5, 0], '#777487');
   }
-  installEnvironment(scene, renderer, surfaces);
+  // Modelos densos só entram no mapa de sombras perto do carro; longe, a sombra não seria vista.
+  // Ao longe, viram um cartaz: uma foto do próprio modelo, tirada uma única vez na carga,
+  // substitui dezenas de milhares de triângulos que ocupariam poucos pixels na tela.
+  const heavyCasters = [];
+  const studioScene = new THREE.Scene(), studioCamera = new THREE.OrthographicCamera();
+  studioScene.add(new THREE.HemisphereLight('#ffffff', '#8a8578', 1.9));
+  const studioKey = new THREE.DirectionalLight('#ffffff', 2.2); studioKey.position.set(-.5, .8, 1); studioScene.add(studioKey);
+  function photograph(object, facing) {
+    const parent = object.parent; studioScene.add(object); object.updateMatrixWorld(true);
+    const bounds = new THREE.Box3().setFromObject(object), size = bounds.getSize(new THREE.Vector3()), centre = bounds.getCenter(new THREE.Vector3());
+    const width = Math.max(size.x, size.z) * 1.04, height = size.y * 1.04;
+    Object.assign(studioCamera, { left: -width / 2, right: width / 2, top: height / 2, bottom: -height / 2, near: .1, far: 400 });
+    studioCamera.position.copy(centre).add(new THREE.Vector3(0, 0, facing * 200)); studioCamera.lookAt(centre); studioCamera.updateProjectionMatrix();
+    studioKey.position.set(-.5 * facing, .8, facing);
+    const pixels = 384, target = new THREE.WebGLRenderTarget(Math.max(64, Math.round(pixels * width / height)), pixels, { samples: 4 });
+    target.texture.colorSpace = THREE.SRGBColorSpace;
+    const previous = renderer.getRenderTarget(), colour = renderer.getClearColor(new THREE.Color()), alpha = renderer.getClearAlpha();
+    renderer.setRenderTarget(target); renderer.setClearColor(0x000000, 0); renderer.clear(); renderer.render(studioScene, studioCamera);
+    renderer.setRenderTarget(previous); renderer.setClearColor(colour, alpha);
+    studioScene.remove(object); parent?.add(object);
+    const card = new THREE.Mesh(new THREE.PlaneGeometry(width, height), new THREE.MeshBasicMaterial({ map: target.texture, alphaTest: .5 }));
+    card.visible = false; card.userData.lift = centre.y - bounds.min.y; scene.add(card); return card;
+  }
+  function heavyCaster(object, at, facing = 1) {
+    if (object.name === 'studio') return;
+    const card = photograph(object, facing), meshes = [];
+    object.traverse(child => { if (child.isMesh) meshes.push(child); });
+    heavyCasters.push({ object, card, meshes, at, casting: true, far: false });
+  }
+  const cardTint = new THREE.Color();
+  installEnvironment(scene, renderer, surfaces, heavyCaster);
   installCity(scene, surfaces);
+  const landmarks = installLandmarks(scene, material, bake);
   sign('MURAIS ←|MOINHO →', {x:7,z:-43}, '#7fa6ff');
   const discoveryObjects = DISCOVERIES.map((point, i) => {
     const group = new THREE.Group(); group.position.set(point.x,0,point.z); scene.add(group);
@@ -190,11 +215,9 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
       cylinder(group,.045,.045,3.3,[0,1.7,-1.1],'#9d9e8e',10);sphere(group,.18,[0,3.3,-1.1],'#252c28');
     }
     const beacon=new THREE.Mesh(new THREE.SphereGeometry(.18,12,8),material('#f5a9c6',true));beacon.position.set(0,5.5,-2.8);group.add(beacon);
+    bake(group,[glow,beacon]);
     return {group,glow,beacon};
   });
-  // Raised solar disc at the vanishing point.
-  const sun = new THREE.Mesh(new THREE.CircleGeometry(30, 64), new THREE.MeshBasicMaterial({ color: '#f2559c', fog: false }));
-  sun.position.set(-70, 100, -300); scene.add(sun);
   const island=new THREE.Group();scene.add(island);
   const satellites=new THREE.Group();island.add(satellites);
   const portal=new THREE.Group();island.add(portal);
@@ -229,6 +252,7 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
     const tuft = new THREE.Mesh(new THREE.ConeGeometry(1.5, 4 + i % 2, 5), material('#4c6d5b'));
     tuft.position.set(Math.cos(i * 1.3) * 10, 2, Math.sin(i * 1.3) * 9); windmill.add(tuft);
   }
+  bake(rotor); bake(windmill, [rotor]);
   const districtLights = CITY_ERAS.map(({light}) => ({
     sun: new THREE.Color(light.sun), sky: new THREE.Color(light.sky), haze: new THREE.Color(light.haze),
   }));
@@ -291,6 +315,8 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
       closest?.pivot.userData.rolling.attach(detail);
     }
     for (const {mesh, pivot} of wheelGroups) { pivot.userData.rolling.attach(mesh); modelWheels.push(pivot); }
+    // Com as rodas já nos eixos, a carroceria (dezenas de peças) é fundida por material.
+    bake(vehicle);
     vehicleStatus.textContent = kind === 'geep' ? 'GEEP / SHABAEV / CC BY 4.0' : 'SUV KENNEY / CC0 · VEÍCULO ALTERNATIVO';
     vehicleStatus.dataset.loaded = 'true'; vehicleStatus.dataset.model = kind; vehicleStatus.dataset.wheels = String(modelWheels.length);
   }
@@ -340,14 +366,17 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
   const people = MEMBER_LOCATIONS.map((at, index) => {
     const actor = person(index); actor.group.position.set(at.x, 0, at.z); actor.group.rotation.y = at.heading + Math.PI;
     actor.group.userData.member = index; actor.group.traverse(object => { object.userData.member = index; }); scene.add(actor.group);
-    const platform = cylinder(scene, 3.6, 4, .4, [at.x, -.08, at.z], '#3a68d8'); platform.receiveShadow = true;
+    const platform = cylinder(city, 3.6, 4, .4, [at.x, -.08, at.z], '#3a68d8'); platform.castShadow = false; platform.receiveShadow = true;
     sign(['2-D / VOCALS', 'MURDOC / BASS', 'NOODLE / GUITAR', 'RUSSEL / DRUMS'][index], {x:at.x,z:at.z-6}, '#7fa6ff');
     return actor;
   });
+  bake(city);
   const bandStatus = document.querySelector('#band-status');
   async function loadBand() {
     try {
-    const gltf = await new GLTFLoader().loadAsync('/assets/models/gorillaz-phase7.glb');
+    // Versão para a cena: texturas WebP de 1024 px e malha simplificada. O GLB original segue disponível para download.
+    const bandLoader = new GLTFLoader();
+    const gltf = await bandLoader.loadAsync('/assets/models/gorillaz-phase7-web.glb').catch(() => bandLoader.loadAsync('/assets/models/gorillaz-phase7.glb'));
     const roots = Array(4).fill(null);
     gltf.scene.traverse(object => { if (Number.isInteger(object.userData.memberIndex) && object.userData.memberIndex >= 0 && object.userData.memberIndex < 4) roots[object.userData.memberIndex] = object; });
     if (roots.length !== 4 || roots.some(root => !root)) throw new Error('O pacote precisa conter os quatro integrantes identificados');
@@ -363,7 +392,10 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
         object.userData.member = index;
         if (object.isMesh) { object.castShadow = true; object.receiveShadow = true; }
       });
+      // Cada integrante chega em várias malhas com o mesmo material: fundidas, viram uma chamada.
+      bake(visual); visual.traverse(object => { object.userData.member = index; });
       const actor = people[index];
+      heavyCaster(visual, actor.group.position, -1);
       actor.group.traverse(object => { if (object.isMesh) object.geometry.dispose(); });
       actor.group.clear(); actor.group.add(visual); actor.arms = [];
       if (index === 1 || index === 2) {
@@ -464,7 +496,51 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
   const cameraTarget = new THREE.Vector3();
   const desiredCamera = new THREE.Vector3();
   let previousTime = null; let initialized = false;
+  let impact = 0; const tumbleYaw = new THREE.Quaternion(), upAxis = new THREE.Vector3(0, 1, 0);
+  // Prédios como caixas orientadas: a câmera de viagem encurta o braço em vez de atravessar fachadas.
+  const blockers = [...CITY_LOTS.map(lot => ({ x: lot.x, z: lot.z, cos: Math.cos(lot.rotation), sin: Math.sin(lot.rotation), halfW: lot.w / 2 + 1.2, halfD: lot.d / 2 + 1.2, top: lot.floors * 3.2 + 1.5 })),
+    ...ERA_GATES.map(gate => ({ x: gate.x, z: gate.z, cos: Math.cos(gate.heading), sin: Math.sin(gate.heading), halfW: gate.width / 2 + 4, halfD: 1.5, top: 12 })),
+    { x: -28, z: 6, cos: 1, sin: 0, halfW: 8, halfD: 8, top: 16 }];
+  function clearReach(x, z, angle, radius, height) {
+    const sin = Math.sin(angle), cos = Math.cos(angle);
+    for (let reach = 8; reach <= radius; reach += 1.25) {
+      const px = x + sin * reach, pz = z + cos * reach, py = 2 + (height - 2) * reach / radius;
+      // Três amostras lado a lado: a vista precisa de um corredor livre, não de uma fresta entre prédios.
+      for (const lot of blockers) {
+        if (py > lot.top) continue;
+        for (const side of [0, -2.5, 2.5]) {
+          const dx = px + cos * side - lot.x, dz = pz - sin * side - lot.z;
+          if (Math.abs(dx * lot.cos - dz * lot.sin) < lot.halfW && Math.abs(dx * lot.sin + dz * lot.cos) < lot.halfD) return Math.max(8, reach - 1.25);
+        }
+      }
+    }
+    return radius;
+  }
+  // Resolução adaptativa: mede o intervalo real entre quadros e ajusta a densidade de pixels.
+  // A aplicação não chama update com a aba oculta, então todo intervalo recebido é desempenho real.
+  let pace = 0, paceCheck = null, raiseAfter = 0, raiseBackoff = 4, lastRaise = -Infinity, slowAtFloor = 0;
+  function adapt(dt, t) {
+    if (dt <= 0) return;
+    // Os primeiros segundos têm travadas de carga (modelos, texturas, shaders) que não representam o ritmo normal.
+    if (paceCheck === null) paceCheck = t + 4;
+    if (t < paceCheck) return;
+    const budget = compact ? 1 / 30 : 1 / 60;
+    pace = pace ? pace + (dt - pace) * .06 : dt;
+    if (t - paceCheck < 1) return; paceCheck = t;
+    let next = pixelRatio;
+    if (pace > budget * 1.3) {
+      next = Math.max(minRatio, pixelRatio * .85);
+      if (t - lastRaise < 4) raiseBackoff = Math.min(60, raiseBackoff * 2);
+      raiseAfter = t + raiseBackoff;
+      // Três segundos no piso de resolução e ainda lento: o bloom é o próximo a sair.
+      slowAtFloor = next === pixelRatio ? slowAtFloor + 1 : 0;
+      if (slowAtFloor >= 3 && postfx) { postfx.dispose(); postfx = null; renderer.domElement.dataset.quality = 'padrao'; }
+    } else if (pace < budget * 1.08 && pixelRatio < maxRatio && t > raiseAfter) { next = Math.min(maxRatio, pixelRatio * 1.1); lastRaise = t; slowAtFloor = 0; }
+    if (next !== pixelRatio) { pixelRatio = next; renderer.setPixelRatio(pixelRatio); pace = 0; renderer.domElement.dataset.pixelRatio = pixelRatio.toFixed(2); }
+  }
   return {
+    // Usado por ?perf e pelos scripts de medição.
+    debug: { renderer, scene, camera, setSize(width, height) { renderer.setSize(width, height, false); camera.aspect = width / height; camera.updateProjectionMatrix(); } },
     setOverview(value) { overview = value; landmarkView = false; firstPerson = false; },
     setInteraction(value) { interacting = firstPerson && value; highlight(null); release(); },
     recenter() { yaw = pitch = 0; },
@@ -475,16 +551,16 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
     resetCamera() { firstPerson = false; dragAngle = 0; dragElevation = 0; zoom = 1; overview = false; landmarkView = false; },
     update(vehicle, time, orbit, reduced, showcase, known, nearby) {
       const {x,z,heading} = vehicle; const t = time / 1000; const moving = Math.abs(vehicle.speed) > .1;
-      const dt = previousTime === null ? .016 : Math.min((time - previousTime) / 1000, .1); previousTime = time;
+      const dt = previousTime === null ? .016 : Math.max(0, Math.min((time - previousTime) / 1000, .1)); previousTime = time;
       const blend = reduced ? 1 : 1 - Math.exp(-dt * 4);
       const light = districtLights[eraAt(vehicle)];
       const fade = lightingReady ? 1 - Math.exp(-dt * 1.6) : 1;
       sunlight.color.lerp(light.sun, fade);
       skylight.color.lerp(light.sky, fade);
-      sky.material.color.copy(skylight.color);
-      sun.material.color.copy(sunlight.color);
       scene.fog.color.lerp(light.haze, fade);
       scene.background.copy(scene.fog.color);
+      atmosphere.update(sunlight.color, skylight.color, scene.fog.color, t, reduced); atmosphere.follow(x, z);
+      adapt(dt, t); landmarks.update(t, reduced);
       lightingReady = true;
       scene.fog.density = THREE.MathUtils.lerp(scene.fog.density, overview ? .001 : landmarkView ? .002 : .0035, blend);
       island.visible = showcase; island.position.set(x,0,z);
@@ -502,8 +578,14 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
       const radius = (mobile ? (showcase ? 46 : 29) : (showcase ? 40 : 24)) * zoom + (reduced ? 0 : Math.abs(vehicle.speed)*.12);
       const travelHeading = heading + (vehicle.speed < -.2 ? Math.PI : 0);
       const angle = (orbit && !reduced ? t * .16 : showcase ? .48 : .16) + dragAngle;
-      const cameraAngle = angle + travelHeading;
-      desiredCamera.set(x + Math.sin(cameraAngle) * radius, (showcase ? 12 : 11.8) + dragElevation, z + Math.cos(cameraAngle) * radius);
+      const cameraAngle = angle + travelHeading, cameraHeight = (showcase ? 12 : 11.8) + dragElevation;
+      // Dirigindo, a câmera só se aproxima; com a banda reunida, procura um ângulo livre para manter o enquadramento.
+      let reach = clearReach(x, z, cameraAngle, radius, cameraHeight), viewAngle = cameraAngle;
+      if (showcase && reach < radius) for (const turn of [.45, -.45, .9, -.9, 1.35, -1.35, 1.8, -1.8]) {
+        const open = clearReach(x, z, cameraAngle + turn, radius, cameraHeight);
+        if (open > reach) { reach = open; viewAngle = cameraAngle + turn; if (open >= radius) break; }
+      }
+      desiredCamera.set(x + Math.sin(viewAngle) * reach, cameraHeight, z + Math.cos(viewAngle) * reach);
       const ahead = showcase ? 1 : 7 + Math.min(Math.abs(vehicle.speed)*.27,7);
       const courtyardOffset=showcase?(mobile?-2:-8):0;
       look.set(x + courtyardOffset*Math.cos(heading) - Math.sin(travelHeading) * ahead, mobile && showcase ? 3 : 2, z - courtyardOffset*Math.sin(heading) - Math.cos(travelHeading) * ahead);
@@ -534,17 +616,87 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
       if (!initialized || reduced || firstPerson) { camera.position.copy(desiredCamera); cameraTarget.copy(look); initialized = true; }
       else { camera.position.lerp(desiredCamera, blend); cameraTarget.lerp(look, blend); }
       camera.lookAt(cameraTarget);
-      sunlight.position.set(x - 44, 54, z + 26); sunlight.target.position.set(x, 0, z); sun.lookAt(camera.position);
+      // Tranco de câmera no impacto: curto, proporcional à velocidade, sem acumular no estado da câmera.
+      if (impact > .01) { camera.rotateZ(Math.sin(t * 58) * impact * .022); camera.rotateX(Math.sin(t * 47) * impact * .012); impact *= Math.exp(-5 * dt); }
+      if (frameCount++ % 2 === 0) aimSun(x, z);
+      cardTint.copy(sunlight.color).lerp(skylight.color, .45);
+      for (const entry of heavyCasters) {
+        const casting = Math.hypot(entry.at.x - x, entry.at.z - z) < 55;
+        if (casting !== entry.casting) { entry.casting = casting; for (const mesh of entry.meshes) mesh.castShadow = casting; }
+        // Histerese de 10 m evita alternar entre modelo e cartaz na fronteira.
+        const range = Math.hypot(entry.at.x - camera.position.x, entry.at.z - camera.position.z);
+        const far = !overview && range > (entry.far ? 78 : 88);
+        if (far !== entry.far) { entry.far = far; entry.object.visible = !far; entry.card.visible = far; }
+        if (far) {
+          entry.card.position.set(entry.at.x, (entry.at.y || 0) + entry.card.userData.lift, entry.at.z);
+          entry.card.rotation.y = Math.atan2(camera.position.x - entry.at.x, camera.position.z - entry.at.z);
+          entry.card.material.color.copy(cardTint);
+        }
+      }
       for (const [i, actor] of people.entries()) {
         const localSide = i % 2 ? 5.5 : -5.5; const localAlong = i < 2 ? -5 : 3;
         const fixed = MEMBER_LOCATIONS[i];
-        actor.group.position.x = showcase ? x + localSide * Math.cos(heading) + localAlong * Math.sin(heading) : fixed.x;
-        actor.group.position.z = showcase ? z - localSide * Math.sin(heading) + localAlong * Math.cos(heading) : fixed.z;
-        actor.group.rotation.y = (showcase ? heading : fixed.heading) + Math.PI;
-        const hitDistance = Math.hypot(actor.group.position.x - x, actor.group.position.z - z);
-        const reacting = !showcase && hitDistance < 3.4 && Math.abs(vehicle.speed) > 3;
-        actor.group.position.y = reacting ? .4 + Math.abs(Math.sin(t * 18)) * .35 : reduced ? 0 : Math.sin(t * 2 + i) * .07;
-        actor.group.rotation.z = reacting ? Math.sin(t * 15) * .23 : 0;
+        const homeYaw = (showcase ? heading : fixed.heading) + Math.PI, place = actor.group.position;
+        if (showcase) actor.knock = null;
+        const hitDistance = Math.hypot(place.x - x, place.z - z), speed = Math.abs(vehicle.speed);
+        const exposed = !actor.knock || actor.knock.phase === 'return' || actor.knock.phase === 'dizzy';
+        if (!showcase && exposed && hitDistance < 3.2 && speed > 3) {
+          // Atropelamento: o carro varre as pernas, o corpo é lançado na direção da viagem e gira para trás.
+          const way = Math.sign(vehicle.speed), fx = -Math.sin(heading) * way, fz = -Math.cos(heading) * way;
+          const ax = (place.x - x) / (hitDistance || 1), az = (place.z - z) / (hitDistance || 1);
+          if (reduced) actor.knock = { phase: 'return', x: fixed.x + ax * 3, z: fixed.z + az * 3, y: 0, angle: 0, timer: 0, axis: new THREE.Vector3(1, 0, 0), yaw: homeYaw };
+          else {
+            const push = Math.min(9, speed * .7), vx = fx * push + ax * 2.5, vz = fz * push + az * 2.5, length = Math.hypot(vx, vz) || 1;
+            actor.knock = { phase: 'air', x: place.x, z: place.z, y: Math.max(place.y, .05), vx, vz, vy: Math.min(9, 4.2 + speed * .22), angle: 0, spin: 3.5 + speed * .3,
+              axis: new THREE.Vector3(-vz / length, 0, vx / length), bounced: false, timer: 0, yaw: homeYaw };
+            impact = Math.min(1, speed / 18);
+          }
+        }
+        const knock = actor.knock;
+        if (!knock) {
+          place.x = showcase ? x + localSide * Math.cos(heading) + localAlong * Math.sin(heading) : fixed.x;
+          place.z = showcase ? z - localSide * Math.sin(heading) + localAlong * Math.cos(heading) : fixed.z;
+          place.y = reduced ? 0 : Math.sin(t * 2 + i) * .07;
+          // Quem vê o carro chegando rápido se inclina para longe antes do impacto.
+          const wary = !showcase && !reduced && hitDistance < 11 && speed > 6 ? (1 - hitDistance / 11) * .16 : 0;
+          actor.group.rotation.set(wary, homeYaw, 0, 'YXZ');
+        } else {
+          knock.timer += dt;
+          if (knock.phase === 'air') {
+            knock.vy -= 24 * dt; knock.x += knock.vx * dt; knock.z += knock.vz * dt; knock.y += knock.vy * dt; knock.angle += knock.spin * dt;
+            if (knock.y <= .3 && knock.vy < 0) {
+              knock.y = .3; knock.vx *= .5; knock.vz *= .5; knock.spin *= .45;
+              if (knock.bounced || knock.vy > -4) { knock.phase = 'slide'; knock.timer = 0; knock.rest = (Math.round(knock.angle / Math.PI - .5) + .5) * Math.PI; }
+              else { knock.bounced = true; knock.vy *= -.34; }
+            }
+          } else if (knock.phase === 'slide') {
+            // Deitado: escorrega até parar e assenta de costas ou de bruços, o que estiver mais perto.
+            const drag = Math.exp(-4.5 * dt); knock.vx *= drag; knock.vz *= drag; knock.x += knock.vx * dt; knock.z += knock.vz * dt;
+            knock.angle += (knock.rest - knock.angle) * (1 - Math.exp(-12 * dt)); knock.y += (.3 - knock.y) * .3;
+            if (knock.timer > 1.1 && Math.hypot(knock.vx, knock.vz) < .4) { knock.phase = 'rise'; knock.timer = 0; knock.from = knock.angle; knock.upright = Math.round(knock.angle / (Math.PI * 2)) * Math.PI * 2; }
+          } else if (knock.phase === 'rise') {
+            const k = Math.min(1, knock.timer / .9), ease = k * k * (3 - 2 * k);
+            knock.angle = knock.from + (knock.upright - knock.from) * ease; knock.y = .3 * (1 - ease) + Math.sin(k * Math.PI) * .25;
+            if (k >= 1) { knock.phase = 'dizzy'; knock.timer = 0; knock.angle = 0; }
+          } else if (knock.phase === 'dizzy') {
+            // Em pé, ainda tonto: balança, olha para o carro e só então volta.
+            knock.y = 0; knock.sway = Math.sin(knock.timer * 9) * .2 * Math.max(0, 1 - knock.timer / 1.1);
+            const toCar = Math.atan2(x - knock.x, z - knock.z) + Math.PI, turn = Math.atan2(Math.sin(toCar - knock.yaw), Math.cos(toCar - knock.yaw));
+            knock.yaw += turn * (1 - Math.exp(-6 * dt));
+            if (knock.timer > 1.2) { knock.phase = 'return'; knock.timer = 0; knock.sway = 0; }
+          } else {
+            const dx = fixed.x - knock.x, dz = fixed.z - knock.z, left = Math.hypot(dx, dz), step = Math.min(left, 4.2 * dt);
+            if (left < .05) actor.knock = null;
+            else {
+              knock.x += dx / left * step; knock.z += dz / left * step; knock.y = reduced ? 0 : Math.abs(Math.sin(knock.timer * 9)) * .14;
+              const walk = left > 1.2 ? Math.atan2(dx, dz) + Math.PI : homeYaw, turn = Math.atan2(Math.sin(walk - knock.yaw), Math.cos(walk - knock.yaw));
+              knock.yaw += turn * (1 - Math.exp(-8 * dt));
+            }
+          }
+          place.set(knock.x, knock.y, knock.z);
+          actor.group.quaternion.setFromAxisAngle(knock.axis, knock.angle).multiply(tumbleYaw.setFromAxisAngle(upAxis, knock.yaw));
+          if (knock.sway) actor.group.rotateZ(knock.sway);
+        }
         if (actor.instrument) actor.instrument.rotation.z = -.34 + (reduced ? 0 : Math.sin(t * 5 + i) * .035);
         if (actor.arms.length) {
           actor.arms[0].rotation.z = i === 1 || i === 2 ? -.55 + Math.sin(t * 8) * .16 : i === 3 ? -.25 + Math.sin(t * 10) * .35 : -.1;
@@ -552,7 +704,8 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
         }
 
       }
-      renderer.render(scene, camera);
+      renderer.info.reset();
+      if (postfx) postfx.render(scene, camera); else { renderer.setRenderTarget(null); renderer.render(scene, camera); }
       renderer.domElement.dataset.triangles=String(renderer.info.render.triangles);
       renderer.domElement.dataset.drawCalls=String(renderer.info.render.calls);
     },

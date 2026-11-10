@@ -16,6 +16,13 @@ const connections = [
   [6, 0, [[69, -9], [30, 8]]], [1, 7, [[3, -78]]], [7, 5, [[49, -101]]],
   [3, 7, [[-42, -103]]], [7, 6, [[55, -73]]],
 ];
+// Cada rua leva o nome de uma faixa ou disco ligado ao bairro que atravessa: [placa, pintura no asfalto].
+const ROAD_NAMES = [
+  ['Av. Kong Studios', 'KONG'], ['Av. Clint Eastwood', 'CLINT'], ['Av. Humanz', 'HUMANZ'],
+  ['Av. Saturnz Barz', 'SATURNZ'], ['Av. DoYaThing', 'DOYATHING'], ['Av. Plastic Beach', 'PLASTIC'],
+  ['Av. 19-2000', '19-2000'], ['Rua Tomorrow Comes Today', 'TOMORROW'], ['Rua Feel Good Inc.', 'FEEL GOOD'],
+  ['Rua Song Machine', 'SONG M.'], ['Rua Stylo', 'STYLO'],
+];
 function interpolate(points, t) {
   const scaled = t * (points.length - 1); const i = Math.min(points.length - 2, Math.floor(scaled)); const u = scaled - i;
   const p0 = points[Math.max(0, i - 1)], p1 = points[i], p2 = points[i + 1], p3 = points[Math.min(points.length - 1, i + 2)];
@@ -27,7 +34,8 @@ export const ROADS = connections.map(([from, to, controls], id) => {
   const samples = Array.from({ length: 81 }, (_, i) => interpolate(points, i / 80));
   const length = samples.slice(1).reduce((sum, p, i) => sum + Math.hypot(p.x - samples[i].x, p.z - samples[i].z), 0);
   const kind = id === 0 ? 'studio' : id < 7 ? 'avenue' : 'lane';
-  return { id, from, to, samples, length, kind, width: { studio: 13, avenue: 15, lane: 10 }[kind] };
+  const [name, short] = ROAD_NAMES[id];
+  return { id, from, to, samples, length, kind, name, short, width: { studio: 13, avenue: 15, lane: 10 }[kind] };
 });
 export const MEMBER_LOCATIONS = [
   { x: -68, z: -73, heading: -.5 }, { x: -55, z: -131, heading: 1 },

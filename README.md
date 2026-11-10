@@ -57,6 +57,7 @@ O primeiro piloto visual inclui uma fachada de Kong Studios, materiais autorais,
 - `src/navigation.js`: caminhos pelo grafo de ruas e comandos do passeio guiado.
 - `src/scene.js`: Three.js, terreno, ruas, Geep, integrantes, moinho, rodas e câmera.
 - `src/environment.js`, `src/materials.js`: cenário texturizado, assets da exposição e superfícies locais.
+- `src/atmosphere.js`, `src/postfx.js`: céu, mar, mapa de ambiente e pós-processamento (bloom, vinheta, tone mapping).
 - `scripts/build-visual-environment.py`: geração reproduzível da fachada, árvore e texturas autorais no Blender.
 - `src/content.js`, `src/editorial.css`: oito eras de 1998–2023, onze faixas e conteúdo histórico ampliado.
 - `src/progress.js`: persistência da posição no mundo e dos integrantes, com leitura do progresso anterior.
@@ -121,6 +122,33 @@ As consultas ao site oficial e à Britannica foram bloqueadas pela política de 
 O roteiro agora oferece entrada por direção livre ou passeio guiado, escolha entre cinco destinos e orientação ao chegar. A leitura direta continua disponível na entrada.
 
 Veja [o processo de evolução](docs/PROCESSO-DE-EVOLUCAO.md) para prioridades, critérios de aceitação e divisão dos módulos. Com o servidor ativo, `python scripts/smoke-browser.py` verifica os fluxos em desktop, telas de 390 e 320 px e modo sem 3D. Esse teste requer Python Playwright com Chromium; não é uma dependência da aplicação. As capturas ficam em `artifacts/browser`, ou na pasta definida por `SCREENSHOT_DIR`.
+
+## Desempenho e qualidade gráfica
+
+A cena escolhe o perfil gráfico sozinha e o ajusta enquanto roda. Para forçar um perfil, abra `http://localhost:3000/?qualidade=leve` ou `?qualidade=alta`.
+
+- **Perfil alto (padrão em telas largas):** a cena é desenhada em HDR com MSAA e passa por um bloom próprio (`src/postfx.js`), que faz neon, telões, postes e marcadores brilharem. Sombras de 2048 px.
+- **Perfil leve (padrão abaixo de 700 px):** sem pós-processamento, sombras de 1024 px e densidade de pixels limitada a 1,5.
+- **Resolução adaptativa:** o intervalo real entre quadros é medido a cada segundo. Se o ritmo cai abaixo da meta, a densidade de pixels diminui até 0,7; se sobra folga, volta a subir. Persistindo a lentidão no piso, o bloom é desligado. O estado fica em `data-quality` e `data-pixel-ratio` no canvas.
+- **Céu, mar e reflexos (`src/atmosphere.js`):** céu procedural com nuvens e sol, tingido pelas cores de cada bairro; o mesmo céu vira o mapa de ambiente que dá reflexo a vidro e metal; o mar tem ondulação animada. Nenhum arquivo novo é baixado.
+- **Sombras:** redesenhadas em quadros alternados e presas à grade de texels, para não cintilar com o carro em movimento. Os prédios projetam sombra por volumes simples (uma caixa por prédio), não por todos os detalhes da fachada.
+- **Menos chamadas de desenho:** ruas, cruzamentos, placas, pedras, moinho, objetos das histórias, carroceria do Geep e cada integrante são fundidos por material na carga.
+- **Modelos densos ao longe:** integrantes, escultura e diorama são fotografados uma vez na carga; a mais de ~85 m da câmera a foto substitui a malha, e eles só entram no mapa de sombras a menos de 55 m do carro.
+- **Câmera:** a câmera de viagem encurta o braço em vez de atravessar prédios e portais; com a banda reunida, procura um ângulo livre.
+- **Servidor:** arquivos ficam em memória, textos seguem com gzip e o navegador revalida por ETag, então recarregar a página não baixa os ~19 MB de novo.
+
+- **Banda mais leve:** a cena carrega `assets/models/gorillaz-phase7-web.glb` (3,3 MB, texturas WebP de 1024 px, ~104 mil triângulos), gerado do original com `gltf-transform` (`resize`, `webp`, `weld`, `simplify --ratio 0.5 --error 0.001`). O GLB original (9,3 MB) continua no projeto, para download e como alternativa se o reduzido não carregar.
+
+### Ruas, referências e atropelamentos
+
+- **Ruas (`src/roads.js`):** calçada elevada com meio-fio contínuo, rotatórias nos cruzamentos, faixas de borda, eixo duplo amarelo e divisão de pistas nas avenidas, faixas de pedestre, postes e placas de esquina. O traçado e a física não mudaram.
+- **Nomes de rua:** cada rua leva o nome de uma faixa ou disco (Av. Clint Eastwood, Av. 19-2000, Rua Feel Good Inc., Av. Plastic Beach, Rua Stylo…), na placa e pintado no asfalto. Os nomes ficam em `ROAD_NAMES`, em `src/world-data.js`.
+- **Marcos (`src/landmarks.js`):** a ilha rosa de Plastic Beach no mar a leste, o cemitério de Clint Eastwood com um fantasma azul perto de Kong e dois helicópteros de El Mañana rondando o moinho. São interpretações geométricas autorais, sem colisão.
+- **Atropelamento:** bater em um integrante acima de ~11 km/h o lança na direção da viagem; ele gira, quica, escorrega, levanta tonto olhando para o carro e volta andando ao lugar. A câmera dá um tranco proporcional à velocidade. Com movimento reduzido, ele apenas dá um passo para o lado. É só visual: a física do carro não muda.
+
+`?perf` expõe `window.__gorilazz` (cena, renderizador e veículo) para medições no console. Os contadores `data-triangles` e `data-draw-calls` do canvas somam todas as passagens do quadro, inclusive sombras.
+
+Não há banco de dados: o progresso fica em três chaves de `localStorage` (`gorilazz-discoveries-v1`, `gorilazz.world.v1` e a legada `gorilazz.journey.v1`), gravadas no máximo a cada 1,5 s durante a condução.
 
 ## Rádio local, câmera e tela cheia
 

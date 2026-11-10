@@ -288,6 +288,8 @@ import('./scene.js').then(({createWorld}) => {
     },
   });
   worldAvailable = true;
+  // ?perf expõe a cena para medições (scripts/ e console); não altera a experiência.
+  if (new URLSearchParams(location.search).has('perf')) window.__gorilazz = { world, vehicle, known: journal.known };
   document.querySelector('.world-shell').classList.add('has-3d');
   document.querySelector('#render-status').textContent = 'MUNDO ABERTO / 3D EM TEMPO REAL';
 }).catch(error => {
