@@ -266,6 +266,11 @@ button:focus-visible, canvas:focus-visible { outline:2px solid var(--acid); outl
 #road-radio strong { font-size:15px; }
 #road-radio small { color:#a9bdb2; }
 #hud-radio-menu:not([hidden]) { grid-column:1/-1; display:flex; flex-wrap:wrap; align-items:center; gap:4px; }
+#hud-radio-menu:not([hidden]) { max-height:min(160px,20svh); overflow-y:auto; }
+#kong-fm-help { flex:0 0 100%; margin:0 0 4px; color:var(--ink); font:12px/1.4 Arial,sans-serif; }
+#road-radio-status { grid-column:1/-1; margin:0; font:12px/1.4 Arial,sans-serif; }
+#road-radio-status:empty { display:none; }
+#hud-radio-menu #road-radio-listen { display:grid; }
 #jogo .radio-import { max-width:none; }
 #jogo .controls { bottom:var(--bottom); left:50%; right:auto; transform:translateX(-50%); pointer-events:none; }
 #jogo .controls p { font:10px/1.4 Arial; text-align:center; }

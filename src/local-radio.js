@@ -5,7 +5,7 @@ const station = [
 
 export function createLocalRadio({ input, playButton, previousButton, nextButton, title, album, status }) {
   const playlist = document.createElement('select');
-  playlist.setAttribute('aria-label', 'Escolher e tocar faixa');
+  playlist.setAttribute('aria-label', 'Escolher e tocar áudio na Kong FM');
   document.querySelector('#road-radio').append(playlist);
   const audio = new Audio();
   audio.preload = 'metadata';
@@ -16,7 +16,8 @@ export function createLocalRadio({ input, playButton, previousButton, nextButton
     title.textContent = track.name;
     album.textContent = track.artist;
     playButton.textContent = audio.paused ? '▶' : 'Ⅱ';
-    playButton.setAttribute('aria-label', audio.paused ? 'Tocar rádio' : 'Pausar rádio');
+    const label = audio.paused ? 'Tocar Kong FM aqui' : 'Pausar Kong FM';
+    playButton.setAttribute('aria-label', label); playButton.title = label;
     playlist.value = String(index);
   }
   function rebuildList() {

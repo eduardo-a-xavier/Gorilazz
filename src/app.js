@@ -454,30 +454,29 @@ function setTrack(index) {
   trackIndex = (index + tracks.length) % tracks.length;
   const track = tracks[trackIndex];
   document.querySelector('#radio-title').textContent = track.name;
-  document.querySelector('#road-radio-listen').href = listeningUrl(track);
   document.querySelector('#track-album').textContent = `${track.album} · ${track.year}`;
   document.querySelector('#track-description').textContent = track.text;
   document.querySelector('#track-number').textContent = `${String(trackIndex + 1).padStart(2, '0')} — ${String(tracks.length).padStart(2, '0')}`;
   document.querySelector('#listen-link').href = listeningUrl(track);
-  document.querySelector('#listen-link').textContent = track.video ? 'OUVIR NO YOUTUBE ↗' : 'BUSCAR NO YOUTUBE ↗';
+  document.querySelector('#listen-link').textContent = track.video ? 'ABRIR NO YOUTUBE ↗' : 'BUSCAR NO YOUTUBE ↗';
   document.querySelector('#track-era').textContent = `NA VIAGEM / ${eras[track.era].album.toUpperCase()}`;
-  document.querySelector('#track-status').textContent = track.video ? 'O clipe abre sob sua escolha e precisa de internet. Sem reprodução automática.' : 'Esta faixa abre uma busca pelo clipe oficial. Não há uma prévia incorporada cadastrada para esta escuta.';
+  document.querySelector('#track-status').textContent = track.video ? 'Clipe do YouTube nesta página. Precisa de internet e reprodução manual.' : 'Abre uma busca no YouTube em nova aba. Esta faixa não tem player incorporado.';
   document.querySelector('#radio').style.setProperty('--record-color', track.color);
   document.querySelector('#video-slot').replaceChildren();
-  document.querySelector('#play-track').textContent = track.video ? '▶ ABRIR CLIPE' : 'BUSCAR CLIPE ↗';
+  document.querySelector('#play-track').textContent = track.video ? '▶ VER CLIPE DO YOUTUBE' : 'BUSCAR NO YOUTUBE ↗';
 }
 const localRadio = createLocalRadio({
   input: document.querySelector('#radio-files'), playButton: document.querySelector('#road-radio-play'),
   previousButton: document.querySelector('#road-radio-prev'), nextButton: document.querySelector('#road-radio-next'),
   title: document.querySelector('#road-radio-track'), album: document.querySelector('#road-radio-album'),
-  status: document.querySelector('#track-status'),
+  status: document.querySelector('#road-radio-status'),
 });
 document.querySelector('#previous-track').addEventListener('click', () => { manualTrack = true; setTrack(trackIndex - 1); });
 document.querySelector('#next-track').addEventListener('click', () => { manualTrack = true; setTrack(trackIndex + 1); });
 document.querySelector('#play-track').addEventListener('click', () => {
   const slot = document.querySelector('#video-slot');
   if (!tracks[trackIndex].video) { window.open(listeningUrl(tracks[trackIndex]), '_blank', 'noopener,noreferrer'); return; }
-  if (slot.firstChild) { slot.replaceChildren(); document.querySelector('#play-track').textContent = '▶ ABRIR CLIPE'; return; }
+  if (slot.firstChild) { slot.replaceChildren(); document.querySelector('#play-track').textContent = '▶ VER CLIPE DO YOUTUBE'; return; }
   setTour(false); stop(); destination = null;
   const iframe = document.createElement('iframe');
   iframe.src = `https://www.youtube-nocookie.com/embed/${tracks[trackIndex].video}`;
@@ -566,7 +565,7 @@ const radioMenu = document.createElement('div');
 radioMenu.id = 'hud-radio-menu';
 document.querySelector('.radio-import').addEventListener('click', () => document.querySelector('#radio-files').click());
 document.querySelector('#road-radio').append(radioMenu);
-for (const selector of ['#road-radio-prev','#road-radio-next','.radio-import','#road-radio-listen','#road-radio select','.radio-volume']) {
+for (const selector of ['#kong-fm-help','#road-radio-prev','#road-radio-next','.radio-import','#road-radio-listen','#road-radio select','.radio-volume']) {
   radioMenu.append(document.querySelector(selector));
 }
 const hudMenus = [[document.querySelector('#hud-nav'), navMenu], [document.querySelector('#hud-radio-toggle'), radioMenu]];

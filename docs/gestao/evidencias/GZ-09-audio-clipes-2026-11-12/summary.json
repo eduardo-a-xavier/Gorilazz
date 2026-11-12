@@ -1,0 +1,49 @@
+{
+  "preservedHashesMatch": true,
+  "creditsHtmlTailPreserved": true,
+  "previousJournalChangePreserved": true,
+  "fileSizes": {
+    "index.html": {
+      "before": 24719,
+      "after": 24957
+    },
+    "src/app.js": {
+      "before": 55024,
+      "after": 54956
+    },
+    "src/local-radio.js": {
+      "before": 3343,
+      "after": 3414
+    },
+    "src/world.css": {
+      "before": 27218,
+      "after": 27581
+    }
+  },
+  "validation": {
+    "checkExit": 0,
+    "testExit": 0,
+    "testsPassed": 46
+  },
+  "browser": {
+    "initialVideoFrames": 0,
+    "localPlayLabel": "Pausar Kong FM",
+    "localPauseLabel": "Tocar Kong FM aqui",
+    "localTrack": "Concreto",
+    "videoFramesWhileLocalPlaying": 0,
+    "embed": "https://www.youtube-nocookie.com/embed/1V_xRb0x9aw",
+    "embedAutoplayParameter": false,
+    "videoFramesAfterClose": 0,
+    "buttonAfterClose": "▶ VER CLIPE DO YOUTUBE",
+    "searchTrack": "Revolving Doors",
+    "searchOpenedNewTab": true,
+    "searchUrl": "https://www.youtube.com/results?search_query=Gorillaz+Revolving+Doors+official",
+    "hudLinkDestination": "#radio",
+    "mobileLinkVisible": true,
+    "mobileHorizontalOverflow": false
+  },
+  "limitations": [
+    "Reprodução completa do YouTube não confirmada; googlevideo/doubleclick com ERR_NAME_NOT_RESOLVED e fonte externa com ERR_CACHE_MISS.",
+    "Não foram testados importação de arquivo real, arquivo inválido, Android físico, leitor de tela ou controles 3D da cabine."
+  ]
+}

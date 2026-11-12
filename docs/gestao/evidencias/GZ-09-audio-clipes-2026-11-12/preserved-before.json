@@ -1,0 +1,46 @@
+[
+  {
+    "Path": "E:\\Gorilazz-Relatorio\\src\\content.js",
+    "Hash": "CFD184FD120F292AAD5EE302371D26FADB391663C750E41B9F2C85A89F7A39D9"
+  },
+  {
+    "Path": "E:\\Gorilazz-Relatorio\\src\\environment.js",
+    "Hash": "E6181C9EEDFFAF65AB9A10676F257FB819E6E96B7C645E9179CFC80B9C2D1609"
+  },
+  {
+    "Path": "E:\\Gorilazz-Relatorio\\src\\scene.js",
+    "Hash": "19C0A008D60F9C31DD156BD5AC491311DFDB92196C5456606B57547530E84A7E"
+  },
+  {
+    "Path": "E:\\Gorilazz-Relatorio\\src\\world-data.js",
+    "Hash": "10D702EFFA5C96DECA94D13B96A2EDF7AA413881FD2EA45C7040F921F1A984AB"
+  },
+  {
+    "Path": "E:\\Gorilazz-Relatorio\\server.mjs",
+    "Hash": "4B8C13E7C391394D59591B64EED65C46416810D7B8C654D3F246822F8A72A5D3"
+  },
+  {
+    "Path": "E:\\Gorilazz-Relatorio\\README.md",
+    "Hash": "D977A0EDC9547D4F0FB366A02780645F780DC66CA5A7866F4C80656F054AF7AF"
+  },
+  {
+    "Path": "E:\\Gorilazz-Relatorio\\assets\\environment\\CREDITS.txt",
+    "Hash": "3465FF43172785B047475A8A03D569C9FFD505464A563D576E52F737EE714C77"
+  },
+  {
+    "Path": "E:\\Gorilazz-Relatorio\\assets\\environment\\manifest.json",
+    "Hash": "B911310AAE5C9AFA60EC7AD3507C8DEBEF5F804E2191ADE00775004835D1B400"
+  },
+  {
+    "Path": "E:\\Gorilazz-Relatorio\\tests\\server.test.mjs",
+    "Hash": "A34AB64821A65E87EFBF9198978C8D71AB5F69316977AD0D1C0C4BA0110E43C8"
+  },
+  {
+    "Path": "E:\\Gorilazz-Relatorio\\tests\\frequency-garden.test.mjs",
+    "Hash": "246CD9D4CDB1657E12B7D61B94810DB890941F63B2B6181A93A464FA3ADAC184"
+  },
+  {
+    "Path": "E:\\Gorilazz-Relatorio\\tests\\regional-grounds.test.mjs",
+    "Hash": "D5B01FC252655B4EE09C6868CD4B932CDEA6DAF346ACD2320F494E019A5AA9FB"
+  }
+]
