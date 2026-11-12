@@ -1,0 +1,62 @@
+[
+  {
+    "Path": "E:\\Gorilazz-Relatorio\\index.html",
+    "Hash": "CD93FA504F9429ED27A82E427E6706CEB145F7C1E4C06DEF2FD8BD34FE49E178"
+  },
+  {
+    "Path": "E:\\Gorilazz-Relatorio\\server.mjs",
+    "Hash": "4B8C13E7C391394D59591B64EED65C46416810D7B8C654D3F246822F8A72A5D3"
+  },
+  {
+    "Path": "E:\\Gorilazz-Relatorio\\src\\app.js",
+    "Hash": "863A6A5D56C6B720D14BA5DC00243FDA97C7843DE520E44BA3C3CA8400647D2D"
+  },
+  {
+    "Path": "E:\\Gorilazz-Relatorio\\src\\content.js",
+    "Hash": "CFD184FD120F292AAD5EE302371D26FADB391663C750E41B9F2C85A89F7A39D9"
+  },
+  {
+    "Path": "E:\\Gorilazz-Relatorio\\src\\environment.js",
+    "Hash": "E6181C9EEDFFAF65AB9A10676F257FB819E6E96B7C645E9179CFC80B9C2D1609"
+  },
+  {
+    "Path": "E:\\Gorilazz-Relatorio\\src\\world-data.js",
+    "Hash": "10D702EFFA5C96DECA94D13B96A2EDF7AA413881FD2EA45C7040F921F1A984AB"
+  },
+  {
+    "Path": "E:\\Gorilazz-Relatorio\\src\\cabin.js",
+    "Hash": "3C212C4D9FECF5DDAED5532FFEBE09A0E76939DD396AC1AC1D7191278802ADD7"
+  },
+  {
+    "Path": "E:\\Gorilazz-Relatorio\\src\\local-radio.js",
+    "Hash": "B7DF4A1329E0A25E29067634F3010D08F81F41BAAAA2EEA4A792063551AD28CD"
+  },
+  {
+    "Path": "E:\\Gorilazz-Relatorio\\src\\world.css",
+    "Hash": "BC4886A6FE02249E7A56A2CB4C7A80EB0649A1BB119773BF70B6ED94C6EE6B2A"
+  },
+  {
+    "Path": "E:\\Gorilazz-Relatorio\\README.md",
+    "Hash": "D977A0EDC9547D4F0FB366A02780645F780DC66CA5A7866F4C80656F054AF7AF"
+  },
+  {
+    "Path": "E:\\Gorilazz-Relatorio\\assets\\models\\gorillaz-geep.glb",
+    "Hash": "A07400446FE54848D8E2C44A0B1E60FF643980EC44F866C729D33010239E10D0"
+  },
+  {
+    "Path": "E:\\Gorilazz-Relatorio\\assets\\environment\\CREDITS.txt",
+    "Hash": "3465FF43172785B047475A8A03D569C9FFD505464A563D576E52F737EE714C77"
+  },
+  {
+    "Path": "E:\\Gorilazz-Relatorio\\assets\\environment\\manifest.json",
+    "Hash": "B911310AAE5C9AFA60EC7AD3507C8DEBEF5F804E2191ADE00775004835D1B400"
+  },
+  {
+    "Path": "E:\\Gorilazz-Relatorio\\assets\\models\\GEEP-CREDITS.txt",
+    "Hash": "6D0FB0415E1E7082947D491ED512ABED070A1E857C0C31A3FE9422D5FEA6E0A3"
+  },
+  {
+    "Path": "E:\\Gorilazz-Relatorio\\assets\\models\\PHASE7-CREDITS.txt",
+    "Hash": "5D9CF5E534516CA882986275EC30B0F7E56E9EE34AFB114DFAB860B4E79BB384"
+  }
+]

@@ -133,7 +133,7 @@ A cena escolhe o perfil gráfico sozinha e o ajusta enquanto roda. Para forçar 
 - **Céu, mar e reflexos (`src/atmosphere.js`):** céu procedural com nuvens e sol, tingido pelas cores de cada bairro; o mesmo céu vira o mapa de ambiente que dá reflexo a vidro e metal; o mar tem ondulação animada. Nenhum arquivo novo é baixado.
 - **Sombras:** redesenhadas em quadros alternados e presas à grade de texels, para não cintilar com o carro em movimento. Os prédios projetam sombra por volumes simples (uma caixa por prédio), não por todos os detalhes da fachada.
 - **Menos chamadas de desenho:** ruas, cruzamentos, placas, pedras, moinho, objetos das histórias, carroceria do Geep e cada integrante são fundidos por material na carga.
-- **Modelos densos ao longe:** integrantes, escultura e diorama são fotografados uma vez na carga; a mais de ~85 m da câmera a foto substitui a malha, e eles só entram no mapa de sombras a menos de 55 m do carro.
+- **Modelos densos ao longe:** integrantes e escultura 2-D são fotografados uma vez na carga; a mais de ~85 m da câmera a foto substitui a malha, e eles só entram no mapa de sombras a menos de 55 m do carro. O Jardim de frequências (peça original que substituiu o diorama removido, ver `assets/environment/CREDITS.txt`) é geometria leve e não usa essa foto.
 - **Câmera:** a câmera de viagem encurta o braço em vez de atravessar prédios e portais; com a banda reunida, procura um ângulo livre.
 - **Servidor:** arquivos ficam em memória, textos seguem com gzip e o navegador revalida por ETag, então recarregar a página não baixa os ~19 MB de novo.
 

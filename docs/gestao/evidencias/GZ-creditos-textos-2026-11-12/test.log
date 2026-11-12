@@ -1,0 +1,61 @@
+
+> gorilazz-a-estrada@1.0.0 test
+> node --test tests/*.test.mjs
+
+✔ rig articula o braço sem reescrever a malha nem mover o tronco (19.2319ms)
+✔ o recorte tem oito eras distintas e não se apresenta como discografia atual (5.8791ms)
+✔ cada era tem duas camadas de narrativa, fonte e uma escuta válida (0.9267ms)
+✔ The Fall distingue digital e físico sem duplicar o álbum (0.3544ms)
+✔ a era corresponde à posição circular inclusive em marcha à ré (0.2961ms)
+✔ faixas sem ID de vídeo cadastrado abrem uma busca em vez de um embed inventado (1.1376ms)
+✔ cada integrante aponta para uma ficha e escuta existentes (0.365ms)
+✔ motorista procedural preserva encaixes, orçamento e materiais sem texturas (28.582ms)
+✔ reação termina em 0,8 segundo e não acumula ao receber novo gatilho (0.4871ms)
+✔ movimento e preferência reduzida bloqueiam e cancelam a reação (0.3393ms)
+✔ peças fornecidas são GLBs locais estáticos reduzidos, com texturas incorporadas (10.5528ms)
+✔ fachada e vegetação autorais usam poucos grupos de material e GLB válido (5.9048ms)
+✔ novos volumes da exposição e árvores preservam os caminhos de exploração (8.7901ms)
+✔ escultura original permanece dentro do volume de colisão e dispensa texturas externas (9.6622ms)
+✔ uma viagem nova ou um registro inválido não quebra a página (2.7516ms)
+✔ o progresso restaura posição e apenas integrantes únicos válidos (0.622ms)
+✔ salvar uma volta preserva o progresso sem depender da quantidade de voltas (0.5869ms)
+✔ uma posição inválida não contamina o movimento (0.8986ms)
+✔ bloqueio do armazenamento mantém a experiência utilizável (2.0815ms)
+✔ acabamentos regionais cabem no terreno existente, abaixo das ruas e sem texturas (10.2512ms)
+✔ o circuito fecha sem salto em qualquer volta (3.2886ms)
+✔ a frente do jipe aponta na tangente da curva (0.902ms)
+✔ o deslocamento lateral mantém o arco do circuito (0.4256ms)
+✔ as nove paradas ocupam posições diferentes (0.5001ms)
+✔ o caminho mais curto pode atravessar a emenda nos dois sentidos (3.1261ms)
+✔ progresso e encontros são periódicos inclusive em marcha à ré (0.6825ms)
+✔ servidor revalida por ETag, comprime texto e mantém a lista explícita de arquivos (361.9909ms)
+✔ posição livre e integrantes sobrevivem ao recarregamento sem restaurar velocidade (3.3793ms)
+✔ posição inválida volta ao início e mantém os integrantes válidos (0.5745ms)
+✔ progresso de integrantes da versão anterior permanece disponível para migração (1.153ms)
+✔ persistência do mundo tolera dados quebrados e armazenamento bloqueado (0.5509ms)
+✔ ré atinge no máximo 15 km/h em diferentes passos e desacelera ao soltar (47.0097ms)
+✔ acelerar ganha velocidade; soltar preserva inércia e frear para (18.8938ms)
+✔ frear continuamente não engata ré; soltar e pressionar novamente engata (21.7375ms)
+✔ freio tem prioridade sobre acelerador e os limites de velocidade são respeitados (2.9942ms)
+✔ direção muda a trajetória nos dois sentidos e não gira o carro parado (23.163ms)
+✔ integração mantém comportamento próximo em taxas diferentes de quadros (9.5954ms)
+✔ colisões e limites impedem atravessar prédios ou sair da ilha (0.4559ms)
+✔ peças das descobertas e o cemitério são sólidos sem bloquear ruas nem a chegada (18.6713ms)
+✔ ruas compartilham cruzamentos, têm desvios e deixam os integrantes fora da pista (1.6106ms)
+✔ diário persiste descobertas válidas sem duplicação e ignora dados inválidos (1.5084ms)
+✔ diário funciona quando acesso ao armazenamento é bloqueado (0.2136ms)
+✔ encontros dependem de distância no mundo e não atravessam prédios (0.3873ms)
+✔ passeio chega a beginning e freia sem prender em obstáculos (45.1311ms)
+✔ passeio chega a voices e freia sem prender em obstáculos (147.37ms)
+✔ passeio chega a genres e freia sem prender em obstáculos (207.025ms)
+✔ passeio chega a demon-days e freia sem prender em obstáculos (154.8841ms)
+✔ passeio chega a live e freia sem prender em obstáculos (101.3735ms)
+✔ os quatro portais podem ser percorridos em sequência pela malha viária (429.6243ms)
+ℹ tests 49
+ℹ suites 0
+ℹ pass 49
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1813.4474

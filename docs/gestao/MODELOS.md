@@ -4,9 +4,9 @@ Revisão em 11/11/2026 a partir dos modelos e contas conectados no OpenBot. A es
 
 | Agente | Modelo e esforço | Uso esperado | Justificativa |
 | --- | --- | --- | --- |
-| Gorilazz Central | GPT-6.1 Terra · alto | arquitetura, prioridades, decomposição e consolidação | Reserva mais capacidade para decisões com várias dependências e revisão de entregas. |
-| Engenharia Gorilazz | GPT-6.1 Sol · alto | mudanças focadas em HTML, JavaScript e Three.js | Modelo de código separado do coordenador, com esforço alto para navegar módulos e limitar diffs. |
-| Pesquisa Gorilazz | GPT-6 Luna · médio (trocado de Gemini 3.8 Flash em 12/11 por cota atingida; Eduardo pediu o Luna) | fontes, fatos, créditos e comparação de referências | Provedor separado para pesquisa editorial e síntese rápida; cada afirmação ainda precisa de fonte verificável. |
+| Gorilazz Central | Claude Opus 5.5 · alto | arquitetura, prioridades, decomposição e consolidação | Trocado do GPT-6.1 Terra em 12/11/2026, a pedido do Eduardo, com a cota do Claude disponível. |
+| Engenharia Gorilazz | Claude Sonnet 5.5 · alto (troca pendente) | mudanças focadas em HTML, JavaScript e Three.js | Troca do GPT-6.1 Sol aprovada em 12/11/2026; aplica no próximo turno, porque ela estava trabalhando. |
+| Pesquisa Gorilazz | Claude Sonnet 5.5 · médio | fontes, fatos, créditos e comparação de referências | Trocado do GPT-6 Luna em 12/11/2026, a pedido do Eduardo. Cada afirmação ainda precisa de fonte verificável. |
 | QA Gorilazz | Claude Haiku 5.5 · médio | critérios de aceite, matriz de validação e revisão de evidências | Revisão concisa de listas e evidências, mantendo a regra de usar Claude apenas no Haiku 5.5 médio. |
 
 ## Operação

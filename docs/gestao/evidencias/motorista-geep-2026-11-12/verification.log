@@ -1,0 +1,58 @@
+{
+  "preservedHashesMatch": true,
+  "carConstructionAndInstallPreserved": true,
+  "before": {
+    "meshes": 17,
+    "triangles": 1428,
+    "geometryBufferBytes": 44472,
+    "sceneBytes": 71011
+  },
+  "after": {
+    "meshes": 11,
+    "triangles": 2228,
+    "materials": 5,
+    "uniqueGeometries": 11,
+    "geometryBufferBytes": 69752,
+    "sceneBytes": 74472,
+    "newAssetFiles": 0
+  },
+  "tests": {
+    "checkExit": 0,
+    "testExit": 0,
+    "passed": 49,
+    "regressionBeforeExit": 1
+  },
+  "capture": {
+    "viewport": [
+      1345,
+      635
+    ],
+    "buffer": [
+      1345,
+      543
+    ],
+    "fov": 35,
+    "pixelRatio": 1,
+    "driverLocalCamera": [
+      -1.45,
+      2.95,
+      -2.25
+    ],
+    "driverLocalTarget": [
+      0,
+      1.9,
+      -0.02
+    ],
+    "worldCamera": [
+      -15.442696109087981,
+      4.097083338894441,
+      -22.91715896608864
+    ],
+    "driverSeatPosition": [
+      -0.6213311375716657,
+      0.49808333889444034,
+      0.41534367008364126
+    ],
+    "scale": 1.22
+  }
+}

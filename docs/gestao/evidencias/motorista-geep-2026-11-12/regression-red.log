@@ -1,0 +1,25 @@
+file:///E:/Gorilazz-Relatorio/tests/driver.test.mjs:4
+import { createDriver, createDriverReaction } from '../src/scene.js';
+         ^^^^^^^^^^^^
+SyntaxError: The requested module '../src/scene.js' does not provide an export named 'createDriver'
+    at #asyncInstantiate (node:internal/modules/esm/module_job:326:21)
+    at async ModuleJob.run (node:internal/modules/esm/module_job:429:5)
+    at async node:internal/modules/esm/loader:639:26
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)
+
+Node.js v25.9.0
+✖ tests\driver.test.mjs (98.4344ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 105.8914
+
+✖ failing tests:
+
+test at tests\driver.test.mjs:1:1
+✖ tests\driver.test.mjs (98.4344ms)
+  'test failed'

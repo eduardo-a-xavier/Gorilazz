@@ -59,7 +59,7 @@ export const MEMBER_LOCATIONS = [
 ].map(point => { const placed = settle(point, 8.5); return { ...placed, heading: placed.facing }; /* o grupo do integrante gira heading + π e a frente do modelo é −z */ });
 export const DISCOVERIES = [
   { id: 'beginning', x: -16, z: -25, title: 'Duas mentes, um universo', label: 'O COMEÇO / 1998', kind: 'MURAL', region: 0, track: 0, chapter: 1,
-    text: 'Em Londres, em 1998, Damon Albarn e Jamie Hewlett criaram Gorillaz. Música e desenho passaram a contar uma história juntos: uma banda virtual com integrantes, personalidades e um mundo próprio.',
+    text: 'Gorillaz surgiu em 1998, a partir da colaboração entre Damon Albarn e Jamie Hewlett. Música e desenho passaram a contar uma história juntos: uma banda virtual com integrantes, personalidades e um mundo próprio.',
     detail: 'O primeiro álbum, Gorillaz, chegou em 2001. Clint Eastwood e Tomorrow Comes Today apresentam o encontro entre hip-hop, dub, rock e animação.', source: 'https://www.gorillaz.com/' },
   { id: 'voices', x: -105, z: -85, title: 'Quatro rostos. Muitas histórias.', label: 'BAIRRO DOS MURAIS', kind: 'ARQUIVO', region: 1, track: 1, chapter: 2,
     text: '2-D canta e toca teclados; Murdoc toca baixo; Noodle, guitarra; Russel, bateria. Suas histórias e personalidades se desenvolvem nos clipes e nas diferentes eras visuais da banda.',
@@ -165,7 +165,7 @@ export function urbanity(point) {
 // Bairros por época: a cidade conta a história da banda em quatro atos (1998–2026).
 export const CITY_ERAS = [
   { id: 'explosao', act: 1, title: 'A explosão', years: '2000–2006', color: '#e0a43a', light: { sun: '#ffc06a', sky: '#ffe2a5', haze: '#b09a76' }, anchor: { x: -35, z: 8 },
-    albums: 'Gorillaz (2001) · Demon Days (2005)', summary: 'Tijolo, caixas-d\'água e grafite: a Londres decadente de Kong Studios.' },
+    albums: 'Gorillaz (2001) · Demon Days (2005)', summary: 'Tijolo, caixas-d\'água e grafite: uma leitura do projeto para o bairro de Kong Studios.' },
   { id: 'plastic', act: 2, title: 'O auge ambicioso', years: '2007–2011', color: '#7fd6cf', light: { sun: '#75e7de', sky: '#b6f4ed', haze: '#83bcb9' }, anchor: { x: 95, z: -45 },
     albums: 'Plastic Beach (2010) · The Fall (2010)', summary: 'Fachadas pastel, lixo plástico colorido e clima de ilha à beira-mar.' },
   { id: 'hiato', act: 3, title: 'A briga e o hiato', years: '2012–2016', color: '#9cacbd', light: { sun: '#acc1d8', sky: '#cbd6e8', haze: '#8996a8' }, anchor: { x: 0, z: -135 },

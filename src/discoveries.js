@@ -19,7 +19,7 @@ export function nearbyInteraction(vehicle) {
 const recordings = {
   explosao: {
     object: 'O televisor de Kong',
-    studio: 'Em 1998, Damon Albarn e Jamie Hewlett imaginaram uma banda de desenho enquanto dividiam um apartamento em Londres. O EP Tomorrow Comes Today apresentou os personagens em 2000. No palco da primeira turnê, os músicos tocavam atrás de uma tela.',
+    studio: 'Segundo a imprensa, Damon Albarn e Jamie Hewlett imaginaram uma banda de desenho enquanto dividiam um apartamento no oeste de Londres; Gorillaz surgiu em 1998. O EP Tomorrow Comes Today apresentou os personagens em 2000. No palco da primeira turnê, os músicos tocavam atrás de uma tela.',
     fiction: 'Em Clint Eastwood, Russel cai no chão e o fantasma de Del sai de seu corpo para rimar. Enquanto o público ouve um convidado na gravação, o clipe inventa um jeito de fazê-lo entrar na banda.',
     cue: 'Em Feel Good Inc., repare na distância entre a torre de 2-D e o moinho de Noodle. O próximo bairro leva essa ideia de um lugar isolado até o oceano.',
   },

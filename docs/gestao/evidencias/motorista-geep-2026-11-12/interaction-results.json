@@ -1,0 +1,19 @@
+{
+  "naturalApp": {"browserReducedMotion":true,"trustedHover":true,"maxNod":0},
+  "environmentEmulation": {"requestedReducedMotion":false,"attempts":2,"tabInventoryReducedMotion":false,"actualMatchMediaReducedMotion":true,"matchMediaIsNative":true},
+  "diagnosticFixture": {"sceneReducedArgument":false,"unrelatedSceneObjectsHidden":true,"originalRenderSuppressed":true,"clockSamplesDrivenWithTimers":true,"reason":"O navegador manteve movimento reduzido e poucos frames por segundo; a fixture testa os handlers reais da cena sem modificar o produto."},
+  "trustedHover": {"maxNodRadians":0.11844040552047962,"maxYawRadians":0.23688081104095923,"armsRotationStayedZero":true,"samples":[
+    {"elapsedMs":110.2,"head":[-0.050281959867556195,0.10056391973511239,0]},
+    {"elapsedMs":359,"head":[-0.11844040552047962,0.23688081104095923,0]},
+    {"elapsedMs":607.2,"head":[-0.08242006158558977,0.16484012317117955,0]},
+    {"elapsedMs":1059.4,"head":[0,0,0]}]},
+  "trustedClick": {"modalOpened":false,"armsRotationStayedZero":true,"samples":[
+    {"elapsedMs":106.8,"head":[-0.04877969562046899,0.09755939124093797,0]},
+    {"elapsedMs":355.9,"head":[-0.11820500805571278,0.23641001611142556,0]},
+    {"elapsedMs":608.1,"head":[-0.08214565271142173,0.16429130542284345,0]},
+    {"elapsedMs":1059.3,"head":[0,0,0]}]},
+  "trustedPointerDrag": {"toolReturnedNativeDragError":true,"canvasPointerEventsObserved":true,"start":[627.486328125,291.7327880859375],"end":[639.486328125,291.7327880859375],"headStayedZeroAfterRelease":true,
+    "cameraBefore":[-6.1184899918296995,6.702516539911901,-33.73119581805516],"cameraAfter":[-10.396543076495831,6.723664150334601,-36.26816987860777]},
+  "firstPersonSceneApi": {"driverVisible":false,"cabinVisible":true},
+  "limits": ["Sem Android/toque físico ou validação completa de hover com preferência normal no fluxo natural do app.","Duração, movimento, preferência reduzida e cancelamento também verificados nos testes unitários.","Feedback OpenBot não enviado: ferramenta permite apenas contexto de mensagem humana, não tarefa de colega."]
+}
