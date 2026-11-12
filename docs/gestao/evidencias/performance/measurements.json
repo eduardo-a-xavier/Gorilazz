@@ -1,0 +1,20 @@
+{
+  "date": "2026-11-12",
+  "hardware": "Ryzen 5 4600G; Radeon RX 6700 XT via ANGLE D3D11; 12 logical cores; Chromium 152.0.7977.167",
+  "units": {"frame": "ms", "heap": "bytes", "ranges": "min, median, max"},
+  "runs": [
+    {"label":"auto-desktop-1","seconds":10.0161,"frames":29,"fps":2.89924,"p50":310.1,"p95":537,"calls":[174,264,268],"triangles":[258670,453710,453954],"heap":[29417773,30332401,31216077],"textures":[93,95,95],"geometries":[186,190,190],"ratio":[0.7,0.7,0.7],"canvas":[941,380],"bins":[4,3,4,2,2,1,3,4,3,3]},
+    {"label":"auto-desktop-2","seconds":10.0027,"frames":31,"fps":3.14696,"p50":300,"p95":537.4,"calls":[174,268,268],"triangles":[258670,453954,453954],"heap":[29624961,30348557,31414089],"textures":[95,95,95],"geometries":[190,190,190],"ratio":[0.7,0.7,0.7],"canvas":[941,380],"bins":[2,3,2,1,6,6,5,2,2,2]},
+    {"label":"auto-aerea","seconds":10.0094,"frames":29,"fps":2.9474,"p50":400.9,"p95":536.5,"calls":[321,415,415],"triangles":[324746,520030,520030],"heap":[31423602,32710487,34686491],"textures":[142,142,142],"geometries":[315,315,315],"ratio":[0.7,0.7,0.7],"canvas":[941,380],"bins":[2,2,2,2,3,3,4,5,3,3]},
+    {"label":"leve-desktop-aquecimento","seconds":8.0126,"frames":24,"fps":3.05007,"p50":380.1,"p95":537.4,"calls":[170,268,268],"triangles":[258426,453954,453954],"heap":[44883188,50640051,58115235],"textures":[93,95,95],"geometries":[186,190,190],"ratio":[0.7,0.7225,1],"canvas":[941,380],"bins":[3,3,2,2,3,5,2,4]},
+    {"label":"leve-sem-sombras","seconds":8.0066,"frames":23,"fps":2.77239,"p50":517.4,"p95":535.4,"calls":[174,174,174],"triangles":[258670,258670,258670],"heap":[44916201,52934405,57801385],"textures":[95,95,95],"geometries":[190,190,190],"ratio":[0.7,0.7,0.7],"canvas":[941,380],"bins":[5,5,2,2,3,2,2,2]},
+    {"label":"leve-desktop-estavel","seconds":8.0024,"frames":19,"fps":2.42441,"p50":518.7,"p95":536.5,"calls":[174,268,268],"triangles":[258670,453954,453954],"heap":[28683290,29335974,29369086],"textures":[95,95,95],"geometries":[190,190,190],"ratio":[0.7,0.7,0.7],"canvas":[941,380],"bins":[5,2,2,3,2,1,2,2]},
+    {"label":"leve-aerea","seconds":8.0076,"frames":19,"fps":2.45838,"p50":518.8,"p95":535.5,"calls":[321,415,415],"triangles":[324746,520030,520030],"heap":[30223570,31823528,33822588],"textures":[142,142,142],"geometries":[315,315,315],"ratio":[0.7,0.7,0.7],"canvas":[941,380],"bins":[5,2,2,2,2,3,2,1]},
+    {"label":"mobile-375-transicao","seconds":8.0138,"frames":61,"fps":7.83525,"p50":59.9,"p95":513.6,"calls":[140,140,234],"triangles":[218723,218723,414007],"heap":[37861285,44641141,53281211],"textures":[86,86,86],"geometries":[173,173,173],"ratio":[0.7,0.7,1],"canvas":[262,536],"bins":[3,3,3,5,12,10,10,15]},
+    {"label":"mobile-estavel","seconds":8.0065,"frames":9,"fps":1.12293,"p50":1003.1,"p95":1004.7,"calls":[132,226,226],"triangles":[218715,413999,413999],"heap":[29642461,29714087,40698073],"textures":[81,81,81],"geometries":[172,172,172],"ratio":[0.7,0.7,0.7],"canvas":[262,536],"bins":[2,1,1,1,1,1,1,1]},
+    {"label":"mobile-passeio","seconds":8.0008,"frames":111,"fps":15.05529,"p50":67.2,"p95":100.7,"calls":[102,152,217],"triangles":[99384,109990,197625],"heap":[30006420,31884004,33781716],"textures":[98,115,118],"geometries":[205,240,244],"ratio":[0.7,0.7,0.7],"canvas":[262,536],"bins":[4,19,12,13,14,16,14,19]}
+  ],
+  "warmNavigation": {"domLoadMs":531.3,"lastResourceResponseEndMs":1563.4,"resourceCount":55,"transferBytes":16500,"decodedBodyBytes":10514882},
+  "sceneTextureEstimate": {"objects":148,"sources":148,"rgba8WithMipsBytes":220592810.666667},
+  "notes": ["Dados condensados das respostas do navegador; intervalos individuais não foram exportados.","Todos os renders contados com aba visible; amostras via MutationObserver também confirmaram foco.","Introdução de 12s em aquecimento e terceiro baseline sobreposto a experimento foram excluídos.","Experimento desktop inicial sem sombras foi excluído por sobreposição; somente leve-sem-sombras é isolado.","Tempos de CPU do wrapper inicial: medianas 3,5/3,1 ms; não representam tempo GPU."]
+}

@@ -1,0 +1,85 @@
+{
+  "preservedHashesMatch": true,
+  "geometry": [
+    {
+      "name": "studio-ground",
+      "triangles": 38,
+      "geometryBytes": 4104
+    },
+    {
+      "name": "coast-ground",
+      "triangles": 212,
+      "geometryBytes": 22896
+    },
+    {
+      "name": "lookout-ground",
+      "triangles": 288,
+      "geometryBytes": 31104
+    }
+  ],
+  "triangles": 538,
+  "geometryBytes": 58104,
+  "materials": 1,
+  "textures": 0,
+  "environmentBytes": {
+    "before": 7058,
+    "after": 9925
+  },
+  "tests": {
+    "checkExit": 0,
+    "testExit": 0,
+    "passed": 46,
+    "regressionBeforeExit": 1
+  },
+  "capture": {
+    "viewport": [
+      1345,
+      635
+    ],
+    "canvasCss": [
+      1345,
+      543
+    ],
+    "drawingBuffer": [
+      941,
+      380
+    ],
+    "pixelRatio": 0.7,
+    "studio": {
+      "camera": [
+        36,
+        58,
+        35
+      ],
+      "target": [
+        -4,
+        0,
+        -5
+      ]
+    },
+    "coast": {
+      "camera": [
+        145,
+        40,
+        35
+      ],
+      "target": [
+        116,
+        0,
+        -15
+      ]
+    },
+    "lookout": {
+      "camera": [
+        110,
+        42,
+        -83
+      ],
+      "target": [
+        72,
+        0,
+        -123
+      ]
+    }
+  }
+}

@@ -1,0 +1,424 @@
+{
+  "models": [
+    {
+      "path": "assets/environment/2d-sculpture.glb",
+      "bytes": 1580892,
+      "meshes": 1,
+      "primitives": 1,
+      "triangles": 33999,
+      "images": [
+        {
+          "bytes": 186407,
+          "width": 1024,
+          "height": 1024,
+          "rgba8_mips_estimate": 5592405.333333333
+        }
+      ]
+    },
+    {
+      "path": "assets/environment/broadleaf-tree.glb",
+      "bytes": 59516,
+      "meshes": 2,
+      "primitives": 2,
+      "triangles": 692,
+      "images": [
+        {
+          "bytes": 17049,
+          "width": 512,
+          "height": 512,
+          "rgba8_mips_estimate": 1398101.3333333333
+        },
+        {
+          "bytes": 12447,
+          "width": 512,
+          "height": 512,
+          "rgba8_mips_estimate": 1398101.3333333333
+        }
+      ]
+    },
+    {
+      "path": "assets/environment/kong-studio.glb",
+      "bytes": 668736,
+      "meshes": 7,
+      "primitives": 7,
+      "triangles": 8680,
+      "images": [
+        {
+          "bytes": 11757,
+          "width": 512,
+          "height": 512,
+          "rgba8_mips_estimate": 1398101.3333333333
+        },
+        {
+          "bytes": 12925,
+          "width": 512,
+          "height": 512,
+          "rgba8_mips_estimate": 1398101.3333333333
+        },
+        {
+          "bytes": 15881,
+          "width": 512,
+          "height": 512,
+          "rgba8_mips_estimate": 1398101.3333333333
+        },
+        {
+          "bytes": 17049,
+          "width": 512,
+          "height": 512,
+          "rgba8_mips_estimate": 1398101.3333333333
+        }
+      ]
+    },
+    {
+      "path": "assets/environment/noodle-diorama.glb",
+      "bytes": 1251404,
+      "meshes": 1,
+      "primitives": 3,
+      "triangles": 48000,
+      "images": [
+        {
+          "bytes": 30980,
+          "width": 1024,
+          "height": 1024,
+          "rgba8_mips_estimate": 5592405.333333333
+        },
+        {
+          "bytes": 38987,
+          "width": 1024,
+          "height": 1024,
+          "rgba8_mips_estimate": 5592405.333333333
+        },
+        {
+          "bytes": 38961,
+          "width": 1024,
+          "height": 1024,
+          "rgba8_mips_estimate": 5592405.333333333
+        }
+      ]
+    },
+    {
+      "path": "assets/models/gorillaz-geep.glb",
+      "bytes": 785068,
+      "meshes": 37,
+      "primitives": 37,
+      "triangles": 6264,
+      "images": [
+        {
+          "bytes": 3105,
+          "width": 256,
+          "height": 256,
+          "rgba8_mips_estimate": 349525.3333333333
+        },
+        {
+          "bytes": 132903,
+          "width": 1024,
+          "height": 1024,
+          "rgba8_mips_estimate": 5592405.333333333
+        },
+        {
+          "bytes": 5102,
+          "width": 128,
+          "height": 128,
+          "rgba8_mips_estimate": 87381.33333333333
+        },
+        {
+          "bytes": 5933,
+          "width": 128,
+          "height": 128,
+          "rgba8_mips_estimate": 87381.33333333333
+        },
+        {
+          "bytes": 5329,
+          "width": 128,
+          "height": 128,
+          "rgba8_mips_estimate": 87381.33333333333
+        },
+        {
+          "bytes": 38725,
+          "width": 512,
+          "height": 512,
+          "rgba8_mips_estimate": 1398101.3333333333
+        },
+        {
+          "bytes": 18363,
+          "width": 256,
+          "height": 256,
+          "rgba8_mips_estimate": 349525.3333333333
+        },
+        {
+          "bytes": 3314,
+          "width": 128,
+          "height": 128,
+          "rgba8_mips_estimate": 87381.33333333333
+        },
+        {
+          "bytes": 3532,
+          "width": 128,
+          "height": 128,
+          "rgba8_mips_estimate": 87381.33333333333
+        },
+        {
+          "bytes": 22451,
+          "width": 512,
+          "height": 512,
+          "rgba8_mips_estimate": 1398101.3333333333
+        },
+        {
+          "bytes": 3701,
+          "width": 256,
+          "height": 256,
+          "rgba8_mips_estimate": 349525.3333333333
+        },
+        {
+          "bytes": 2633,
+          "width": 128,
+          "height": 128,
+          "rgba8_mips_estimate": 87381.33333333333
+        },
+        {
+          "bytes": 2531,
+          "width": 128,
+          "height": 128,
+          "rgba8_mips_estimate": 87381.33333333333
+        },
+        {
+          "bytes": 38724,
+          "width": 512,
+          "height": 512,
+          "rgba8_mips_estimate": 1398101.3333333333
+        }
+      ]
+    },
+    {
+      "path": "assets/models/gorillaz-phase7-web.glb",
+      "bytes": 3407964,
+      "meshes": 25,
+      "primitives": 25,
+      "triangles": 104081,
+      "images": [
+        {
+          "bytes": 101064,
+          "width": 1024,
+          "height": 1024,
+          "rgba8_mips_estimate": 5592405.333333333
+        },
+        {
+          "bytes": 212270,
+          "width": 1024,
+          "height": 1024,
+          "rgba8_mips_estimate": 5592405.333333333
+        },
+        {
+          "bytes": 304904,
+          "width": 1024,
+          "height": 1024,
+          "rgba8_mips_estimate": 5592405.333333333
+        },
+        {
+          "bytes": 52704,
+          "width": 1024,
+          "height": 1024,
+          "rgba8_mips_estimate": 5592405.333333333
+        }
+      ]
+    },
+    {
+      "path": "assets/models/gorillaz-phase7.glb",
+      "bytes": 9535300,
+      "meshes": 25,
+      "primitives": 25,
+      "triangles": 171423,
+      "images": [
+        {
+          "bytes": 1538451,
+          "width": 2048,
+          "height": 2048,
+          "rgba8_mips_estimate": 22369621.333333332
+        },
+        {
+          "bytes": 1196629,
+          "width": 2048,
+          "height": 2048,
+          "rgba8_mips_estimate": 22369621.333333332
+        },
+        {
+          "bytes": 1563666,
+          "width": 2048,
+          "height": 2048,
+          "rgba8_mips_estimate": 22369621.333333332
+        },
+        {
+          "bytes": 901802,
+          "width": 2048,
+          "height": 2048,
+          "rgba8_mips_estimate": 22369621.333333332
+        }
+      ]
+    },
+    {
+      "path": "assets/models/kenney-suv-luxury.glb",
+      "bytes": 188200,
+      "meshes": 5,
+      "primitives": 5,
+      "triangles": 2086,
+      "images": [
+        {
+          "bytes": 12371,
+          "width": 512,
+          "height": 512,
+          "rgba8_mips_estimate": 1398101.3333333333
+        }
+      ]
+    },
+    {
+      "path": "assets/models/kenney-suv.glb",
+      "bytes": 219840,
+      "meshes": 6,
+      "primitives": 6,
+      "triangles": 2474,
+      "images": [
+        {
+          "bytes": 12371,
+          "width": 512,
+          "height": 512,
+          "rgba8_mips_estimate": 1398101.3333333333
+        }
+      ]
+    }
+  ],
+  "textures": [
+    {
+      "path": "assets/materials/asphalt-normal.png",
+      "bytes": 477696,
+      "width": 512,
+      "height": 512,
+      "rgba8_mips_estimate": 1398101.3333333333
+    },
+    {
+      "path": "assets/materials/asphalt.png",
+      "bytes": 267839,
+      "width": 512,
+      "height": 512,
+      "rgba8_mips_estimate": 1398101.3333333333
+    },
+    {
+      "path": "assets/materials/brick.png",
+      "bytes": 226067,
+      "width": 512,
+      "height": 512,
+      "rgba8_mips_estimate": 1398101.3333333333
+    },
+    {
+      "path": "assets/materials/earth-normal.png",
+      "bytes": 477434,
+      "width": 512,
+      "height": 512,
+      "rgba8_mips_estimate": 1398101.3333333333
+    },
+    {
+      "path": "assets/materials/earth.png",
+      "bytes": 273142,
+      "width": 512,
+      "height": 512,
+      "rgba8_mips_estimate": 1398101.3333333333
+    },
+    {
+      "path": "assets/materials/foliage-normal.png",
+      "bytes": 477494,
+      "width": 512,
+      "height": 512,
+      "rgba8_mips_estimate": 1398101.3333333333
+    },
+    {
+      "path": "assets/materials/foliage.png",
+      "bytes": 303650,
+      "width": 512,
+      "height": 512,
+      "rgba8_mips_estimate": 1398101.3333333333
+    },
+    {
+      "path": "assets/materials/grass-normal.png",
+      "bytes": 477321,
+      "width": 512,
+      "height": 512,
+      "rgba8_mips_estimate": 1398101.3333333333
+    },
+    {
+      "path": "assets/materials/grass.png",
+      "bytes": 272448,
+      "width": 512,
+      "height": 512,
+      "rgba8_mips_estimate": 1398101.3333333333
+    },
+    {
+      "path": "assets/materials/plaster-normal.png",
+      "bytes": 477409,
+      "width": 512,
+      "height": 512,
+      "rgba8_mips_estimate": 1398101.3333333333
+    },
+    {
+      "path": "assets/materials/plaster.png",
+      "bytes": 297959,
+      "width": 512,
+      "height": 512,
+      "rgba8_mips_estimate": 1398101.3333333333
+    },
+    {
+      "path": "assets/materials/roof-normal.png",
+      "bytes": 477306,
+      "width": 512,
+      "height": 512,
+      "rgba8_mips_estimate": 1398101.3333333333
+    },
+    {
+      "path": "assets/materials/roof.png",
+      "bytes": 306557,
+      "width": 512,
+      "height": 512,
+      "rgba8_mips_estimate": 1398101.3333333333
+    },
+    {
+      "path": "assets/materials/wood-normal.png",
+      "bytes": 477609,
+      "width": 512,
+      "height": 512,
+      "rgba8_mips_estimate": 1398101.3333333333
+    },
+    {
+      "path": "assets/materials/wood.png",
+      "bytes": 310477,
+      "width": 512,
+      "height": 512,
+      "rgba8_mips_estimate": 1398101.3333333333
+    },
+    {
+      "path": "assets/portraits/phase7-murdoc.png",
+      "bytes": 181908,
+      "width": 384,
+      "height": 512,
+      "rgba8_mips_estimate": 1048576.0
+    },
+    {
+      "path": "assets/portraits/phase7-noodle.png",
+      "bytes": 186676,
+      "width": 384,
+      "height": 512,
+      "rgba8_mips_estimate": 1048576.0
+    },
+    {
+      "path": "assets/portraits/phase7-russel.png",
+      "bytes": 212713,
+      "width": 384,
+      "height": 512,
+      "rgba8_mips_estimate": 1048576.0
+    },
+    {
+      "path": "assets/portraits/phase7-twod.png",
+      "bytes": 182046,
+      "width": 384,
+      "height": 512,
+      "rgba8_mips_estimate": 1048576.0
+    }
+  ]
+}

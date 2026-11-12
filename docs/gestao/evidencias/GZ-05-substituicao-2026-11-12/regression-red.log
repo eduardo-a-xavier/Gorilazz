@@ -1,0 +1,20 @@
+Baseline: HEAD diorama = 200; esperado pela regressão = 404
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+200 !== 404
+
+    at file:///E:/Gorilazz-Relatorio/docs/gestao/evidencias/GZ-05-substituicao-2026-11-12/regression-red.mjs:17:10
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5) {
+  generatedMessage: true,
+  code: 'ERR_ASSERTION',
+  actual: 200,
+  expected: 404,
+  operator: 'strictEqual',
+  diff: 'simple'
+}
+
+Node.js v25.9.0

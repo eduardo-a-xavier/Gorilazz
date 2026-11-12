@@ -1,0 +1,56 @@
+
+> gorilazz-a-estrada@1.0.0 test
+> node --test tests/*.test.mjs
+
+✔ rig articula o braço sem reescrever a malha nem mover o tronco (21.4591ms)
+✔ o recorte tem oito eras distintas e não se apresenta como discografia atual (2.2784ms)
+✔ cada era tem duas camadas de narrativa, fonte e uma escuta válida (0.5974ms)
+✔ The Fall distingue digital e físico sem duplicar o álbum (0.4192ms)
+✔ a era corresponde à posição circular inclusive em marcha à ré (0.4054ms)
+✔ faixas sem ID de vídeo cadastrado abrem uma busca em vez de um embed inventado (1.033ms)
+✔ cada integrante aponta para uma ficha e escuta existentes (0.3548ms)
+✔ peças fornecidas são GLBs locais estáticos reduzidos, com texturas incorporadas (12.9604ms)
+✔ fachada e vegetação autorais usam poucos grupos de material e GLB válido (4.6493ms)
+✔ novos volumes da exposição e árvores preservam os caminhos de exploração (7.6346ms)
+✔ uma viagem nova ou um registro inválido não quebra a página (2.5177ms)
+✔ o progresso restaura posição e apenas integrantes únicos válidos (0.4983ms)
+✔ salvar uma volta preserva o progresso sem depender da quantidade de voltas (0.6261ms)
+✔ uma posição inválida não contamina o movimento (0.4651ms)
+✔ bloqueio do armazenamento mantém a experiência utilizável (0.584ms)
+✔ o circuito fecha sem salto em qualquer volta (6.1605ms)
+✔ a frente do jipe aponta na tangente da curva (0.4026ms)
+✔ o deslocamento lateral mantém o arco do circuito (0.4648ms)
+✔ as nove paradas ocupam posições diferentes (0.4979ms)
+✔ o caminho mais curto pode atravessar a emenda nos dois sentidos (1.5356ms)
+✔ progresso e encontros são periódicos inclusive em marcha à ré (1.4335ms)
+✔ servidor revalida por ETag, comprime texto e mantém a lista explícita de arquivos (316.4222ms)
+✔ posição livre e integrantes sobrevivem ao recarregamento sem restaurar velocidade (2.65ms)
+✔ posição inválida volta ao início e mantém os integrantes válidos (0.5185ms)
+✔ progresso de integrantes da versão anterior permanece disponível para migração (0.6812ms)
+✔ persistência do mundo tolera dados quebrados e armazenamento bloqueado (0.5312ms)
+✔ ré atinge no máximo 15 km/h em diferentes passos e desacelera ao soltar (59.8839ms)
+✔ acelerar ganha velocidade; soltar preserva inércia e frear para (26.9096ms)
+✔ frear continuamente não engata ré; soltar e pressionar novamente engata (22.7113ms)
+✔ freio tem prioridade sobre acelerador e os limites de velocidade são respeitados (3.0678ms)
+✔ direção muda a trajetória nos dois sentidos e não gira o carro parado (30.0707ms)
+✔ integração mantém comportamento próximo em taxas diferentes de quadros (13.392ms)
+✔ colisões e limites impedem atravessar prédios ou sair da ilha (0.6424ms)
+✔ peças das descobertas e o cemitério são sólidos sem bloquear ruas nem a chegada (20.8619ms)
+✔ ruas compartilham cruzamentos, têm desvios e deixam os integrantes fora da pista (2.1029ms)
+✔ diário persiste descobertas válidas sem duplicação e ignora dados inválidos (1.831ms)
+✔ diário funciona quando acesso ao armazenamento é bloqueado (0.2953ms)
+✔ encontros dependem de distância no mundo e não atravessam prédios (0.3346ms)
+✔ passeio chega a beginning e freia sem prender em obstáculos (58.0963ms)
+✔ passeio chega a voices e freia sem prender em obstáculos (171.0121ms)
+✔ passeio chega a genres e freia sem prender em obstáculos (240.0294ms)
+✔ passeio chega a demon-days e freia sem prender em obstáculos (169.7568ms)
+✔ passeio chega a live e freia sem prender em obstáculos (108.9588ms)
+✔ os quatro portais podem ser percorridos em sequência pela malha viária (440.6641ms)
+ℹ tests 44
+ℹ suites 0
+ℹ pass 44
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1847.6213

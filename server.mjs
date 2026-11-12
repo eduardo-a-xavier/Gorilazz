@@ -42,7 +42,6 @@ const routes = new Map([
   ['/assets/environment/2d-sculpture.glb', ['assets/environment/2d-sculpture.glb', 'model/gltf-binary']],
   ['/assets/environment/broadleaf-tree.glb', ['assets/environment/broadleaf-tree.glb', 'model/gltf-binary']],
   ['/assets/environment/kong-studio.glb', ['assets/environment/kong-studio.glb', 'model/gltf-binary']],
-  ['/assets/environment/noodle-diorama.glb', ['assets/environment/noodle-diorama.glb', 'model/gltf-binary']],
   ['/assets/environment/CREDITS.txt', ['assets/environment/CREDITS.txt', 'text/plain; charset=utf-8']],
   ['/src/route.js', ['src/route.js', 'text/javascript; charset=utf-8']],
   ['/src/world-data.js', ['src/world-data.js', 'text/javascript; charset=utf-8']],

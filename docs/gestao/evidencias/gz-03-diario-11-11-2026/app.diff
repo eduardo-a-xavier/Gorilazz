@@ -1,0 +1,13 @@
+diff --git a/src/app.js b/src/app.js
+index eae4ec7..b5d7b42 100644
+--- a/src/app.js
++++ b/src/app.js
+@@ -275,7 +275,7 @@ function updateJournal() {
+   DISCOVERIES.forEach((point, index) => {
+     const known = journal.known.has(point.id); const item = document.createElement('li'); item.className = known ? 'found' : '';
+     const title = document.createElement('h3'); title.textContent = known ? point.title : `? ${point.kind.toLowerCase()} a descobrir`;
+-    const region = document.createElement('p'); region.textContent = REGIONS[point.region].name;
++    const region = document.createElement('p'); region.textContent = `Região: ${REGIONS[point.region].name} · Ato espacial: ${CITY_ERAS[eraAt(point)].act}`;
+     const read = document.createElement('button'); read.type = 'button'; read.textContent = known ? 'Reler história ↗' : 'Consultar conteúdo ↗';
+     read.addEventListener('click', () => { journalNextAction = () => openDiscovery(index, false); journalDialog.close(); }); item.append(title, region, read);
+     if (known) { const go = document.createElement('button'); go.type = 'button'; go.textContent = 'Visitar lugar →'; go.addEventListener('click', () => { journalNextAction = () => startNavigation(point); journalDialog.close(); }); item.append(go); }

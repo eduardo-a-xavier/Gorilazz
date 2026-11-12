@@ -15,20 +15,6 @@
       "rigged": false
     },
     {
-      "author": null,
-      "source": "https://sketchfab.com/search?features=downloadable&q=gorilaz&type=models",
-      "license": null,
-      "attributionStatus": "individual source under identification; supplied by user",
-      "sourceArchive": "noodle.zip",
-      "originalTriangles": 306208,
-      "file": "noodle-diorama.glb",
-      "bytes": 1251404,
-      "sha256": "b5f34c8e6f3e648fc2b7c02ad66b052764802c816d5763c7415ef6bbcf616642",
-      "triangles": 48000,
-      "animated": false,
-      "rigged": false
-    },
-    {
       "author": "Original environment produced for this project",
       "source": "scripts/build-visual-environment.py",
       "license": "Project-authored",

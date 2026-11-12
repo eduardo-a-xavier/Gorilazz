@@ -25,6 +25,6 @@ test('servidor revalida por ETag, comprime texto e mantém a lista explícita de
     assert.equal(model.headers.get('content-encoding'), null);
     assert.equal(Number(model.headers.get('content-length')), (await model.arrayBuffer()).byteLength);
     for (const path of ['/src/atmosphere.js', '/src/postfx.js', '/src/roads.js', '/src/landmarks.js', '/assets/models/gorillaz-phase7-web.glb']) assert.equal((await fetch(origin + path)).status, 200);
-    for (const path of ['/package.json', '/server.mjs', '/src/../server.mjs']) assert.equal((await fetch(origin + path)).status, 404);
+    for (const path of ['/package.json', '/server.mjs', '/src/../server.mjs', '/assets/environment/noodle-diorama.glb']) assert.equal((await fetch(origin + path)).status, 404);
   } finally { child.kill(); }
 });

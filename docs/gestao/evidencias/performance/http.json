@@ -1,0 +1,602 @@
+[
+  {
+    "repeat": 1,
+    "path": "assets/environment/2d-sculpture.glb",
+    "status": 200,
+    "bytes": 1580892,
+    "ms": 328.2634999995935,
+    "etag": "\"xvto-mw2oixwh\""
+  },
+  {
+    "repeat": 1,
+    "path": "assets/environment/broadleaf-tree.glb",
+    "status": 200,
+    "bytes": 59516,
+    "ms": 1.8409000003885012,
+    "etag": "\"19x8-mw2oixwj\""
+  },
+  {
+    "repeat": 1,
+    "path": "assets/environment/kong-studio.glb",
+    "status": 200,
+    "bytes": 668736,
+    "ms": 24.938700000348035,
+    "etag": "\"ec00-mw2oixwm\""
+  },
+  {
+    "repeat": 1,
+    "path": "assets/environment/noodle-diorama.glb",
+    "status": 200,
+    "bytes": 1251404,
+    "ms": 30.348300002515316,
+    "etag": "\"qtl8-mw2oixwx\""
+  },
+  {
+    "repeat": 1,
+    "path": "assets/models/gorillaz-geep.glb",
+    "status": 200,
+    "bytes": 785068,
+    "ms": 2.198499998485204,
+    "etag": "\"gtrg-mw2oixy2\""
+  },
+  {
+    "repeat": 1,
+    "path": "assets/models/gorillaz-phase7-web.glb",
+    "status": 200,
+    "bytes": 3407964,
+    "ms": 31.553000000712927,
+    "etag": "\"211lo-mwagtme5\""
+  },
+  {
+    "repeat": 1,
+    "path": "assets/materials/asphalt-normal.png",
+    "status": 200,
+    "bytes": 477696,
+    "ms": 2.2699999972246587,
+    "etag": "\"a8lc-mw2oixx0\""
+  },
+  {
+    "repeat": 1,
+    "path": "assets/materials/asphalt.png",
+    "status": 200,
+    "bytes": 267839,
+    "ms": 26.98170000076061,
+    "etag": "\"5qnz-mw2oixx2\""
+  },
+  {
+    "repeat": 1,
+    "path": "assets/materials/brick.png",
+    "status": 200,
+    "bytes": 226067,
+    "ms": 1.9133999994664919,
+    "etag": "\"4ufn-mw2oixx3\""
+  },
+  {
+    "repeat": 1,
+    "path": "assets/materials/earth-normal.png",
+    "status": 200,
+    "bytes": 477434,
+    "ms": 13.437300000077812,
+    "etag": "\"a8e2-mw2oixx7\""
+  },
+  {
+    "repeat": 1,
+    "path": "assets/materials/earth.png",
+    "status": 200,
+    "bytes": 273142,
+    "ms": 1.8137000006390736,
+    "etag": "\"5ura-mw2oixx8\""
+  },
+  {
+    "repeat": 1,
+    "path": "assets/materials/foliage-normal.png",
+    "status": 200,
+    "bytes": 477494,
+    "ms": 1.9517000000632834,
+    "etag": "\"a8fq-mw2oixxb\""
+  },
+  {
+    "repeat": 1,
+    "path": "assets/materials/foliage.png",
+    "status": 200,
+    "bytes": 303650,
+    "ms": 1.829699998779688,
+    "etag": "\"6iaq-mw2oixxd\""
+  },
+  {
+    "repeat": 1,
+    "path": "assets/materials/grass-normal.png",
+    "status": 200,
+    "bytes": 477321,
+    "ms": 1.954499999555992,
+    "etag": "\"a8ax-mw2oixxf\""
+  },
+  {
+    "repeat": 1,
+    "path": "assets/materials/grass.png",
+    "status": 200,
+    "bytes": 272448,
+    "ms": 1.898599999549333,
+    "etag": "\"5u80-mw2oixxh\""
+  },
+  {
+    "repeat": 1,
+    "path": "assets/materials/plaster-normal.png",
+    "status": 200,
+    "bytes": 477409,
+    "ms": 2.043000000412576,
+    "etag": "\"a8dd-mw2oixxk\""
+  },
+  {
+    "repeat": 1,
+    "path": "assets/materials/plaster.png",
+    "status": 200,
+    "bytes": 297959,
+    "ms": 1.6438999991805758,
+    "etag": "\"6dwn-mw2oixxl\""
+  },
+  {
+    "repeat": 1,
+    "path": "assets/materials/roof-normal.png",
+    "status": 200,
+    "bytes": 477306,
+    "ms": 2.047999998467276,
+    "etag": "\"a8ai-mw2oixxo\""
+  },
+  {
+    "repeat": 1,
+    "path": "assets/materials/roof.png",
+    "status": 200,
+    "bytes": 306557,
+    "ms": 1.8880999996326864,
+    "etag": "\"6kjh-mw2oixxq\""
+  },
+  {
+    "repeat": 1,
+    "path": "assets/materials/wood-normal.png",
+    "status": 200,
+    "bytes": 477609,
+    "ms": 2.0613999986380804,
+    "etag": "\"a8ix-mw2oixxs\""
+  },
+  {
+    "repeat": 1,
+    "path": "assets/materials/wood.png",
+    "status": 200,
+    "bytes": 310477,
+    "ms": 1.893799999379553,
+    "etag": "\"6nkd-mw2oixxu\""
+  },
+  {
+    "repeat": 1,
+    "path": "assets/portraits/phase7-murdoc.png",
+    "status": 200,
+    "bytes": 181908,
+    "ms": 1.81200000224635,
+    "etag": "\"3wd0-mw2oixzx\""
+  },
+  {
+    "repeat": 1,
+    "path": "assets/portraits/phase7-noodle.png",
+    "status": 200,
+    "bytes": 186676,
+    "ms": 1.7862999993667472,
+    "etag": "\"401g-mw2oixzz\""
+  },
+  {
+    "repeat": 1,
+    "path": "assets/portraits/phase7-russel.png",
+    "status": 200,
+    "bytes": 212713,
+    "ms": 1.7633999996178318,
+    "etag": "\"4k4p-mw2oiy01\""
+  },
+  {
+    "repeat": 1,
+    "path": "assets/portraits/phase7-twod.png",
+    "status": 200,
+    "bytes": 182046,
+    "ms": 1.6673999998602085,
+    "etag": "\"3wgu-mw2oiy03\""
+  },
+  {
+    "repeat": 2,
+    "path": "assets/environment/2d-sculpture.glb",
+    "status": 200,
+    "bytes": 1580892,
+    "ms": 17.188600002555177,
+    "etag": "\"xvto-mw2oixwh\""
+  },
+  {
+    "repeat": 2,
+    "path": "assets/environment/broadleaf-tree.glb",
+    "status": 200,
+    "bytes": 59516,
+    "ms": 1.9558999993023463,
+    "etag": "\"19x8-mw2oixwj\""
+  },
+  {
+    "repeat": 2,
+    "path": "assets/environment/kong-studio.glb",
+    "status": 200,
+    "bytes": 668736,
+    "ms": 2.437799998006085,
+    "etag": "\"ec00-mw2oixwm\""
+  },
+  {
+    "repeat": 2,
+    "path": "assets/environment/noodle-diorama.glb",
+    "status": 200,
+    "bytes": 1251404,
+    "ms": 2.9291999999259133,
+    "etag": "\"qtl8-mw2oixwx\""
+  },
+  {
+    "repeat": 2,
+    "path": "assets/models/gorillaz-geep.glb",
+    "status": 200,
+    "bytes": 785068,
+    "ms": 2.0551000015984755,
+    "etag": "\"gtrg-mw2oixy2\""
+  },
+  {
+    "repeat": 2,
+    "path": "assets/models/gorillaz-phase7-web.glb",
+    "status": 200,
+    "bytes": 3407964,
+    "ms": 52.760200000193436,
+    "etag": "\"211lo-mwagtme5\""
+  },
+  {
+    "repeat": 2,
+    "path": "assets/materials/asphalt-normal.png",
+    "status": 200,
+    "bytes": 477696,
+    "ms": 15.70019999780925,
+    "etag": "\"a8lc-mw2oixx0\""
+  },
+  {
+    "repeat": 2,
+    "path": "assets/materials/asphalt.png",
+    "status": 200,
+    "bytes": 267839,
+    "ms": 1.7638999997870997,
+    "etag": "\"5qnz-mw2oixx2\""
+  },
+  {
+    "repeat": 2,
+    "path": "assets/materials/brick.png",
+    "status": 200,
+    "bytes": 226067,
+    "ms": 1.5864999986661132,
+    "etag": "\"4ufn-mw2oixx3\""
+  },
+  {
+    "repeat": 2,
+    "path": "assets/materials/earth-normal.png",
+    "status": 200,
+    "bytes": 477434,
+    "ms": 12.026399999740534,
+    "etag": "\"a8e2-mw2oixx7\""
+  },
+  {
+    "repeat": 2,
+    "path": "assets/materials/earth.png",
+    "status": 200,
+    "bytes": 273142,
+    "ms": 1.894100001663901,
+    "etag": "\"5ura-mw2oixx8\""
+  },
+  {
+    "repeat": 2,
+    "path": "assets/materials/foliage-normal.png",
+    "status": 200,
+    "bytes": 477494,
+    "ms": 1.8066000011458527,
+    "etag": "\"a8fq-mw2oixxb\""
+  },
+  {
+    "repeat": 2,
+    "path": "assets/materials/foliage.png",
+    "status": 200,
+    "bytes": 303650,
+    "ms": 1.8343000010645483,
+    "etag": "\"6iaq-mw2oixxd\""
+  },
+  {
+    "repeat": 2,
+    "path": "assets/materials/grass-normal.png",
+    "status": 200,
+    "bytes": 477321,
+    "ms": 26.97239999906742,
+    "etag": "\"a8ax-mw2oixxf\""
+  },
+  {
+    "repeat": 2,
+    "path": "assets/materials/grass.png",
+    "status": 200,
+    "bytes": 272448,
+    "ms": 2.2468999995908234,
+    "etag": "\"5u80-mw2oixxh\""
+  },
+  {
+    "repeat": 2,
+    "path": "assets/materials/plaster-normal.png",
+    "status": 200,
+    "bytes": 477409,
+    "ms": 2.028899998549605,
+    "etag": "\"a8dd-mw2oixxk\""
+  },
+  {
+    "repeat": 2,
+    "path": "assets/materials/plaster.png",
+    "status": 200,
+    "bytes": 297959,
+    "ms": 1.765299999533454,
+    "etag": "\"6dwn-mw2oixxl\""
+  },
+  {
+    "repeat": 2,
+    "path": "assets/materials/roof-normal.png",
+    "status": 200,
+    "bytes": 477306,
+    "ms": 24.439700002403697,
+    "etag": "\"a8ai-mw2oixxo\""
+  },
+  {
+    "repeat": 2,
+    "path": "assets/materials/roof.png",
+    "status": 200,
+    "bytes": 306557,
+    "ms": 1.7169000020658132,
+    "etag": "\"6kjh-mw2oixxq\""
+  },
+  {
+    "repeat": 2,
+    "path": "assets/materials/wood-normal.png",
+    "status": 200,
+    "bytes": 477609,
+    "ms": 14.392099998076446,
+    "etag": "\"a8ix-mw2oixxs\""
+  },
+  {
+    "repeat": 2,
+    "path": "assets/materials/wood.png",
+    "status": 200,
+    "bytes": 310477,
+    "ms": 1.7183000018121675,
+    "etag": "\"6nkd-mw2oixxu\""
+  },
+  {
+    "repeat": 2,
+    "path": "assets/portraits/phase7-murdoc.png",
+    "status": 200,
+    "bytes": 181908,
+    "ms": 1.5429000013682526,
+    "etag": "\"3wd0-mw2oixzx\""
+  },
+  {
+    "repeat": 2,
+    "path": "assets/portraits/phase7-noodle.png",
+    "status": 200,
+    "bytes": 186676,
+    "ms": 1.5500000008614734,
+    "etag": "\"401g-mw2oixzz\""
+  },
+  {
+    "repeat": 2,
+    "path": "assets/portraits/phase7-russel.png",
+    "status": 200,
+    "bytes": 212713,
+    "ms": 1.5872000003582798,
+    "etag": "\"4k4p-mw2oiy01\""
+  },
+  {
+    "repeat": 2,
+    "path": "assets/portraits/phase7-twod.png",
+    "status": 200,
+    "bytes": 182046,
+    "ms": 1.723699999274686,
+    "etag": "\"3wgu-mw2oiy03\""
+  },
+  {
+    "repeat": 3,
+    "path": "assets/environment/2d-sculpture.glb",
+    "status": 200,
+    "bytes": 1580892,
+    "ms": 38.61479999977746,
+    "etag": "\"xvto-mw2oixwh\""
+  },
+  {
+    "repeat": 3,
+    "path": "assets/environment/broadleaf-tree.glb",
+    "status": 200,
+    "bytes": 59516,
+    "ms": 15.58620000287192,
+    "etag": "\"19x8-mw2oixwj\""
+  },
+  {
+    "repeat": 3,
+    "path": "assets/environment/kong-studio.glb",
+    "status": 200,
+    "bytes": 668736,
+    "ms": 1.8005999991146382,
+    "etag": "\"ec00-mw2oixwm\""
+  },
+  {
+    "repeat": 3,
+    "path": "assets/environment/noodle-diorama.glb",
+    "status": 200,
+    "bytes": 1251404,
+    "ms": 14.131200001429534,
+    "etag": "\"qtl8-mw2oixwx\""
+  },
+  {
+    "repeat": 3,
+    "path": "assets/models/gorillaz-geep.glb",
+    "status": 200,
+    "bytes": 785068,
+    "ms": 15.21850000062841,
+    "etag": "\"gtrg-mw2oixy2\""
+  },
+  {
+    "repeat": 3,
+    "path": "assets/models/gorillaz-phase7-web.glb",
+    "status": 200,
+    "bytes": 3407964,
+    "ms": 5.300900000293041,
+    "etag": "\"211lo-mwagtme5\""
+  },
+  {
+    "repeat": 3,
+    "path": "assets/materials/asphalt-normal.png",
+    "status": 200,
+    "bytes": 477696,
+    "ms": 26.70600000055856,
+    "etag": "\"a8lc-mw2oixx0\""
+  },
+  {
+    "repeat": 3,
+    "path": "assets/materials/asphalt.png",
+    "status": 200,
+    "bytes": 267839,
+    "ms": 1.7546000017318875,
+    "etag": "\"5qnz-mw2oixx2\""
+  },
+  {
+    "repeat": 3,
+    "path": "assets/materials/brick.png",
+    "status": 200,
+    "bytes": 226067,
+    "ms": 1.6395999991800636,
+    "etag": "\"4ufn-mw2oixx3\""
+  },
+  {
+    "repeat": 3,
+    "path": "assets/materials/earth-normal.png",
+    "status": 200,
+    "bytes": 477434,
+    "ms": 12.35179999639513,
+    "etag": "\"a8e2-mw2oixx7\""
+  },
+  {
+    "repeat": 3,
+    "path": "assets/materials/earth.png",
+    "status": 200,
+    "bytes": 273142,
+    "ms": 15.939900000375928,
+    "etag": "\"5ura-mw2oixx8\""
+  },
+  {
+    "repeat": 3,
+    "path": "assets/materials/foliage-normal.png",
+    "status": 200,
+    "bytes": 477494,
+    "ms": 1.7213000028277747,
+    "etag": "\"a8fq-mw2oixxb\""
+  },
+  {
+    "repeat": 3,
+    "path": "assets/materials/foliage.png",
+    "status": 200,
+    "bytes": 303650,
+    "ms": 14.304500000434928,
+    "etag": "\"6iaq-mw2oixxd\""
+  },
+  {
+    "repeat": 3,
+    "path": "assets/materials/grass-normal.png",
+    "status": 200,
+    "bytes": 477321,
+    "ms": 1.9986000006610993,
+    "etag": "\"a8ax-mw2oixxf\""
+  },
+  {
+    "repeat": 3,
+    "path": "assets/materials/grass.png",
+    "status": 200,
+    "bytes": 272448,
+    "ms": 1.702800000202842,
+    "etag": "\"5u80-mw2oixxh\""
+  },
+  {
+    "repeat": 3,
+    "path": "assets/materials/plaster-normal.png",
+    "status": 200,
+    "bytes": 477409,
+    "ms": 26.2851999978011,
+    "etag": "\"a8dd-mw2oixxk\""
+  },
+  {
+    "repeat": 3,
+    "path": "assets/materials/plaster.png",
+    "status": 200,
+    "bytes": 297959,
+    "ms": 14.997199999925215,
+    "etag": "\"6dwn-mw2oixxl\""
+  },
+  {
+    "repeat": 3,
+    "path": "assets/materials/roof-normal.png",
+    "status": 200,
+    "bytes": 477306,
+    "ms": 16.152900003362447,
+    "etag": "\"a8ai-mw2oixxo\""
+  },
+  {
+    "repeat": 3,
+    "path": "assets/materials/roof.png",
+    "status": 200,
+    "bytes": 306557,
+    "ms": 1.81940000038594,
+    "etag": "\"6kjh-mw2oixxq\""
+  },
+  {
+    "repeat": 3,
+    "path": "assets/materials/wood-normal.png",
+    "status": 200,
+    "bytes": 477609,
+    "ms": 1.7382000005454756,
+    "etag": "\"a8ix-mw2oixxs\""
+  },
+  {
+    "repeat": 3,
+    "path": "assets/materials/wood.png",
+    "status": 200,
+    "bytes": 310477,
+    "ms": 12.30299999951967,
+    "etag": "\"6nkd-mw2oixxu\""
+  },
+  {
+    "repeat": 3,
+    "path": "assets/portraits/phase7-murdoc.png",
+    "status": 200,
+    "bytes": 181908,
+    "ms": 1.806099997338606,
+    "etag": "\"3wd0-mw2oixzx\""
+  },
+  {
+    "repeat": 3,
+    "path": "assets/portraits/phase7-noodle.png",
+    "status": 200,
+    "bytes": 186676,
+    "ms": 13.158900001144502,
+    "etag": "\"401g-mw2oixzz\""
+  },
+  {
+    "repeat": 3,
+    "path": "assets/portraits/phase7-russel.png",
+    "status": 200,
+    "bytes": 212713,
+    "ms": 14.653500002168585,
+    "etag": "\"4k4p-mw2oiy01\""
+  },
+  {
+    "repeat": 3,
+    "path": "assets/portraits/phase7-twod.png",
+    "status": 200,
+    "bytes": 182046,
+    "ms": 15.05189999807044,
+    "etag": "\"3wgu-mw2oiy03\""
+  }
+]

@@ -14,7 +14,7 @@ function triangles(data) {
   return data.meshes.reduce((sum,mesh)=>sum+mesh.primitives.reduce((n,p)=>n+data.accessors[p.indices??p.attributes.POSITION].count/3,0),0);
 }
 test('peças fornecidas são GLBs locais estáticos reduzidos, com texturas incorporadas',async()=>{
-  for(const [name,maximum] of [['2d-sculpture.glb',35000],['noodle-diorama.glb',50000]]){
+  for(const [name,maximum] of [['2d-sculpture.glb',35000]]){
     const data=await glb(name);assert.ok(triangles(data)<=maximum);assert.ok(triangles(data)>10000);
     assert.equal(data.skins?.length||0,0);assert.equal(data.animations?.length||0,0);
     assert.ok(data.images.length>0);assert.ok(data.images.every(image=>Number.isInteger(image.bufferView)&&!image.uri));
@@ -42,3 +42,4 @@ test('novos volumes da exposição e árvores preservam os caminhos de exploraç
   assert.ok(TREE_LOCATIONS.length>10);
   for(const point of TREE_LOCATIONS){assert.ok(nearestRoad(point).distance>=15);assert.ok(DISCOVERIES.every(d=>distance(point,d)>=15));}
 });
+

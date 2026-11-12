@@ -1,0 +1,25 @@
+file:///E:/Gorilazz-Relatorio/tests/regional-grounds.test.mjs:4
+import { createRegionalGrounds } from '../src/environment.js';
+         ^^^^^^^^^^^^^^^^^^^^^
+SyntaxError: The requested module '../src/environment.js' does not provide an export named 'createRegionalGrounds'
+    at #asyncInstantiate (node:internal/modules/esm/module_job:326:21)
+    at async ModuleJob.run (node:internal/modules/esm/module_job:429:5)
+    at async node:internal/modules/esm/loader:639:26
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)
+
+Node.js v25.9.0
+✖ tests\regional-grounds.test.mjs (87.8108ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 95.9425
+
+✖ failing tests:
+
+test at tests\regional-grounds.test.mjs:1:1
+✖ tests\regional-grounds.test.mjs (87.8108ms)
+  'test failed'

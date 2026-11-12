@@ -1,0 +1,54 @@
+[
+  {
+    "Path": "E:\\Gorilazz-Relatorio\\index.html",
+    "Hash": "2D53AE61AEC41A55AA3DDCFF0BBE67CA4C7B9E23C88370E182E5589192A837A7"
+  },
+  {
+    "Path": "E:\\Gorilazz-Relatorio\\server.mjs",
+    "Hash": "4B8C13E7C391394D59591B64EED65C46416810D7B8C654D3F246822F8A72A5D3"
+  },
+  {
+    "Path": "E:\\Gorilazz-Relatorio\\src\\app.js",
+    "Hash": "E7951A4E6171FA9A93DB273353E0932DBE34568628D32F06F6DCF448FA762BDC"
+  },
+  {
+    "Path": "E:\\Gorilazz-Relatorio\\src\\content.js",
+    "Hash": "CFD184FD120F292AAD5EE302371D26FADB391663C750E41B9F2C85A89F7A39D9"
+  },
+  {
+    "Path": "E:\\Gorilazz-Relatorio\\src\\world-data.js",
+    "Hash": "10D702EFFA5C96DECA94D13B96A2EDF7AA413881FD2EA45C7040F921F1A984AB"
+  },
+  {
+    "Path": "E:\\Gorilazz-Relatorio\\src\\scene.js",
+    "Hash": "19C0A008D60F9C31DD156BD5AC491311DFDB92196C5456606B57547530E84A7E"
+  },
+  {
+    "Path": "E:\\Gorilazz-Relatorio\\src\\city.js",
+    "Hash": "B9B9073F00D29F54AE4351F9F13FC9A317BCFB21F01941FB4DB70B526ED186E5"
+  },
+  {
+    "Path": "E:\\Gorilazz-Relatorio\\README.md",
+    "Hash": "D977A0EDC9547D4F0FB366A02780645F780DC66CA5A7866F4C80656F054AF7AF"
+  },
+  {
+    "Path": "E:\\Gorilazz-Relatorio\\assets\\environment\\CREDITS.txt",
+    "Hash": "81BF4192E8D5281762A4A88A9606BD64CE483D12CD2146733E25CF00E705841E"
+  },
+  {
+    "Path": "E:\\Gorilazz-Relatorio\\assets\\environment\\manifest.json",
+    "Hash": "1F5D991D017750AC6C3EA5208221E7CE225E14BD6D04489398C3FEB237116B37"
+  },
+  {
+    "Path": "E:\\Gorilazz-Relatorio\\assets\\environment\\noodle-diorama.glb",
+    "Hash": "B5F34C8E6F3E648FC2B7C02AD66B052764802C816D5763C7415EF6BBCF616642"
+  },
+  {
+    "Path": "E:\\Gorilazz-Relatorio\\tests\\server.test.mjs",
+    "Hash": "A34AB64821A65E87EFBF9198978C8D71AB5F69316977AD0D1C0C4BA0110E43C8"
+  },
+  {
+    "Path": "E:\\Gorilazz-Relatorio\\tests\\frequency-garden.test.mjs",
+    "Hash": "246CD9D4CDB1657E12B7D61B94810DB890941F63B2B6181A93A464FA3ADAC184"
+  }
+]

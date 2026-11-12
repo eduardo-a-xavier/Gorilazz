@@ -23,20 +23,10 @@ triângulos, textura reduzida para 1024 px e exportação GLB estática.
 O arquivo é um scan de uma escultura; Leam é creditado como publicador do scan,
 sem atribuir a ele a criação do personagem ou autoria física não informada.
 
-NOODLE-DIORAMA.GLB
-Arquivo fornecido pelo usuário: noodle.zip.
-Contém Character.fbx e texturas Noodle_UV, Windmill_UV, Rock_UV e RockBump_Normals.
-Inspeção confirmou um conjunto estático com personagem, ilha e pequeno moinho,
-sem esqueleto ou animações. Original: 306.208 triângulos.
-Adaptações: reconexão das três texturas de cor, escala/alinhamento, redução para
-48.000 triângulos, imagens em 1024 px e exportação GLB estática.
-Origem indicada pelo usuário:
-https://sketchfab.com/search?features=downloadable&q=gorilaz&type=models
-A página individual, o autor e a licença deste arquivo ainda não foram
-confirmados. A pesquisa por imagem encontrou um candidato visual, mas não
-estabeleceu correspondência técnica suficiente para atribuir autoria.
-Nenhum autor ou licença foi presumido a partir do nome do ZIP.
-
+NOODLE-DIORAMA.GLB — REMOVIDO DA DISTRIBUIÇÃO em 12/11/2026.
+A peça foi substituída na exposição pelo Jardim de frequências (arte geométrica original, criada do zero).
+O arquivo não está mais no pacote e o servidor não o entrega. Procedência indicada pelo usuário:
+noodle.zip; origem individual e licença nunca confirmadas. Nenhum autor ou licença foi presumido.
 As duas peças aparecem como esculturas da exposição e não substituem os
 quatro integrantes Phase 7 usados nos encontros. Não receberam animação
 articulada nem são apresentadas como modelos rigados.
@@ -48,3 +38,4 @@ O conteúdo desses ZIPs não foi acessado, convertido nem incorporado.
 
 Universo Gorillaz: Jamie Hewlett, Damon Albarn e demais titulares e artistas.
 Projeto acadêmico independente, sem vínculo ou endosso oficial.
+

@@ -1,0 +1,69 @@
+{
+  "preservedHashesMatch": true,
+  "creditBlockUnchangedExceptDownload": true,
+  "fileSizes": {
+    "src/environment.js": {
+      "before": 5881,
+      "after": 7058
+    },
+    "index.html": {
+      "before": 24416,
+      "after": 24719
+    },
+    "server.mjs": {
+      "before": 7954,
+      "after": 7843
+    },
+    "tests/server.test.mjs": {
+      "before": 1842,
+      "after": 1884
+    },
+    "tests/frequency-garden.test.mjs": {
+      "before": 0,
+      "after": 1029
+    }
+  },
+  "geometry": {
+    "triangles": 1396,
+    "meshes": 12,
+    "uniqueGeometries": 4,
+    "materials": 4,
+    "bufferBytes": 19432
+  },
+  "original": {
+    "bytes": 1251404,
+    "triangles": 48000
+  },
+  "browser": {
+    "oldModelPresent": false,
+    "oldAssetRequests": 0,
+    "oldDownloadLinks": 0,
+    "gardenPresent": true,
+    "canvas": [
+      941,
+      380
+    ],
+    "camera": [
+      107,
+      10,
+      -131
+    ],
+    "lookAt": [
+      97,
+      5.3,
+      -144
+    ]
+  },
+  "sharedServerOldRoute": {
+    "port": 3000,
+    "pid": 19020,
+    "status": 200,
+    "bytes": 1251404
+  },
+  "tests": {
+    "checkExit": 0,
+    "testExit": 0,
+    "passed": 45,
+    "baselineRegressionExit": 1
+  }
+}

@@ -1,0 +1,115 @@
+--- a/src/environment.js
++++ b/src/environment.js
+@@ -2,13 +2,35 @@
+ import { GLTFLoader } from './vendor/GLTFLoader.js';
+ import { nearestRoad, TREE_LOCATIONS, VISUAL_LANDMARKS } from './world-data.js';
+ import { letteringTexture } from './materials.js';
++
++export function createFrequencyGarden() {
++  const garden = new THREE.Group(); garden.name = 'frequency-garden';
++  const materials = ['#d2e2a8','#f5a9c6','#7fa6ff','#293f3b'].map(color => new THREE.MeshStandardMaterial({color,roughness:.65,metalness:.25}));
++  const add = (geometry, material, x, y, z) => {
++    const mesh = new THREE.Mesh(geometry, material);
++    mesh.position.set(x,y,z); mesh.castShadow = mesh.receiveShadow = true; garden.add(mesh); return mesh;
++  };
++  add(new THREE.CylinderGeometry(1.95,1.95,.16,32),materials[3],0,.08,0);
++  add(new THREE.CylinderGeometry(.1,.14,2.8,8),materials[3],0,1.56,.1);
++  const ringGeometry = new THREE.TorusGeometry(1,.055,6,32);
++  [1.8,1.4,1].forEach((radius,i) => {
++    const ring = add(ringGeometry,materials[i],0,2.6,0);
++    ring.scale.setScalar(radius); ring.rotation.set(.18,i*.5-.5,0);
++  });
++  const barGeometry = new THREE.BoxGeometry(1,1,1);
++  [1.2,2.1,1.55,2.8,2.35,1.7,1.1].forEach((height,i) => {
++    const bar = add(barGeometry,materials[i%3],(i-3)*.44,height/2+.16,-.32);
++    bar.scale.set(.2,height,.2);
++  });
++  return garden;
++}
+ 
+ export function installEnvironment(scene, renderer, surfaces, onModel = () => {}) {
+   const loader=new GLTFLoader(); const status=document.querySelector('#environment-status');
+   const states={studio:'loading',sculpture:'loading',diorama:'loading',trees:'loading'};
+   function report(key,state) {
+     states[key]=state;renderer.domElement.dataset[key]=state;
+-    if(status) status.textContent=Object.values(states).some(s=>s==='loading')?'Preparando o pátio e as peças da exposição…':Object.values(states).every(s=>s==='ready')?'KONG STUDIOS / CENÁRIO TEXTURIZADO E DUAS PEÇAS INCORPORADAS':'CENÁRIO LOCAL / ALGUMAS PEÇAS USAM ALTERNATIVAS';
++    if(status) status.textContent=Object.values(states).some(s=>s==='loading')?'Preparando o pátio e as peças da exposição…':Object.values(states).every(s=>s==='ready')?'KONG STUDIOS / ESCULTURA 2-D E JARDIM DE FREQUÊNCIAS ORIGINAL':'CENÁRIO LOCAL / ALGUMAS PEÇAS USAM ALTERNATIVAS';
+   }
+   function addModel(key,url,at) {
+     return loader.loadAsync(url).then(gltf=>{
+@@ -31,8 +53,9 @@
+     const art=new THREE.Mesh(new THREE.PlaneGeometry(1.35,2.2),new THREE.MeshStandardMaterial({map,transparent:true,alphaTest:.1,roughness:1,metalness:0}));art.rotation.y=Math.PI/2;art.position.copy(paper.position);art.position.x+=.02;scene.add(art);
+   });
+   const sculpturePromise=addModel('sculpture','/assets/environment/2d-sculpture.glb',VISUAL_LANDMARKS.sculpture);
+-  const dioramaPromise=addModel('diorama','/assets/environment/noodle-diorama.glb',VISUAL_LANDMARKS.diorama);
+-  for(const [key,label] of [['sculpture','2-D / ESCULTURA'],['diorama','NOODLE / DIORAMA']]) {
++  const garden = createFrequencyGarden(), gardenAt = VISUAL_LANDMARKS.diorama;
++  garden.position.set(gardenAt.x,gardenAt.y,gardenAt.z); scene.add(garden); report('diorama','ready');
++  for(const [key,label] of [['sculpture','2-D / ESCULTURA'],['diorama','JARDIM / FREQUÊNCIAS']]) {
+     const point=VISUAL_LANDMARKS[key];
+     const plinth=new THREE.Mesh(new THREE.CylinderGeometry(2.5,2.7,point.y,40),surfaces.get('plaster',2));plinth.position.set(point.x,point.y/2-.05,point.z);plinth.receiveShadow=plinth.castShadow=true;scene.add(plinth);
+     const plaque=new THREE.Mesh(new THREE.PlaneGeometry(3.8,.8),new THREE.MeshStandardMaterial({map:letteringTexture(label,{height:128}),roughness:.9}));plaque.position.set(point.x,.8,point.z+2.76);scene.add(plaque);
+@@ -72,5 +95,5 @@
+   }).catch(error=>{console.warn('Vegetação alternativa:',error.message);report('trees','fallback');
+     for(const point of TREE_LOCATIONS){const crown=new THREE.Mesh(new THREE.SphereGeometry(2.2,12,8),surfaces.get('foliage'));crown.position.set(point.x,3.7,point.z);scene.add(crown);}
+   });
+-  return Promise.allSettled([studioPromise,sculpturePromise,dioramaPromise,treesPromise]);
++  return Promise.allSettled([studioPromise,sculpturePromise,treesPromise]);
+ }
+--- a/index.html
++++ b/index.html
+@@ -33,7 +33,7 @@
+ <noscript><article class="fallback"><h3>Uma banda, muitas histórias</h3><p>Gorillaz foi criada em Londres, em 1998, por Damon Albarn e Jamie Hewlett. O primeiro álbum saiu em 2001. Seus integrantes virtuais são 2-D (voz e teclados), Murdoc (baixo), Noodle (guitarra) e Russel (bateria).</p><p>Rock, hip-hop, eletrônico e dub se encontram em músicas, animações e narrativas. Plastic Beach aborda também questões ambientais. Os shows combinam músicos reais, convidados e projeções.</p><p>Discografia inicial: Gorillaz (2001), Demon Days (2005), Plastic Beach (2010), The Fall (digital: 2010; físico: 2011), Humanz (2017), The Now Now (2018), Song Machine, Season One (2020) e Cracker Island (2023). Recorte histórico deliberado até 2023, sem afirmar que a discografia terminou nesse ano.</p><p>Projeto acadêmico de Eduardo Alves Xavier, Gedson de Souza Mancio Júnior e Rafael Machado Colnaghi. Ative o JavaScript para dirigir e explorar as nove paradas.</p></article></noscript></section>
+ <section class="band-section" aria-labelledby="band-title"><div class="section-heading"><h2 id="band-title">A BANDA.<br>AO SEU REDOR.</h2><p>QUATRO PERSONALIDADES. NENHUMA REGRA.</p></div><p id="band-status" role="status">CARREGANDO OS INTEGRANTES PHASE 7…</p><p class="band-credit">Modelos Phase 7 atribuídos ao Gorillaz na fonte · Publicação: <a href="https://sketchfab.com/nnastav49" target="_blank" rel="noopener noreferrer">Redtricity</a> · <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener noreferrer">CC BY 4.0 indicada na fonte</a> · <a href="/assets/models/PHASE7-CREDITS.txt">créditos e adaptações</a> · <a href="/assets/models/gorillaz-phase7.glb" download>baixar banda GLB ↓</a></p><div id="band-grid"></div></section>
+ <details id="backstage" class="backstage"><summary><span>POR TRÁS DA VIAGEM</span><strong>Créditos, modelos e referências 3D <span aria-hidden="true">+</span></strong></summary><section id="modelos" class="model-section" aria-labelledby="models-title"><div class="section-heading"><h2 id="models-title">UM JIPE.<br>UM MUNDO EM VOLTA.</h2><p>ARQUIVOS REAIS / LICENÇA ABERTA</p></div><div class="model-layout"><div class="circuit-art" aria-hidden="true"><div class="circuit-orbit"><span>G</span><i></i></div><p>3 REGIÕES / 5 DESCOBERTAS<br>O SOM NUNCA PRECISA PARAR.</p></div><div class="model-copy"><p class="eyebrow">GEEP / SHABAEV / CC BY 4.0</p><h3>O Geep chegou<br>à sua garagem.</h3><p>O carro de Gorillaz escolhido para esta viagem já está na cena. O modelo mantém as texturas originais do autor, e as quatro rodas giram com o movimento.</p><p id="vehicle-status" role="status">CARREGANDO GEEP…</p><p id="environment-status" role="status">Preparando as peças do cenário…</p><div class="model-downloads"><a href="/assets/models/gorillaz-geep.glb" download>↓ BAIXAR GEEP · GLB</a><a href="/assets/models/kenney-suv.glb" download>↓ BAIXAR SUV / JIPE · GLB</a><a href="/assets/models/kenney-suv-luxury.glb" download>↓ BAIXAR SUV URBANO · GLB</a></div><p class="model-credit">Geep por <a href="https://sketchfab.com/shabaev" target="_blank" rel="noopener noreferrer">shabaev</a> · <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener noreferrer">CC BY 4.0</a> · <a href="/assets/models/GEEP-CREDITS.txt">créditos e adaptações</a>.<br>Modelos alternativos: <a href="https://kenney.nl/assets/car-kit" target="_blank" rel="noopener noreferrer">Kenney — Car Kit</a> · <a href="/assets/models/KENNEY-LICENSE.txt">licença CC0</a>.<br>Referências de formato: <a href="https://github.com/KhronosGroup/glTF-Sample-Assets/tree/main/Models/ToyCar" target="_blank" rel="noopener noreferrer">Khronos glTF / Toy Car</a>.<br>Referência de experiência: Yamê — The Molazone. Cenário autoral; modelos externos com autoria creditada.</p></div></div></section>
+-<div class="visual-credits"><p class="eyebrow">NOVAS PEÇAS DO MUNDO</p><h3>Arte que também<br>faz parte da viagem.</h3><p>Fachada de Kong Studios, vegetação e materiais autorais produzidos para esta experiência. A escultura de 2-D é um scan publicado por <a href="https://sketchfab.com/3d-models/gorillaz-sculpture-cf1f323bba7d45ad8596eaa62ca60ce1" target="_blank" rel="noopener noreferrer">Leam</a>, com CC Attribution indicada na fonte. O diorama da Noodle vem de uma publicação do Sketchfab cuja autoria ainda está sendo confirmada; o crédito completo será acrescentado aqui.</p><p>As peças foram reduzidas e convertidas para uso na web. São esculturas estáticas da exposição; os quatro integrantes Phase 7 continuam sendo os personagens dos encontros.</p><div class="model-downloads"><a href="/assets/environment/2d-sculpture.glb" download>BAIXAR ESCULTURA 2-D ↓</a><a href="/assets/environment/noodle-diorama.glb" download>BAIXAR DIORAMA NOODLE ↓</a><a href="/assets/environment/CREDITS.txt">CRÉDITOS E ADAPTAÇÕES ↗</a></div></div><section id="referencias" class="reference-section" aria-labelledby="references-title"><div class="section-heading"><h2 id="references-title">AS PEÇAS<br>DESTE UNIVERSO.</h2><p>SELEÇÃO DO PROJETO / SKETCHFAB</p></div><div class="reference-grid"><article class="reference-card"><p class="eyebrow">01 / VEÍCULO SELECIONADO</p><h3>Gorrilaz Car<br>BlockBench</h3><p>O Geep do universo Gorillaz, por <a href="https://sketchfab.com/shabaev" target="_blank" rel="noopener noreferrer">shabaev</a>.</p><span class="reference-tag">CC BY 4.0 / CRÉDITO AO AUTOR</span><p>Modelo incorporado ao circuito a partir do arquivo original do autor. Texturas preservadas, escala ajustada e rodas animadas; autoria e licença mantidas.</p><div><button type="button" data-sketchfab="car">EXPLORAR MODELO 3D ↗</button><a href="https://sketchfab.com/3d-models/gorrilaz-car-blockbench-d1ac8116d1ab4ad7b612921425aa827a" target="_blank" rel="noopener noreferrer">PÁGINA E DOWNLOAD ↗</a></div></article><article class="reference-card"><p class="eyebrow">02 / CENÁRIO SELECIONADO</p><h3>Flying<br>windmill</h3><p>Um moinho voador, por <a href="https://sketchfab.com/zeee7" target="_blank" rel="noopener noreferrer">zeee7</a>.</p><span class="reference-tag">REFERÊNCIA VISUAL / LICENÇA STANDARD</span><p>O autor não oferece download. No circuito, o moinho é uma criação geométrica própria; a prévia abaixo mostra o modelo escolhido.</p><div><button type="button" data-sketchfab="windmill">EXPLORAR MODELO 3D ↗</button><a href="https://sketchfab.com/3d-models/flying-windmill-0e72abda7e8b4ec5a8eaa6bf9d25603b" target="_blank" rel="noopener noreferrer">VER NO SKETCHFAB ↗</a></div></article><article class="reference-card"><p class="eyebrow">03 / REFERÊNCIA DE PERSONAGENS</p><h3>Gorillaz<br>Papercraft</h3><p>Modelo por <a href="https://sketchfab.com/julianto.dudi" target="_blank" rel="noopener noreferrer">Dudi Julianto</a>, descrito pelo autor como uma encomenda de papercraft.</p><span class="reference-tag">REFERÊNCIA VISUAL / DOWNLOAD NÃO DISPONÍVEL</span><p>Não há licença de reutilização informada na página consultada. Esta referência não foi incorporada. O circuito usa os integrantes do pacote Phase 7.</p><div><button type="button" data-sketchfab="band">EXPLORAR MODELO 3D ↗</button><a href="https://sketchfab.com/3d-models/gorillaz-b693d0e95a634674b5fe5744dd3392cb" target="_blank" rel="noopener noreferrer">VER NO SKETCHFAB ↗</a></div></article><article class="reference-card"><p class="eyebrow">04 / INTEGRANTES INCORPORADOS</p><h3>The Gorillaz band<br>Phase 7</h3><p>Pacote publicado por <a href="https://sketchfab.com/nnastav49" target="_blank" rel="noopener noreferrer">Redtricity</a>, que atribui os modelos originais ao Gorillaz na descrição.</p><span class="reference-tag">NA CENA / CC BY 4.0 INDICADA NA FONTE</span><p>Convertido de FBX para GLB, com as quatro texturas e os integrantes separados para os encontros do circuito.</p><div><button type="button" data-sketchfab="phase7">EXPLORAR A FONTE 3D ↗</button><a href="/assets/models/gorillaz-phase7.glb" download>BAIXAR BANDA GLB ↓</a></div></article></div><p class="reference-note">As prévias abrem o visualizador do Sketchfab e precisam de internet. O circuito e os modelos já incluídos continuam funcionando localmente.</p></section>
++<p id="exhibition-update" class="band-credit">Exposição atualizada: o antigo diorama foi substituído pelo Jardim de frequências, uma composição geométrica original sem personagens. O arquivo anterior não integra a cena nem os downloads da versão atual. A descrição histórica abaixo foi preservada para revisão dos créditos.</p><div class="visual-credits"><p class="eyebrow">NOVAS PEÇAS DO MUNDO</p><h3>Arte que também<br>faz parte da viagem.</h3><p>Fachada de Kong Studios, vegetação e materiais autorais produzidos para esta experiência. A escultura de 2-D é um scan publicado por <a href="https://sketchfab.com/3d-models/gorillaz-sculpture-cf1f323bba7d45ad8596eaa62ca60ce1" target="_blank" rel="noopener noreferrer">Leam</a>, com CC Attribution indicada na fonte. O diorama da Noodle vem de uma publicação do Sketchfab cuja autoria ainda está sendo confirmada; o crédito completo será acrescentado aqui.</p><p>As peças foram reduzidas e convertidas para uso na web. São esculturas estáticas da exposição; os quatro integrantes Phase 7 continuam sendo os personagens dos encontros.</p><div class="model-downloads"><a href="/assets/environment/2d-sculpture.glb" download>BAIXAR ESCULTURA 2-D ↓</a><span>DIORAMA ANTERIOR / DOWNLOAD RETIRADO</span><a href="/assets/environment/CREDITS.txt">CRÉDITOS E ADAPTAÇÕES ↗</a></div></div><section id="referencias" class="reference-section" aria-labelledby="references-title"><div class="section-heading"><h2 id="references-title">AS PEÇAS<br>DESTE UNIVERSO.</h2><p>SELEÇÃO DO PROJETO / SKETCHFAB</p></div><div class="reference-grid"><article class="reference-card"><p class="eyebrow">01 / VEÍCULO SELECIONADO</p><h3>Gorrilaz Car<br>BlockBench</h3><p>O Geep do universo Gorillaz, por <a href="https://sketchfab.com/shabaev" target="_blank" rel="noopener noreferrer">shabaev</a>.</p><span class="reference-tag">CC BY 4.0 / CRÉDITO AO AUTOR</span><p>Modelo incorporado ao circuito a partir do arquivo original do autor. Texturas preservadas, escala ajustada e rodas animadas; autoria e licença mantidas.</p><div><button type="button" data-sketchfab="car">EXPLORAR MODELO 3D ↗</button><a href="https://sketchfab.com/3d-models/gorrilaz-car-blockbench-d1ac8116d1ab4ad7b612921425aa827a" target="_blank" rel="noopener noreferrer">PÁGINA E DOWNLOAD ↗</a></div></article><article class="reference-card"><p class="eyebrow">02 / CENÁRIO SELECIONADO</p><h3>Flying<br>windmill</h3><p>Um moinho voador, por <a href="https://sketchfab.com/zeee7" target="_blank" rel="noopener noreferrer">zeee7</a>.</p><span class="reference-tag">REFERÊNCIA VISUAL / LICENÇA STANDARD</span><p>O autor não oferece download. No circuito, o moinho é uma criação geométrica própria; a prévia abaixo mostra o modelo escolhido.</p><div><button type="button" data-sketchfab="windmill">EXPLORAR MODELO 3D ↗</button><a href="https://sketchfab.com/3d-models/flying-windmill-0e72abda7e8b4ec5a8eaa6bf9d25603b" target="_blank" rel="noopener noreferrer">VER NO SKETCHFAB ↗</a></div></article><article class="reference-card"><p class="eyebrow">03 / REFERÊNCIA DE PERSONAGENS</p><h3>Gorillaz<br>Papercraft</h3><p>Modelo por <a href="https://sketchfab.com/julianto.dudi" target="_blank" rel="noopener noreferrer">Dudi Julianto</a>, descrito pelo autor como uma encomenda de papercraft.</p><span class="reference-tag">REFERÊNCIA VISUAL / DOWNLOAD NÃO DISPONÍVEL</span><p>Não há licença de reutilização informada na página consultada. Esta referência não foi incorporada. O circuito usa os integrantes do pacote Phase 7.</p><div><button type="button" data-sketchfab="band">EXPLORAR MODELO 3D ↗</button><a href="https://sketchfab.com/3d-models/gorillaz-b693d0e95a634674b5fe5744dd3392cb" target="_blank" rel="noopener noreferrer">VER NO SKETCHFAB ↗</a></div></article><article class="reference-card"><p class="eyebrow">04 / INTEGRANTES INCORPORADOS</p><h3>The Gorillaz band<br>Phase 7</h3><p>Pacote publicado por <a href="https://sketchfab.com/nnastav49" target="_blank" rel="noopener noreferrer">Redtricity</a>, que atribui os modelos originais ao Gorillaz na descrição.</p><span class="reference-tag">NA CENA / CC BY 4.0 INDICADA NA FONTE</span><p>Convertido de FBX para GLB, com as quatro texturas e os integrantes separados para os encontros do circuito.</p><div><button type="button" data-sketchfab="phase7">EXPLORAR A FONTE 3D ↗</button><a href="/assets/models/gorillaz-phase7.glb" download>BAIXAR BANDA GLB ↓</a></div></article></div><p class="reference-note">As prévias abrem o visualizador do Sketchfab e precisam de internet. O circuito e os modelos já incluídos continuam funcionando localmente.</p></section>
+ 
+ </details>
+ </main>
+--- a/server.mjs
++++ b/server.mjs
+@@ -42,7 +42,6 @@
+   ['/assets/environment/2d-sculpture.glb', ['assets/environment/2d-sculpture.glb', 'model/gltf-binary']],
+   ['/assets/environment/broadleaf-tree.glb', ['assets/environment/broadleaf-tree.glb', 'model/gltf-binary']],
+   ['/assets/environment/kong-studio.glb', ['assets/environment/kong-studio.glb', 'model/gltf-binary']],
+-  ['/assets/environment/noodle-diorama.glb', ['assets/environment/noodle-diorama.glb', 'model/gltf-binary']],
+   ['/assets/environment/CREDITS.txt', ['assets/environment/CREDITS.txt', 'text/plain; charset=utf-8']],
+   ['/src/route.js', ['src/route.js', 'text/javascript; charset=utf-8']],
+   ['/src/world-data.js', ['src/world-data.js', 'text/javascript; charset=utf-8']],
+--- a/tests/server.test.mjs
++++ b/tests/server.test.mjs
+@@ -25,6 +25,6 @@
+     assert.equal(model.headers.get('content-encoding'), null);
+     assert.equal(Number(model.headers.get('content-length')), (await model.arrayBuffer()).byteLength);
+     for (const path of ['/src/atmosphere.js', '/src/postfx.js', '/src/roads.js', '/src/landmarks.js', '/assets/models/gorillaz-phase7-web.glb']) assert.equal((await fetch(origin + path)).status, 200);
+-    for (const path of ['/package.json', '/server.mjs', '/src/../server.mjs']) assert.equal((await fetch(origin + path)).status, 404);
++    for (const path of ['/package.json', '/server.mjs', '/src/../server.mjs', '/assets/environment/noodle-diorama.glb']) assert.equal((await fetch(origin + path)).status, 404);
+   } finally { child.kill(); }
+ });
+--- a/tests/frequency-garden.test.mjs
++++ b/tests/frequency-garden.test.mjs
+@@ -0,0 +1,23 @@
++import test from 'node:test';
++import assert from 'node:assert/strict';
++import * as THREE from '../src/vendor/three.module.min.js';
++import { createFrequencyGarden } from '../src/environment.js';
++import { VISUAL_LANDMARKS } from '../src/world-data.js';
++
++test('escultura original permanece dentro do volume de colisão e dispensa texturas externas', () => {
++  const garden = createFrequencyGarden();
++  const bounds = new THREE.Box3().setFromObject(garden);
++  const radius = VISUAL_LANDMARKS.diorama.radius;
++  for (const x of [bounds.min.x, bounds.max.x]) for (const z of [bounds.min.z, bounds.max.z]) {
++    assert.ok(Math.hypot(x,z) < radius);
++  }
++  assert.ok(bounds.min.y >= 0);
++  assert.ok(bounds.max.y < 8);
++  let triangles = 0;
++  garden.traverse(object => {
++    if (!object.isMesh) return;
++    triangles += (object.geometry.index?.count ?? object.geometry.attributes.position.count) / 3;
++    assert.ok(Object.values(object.material).every(value => !value?.isTexture));
++  });
++  assert.ok(triangles > 0 && triangles <= 1500);
++});
