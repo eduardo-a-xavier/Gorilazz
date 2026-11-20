@@ -493,7 +493,19 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
   }
   // Motorista: boneco autoral nas cores do site, sentado no banco esquerdo. Fora do carro vê-se
   // o corpo inteiro; em primeira pessoa ele some e ficam só os braços da cabine (cabin.js).
-  const {driver,driverHead,upperArmL,upperArmR} = createDriver(material);
+  let {driver,driverHead,upperArmL,upperArmR} = createDriver(material);
+  // Motorista autoral em GLB (assets/models/driver-pilot.glb): troca o procedural quando carrega.
+  // Se falhar, o motorista procedural continua na cena.
+  new GLTFLoader().loadAsync('./assets/models/driver-pilot.glb').then(gltf => {
+    const pilot = gltf.scene.getObjectByName('driver');
+    const head = pilot?.getObjectByName('driver-head');
+    const armL = pilot?.getObjectByName('upperArmL');
+    const armR = pilot?.getObjectByName('upperArmR');
+    if (!pilot || !head || !armL || !armR) return;
+    pilot.position.copy(driver.position); pilot.scale.copy(driver.scale); pilot.name = 'driver';
+    car.remove(driver); car.add(pilot); pilot.updateWorldMatrix(true, true);
+    driver = pilot; driverHead = head; upperArmL = armL; upperArmR = armR;
+  }).catch(() => {});
   const driverReaction = createDriverReaction(); let driverYaw=0;
   car.add(driver, cabin.root);
   let modelWheels = [];
@@ -543,7 +555,7 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
       car.add(steeringPivot); steeringPivot.updateWorldMatrix(true, false); steeringPivot.attach(steeringMesh);
       const seat = seats.map(mesh => new THREE.Box3().setFromObject(mesh)).find(box => car.worldToLocal(box.getCenter(new THREE.Vector3())).x * centre.x > 0);
       cabin.attach({ centre, normal, radius: Math.max(extent.x, extent.y, extent.z) / 2 - .02, seatTop: seat ? car.worldToLocal(new THREE.Vector3(seat.min.x, seat.max.y, seat.min.z)).y : undefined });
-      driver.position.set(cabin.eye.x, cabin.eye.y - 2.24 * driver.scale.y, cabin.eye.z - .02);
+      driver.position.set(cabin.eye.x, cabin.eye.y - 2.35 * driver.scale.y, cabin.eye.z - .02);
     }
     bake(vehicle); car.add(driver, cabin.root);
     vehicleStatus.textContent = kind === 'geep' ? 'GEEP / SHABAEV / CC BY 4.0' : 'SUV KENNEY / CC0 · VEÍCULO ALTERNATIVO';
