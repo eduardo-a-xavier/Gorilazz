@@ -1,3 +1,9 @@
+export function numericShortcutIndex(key, total) {
+  if (!/^[1-9]$/.test(key)) return -1;
+  const index = Number(key) - 1;
+  return index < total ? index : -1;
+}
+
 export function createInput({ onManual, onInteract, enabled = () => true }) {
   const held = new Set(), pointers = new Map();
   let wheelSteer = 0;

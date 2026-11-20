@@ -10,26 +10,19 @@ Os pôsteres usam os retratos existentes derivados dos modelos Phase 7;
 os créditos de Redtricity/Gorillaz permanecem em PHASE7-CREDITS.txt.
 O cenário é uma interpretação acadêmica independente, não um cenário oficial.
 
-2D-SCULPTURE.GLB
-Arquivo fornecido pelo usuário: gorillaz-sculpture.zip.
-Contém poly.obj e uma imagem JPEG de 8192 x 8192.
-Correspondência identificada: Gorillaz sculpture, scan publicado por Leam (leamlld).
-https://sketchfab.com/3d-models/gorillaz-sculpture-cf1f323bba7d45ad8596eaa62ca60ce1
-A página pública indexada informa CC Attribution e 129,4 mil triângulos,
-compatíveis com os 129.391 triângulos do arquivo inspecionado.
-A versão exata da licença não foi obtida pela API; não se inventa esse metadado.
-Adaptações: reconexão da textura, escala/alinhamento, redução para 33.999
-triângulos, textura reduzida para 1024 px e exportação GLB estática.
-O arquivo é um scan de uma escultura; Leam é creditado como publicador do scan,
-sem atribuir a ele a criação do personagem ou autoria física não informada.
+2D-SCULPTURE.GLB — REMOVIDO DA DISTRIBUIÇÃO em 19/11/2026.
+O scan publicado por Leam (leamlld) no Sketchfab declarava CC BY 4.0 para o
+upload, mas essa licença não comprova autorização sobre a personagem, a marca
+Gorillaz ou a autoria da escultura física. Por decisão do responsável acadêmico,
+o arquivo, sua rota e seu download foram retirados da versão de entrega.
+O espaço passou a usar o Jardim de ecos, composição geométrica original criada
+com as mesmas formas procedurais do Jardim de frequências.
 
 NOODLE-DIORAMA.GLB — REMOVIDO DA DISTRIBUIÇÃO em 12/11/2026.
 A peça foi substituída na exposição pelo Jardim de frequências (arte geométrica original, criada do zero).
 O arquivo não está mais no pacote e o servidor não o entrega. Procedência indicada pelo usuário:
 noodle.zip; origem individual e licença nunca confirmadas. Nenhum autor ou licença foi presumido.
-As duas peças aparecem como esculturas da exposição e não substituem os
-quatro integrantes Phase 7 usados nos encontros. Não receberam animação
-articulada nem são apresentadas como modelos rigados.
+Os dois jardins procedurais (Jardim de ecos e Jardim de frequências) substituíram essas peças na exposição e não substituem os quatro integrantes Phase 7 usados nos encontros. Não receberam animação articulada nem são apresentados como modelos rigados.
 
 ARQUIVOS AINDA NÃO INSPECIONADOS
 2d-gorillaz-model-v2-study.zip e take-me-to-a-galaxy-far-away.zip excederam

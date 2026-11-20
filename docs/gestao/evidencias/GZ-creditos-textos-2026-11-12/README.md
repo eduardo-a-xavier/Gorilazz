@@ -32,7 +32,7 @@ Histórico de atribuição preservado: `assets/environment/CREDITS.txt` (registr
 
 - **Sem captura visual dos trechos de Londres.** O cartão de capítulo só aparece durante a exploração e o `<noscript>` só renderiza sem JavaScript; a tela principal já exibe o texto de `src/content.js`. A evidência desses itens é textual (diff e HTML servido).
 - Ainda aparece "Londres" em `src/app.js:406`, `src/discoveries.js:22`, `src/world-data.js:62` e `:168`. Fora do escopo pedido (só `index.html`); contradizem o GZ-04. `src/content.js` já está corrigido.
-- README linha 136: não achei no código um mecanismo de "foto ao longe"; a frase sobre integrantes e escultura pode estar desatualizada. Não verificado.
+- README linha 136 (corrigido em 12/11/2026): eu havia dito que não achei o mecanismo de "foto ao longe"; ele existe em `src/scene.js` (`photograph`/`heavyCaster`, ligado à banda e às peças carregadas por `addModel`, como a escultura). O Jardim de frequências é criado direto, sem `addModel`, então de fato não usa a foto. A frase do README está correta.
 - README linha 49 ainda cita o diorama (histórico do piloto); não alterado.
 - `docs/visual/mirante-noodle.jpg` (captura do diorama, citada no relatório) não foi tratada: não estava no escopo.
 - Estado do servidor compartilhado preservado; testado só no Chromium desktop.

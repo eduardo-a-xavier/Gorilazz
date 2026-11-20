@@ -4,7 +4,7 @@ import * as THREE from '../src/vendor/three.module.min.js';
 import { createFrequencyGarden } from '../src/environment.js';
 import { VISUAL_LANDMARKS } from '../src/world-data.js';
 
-test('escultura original permanece dentro do volume de colisão e dispensa texturas externas', () => {
+test('jardim original permanece dentro do volume de colisão e dispensa texturas externas', () => {
   const garden = createFrequencyGarden();
   const bounds = new THREE.Box3().setFromObject(garden);
   const radius = VISUAL_LANDMARKS.diorama.radius;

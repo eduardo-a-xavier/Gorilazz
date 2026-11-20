@@ -2,7 +2,24 @@ import * as THREE from './vendor/three.module.min.js';
 
 // Original baked surfaces. Textures are local and share a small material cache.
 export function createSurfaceLibrary() {
-  const loader = new THREE.TextureLoader(), cache = new Map();
+  const loader = new THREE.TextureLoader(), cache = new Map(), images = new Map();
+  // Uma imagem por URL: cada combinação de repetição usa um clone, que compartilha o mesmo Source
+  // (e a mesma textura na GPU) mas mantém repeat próprio. Um clone criado antes do fim do download
+  // é marcado para envio à GPU assim que a imagem chega. clone() já chama needsUpdate; sem imagem isso
+  // geraria o aviso "Texture marked for update but no image data found", então a versão volta a 0.
+  function sharedTexture(url, repeatX, repeatY) {
+    let entry = images.get(url), texture;
+    if (!entry) {
+      entry = { loaded: false, clones: [] };
+      texture = entry.base = loader.load(url, () => { entry.loaded = true; for (const clone of entry.clones) clone.needsUpdate = true; });
+      images.set(url, entry);
+    } else {
+      texture = entry.base.clone();
+      if (!entry.loaded) { texture.version = 0; entry.clones.push(texture); }
+    }
+    texture.wrapS = texture.wrapT = THREE.RepeatWrapping; texture.repeat.set(repeatX, repeatY);
+    return texture;
+  }
   const definitions = {
     asphalt: ['#dfe3dc', .93], earth: ['#b9b19b', 1], grass: ['#b6c69d', 1],
     plaster: ['#e3dfca', .94], brick: ['#dbc2ad', .97], wood: ['#d6c7a1', .91],
@@ -13,12 +30,10 @@ export function createSurfaceLibrary() {
       const key = `${name}/${repeatX}/${repeatY}`;
       if (cache.has(key)) return cache.get(key);
       const [color, roughness] = definitions[name] || definitions.plaster;
-      const map = loader.load(`/assets/materials/${name}.png`); map.colorSpace = THREE.SRGBColorSpace;
-      map.wrapS = map.wrapT = THREE.RepeatWrapping; map.repeat.set(repeatX, repeatY); map.anisotropy = 4;
+      const map = sharedTexture(`./assets/materials/${name}.png`, repeatX, repeatY); map.colorSpace = THREE.SRGBColorSpace; map.anisotropy = 4;
       const result = new THREE.MeshStandardMaterial({map, color, roughness, metalness:0});
       if (name !== 'brick') {
-        const normalMap = loader.load(`/assets/materials/${name}-normal.png`);
-        normalMap.wrapS = normalMap.wrapT = THREE.RepeatWrapping; normalMap.repeat.copy(map.repeat);
+        const normalMap = sharedTexture(`./assets/materials/${name}-normal.png`, repeatX, repeatY);
         result.normalMap = normalMap; result.normalScale.set(.16,.16);
       }
       cache.set(key,result); return result;

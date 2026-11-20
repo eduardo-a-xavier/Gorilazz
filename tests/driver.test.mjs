@@ -9,11 +9,11 @@ test('motorista procedural preserva encaixes, orçamento e materiais sem textura
     if (!palette.has(color)) palette.set(color,new THREE.MeshStandardMaterial({color}));
     return palette.get(color);
   };
-  const {driver,driverHead,driverArms} = createDriver(material);
+  const {driver,driverHead,upperArmL,upperArmR} = createDriver(material);
   assert.deepEqual(driver.position.toArray(),[-.54,.12,.42]);
   assert.deepEqual(driver.scale.toArray(),[1.22,1.22,1.22]);
-  assert.deepEqual(driverHead.position.toArray(),[0,2.24,.02]);
-  assert.deepEqual(driverArms.position.toArray(),[0,1.62,-.5]);
+  assert.deepEqual(driverHead.position.toArray(),[0,2.35,.05]);
+  assert.ok(upperArmL && upperArmR, 'braços do motorista precisam existir para girar com o volante');
   let triangles = 0, meshes = 0;
   driver.traverse(object => {
     if (!object.isMesh) return;

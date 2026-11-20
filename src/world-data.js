@@ -59,10 +59,10 @@ export const MEMBER_LOCATIONS = [
 ].map(point => { const placed = settle(point, 8.5); return { ...placed, heading: placed.facing }; /* o grupo do integrante gira heading + π e a frente do modelo é −z */ });
 export const DISCOVERIES = [
   { id: 'beginning', x: -16, z: -25, title: 'Duas mentes, um universo', label: 'O COMEÇO / 1998', kind: 'MURAL', region: 0, track: 0, chapter: 1,
-    text: 'Gorillaz surgiu em 1998, a partir da colaboração entre Damon Albarn e Jamie Hewlett. Música e desenho passaram a contar uma história juntos: uma banda virtual com integrantes, personalidades e um mundo próprio.',
-    detail: 'O primeiro álbum, Gorillaz, chegou em 2001. Clint Eastwood e Tomorrow Comes Today apresentam o encontro entre hip-hop, dub, rock e animação.', source: 'https://www.gorillaz.com/' },
+    text: 'Segundo Jamie Hewlett, Gorillaz surgiu em 1998, a partir de uma ideia apresentada por Damon Albarn. Música e desenho passaram a contar uma história juntos: uma banda virtual com integrantes, personalidades e um mundo próprio.',
+    detail: 'O álbum de estreia Gorillaz foi lançado em 26 de março de 2001. Clint Eastwood e Tomorrow Comes Today apresentam o encontro entre hip-hop, dub, rock e animação.', source: 'https://www.vice.com/en/article/gorillaz-co-creator-jamie-hewlett-just-wanted-to-draw-comics/' },
   { id: 'voices', x: -105, z: -85, title: 'Quatro rostos. Muitas histórias.', label: 'BAIRRO DOS MURAIS', kind: 'ARQUIVO', region: 1, track: 1, chapter: 2,
-    text: '2-D canta e toca teclados; Murdoc toca baixo; Noodle, guitarra; Russel, bateria. Suas histórias e personalidades se desenvolvem nos clipes e nas diferentes eras visuais da banda.',
+    text: '2-D canta; Murdoc toca baixo; Noodle, guitarra; Russel, bateria. Suas histórias e personalidades se desenvolvem nos clipes e nas diferentes eras visuais da banda.',
     detail: 'Explore o bairro e os caminhos próximos para encontrar os quatro integrantes. Cada ficha apresenta uma sugestão de música para continuar a viagem.', source: 'https://www.gorillaz.com/' },
   { id: 'genres', x: -47, z: -120, title: 'Um som sem fronteiras', label: 'FREQUÊNCIA LIVRE', kind: 'RÁDIO', region: 1, track: 3, chapter: 3,
     text: 'Gorillaz cruza rock, hip-hop, eletrônico e dub. As colaborações mudam de disco para disco, ampliando as vozes e as referências que participam desse universo.',

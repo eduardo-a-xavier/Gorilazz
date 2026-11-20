@@ -42,39 +42,83 @@ function bake(group, keep = []) {
 
 export function createDriver(material) {
   const driver = new THREE.Group(); driver.position.set(-.54,.12,.42); driver.scale.setScalar(1.22); driver.name='driver';
-  const smooth = new THREE.SphereGeometry(1,10,6), face = new THREE.SphereGeometry(1,12,10), detail = new THREE.SphereGeometry(1,8,4);
+  // Variante B: piloto de estrada original — modelagem mais realista com rosto definido, estrutura de braço separada, capô e detalhes de piloto.
+  const smooth = new THREE.SphereGeometry(1,9,6), face = new THREE.SphereGeometry(1,12,9), round = new THREE.SphereGeometry(1,10,7), soft = new THREE.SphereGeometry(1,8,5), detail = new THREE.SphereGeometry(1,8,4), dot = new THREE.SphereGeometry(1,6,3);
+  const capShell = new THREE.SphereGeometry(1,12,4,0,Math.PI*2,0,Math.PI/2), smile = new THREE.TorusGeometry(1,.15,5,8,Math.PI*.85), collar = new THREE.TorusGeometry(1,.22,5,8), neck = new THREE.CylinderGeometry(.9,1.1,1,8,1);
+  const SKIN='#c65b62', CREAM='#f5e1a6', PINK='#e38d99', DARK='#1a1a2e', INK='#2d3436', PILOT_BLUE='#36bdb5';
   const part = (parent,geometry,size,at,color) => {
     const mesh = new THREE.Mesh(geometry,material(color)); mesh.scale.set(...size); mesh.position.set(...at);
     mesh.castShadow=mesh.receiveShadow=true; parent.add(mesh); return mesh;
   };
-  part(driver,smooth,[.33,.39,.19],[0,1.52,.06],'#e2d8c0');
-  part(driver,smooth,[.35,.06,.2],[0,1.2,.06],'#f2559c');
-  part(driver,smooth,[.1,.08,.1],[0,1.97,.04],'#d9a37c');
-  const driverHead = new THREE.Group(); driverHead.position.set(0,2.24,.02); driverHead.name='driver-head'; driver.add(driverHead);
-  part(driverHead,face,[.27,.2916,.27],[0,0,0],'#d9a37c');
-  part(driverHead,new THREE.SphereGeometry(1,12,6,0,Math.PI*2,0,Math.PI/2),[.29,.22,.29],[0,.1,.03],'#f2559c');
-  part(driverHead,smooth,[.3,.035,.18],[0,.08,-.18],'#f2559c');
+  // Tronco: peito e abdômen em duas peças, cinto amarelo-esverdeado, gola estruturada, pescoço mais grosso.
+  part(driver,round,[.35,.38,.22],[0,1.65,.08],CREAM);
+  part(driver,soft,[.32,.3,.16],[0,1.35,.06],CREAM);
+  part(driver,detail,[.38,.06,.24],[0,1.25,.08],PINK);
+  part(driver,neck,[.09,.22,.09],[0,2.05,.06],SKIN);
+  part(driver,collar,[.14,.14,.14],[0,1.95,.06],PINK).rotation.x=Math.PI/2;
+  // Placa estrutural do peito (estilo piloto)
+  const chestPlate = part(driver,soft,[.28,.22,.1],[0,1.7,.04],DARK);
+  chestPlate.rotation.z = Math.PI/8;
+  // Ombrops estruturados
+  const shoulderL = part(driver,soft,[.18,.12,.2],[-.25,1.2,.05],DARK);
+  const shoulderR = part(driver,soft,[.18,.12,.2],[.25,1.2,.05],DARK);
+  // Tronco segundo painel (detalhes laterais)
+  part(driver,detail,[.1,.08,.16],[-.22,1.4,.02],PINK);
+  part(driver,detail,[.1,.08,.16],[.22,1.4,.02],PINK);
+  const driverHead = new THREE.Group(); driverHead.position.set(0,2.35,.05); driverHead.name='driver-head'; driver.add(driverHead);
+  // Cabeça: estrutura oval frontal, queixo definido, cabelo liso lateral, capacete de piloto com viseira.
+  part(driverHead,face,[.3,.32,.35],[0,0,0],SKIN);
+  // Olhos definidos
+  const eyeL = part(driverHead,dot,[.06,.06,.06],[-.12,.22,.28],INK);
+  const eyeR = part(driverHead,dot,[.06,.06,.06],[.12,.22,.28],INK);
+  part(driverHead,capShell,[.33,.3,.32],[0,0,.02],PINK);
+  part(driverHead,dot,[.06,.06,.06],[-.12,.22,.28],INK);
+  // Nariz perfilado
+  part(driverHead,detail,[.08,.06,.05],[0,.18,.25],DARK);
+  part(driverHead,soft,[.245,.19,.13],[0,-.005,.2],DARK);
   for (const side of [-1,1]) {
-    part(driverHead,smooth,[.035,.06,.035],[side*.25,-.015,0],'#d9a37c');
-    part(driverHead,detail,[.045,.055,.025],[side*.1,-.025,-.252],'#141414');
-    part(driverHead,detail,[.012,.015,.007],[side*.1-.012,-.012,-.277],'#e2d8c0');
-    part(driverHead,detail,[.07,.017,.022],[side*.1,.06,-.25],'#141414').rotation.z=side*.12;
-    part(driver,smooth,[.12,.11,.35],[side*.17,1.12,-.3],'#2a3036');
-    part(driver,smooth,[.11,.3,.11],[side*.17,.8,-.62],'#2a3036');
+    part(driverHead,detail,[.035,.06,.035],[side*.25,-.015,0],SKIN);
+    part(driverHead,detail,[.03,.075,.03],[side*.252,.03,-.1],DARK);
+    part(driverHead,soft,[.062,.07,.03],[side*.1,-.02,-.228],CREAM);
+    part(driverHead,detail,[.034,.043,.016],[side*.1,-.022,-.256],INK);
+    part(driverHead,dot,[.01,.012,.006],[side*.1-.011,-.008,-.27],CREAM);
+    part(driverHead,detail,[.07,.017,.022],[side*.1,.062,-.25],INK).rotation.z=side*.14;
+    part(driverHead,dot,[.04,.026,.012],[side*.165,-.1,-.2],PINK);
+    part(driver,soft,[.12,.11,.35],[side*.17,1.12,-.3],DARK);
+    part(driver,soft,[.11,.3,.11],[side*.17,.8,-.62],DARK);
+    part(driver,soft,[.1,.1,.1],[side*.29,1.8,.07],CREAM);
   }
-  part(driverHead,detail,[.035,.045,.045],[0,-.055,-.269],'#d9a37c');
-  part(driverHead,detail,[.065,.017,.02],[0,-.15,-.23],'#141414');
-  const driverArms = new THREE.Group(); driverArms.position.set(0,1.62,-.5); driverArms.name='driver-arms'; driver.add(driverArms);
-  for (const side of [-1,1]) {
-    const shoulder = new THREE.Vector3(side*.28,.18,.58), wrist = new THREE.Vector3(side*.19,.01,.055);
-    const direction = new THREE.Vector3().subVectors(wrist,shoulder), centre = new THREE.Vector3().addVectors(shoulder,wrist).multiplyScalar(.5);
-    const arm = part(driverArms,smooth,[.085,.085,direction.length()/2+.025],centre.toArray(),'#e2d8c0');
-    arm.quaternion.setFromUnitVectors(new THREE.Vector3(0,0,1),direction.normalize());
-    part(driverArms,detail,[.1,.08,.055],wrist.toArray(),'#f2559c').quaternion.copy(arm.quaternion);
-    part(driverArms,smooth,[.085,.085,.085],[side*.19,0,0],'#d9a37c');
-  }
-  bake(driverHead); bake(driverArms); bake(driver,[driverHead,driverArms]);
-  return {driver,driverHead,driverArms};
+  part(driverHead,detail,[.035,.045,.045],[0,-.055,-.269],SKIN);
+  const mouth = part(driverHead,smile,[.08,.08,.05],[0,.1,.15],INK); mouth.rotation.z=-(Math.PI/2+Math.PI*.35);
+  const upperArmL = new THREE.Group(); upperArmL.position.set(-.25,1.5,.6); driver.add(upperArmL);
+  part(upperArmL,soft,[.14,.1,.18],[0,0,0],SKIN);
+  // Cotovelo esquerdo
+  const elbowL = part(upperArmL,detail,[.08,.06,.08],[0,.3,0],PINK);
+  // Forearm esquerdo
+  const forearmL = new THREE.Group(); forearmL.position.set(-.22,1.15,.4); upperArmL.add(forearmL);
+  part(forearmL,soft,[.08,.07,.12],[0,0,0],CREAM);
+  part(forearmL,detail,[.04,.03,.05],[0,.15,0],PINK);
+  // Mão esquerda - garra leve no volante
+  const handL = new THREE.Group(); handL.position.set(-.2,0,.1); forearmL.add(handL);
+  part(handL,soft,[.06,.05,.08],[0,0,0],SKIN);
+  part(handL,dot,[.025,.022,.03],[0,.02,0],INK);
+  part(handL,detail,[.03,.02,.03],[0,.05,0],PINK);
+  // Braço superior direito com articulação visível
+  const upperArmR = new THREE.Group(); upperArmR.position.set(.25,1.5,.6); driver.add(upperArmR);
+  part(upperArmR,soft,[.14,.1,.18],[0,0,0],SKIN);
+  // Cotovelo direito
+  const elbowR = part(upperArmR,detail,[.08,.06,.08],[0,.3,0],PINK);
+  // Forearm direito
+  const forearmR = new THREE.Group(); forearmR.position.set(.22,1.15,.4); upperArmR.add(forearmR);
+  part(forearmR,soft,[.08,.07,.12],[0,0,0],CREAM);
+  part(forearmR,detail,[.04,.03,.05],[0,.15,0],PINK);
+  // Mão direita - garra leve no volante
+  const handR = new THREE.Group(); handR.position.set(.2,0,.1); forearmR.add(handR);
+  part(handR,soft,[.06,.05,.08],[0,0,0],SKIN);
+  part(handR,dot,[.025,.022,.03],[0,.02,0],INK);
+  part(handR,detail,[.03,.02,.03],[0,.05,0],PINK);
+  bake(driverHead); bake(upperArmL); bake(forearmL); bake(upperArmR); bake(forearmR); bake(driverHead); bake(driver);
+  return {driver,driverHead,upperArmL,forearmL,upperArmR,forearmR};
 }
 
 export function createDriverReaction() {
@@ -99,7 +143,9 @@ export function createDriverReaction() {
 export function createWorld(container, onMember, {onLost = () => {}, onRestored = () => {}, onViewReset = () => {}, onFullscreen = () => {}, onExplore = () => {}, radio, onRadio, onSteer} = {}) {
   // Perfil gráfico: automático por padrão; ?qualidade=leve ou ?qualidade=alta força um perfil.
   const requested = new URLSearchParams(location.search).get('qualidade');
-  const compact = container.clientWidth > 0 && container.clientWidth < 700;
+  // O contêiner ainda não tem largura quando o mundo é criado (clientWidth = 0); sem o recurso à janela,
+  // celulares caíam no perfil alto (bloom, sombras de 2048, teto de pixel 1,75 e meta de 60 quadros/s).
+  const compact = (container.clientWidth || innerWidth) < 700;
   const light = requested === 'leve' || (requested !== 'alta' && compact);
   const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false, powerPreference: 'high-performance' });
   const maxRatio = Math.min(devicePixelRatio, light ? 1.5 : 1.75), minRatio = Math.min(maxRatio, .7);
@@ -129,7 +175,7 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
   scene.add(skylight);
   const sunlight = new THREE.DirectionalLight('#ffe4c2', 3.1);
   sunlight.castShadow = true;
-  const shadowSize = light ? 1024 : 2048;
+  const shadowSize = light ? 1024 : 2048, lightProfile = light;
   sunlight.shadow.mapSize.set(shadowSize, shadowSize);
   Object.assign(sunlight.shadow.camera, { left: -SHADOW_SPAN / 2, right: SHADOW_SPAN / 2, top: SHADOW_SPAN / 2, bottom: -SHADOW_SPAN / 2, near: 1, far: 260 });
   sunlight.shadow.normalBias = .05; sunlight.shadow.bias = -.0003;
@@ -209,7 +255,7 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
   // lambe-lambe, tablado de madeira, caixas de som e os objetos de quem toca ali. Fica voltado
   // para a rua; o integrante se apresenta na frente do próprio muro.
   const MEMBER_SET = [
-    { name: '2-D', role: 'VOCAL · TECLADOS', accent: '#7fa6ff', key: 'twod', tag: 'TOMORROW' },
+    { name: '2-D', role: 'VOCAL', accent: '#7fa6ff', key: 'twod', tag: 'TOMORROW' },
     { name: 'MURDOC', role: 'BAIXO', accent: '#9dd66b', key: 'murdoc', tag: 'KONG' },
     { name: 'NOODLE', role: 'GUITARRA', accent: '#f5a9c6', key: 'noodle', tag: 'DARE' },
     { name: 'RUSSEL', role: 'BATERIA', accent: '#ffcc4d', key: 'russel', tag: '19-2000' },
@@ -269,7 +315,7 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
       texture.needsUpdate = true;
     }
     paint(null);
-    const image = new Image(); image.onload = () => paint(image); image.src = `/assets/portraits/phase7-${set.key}.png`;
+    const image = new Image(); image.onload = () => paint(image); image.src = `./assets/portraits/phase7-${set.key}.png`;
     // Muro, arte na frente, pichação genérica no verso e um tubo de luz na cor do integrante.
     box(stage, [8.8, 4.5, .4], [0, 1.95, -3.6], '#7c7f7a');
     const front = new THREE.Mesh(new THREE.PlaneGeometry(8.6, 4.3), new THREE.MeshStandardMaterial({ map: texture, roughness: .95 })); front.position.set(0, 2, -3.39); front.receiveShadow = true; stage.add(front);
@@ -288,7 +334,7 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
     box(stage, [.8, .6, .8], [-2.5, .3, 1.5], set.accent); box(stage, [.8, .6, .8], [-2.7, .9, 1.45], '#2a3036').rotation.y = .3;
     box(stage, [2.6, .05, .08], [1.2, .03, 1.2], '#111415').rotation.y = .4;
     if (index === 0) {
-      // 2-D: estojos de teclado e um retorno de palco.
+      // 2-D: equipamento de palco e um retorno.
       box(stage, [2.4, .5, .8], [2, .25, 1.2], '#17191b').rotation.y = .2; box(stage, [2.2, .08, .08], [2, .52, 1.2], set.accent).rotation.y = .2;
       box(stage, [1.1, .7, .8], [-1.4, .35, 1.6], '#2a3036').rotation.x = -.35;
     } else if (index === 1) {
@@ -447,7 +493,7 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
   }
   // Motorista: boneco autoral nas cores do site, sentado no banco esquerdo. Fora do carro vê-se
   // o corpo inteiro; em primeira pessoa ele some e ficam só os braços da cabine (cabin.js).
-  const {driver,driverHead,driverArms} = createDriver(material);
+  const {driver,driverHead,upperArmL,upperArmR} = createDriver(material);
   const driverReaction = createDriverReaction(); let driverYaw=0;
   car.add(driver, cabin.root);
   let modelWheels = [];
@@ -505,10 +551,10 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
   }
   async function loadVehicle() {
     const loader = new GLTFLoader();
-    try { installVehicle(await loader.loadAsync('/assets/models/gorillaz-geep.glb'), 'geep'); }
+    try { installVehicle(await loader.loadAsync('./assets/models/gorillaz-geep.glb'), 'geep'); }
     catch (error) {
       console.warn('Geep indisponível; tentando o SUV local:', error.message);
-      try { installVehicle(await loader.loadAsync('/assets/models/kenney-suv.glb'), 'kenney'); }
+      try { installVehicle(await loader.loadAsync('./assets/models/kenney-suv.glb'), 'kenney'); }
       catch (fallbackError) {
         console.warn('SUV indisponível; veículo geométrico mantido:', fallbackError.message);
         vehicleStatus.textContent = 'VEÍCULO GEOMÉTRICO / MODO ALTERNATIVO'; vehicleStatus.dataset.loaded = 'false';
@@ -596,7 +642,7 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
     try {
     // Versão para a cena: texturas WebP de 1024 px e malha simplificada. O GLB original segue disponível para download.
     const bandLoader = new GLTFLoader();
-    const gltf = await bandLoader.loadAsync('/assets/models/gorillaz-phase7-web.glb').catch(() => bandLoader.loadAsync('/assets/models/gorillaz-phase7.glb'));
+    const gltf = await bandLoader.loadAsync('./assets/models/gorillaz-phase7-web.glb').catch(() => bandLoader.loadAsync('./assets/models/gorillaz-phase7.glb'));
     const roots = Array(4).fill(null);
     gltf.scene.traverse(object => { if (Number.isInteger(object.userData.memberIndex) && object.userData.memberIndex >= 0 && object.userData.memberIndex < 4) roots[object.userData.memberIndex] = object; });
     if (roots.length !== 4 || roots.some(root => !root)) throw new Error('O pacote precisa conter os quatro integrantes identificados');
@@ -816,7 +862,7 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
       if (!modelWheels.length) wheels.forEach(wheel => { wheel.rotation.x -= travelled / .75; });
       previousDistance = vehicle.distanceTravelled;
       // O motorista gira os braços com o volante e olha para dentro da curva.
-      driverArms.rotation.z = vehicle.steering * 1.1; driverYaw=THREE.MathUtils.lerp(driverYaw,vehicle.steering*.9,blend);
+      upperArmL.rotation.z = upperArmR.rotation.z = vehicle.steering * 1.1; driverYaw=THREE.MathUtils.lerp(driverYaw,vehicle.steering*.9,blend);
       if (dragging) driverReaction.cancel();
       const greeting=driverReaction.sample(time/1000,vehicle.speed,reduced);
       driverHead.rotation.set(-.12*greeting,driverYaw+.24*greeting,0);
@@ -871,10 +917,12 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
       camera.lookAt(cameraTarget);
       // Tranco de câmera no impacto: curto, proporcional à velocidade, sem acumular no estado da câmera.
       if (impact > .01) { camera.rotateZ(Math.sin(t * 58) * impact * .022); camera.rotateX(Math.sin(t * 47) * impact * .012); impact *= Math.exp(-5 * dt); }
-      if (frameCount++ % 2 === 0) aimSun(x, z);
+      // Perfil leve na vista aérea: a sombra cobre só 90 m ao redor do jipe, então atualiza a cada 4 quadros.
+      if (frameCount++ % (lightProfile && overview ? 4 : 2) === 0) aimSun(x, z);
       cardTint.copy(sunlight.color).lerp(skylight.color, .45);
       for (const entry of heavyCasters) {
-        const casting = Math.hypot(entry.at.x - x, entry.at.z - z) < 55;
+        // Perfil leve na vista aérea: modelos densos (banda, escultura) não projetam sombra; a 290 m ela ocupa poucos pixels.
+        const casting = Math.hypot(entry.at.x - x, entry.at.z - z) < 55 && !(lightProfile && overview);
         if (casting !== entry.casting) { entry.casting = casting; for (const mesh of entry.meshes) mesh.castShadow = casting; }
         // Histerese de 10 m evita alternar entre modelo e cartaz na fronteira.
         const range = Math.hypot(entry.at.x - camera.position.x, entry.at.z - camera.position.z);

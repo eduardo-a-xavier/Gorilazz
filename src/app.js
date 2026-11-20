@@ -3,13 +3,13 @@ import { loadJourney, loadWorldJourney, saveWorldJourney } from './progress.js';
 import { MEMBER_STOPS } from './route.js';
 import { CITY_ERAS, CITY_LOTS, DISCOVERIES, ERA_GATES, MEMBER_LOCATIONS, REGIONS, ROADS, distance, eraAt, regionAt } from './world-data.js';
 import { createVehicle, stepVehicle, haltVehicle, recoverVehicle } from './driving.js';
-import { createInput } from './input.js';
+import { createInput, numericShortcutIndex } from './input.js';
 import { createJournal, archiveStops, createEraArchive, nearbyInteraction } from './discoveries.js';
 import { planPath, navigationInput } from './navigation.js';
 import { createLocalRadio } from './local-radio.js';
 import { createJourneyGuide } from './journey-guide.js';
 const members = [
-  { name: '2-D', role: 'Voz e teclados', skin: '#e2d8c0', hair: '#3a68d8', shirt: '#f2559c', position: MEMBER_STOPS[0], description: 'Stuart Pot, conhecido como 2-D, é a voz da banda virtual. Seu cabelo azul e olhos escuros compõem sua identidade visual. Sua personalidade sensível contrasta com o caos ao redor.', song: 'Tomorrow Comes Today' },
+  { name: '2-D', role: 'Voz', skin: '#e2d8c0', hair: '#3a68d8', shirt: '#f2559c', position: MEMBER_STOPS[0], description: 'Stuart Pot, conhecido como 2-D, é a voz da banda virtual. Seu cabelo azul e olhos escuros compõem sua identidade visual. Sua personalidade sensível contrasta com o caos ao redor.', song: 'Tomorrow Comes Today' },
   { name: 'Murdoc', role: 'Baixo', skin: '#91a568', hair: '#141414', shirt: '#373737', position: MEMBER_STOPS[1], description: 'Murdoc Niccals é o baixista e autoproclamado líder da banda. Provocador e ligado ao rock, está no centro de várias histórias do universo Gorillaz.', song: 'Feel Good Inc.' },
   { name: 'Noodle', role: 'Guitarra', skin: '#e2d8c0', hair: '#141414', shirt: '#3a68d8', position: MEMBER_STOPS[2], description: 'Noodle é a guitarrista japonesa da banda. Sua trajetória atravessa as eras visuais de Gorillaz, combinando mistério, independência e energia.', song: 'DARE' },
   { name: 'Russel', role: 'Bateria', skin: '#986b50', hair: '#141414', shirt: '#e2d8c0', position: MEMBER_STOPS[3], description: 'Russel Hobbs é o baterista. Sua conexão com o hip-hop e o sobrenatural faz parte da narrativa da banda.', song: 'Clint Eastwood' },
@@ -18,7 +18,7 @@ members.forEach((member, index) => Object.assign(member, memberStories[index], {
 const memberKeys = ['twod', 'murdoc', 'noodle', 'russel'];
 // Mesmas cores das placas e dos fachos de luz de cada integrante no mundo.
 const MEMBER_ACCENTS = ['#7fa6ff', '#9dd66b', '#f5a9c6', '#ffcc4d'];
-function memberPhoto(index) { return `<img src="/assets/portraits/phase7-${memberKeys[index]}.png" alt="" width="384" height="512" loading="lazy">`; }
+function memberPhoto(index) { return `<img src="./assets/portraits/phase7-${memberKeys[index]}.png" alt="" width="384" height="512" loading="lazy">`; }
 function portrait(member, index) {
   return `<svg viewBox="0 0 70 110" aria-hidden="true"><path d="M22 76 18 108M47 76l5 32" stroke="#141414" stroke-width="10"/><path d="M${index === 3 ? 10 : 17} 79V54Q35 36 ${index === 3 ? 60 : 53} 54v25Z" fill="${member.shirt}" stroke="#141414" stroke-width="3"/><path d="M18 55 8 80m45-25 9 25" stroke="${member.skin}" stroke-width="8"/><ellipse cx="35" cy="28" rx="${index === 3 ? 24 : 19}" ry="24" fill="${member.skin}" stroke="#141414" stroke-width="3"/><path d="M15 24 13 7 26 9 34 0 41 9 56 5 54 30 44 15 34 21 26 15Z" fill="${member.hair}"/><g fill="#141414"><ellipse cx="27" cy="29" rx="4" ry="5"/><ellipse cx="43" cy="29" rx="4" ry="5"/></g><path d="m28 42 15-2" stroke="#141414" stroke-width="2"/></svg>`;
 }
@@ -229,8 +229,8 @@ function openDiscovery(index, collect = true) {
   const complete = fresh && journal.known.size === DISCOVERIES.length;
   discoveryFinale.hidden = !complete;
   setTrack(point.track); updateJournal(); discoveryDialog.showModal(); discoveryDialog.querySelector('.close').focus();
-  if (complete) announce(`Percurso completo: você encontrou as ${DISCOVERIES.length} histórias. O diário guarda todas elas.`);
-  else if (fresh) announce(`Nova descoberta: ${point.title}. ${journal.known.size} de 5 histórias.`);
+  if (complete) announce(`Percurso completo: você encontrou as ${DISCOVERIES.length} descobertas. O diário guarda todas elas.`);
+  else if (fresh) announce(`Nova descoberta: ${point.title}. ${journal.known.size} de ${DISCOVERIES.length} descobertas.`);
 }
 const discoveryFinale = document.createElement('div');
 discoveryFinale.id = 'discovery-finale'; discoveryFinale.hidden = true;
@@ -449,6 +449,15 @@ stops.forEach(([name], index) => {
   document.querySelector('#chapter-dock').append(waypoint);
 });
 selectStop(0);
+document.addEventListener('keydown', event => {
+  if (event.repeat || event.ctrlKey || event.metaKey || event.altKey || modalOpen()) return;
+  if (event.target.closest('input,select,textarea,button,a,[contenteditable]')) return;
+  const index = numericShortcutIndex(event.key, stops.length);
+  if (index < 0) return;
+  event.preventDefault(); selectStop(index);
+  menu.children[index].focus({preventScroll:true});
+  document.querySelector('#paradas').scrollIntoView({behavior: reducedMotion.matches ? 'instant' : 'smooth'});
+});
 let trackIndex = 0;
 function setTrack(index) {
   trackIndex = (index + tracks.length) % tracks.length;
@@ -493,6 +502,7 @@ members.forEach((member, index) => {
 });
 eras.forEach((era, index) => {
   const button = document.createElement('button'); button.type = 'button'; button.innerHTML = `<span>${era.label}</span><strong>${era.album}</strong>`;
+  button.style.setProperty('--album-color', era.color);
   button.addEventListener('click', () => selectEra(index)); document.querySelector('#era-menu').append(button);
 });
 document.querySelector('#era-menu').addEventListener('keydown', event => {

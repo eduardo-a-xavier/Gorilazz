@@ -1,20 +1,6 @@
 {
   "assets": [
     {
-      "author": "Leam / leamlld (scan publisher)",
-      "source": "https://sketchfab.com/3d-models/gorillaz-sculpture-cf1f323bba7d45ad8596eaa62ca60ce1",
-      "license": "CC Attribution indicated by indexed source; exact version not confirmed",
-      "sourceArchive": "gorillaz-sculpture.zip",
-      "originalTriangles": 129391,
-      "originalTextureMax": 8192,
-      "file": "2d-sculpture.glb",
-      "bytes": 1580892,
-      "sha256": "60e40672f6f726a0c4c29549e85aaee4ca811ad5ca82bdacf89d6587b82d238b",
-      "triangles": 33999,
-      "animated": false,
-      "rigged": false
-    },
-    {
       "author": "Original environment produced for this project",
       "source": "scripts/build-visual-environment.py",
       "license": "Project-authored",

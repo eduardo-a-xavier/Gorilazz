@@ -39,7 +39,6 @@ const routes = new Map([
   ['/assets/materials/roof.png', ['assets/materials/roof.png', 'image/png']],
   ['/assets/materials/wood-normal.png', ['assets/materials/wood-normal.png', 'image/png']],
   ['/assets/materials/wood.png', ['assets/materials/wood.png', 'image/png']],
-  ['/assets/environment/2d-sculpture.glb', ['assets/environment/2d-sculpture.glb', 'model/gltf-binary']],
   ['/assets/environment/broadleaf-tree.glb', ['assets/environment/broadleaf-tree.glb', 'model/gltf-binary']],
   ['/assets/environment/kong-studio.glb', ['assets/environment/kong-studio.glb', 'model/gltf-binary']],
   ['/assets/environment/CREDITS.txt', ['assets/environment/CREDITS.txt', 'text/plain; charset=utf-8']],

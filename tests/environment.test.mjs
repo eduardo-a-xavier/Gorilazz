@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { readFile } from 'node:fs/promises';
+import { readFile, access } from 'node:fs/promises';
 import { TREE_LOCATIONS, VISUAL_LANDMARKS, nearestRoad, distance, DISCOVERIES } from '../src/world-data.js';
 
 async function glb(name) {
@@ -13,21 +13,12 @@ async function glb(name) {
 function triangles(data) {
   return data.meshes.reduce((sum,mesh)=>sum+mesh.primitives.reduce((n,p)=>n+data.accessors[p.indices??p.attributes.POSITION].count/3,0),0);
 }
-test('peças fornecidas são GLBs locais estáticos reduzidos, com texturas incorporadas',async()=>{
-  for(const [name,maximum] of [['2d-sculpture.glb',35000]]){
-    const data=await glb(name);assert.ok(triangles(data)<=maximum);assert.ok(triangles(data)>10000);
-    assert.equal(data.skins?.length||0,0);assert.equal(data.animations?.length||0,0);
-    assert.ok(data.images.length>0);assert.ok(data.images.every(image=>Number.isInteger(image.bufferView)&&!image.uri));
-    for(const image of data.images){
-      const view=data.bufferViews[image.bufferView];const bytes=data.binary.subarray(view.byteOffset||0,(view.byteOffset||0)+view.byteLength);
-      // The shipping exports use JPEG; rejecting oversized source textures
-      // prevents a small GLB transfer from hiding hundreds of MiB in GPU images.
-      assert.equal(bytes.readUInt16BE(0),0xffd8);let found=false;
-      for(let i=2;i<bytes.length;){const marker=bytes[i+1],size=bytes.readUInt16BE(i+2);if([0xc0,0xc1,0xc2].includes(marker)){assert.ok(bytes.readUInt16BE(i+5)<=1024&&bytes.readUInt16BE(i+7)<=1024);found=true;break;}i+=size+2;}
-      assert.ok(found,'dimensões da textura JPEG devem estar presentes');
-    }
-    assert.ok(data.meshes.every(mesh=>mesh.primitives.every(p=>p.attributes.TEXCOORD_0!==undefined)));
-  }
+test('scan de 2-D não integra a versão de entrega',async()=>{
+  await assert.rejects(access(new URL('../assets/environment/2d-sculpture.glb',import.meta.url)));
+  const environment=await readFile(new URL('../src/environment.js',import.meta.url),'utf8');
+  const server=await readFile(new URL('../server.mjs',import.meta.url),'utf8');
+  assert.ok(!environment.includes('2d-sculpture.glb'));
+  assert.ok(!server.includes('2d-sculpture.glb'));
 });
 test('fachada e vegetação autorais usam poucos grupos de material e GLB válido',async()=>{
   const studio=await glb('kong-studio.glb'),tree=await glb('broadleaf-tree.glb');

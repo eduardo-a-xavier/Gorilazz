@@ -1,6 +1,6 @@
 const station = [
-  { name: 'Concreto', artist: 'Kong FM · instrumental original', url: '/assets/radio/concreto.mp3' },
-  { name: 'Maré de plástico', artist: 'Kong FM · instrumental original', url: '/assets/radio/mare.mp3' },
+  { name: 'Concreto', artist: 'Kong FM · instrumental original', url: './assets/radio/concreto.mp3' },
+  { name: 'Maré de plástico', artist: 'Kong FM · instrumental original', url: './assets/radio/mare.mp3' },
 ];
 
 export function createLocalRadio({ input, playButton, previousButton, nextButton, title, album, status }) {

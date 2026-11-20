@@ -1,4 +1,4 @@
-# Revisão para a entrega de 30 de novembro de 2026
+# Revisão para a entrega de 26 de novembro de 2026
 
 Avaliação em 10/11/2026, a partir do repositório, testes automatizados e capturas do site local em Chromium. Avaliação visual é julgamento de design, não resultado de pesquisa com usuários. Não houve auditoria de uma publicação em produção.
 
@@ -80,15 +80,14 @@ Direção desta etapa: preservar a paleta e as fontes existentes, alinhar o pain
 | 10–13/11 | Fechar escopo, consolidar navegação e confirmar critérios exigidos pela avaliação |
 | 14–18/11 | Polir enquadramento inicial, marcos, rádio e consistência editorial |
 | 19–23/11 | Testar com pelo menos três pessoas; medir carga e fluidez em aparelhos reais; corrigir os bloqueios encontrados |
-| 24–26/11 | Revisar fontes, créditos, links e comportamento da versão publicada |
-| 27–29/11 | Congelar funcionalidades, corrigir regressões e ensaiar apresentação com cópia local disponível |
-| 30/11 | Entregar versão identificada, endereço final, documentação e demonstração |
+| 24–25/11 | Revisar fontes, créditos, links e comportamento da versão candidata |
+| 26/11 | Entregar versão identificada, documentação e demonstração; endereço final somente se Eduardo tiver publicado |
 
 Esse calendário é uma proposta de escopo, não uma promessa de execução automática futura. A rubrica acadêmica e a hospedagem ainda não estão identificadas nesta revisão.
 
 ## Verificação e limites
 
-- Verificação de sintaxe e 41 testes de lógica passaram após as alterações de código.
+- Verificação de sintaxe e 49 testes de lógica passaram em 19/11/2026 no estado local candidato.
 - O smoke existente cobre entrada, passeio, escolha de destino, interrupção manual, pausa fora da cena, diário e ausência de transbordamento horizontal em 1440, 390 e 320 px, além do modo sem 3D.
 - Smoke de navegador concluído em desktop, 390 px, 320 px e sem 3D, incluindo chegada e diário. Capturas finais de direção, menu, leitura móvel e cabine examinadas em `artifacts/delivery`.
 - `python scripts/audit-delivery.py` acrescenta verificação da ação principal fora do menu, importação de áudio com Enter, retorno do foco com Escape, pedais em emulação de toque e leitura em 1440, 390 e 320 px. Esse fluxo encontrou a sobreposição do roteiro com o rádio no modo sem 3D em 320 px, corrigida nesta revisão.

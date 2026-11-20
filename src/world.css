@@ -1,4 +1,11 @@
 /* Open-world controls and discovery overlays. */
+.world-shell:not(.has-3d) .landscape { display:none; }
+.world-shell:not(.has-3d):not(.map-only) { background:
+  radial-gradient(circle at 72% 38%,#53677a44 0 10%,transparent 34%),
+  linear-gradient(120deg,#12211f 0 38%,#202631 72%,#18202a 100%); }
+.world-shell:not(.has-3d):not(.map-only)::before { content:''; position:absolute; inset:0; z-index:0; pointer-events:none; opacity:.2; background:
+  linear-gradient(90deg,transparent 49.8%,#d2e2a81f 50%,transparent 50.2%),
+  linear-gradient(transparent 49.8%,#d2e2a81f 50%,transparent 50.2%); background-size:72px 72px; }
 .world-shell { height:calc(100svh - 92px); min-height:640px; }
 .chapter-card, .chapter-dock, .scene-corner { display:none !important; }
 #world canvas { touch-action:none; }
@@ -13,7 +20,7 @@
 .exploration-actions button { background:#111415aa; border:1px solid #e9e4d455; border-radius:24px; min-height:44px; padding:10px 14px; color:var(--cream); font:8px 'Courier New',monospace; backdrop-filter:blur(8px); }
 #journal-toggle { color:var(--acid); }
 #journal-count { padding-left:8px; }
-.mini-map { position:absolute; top:76px; right:4%; width:176px; z-index:5; border:1px solid #e9e4d433; border-radius:14px; padding:8px; background:#111415bb; pointer-events:none; backdrop-filter:blur(8px); }
+.mini-map { position:absolute; top:76px; right:4%; width:176px; max-width:92%; box-sizing:border-box; overflow:hidden; z-index:5; border:1px solid #e9e4d433; border-radius:14px; padding:8px; background:#111415bb; pointer-events:none; backdrop-filter:blur(8px); }
 .mini-map svg { width:100%; height:auto; display:block; }
 #world-map { pointer-events:auto; }
 .mini-map>span { display:block; text-align:center; font:6px 'Courier New',monospace; letter-spacing:.4px; padding:8px 0 2px; opacity:.7; }
@@ -360,6 +367,6 @@ input:focus-visible, select:focus-visible, summary:focus-visible { outline:3px s
 /* Fichas com a cor do lugar: bairro da história ou cor do integrante. */
 #discovery-dialog, #character-dialog { border-top:6px solid var(--place, var(--acid)); }
 #discovery-dialog > .eyebrow, #character-dialog .eyebrow { color:var(--place, var(--acid)); }
-.map-legend { display:flex; align-items:center; justify-content:center; gap:5px; flex-wrap:wrap; font-size:9px; }
+.map-legend { display:flex; min-width:0; max-width:100%; align-items:center; justify-content:center; gap:5px; flex-wrap:wrap; overflow-wrap:anywhere; font-size:9px; }
 .map-legend i { display:inline-block; width:8px; height:8px; background:#f5a9c6; }
 .map-legend .dot { border-radius:50%; } .map-legend .gem { background:#7fa6ff; transform:rotate(45deg); margin-left:5px; }

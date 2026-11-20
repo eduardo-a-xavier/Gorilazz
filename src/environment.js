@@ -83,10 +83,10 @@ export function createRegionalGrounds() {
 export function installEnvironment(scene, renderer, surfaces, onModel = () => {}) {
   scene.add(createRegionalGrounds());
   const loader=new GLTFLoader(); const status=document.querySelector('#environment-status');
-  const states={studio:'loading',sculpture:'loading',diorama:'loading',trees:'loading'};
+  const states={studio:'loading',gardens:'loading',trees:'loading'};
   function report(key,state) {
     states[key]=state;renderer.domElement.dataset[key]=state;
-    if(status) status.textContent=Object.values(states).some(s=>s==='loading')?'Preparando o pátio e as peças da exposição…':Object.values(states).every(s=>s==='ready')?'KONG STUDIOS / ESCULTURA 2-D E JARDIM DE FREQUÊNCIAS ORIGINAL':'CENÁRIO LOCAL / ALGUMAS PEÇAS USAM ALTERNATIVAS';
+    if(status) status.textContent=Object.values(states).some(s=>s==='loading')?'Preparando o pátio e as peças da exposição…':Object.values(states).every(s=>s==='ready')?'KONG STUDIOS / JARDINS GEOMÉTRICOS ORIGINAIS':'CENÁRIO LOCAL / ALGUMAS PEÇAS USAM ALTERNATIVAS';
   }
   function addModel(key,url,at) {
     return loader.loadAsync(url).then(gltf=>{
@@ -95,7 +95,7 @@ export function installEnvironment(scene, renderer, surfaces, onModel = () => {}
       scene.add(model);onModel(model,at);report(key,'ready');return model;
     }).catch(error=>{console.warn(`Peça ${key} indisponível:`,error.message);report(key,'fallback');return null;});
   }
-  const studioPromise=addModel('studio','/assets/environment/kong-studio.glb',{x:-28,y:-.3,z:6}).then(model=>{
+  const studioPromise=addModel('studio','./assets/environment/kong-studio.glb',{x:-28,y:-.3,z:6}).then(model=>{
     if(!model){const fallback=new THREE.Mesh(new THREE.BoxGeometry(12.8,13,12),surfaces.get('brick',4,4));fallback.position.set(-28,6.2,6);fallback.castShadow=fallback.receiveShadow=true;scene.add(fallback);}
   });
   const signTexture=letteringTexture('KONG STUDIOS|THE ROAD / MUSIC & STORIES',{height:256});
@@ -105,13 +105,13 @@ export function installEnvironment(scene, renderer, surfaces, onModel = () => {}
   const imageLoader=new THREE.TextureLoader();
   ['twod','murdoc','noodle','russel'].forEach((name,i)=>{
     const paper=new THREE.Mesh(new THREE.PlaneGeometry(1.65,2.5),surfaces.get('plaster'));paper.rotation.y=Math.PI/2;paper.position.set(-21.54,3.6,1.8+i*2.6);scene.add(paper);
-    const map=imageLoader.load(`/assets/portraits/phase7-${name}.png`);map.colorSpace=THREE.SRGBColorSpace;
+    const map=imageLoader.load(`./assets/portraits/phase7-${name}.png`);map.colorSpace=THREE.SRGBColorSpace;
     const art=new THREE.Mesh(new THREE.PlaneGeometry(1.35,2.2),new THREE.MeshStandardMaterial({map,transparent:true,alphaTest:.1,roughness:1,metalness:0}));art.rotation.y=Math.PI/2;art.position.copy(paper.position);art.position.x+=.02;scene.add(art);
   });
-  const sculpturePromise=addModel('sculpture','/assets/environment/2d-sculpture.glb',VISUAL_LANDMARKS.sculpture);
-  const garden = createFrequencyGarden(), gardenAt = VISUAL_LANDMARKS.diorama;
-  garden.position.set(gardenAt.x,gardenAt.y,gardenAt.z); scene.add(garden); report('diorama','ready');
-  for(const [key,label] of [['sculpture','2-D / ESCULTURA'],['diorama','JARDIM / FREQUÊNCIAS']]) {
+  const gardenAt = VISUAL_LANDMARKS.diorama, echoAt = VISUAL_LANDMARKS.sculpture;
+  const garden = createFrequencyGarden(); garden.position.set(gardenAt.x,gardenAt.y,gardenAt.z); scene.add(garden);
+  const echoGarden = createFrequencyGarden(); echoGarden.position.set(echoAt.x,echoAt.y,echoAt.z); echoGarden.rotation.y=Math.PI/4; echoGarden.scale.setScalar(.82); scene.add(echoGarden); report('gardens','ready');
+  for(const [key,label] of [['sculpture','JARDIM / ECOS'],['diorama','JARDIM / FREQUÊNCIAS']]) {
     const point=VISUAL_LANDMARKS[key];
     const plinth=new THREE.Mesh(new THREE.CylinderGeometry(2.5,2.7,point.y,40),surfaces.get('plaster',2));plinth.position.set(point.x,point.y/2-.05,point.z);plinth.receiveShadow=plinth.castShadow=true;scene.add(plinth);
     const plaque=new THREE.Mesh(new THREE.PlaneGeometry(3.8,.8),new THREE.MeshStandardMaterial({map:letteringTexture(label,{height:128}),roughness:.9}));plaque.position.set(point.x,.8,point.z+2.76);scene.add(plaque);
@@ -136,7 +136,7 @@ export function installEnvironment(scene, renderer, surfaces, onModel = () => {}
     shrubMesh.setColorAt(i,new THREE.Color(['#63764b','#83915b','#536e52'][i%3]));
   });
   shrubMesh.receiveShadow=true;scene.add(shrubMesh);
-  const treesPromise=loader.loadAsync('/assets/environment/broadleaf-tree.glb').then(gltf=>{
+  const treesPromise=loader.loadAsync('./assets/environment/broadleaf-tree.glb').then(gltf=>{
     gltf.scene.updateMatrixWorld(true);
     gltf.scene.traverse(part=>{
       if(!part.isMesh)return;
@@ -151,5 +151,5 @@ export function installEnvironment(scene, renderer, surfaces, onModel = () => {}
   }).catch(error=>{console.warn('Vegetação alternativa:',error.message);report('trees','fallback');
     for(const point of TREE_LOCATIONS){const crown=new THREE.Mesh(new THREE.SphereGeometry(2.2,12,8),surfaces.get('foliage'));crown.position.set(point.x,3.7,point.z);scene.add(crown);}
   });
-  return Promise.allSettled([studioPromise,sculpturePromise,treesPromise]);
+  return Promise.allSettled([studioPromise,treesPromise]);
 }
