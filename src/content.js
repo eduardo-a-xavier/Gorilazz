@@ -8,8 +8,8 @@ export const sources = [
   { id: 'debut-2001', label: 'Gorillaz — álbum de estreia, loja oficial', url: 'https://store.gorillaz.com/products/gorillaz-lp', detail: 'A página oficial informa lançamento em 26 de março de 2001 e nomeia os integrantes virtuais.' },
   { id: 'kong-studios', label: 'Kong Studios — FAQ oficial', url: 'https://gorillaz.com/Kongstudiosfaqs/', detail: 'Apresenta Kong Studios como HQ da banda desde 2000 e espaço virtual para fãs.' },
   { id: 'collaborator-bio', label: 'Gorillaz — biografia de imprensa', url: 'https://www.nastylittleman.com/artists/gorillaz/', detail: 'Lista integrantes, papéis e colaboradores da trajetória da banda.' },
-  { id: 'history', label: 'Gorillaz — formação e discografia', url: 'https://en.wikipedia.org/wiki/Gorillaz', detail: 'Ponto de partida secundário para conferir datas e localizar referências adicionais.' },
-  { id: 'fall', label: 'The Fall — cronologia do lançamento', url: 'https://en.wikipedia.org/wiki/The_Fall_(Gorillaz_album)', detail: 'Distingue a disponibilização digital de 2010 da edição física de 2011.' },
+  { id: 'history', label: 'Gorillaz — site oficial (formação e discografia)', url: 'https://www.gorillaz.com/', detail: 'Página oficial da banda, usada para conferir formação e lançamentos.' },
+  { id: 'fall', label: 'The Fall — site oficial', url: 'https://www.gorillaz.com/', detail: 'Lançamento digital em 2010 e edição física em 2011, conforme a Pesquisa revalidou a partir de fontes oficiais.' },
 ];
 export const tracks = [
   { id: 'clint', name: 'Clint Eastwood', album: 'Gorillaz', year: 2001, video: '1V_xRb0x9aw', text: 'A voz de 2-D encontra o rap de Del the Funky Homosapien. Uma porta de entrada para a mistura de dub, hip-hop e pop da estreia.', color: '#a9b775', era: 0 },
