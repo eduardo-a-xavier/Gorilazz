@@ -1,12 +1,14 @@
 import * as THREE from './vendor/three.module.min.js';
 import { mergeGeometries } from './vendor/BufferGeometryUtils.js';
 import { CITY_LOTS, CITY_ERAS, ERA_GATES } from './world-data.js';
+import { eraBillboardCredits } from './content.js';
+import { NON_DISCOVERY_PROP_SCALE } from './discovery-scale.js';
 
 // Cidade autoral e procedural, dividida em quatro bairros, um por ato da história da banda:
 //   Ato 1 · A explosão (2000–2006)      → tijolo, caixas-d'água, escadas de incêndio e grafite
 //   Ato 2 · O auge ambicioso (2007–2011) → Plastic Beach: fachadas pastel e lixo plástico colorido
 //   Ato 3 · A briga e o hiato (2012–2016)→ prédios fechados, janelas tapadas e andaimes
-//   Ato 4 · A reinvenção (2017–2026)     → torres de vidro, telões de LED e neon
+//   Ato 4 · A reinvenção (2017–2023)     → torres de vidro, telões de LED e neon
 // Todas as texturas são desenhadas em canvas; nenhum asset externo é necessário.
 // As peças repetidas são fundidas por material para manter poucas chamadas de desenho.
 
@@ -31,12 +33,12 @@ const ERA_SHOPS = [
   ['FECHADO', 'ALUGA-SE', 'EM PAUSA', 'VENDE-SE', 'SEM SINAL', 'FECHADO'],
   ['STREAMING', 'VINIL', 'GAMES', 'REALIDADE AR', 'FONES', 'CAFÉ 24H'],
 ];
-// Datas e marcos do documento de história da banda.
-const ERA_ADS = [
+// Datas e marcos do documento de história da banda (recorte 1998–2023).
+export const ERA_ADS = [
   ['TOMORROW COMES TODAY|EP · 27/11/2000', 'GORILLAZ|26/03/2001 · CLINT EASTWOOD', 'DEMON DAYS|11/05/2005 · FEEL GOOD INC.', 'GRAMMY 2006|FEEL GOOD INC. · HOLOGRAMAS AO VIVO'],
   ['PLASTIC BEACH|03/03/2010 · UMA ILHA DE PLÁSTICO', 'ESCAPE TO PLASTIC BEACH|TURNÊ 2010 · COACHELLA · GLASTONBURY', 'THE FALL|GRAVADO NUM IPAD · 25/12/2010', 'MONKEY|JOURNEY TO THE WEST · ÓPERA 2007'],
   ['DOYATHING|2012 · O ÚLTIMO ANTES DA PAUSA', 'EM PAUSA|2012 — 2016', 'QUER FAZER MAIS UM?|2014 · A RECONCILIAÇÃO', 'FECHADO PARA REFORMA|VOLTAMOS LOGO'],
-  ['HUMANZ|28/04/2017 · SATURNZ BARZ EM 360°', 'THE NOW NOW|29/06/2018 · BRIT AWARD', 'SONG MACHINE|TEMPORADA 1 · 2020', 'CRACKER ISLAND|24/02/2023 · Nº1 NO REINO UNIDO', 'THE MOUNTAIN|27/02/2026 · KONG · Nº1'],
+  ['HUMANZ|28/04/2017 · SATURNZ BARZ EM 360°', 'THE NOW NOW|29/06/2018 · BRIT AWARD', 'SONG MACHINE|TEMPORADA 1 · 2020', 'CRACKER ISLAND|24/02/2023 · Nº1 NO REINO UNIDO', 'COACHELLA 2023|TURNÊ CRACKER ISLAND · PHASE 7'],
 ];
 const NEON = ['#ff5fa2', '#6fe3ff', '#ffd166', '#9dff8a', '#ff8a5c', '#c69bff'];
 const PLASTIC = ['#ff5f8f', '#38c2b5', '#ffcc4d', '#6aa2ff', '#f4efe2', '#9dff8a'];
@@ -64,10 +66,10 @@ const GLOWS = {
   pastel: ['#fff0b8', '#a8f0e8', '#ffd0e0'],
   glass: ['#e4f6ff', '#e4f6ff', '#ff9ccc', '#7fe6ff', '#c9b2ff'],
 };
-function windowLayout(style) {
-  const rng = seeded(style.length * 977 + style.charCodeAt(0));
+function windowLayout(style, tint = 0) {
+  const rng = seeded(style.length * 977 + style.charCodeAt(0) + tint * 193);
   return Array.from({ length: 16 }, () => ({ lit: rng() < LIT[style], glow: pick(rng, GLOWS[style] || GLOWS.default),
-    curtain: rng(), blinds: rng() < .2, boarded: rng() < .55, broken: rng() < .3 }));
+    intensity: .62 + rng() * .38, curtain: rng(), blinds: rng() < .2, boarded: rng() < .55, broken: rng() < .3 }));
 }
 function windowRect(style) {
   if (style === 'glass') return { x: 0, y: 0, w: CELL, h: CELL - 22 };
@@ -116,9 +118,9 @@ const facadeCache = new Map();
 function facadeMaterial(style, tint) {
   tint %= 3; // três tons por estilo: variedade suficiente com poucas chamadas de desenho
   const key = `${style}/${tint}`; if (facadeCache.has(key)) return facadeCache.get(key);
-  const layout = windowLayout(style); const rng = seeded(tint * 131 + style.length);
+  const layout = windowLayout(style, tint); const rng = seeded(tint * 131 + style.length);
   const [c, ctx] = canvas(SIZE); drawWall(ctx, style, PALETTE[style][tint], rng);
-  const glows = style !== 'abandoned'; let emissive = facadeCache.get(`${style}/emissive`);
+  const glows = style !== 'abandoned'; let emissive = facadeCache.get(`${style}/${tint}/emissive`);
   const [ec, ectx] = emissive || !glows ? [] : canvas(SIZE);
   if (ectx) { ectx.fillStyle = '#000'; ectx.fillRect(0, 0, SIZE, SIZE); }
   const frame = { concrete: '#3c4346', brick: '#efe7d4', glass: '#9fb4bd', pastel: '#ffffff', abandoned: '#5a554c' }[style] || '#f4efe2';
@@ -126,12 +128,12 @@ function facadeMaterial(style, tint) {
     const r = windowRect(style); const x = (i % 4) * CELL + r.x, y = Math.floor(i / 4) * CELL + r.y;
     if (style === 'glass') {
       if (win.lit) {
-        // Escritório aceso: luz do teto e silhuetas de mesas, sem pintar o vidro inteiro.
+        // Escritório aceso: luz do teto e silhuetas de mesas, com variação por janela.
         const g = ctx.createLinearGradient(0, y, 0, y + r.h); g.addColorStop(0, win.glow); g.addColorStop(.35, 'rgba(255,255,255,0)');
-        ctx.globalAlpha = .55; ctx.fillStyle = g; ctx.fillRect(x + 3, y + 3, r.w - 6, r.h - 6); ctx.globalAlpha = 1;
+        ctx.globalAlpha = .55 * win.intensity; ctx.fillStyle = g; ctx.fillRect(x + 3, y + 3, r.w - 6, r.h - 6); ctx.globalAlpha = 1;
         ctx.fillStyle = win.glow; ctx.fillRect(x + 8, y + 8, r.w - 16, 4);
         ctx.fillStyle = 'rgba(10,15,20,.55)'; for (let k = 0; k < 3; k++) ctx.fillRect(x + 12 + k * 38, y + r.h - 34, 26, 16);
-        if (ectx) { ectx.fillStyle = win.glow; ectx.fillRect(x + 8, y + 8, r.w - 16, 4); ectx.globalAlpha = .35; ectx.fillRect(x + 3, y + 12, r.w - 6, r.h * .35); ectx.globalAlpha = 1; }
+        if (ectx) { ectx.globalAlpha = win.intensity; ectx.fillStyle = win.glow; ectx.fillRect(x + 8, y + 8, r.w - 16, 4); ectx.globalAlpha = .38 * win.intensity; ectx.fillRect(x + 3, y + 12, r.w - 6, r.h * .35); ectx.globalAlpha = 1; }
       }
       ctx.fillStyle = 'rgba(255,255,255,.12)'; ctx.beginPath(); ctx.moveTo(x, y + r.h); ctx.lineTo(x + r.w * .6, y); ctx.lineTo(x + r.w * .85, y); ctx.lineTo(x + r.w * .2, y + r.h); ctx.fill();
       ctx.fillStyle = frame; ctx.fillRect(x, y, 3, r.h); ctx.fillRect(x + r.w / 2 - 1, y, 2, r.h);
@@ -149,8 +151,8 @@ function facadeMaterial(style, tint) {
       return;
     }
     if (win.lit) {
-      ctx.fillStyle = win.glow; ctx.fillRect(x, y, r.w, r.h);
-      if (ectx) { ectx.fillStyle = win.glow; ectx.fillRect(x, y, r.w, r.h); }
+      ctx.globalAlpha = win.intensity; ctx.fillStyle = win.glow; ctx.fillRect(x, y, r.w, r.h); ctx.globalAlpha = 1;
+      if (ectx) { ectx.globalAlpha = win.intensity; ectx.fillStyle = win.glow; ectx.fillRect(x, y, r.w, r.h); ectx.globalAlpha = 1; }
       ctx.fillStyle = 'rgba(120,70,50,.35)'; const cw = r.w * (.15 + win.curtain * .25);
       ctx.fillRect(x, y, cw, r.h); ctx.fillRect(x + r.w - cw * .6, y, cw * .6, r.h);
       if (ectx) { ectx.fillStyle = 'rgba(0,0,0,.55)'; ectx.fillRect(x, y, cw, r.h); ectx.fillRect(x + r.w - cw * .6, y, cw * .6, r.h); }
@@ -163,9 +165,9 @@ function facadeMaterial(style, tint) {
     if (style === 'pastel') { ctx.fillStyle = shade(PALETTE.pastel[(i + tint + 1) % 5], -.15); ctx.fillRect(x - 16, y - 4, 10, r.h + 8); ctx.fillRect(x + r.w + 6, y - 4, 10, r.h + 8); }
     ctx.fillStyle = style === 'concrete' ? '#6b7376' : '#d9d0bb'; ctx.fillRect(x - 8, y + r.h + 3, r.w + 16, 7);
   });
-  if (ectx && !emissive) { emissive = texture(ec); facadeCache.set(`${style}/emissive`, emissive); }
-  const material = new THREE.MeshStandardMaterial({ map: texture(c), roughness: style === 'glass' ? .25 : .9, metalness: style === 'glass' ? .35 : 0 });
-  if (glows) Object.assign(material, { emissiveMap: emissive, emissive: new THREE.Color('#ffffff'), emissiveIntensity: style === 'glass' ? .9 : .7 });
+  if (ectx && !emissive) { emissive = texture(ec); facadeCache.set(`${style}/${tint}/emissive`, emissive); }
+  const material = new THREE.MeshStandardMaterial({ map: texture(c), vertexColors: true, roughness: style === 'glass' ? .25 : .9, metalness: style === 'glass' ? .35 : 0 });
+  if (glows) Object.assign(material, { emissiveMap: emissive, emissive: new THREE.Color('#ffffff'), emissiveIntensity: style === 'glass' ? 1.15 : .92 });
   facadeCache.set(key, material); return material;
 }
 
@@ -194,35 +196,110 @@ function signTexture() {
   const [c, ctx] = canvas(512, 64 * SHOP_ROWS.length);
   SHOP_ROWS.forEach((name, i) => {
     const y = i * 64, era = Math.floor(i / 6), neon = era === 2 ? '#c9c2b4' : NEON[i % NEON.length];
-    ctx.fillStyle = era === 2 ? '#3a3a37' : era === 1 ? '#f4efe2' : '#1b1f24'; ctx.fillRect(0, y, 512, 64);
-    ctx.strokeStyle = era === 1 ? PLASTIC[i % PLASTIC.length] : neon; ctx.lineWidth = 3; ctx.strokeRect(6, y + 6, 500, 52);
+    const pulse = .78 + ((i * 37) % 23) / 100;
+    ctx.fillStyle = era === 2 ? '#3a3a37' : era === 1 ? '#f4efe2' : shade('#1b1f24', ((i % 3) - 1) * .04); ctx.fillRect(0, y, 512, 64);
+    ctx.globalAlpha = pulse;
+    ctx.strokeStyle = era === 1 ? PLASTIC[i % PLASTIC.length] : neon; ctx.lineWidth = 3 + (i % 2); ctx.strokeRect(6, y + 6, 500, 52);
     ctx.font = 'bold 40px "Arial Black", Arial, sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-    if (era !== 2) { ctx.shadowColor = neon; ctx.shadowBlur = era === 1 ? 0 : 14; }
+    if (era !== 2) { ctx.shadowColor = neon; ctx.shadowBlur = era === 1 ? 6 : 12 + (i % 4) * 4; }
     ctx.fillStyle = era === 1 ? shade(PLASTIC[i % PLASTIC.length], -.25) : neon; ctx.fillText(name, 256, y + 34, 470); ctx.shadowBlur = 0;
+    ctx.globalAlpha = 1;
   });
   return texture(c, { repeat: false });
 }
-const AD_ROWS = ERA_ADS.flat(), AD_H = 192;
+const AD_ROWS = ERA_ADS.flat(), AD_W = 2048, AD_H = 384;
+export const AD_COVER_SIZE = 256;
+export const AD_COVERS = [
+  ['gorillaz-2001', 'gorillaz-2001', 'demon-days-2005', 'demon-days-2005'],
+  ['plastic-beach-2010', 'plastic-beach-2010', 'the-fall-2010', null],
+  [null, null, null, null],
+  ['humanz-2017', 'the-now-now-2018', 'song-machine-2020', 'cracker-island-2023', null],
+];
+// Arte oficial por era (assets/art, WebP) para as capas do atlas: alinhada 1:1 com AD_COVERS e entrada sob demanda.
+export const ERA_ART = [
+  ['album-gorillaz-2001', 'album-gorillaz-2001', 'album-demon-days-2005', 'art-feel-good-inc-2005'],
+  ['album-plastic-beach-2010', 'art-stylo-2010', 'album-the-fall-2010', null],
+  [null, null, null, null],
+  ['album-humanz-2017', 'album-the-now-now-2018', 'album-song-machine-2020', 'album-cracker-island-2023', null],
+];
+export const AD_CREDIT_KEYS = [
+  ['gorillaz', 'gorillaz', 'demon-days', 'demon-days'],
+  ['plastic-beach', 'plastic-beach', 'the-fall', 'plastic'],
+  ['hiato', 'hiato', 'hiato', 'hiato'],
+  ['humanz', 'the-now-now', 'song-machine', 'cracker-island', 'reinvencao'],
+];
+const ERA_ART_RADIUS = 80; // m: distância do centro da era para baixar a arte dela
+// Escala dos outdoors no telhado: 1,5x; a folga até a borda do asfalto ficou ≥ 0,9 m em todos os lotes (ver tests/roads.test.mjs).
+const BILLBOARD_SCALE = 1.5;
+let adAtlas = null; const eraArtRequested = new Set();
+function paintBillboardCover(ctx, img, y, accent) {
+  ctx.save();
+  ctx.fillStyle = '#111415'; ctx.fillRect(24, y + 14, AD_COVER_SIZE + 16, AD_COVER_SIZE + 16);
+  ctx.drawImage(img, 32, y + 22, AD_COVER_SIZE, AD_COVER_SIZE);
+  ctx.strokeStyle = accent; ctx.lineWidth = 5; ctx.strokeRect(28, y + 18, AD_COVER_SIZE + 8, AD_COVER_SIZE + 8);
+  ctx.restore();
+}
 function adTexture() {
-  const [c, ctx] = canvas(1024, AD_H * AD_ROWS.length); const rng = seeded(31);
+  const [c, ctx] = canvas(AD_W, AD_H * AD_ROWS.length); const rng = seeded(31);
+  adAtlas = { ctx, tex: null, slots: [] };
   let row = 0;
+  const coverTargets = [];
   ERA_ADS.forEach((ads, era) => ads.forEach((text, k) => {
     const y = row++ * AD_H, [title, line] = text.split('|');
+    const slug = AD_COVERS[era]?.[k] ?? null;
+    const creditKey = AD_CREDIT_KEYS[era]?.[k] ?? ['explosao', 'plastic', 'hiato', 'reinvencao'][era];
+    const credit = eraBillboardCredits[creditKey] || 'Arte: Jamie Hewlett · uso acadêmico';
+    const textX = slug ? 1170 : 1024, textW = slug ? 1680 : 1920;
     const bg = [['#1d2a33', '#2a1d2e', '#14303a', '#3a1d1d'], ['#38c2b5', '#ff7eb0', '#f4efe2', '#ffcc4d'], ['#55554f', '#4a4c48', '#5c5650', '#45474a'], ['#0d0f1a', '#1a0d1f', '#081a1f', '#1f0d14', '#141006']][era][k];
     const accent = [NEON[k], '#1d2a33', '#a8a296', NEON[(k + 1) % NEON.length]][era];
-    ctx.fillStyle = bg; ctx.fillRect(0, y, 1024, AD_H);
-    ctx.fillStyle = accent; ctx.fillRect(0, y + AD_H - 44, 1024, 44);
+    ctx.fillStyle = bg; ctx.fillRect(0, y, AD_W, AD_H);
+    ctx.fillStyle = accent; ctx.fillRect(0, y + AD_H - 92, AD_W, 50);
+    ctx.fillStyle = '#111415f2'; ctx.fillRect(0, y + AD_H - 42, AD_W, 42);
     ctx.textAlign = 'center'; ctx.fillStyle = era === 1 ? '#1d2a33' : era === 2 ? '#d7d0c2' : '#f4efe2';
-    if (era === 3) { ctx.shadowColor = NEON[(k + 1) % NEON.length]; ctx.shadowBlur = 20; }
-    ctx.font = 'bold 92px "Arial Black", Arial, sans-serif'; ctx.fillText(title, 512, y + 108, 960); ctx.shadowBlur = 0;
-    ctx.font = 'bold 28px monospace'; ctx.fillStyle = era === 2 ? '#2a2a28' : '#111'; ctx.fillText(line, 512, y + AD_H - 13, 960);
+    if (era === 3) { ctx.shadowColor = NEON[(k + 1) % NEON.length]; ctx.shadowBlur = 28; }
+    ctx.font = 'bold 148px "Arial Black", Arial, sans-serif'; ctx.fillText(title, textX, y + 178, textW); ctx.shadowBlur = 0;
+    ctx.font = 'bold 42px monospace'; ctx.fillStyle = era === 2 ? '#2a2a28' : '#111'; ctx.fillText(line, textX, y + AD_H - 54, textW);
+    ctx.font = 'bold 28px monospace'; ctx.fillStyle = '#f4efe2'; ctx.fillText(credit, textX, y + AD_H - 12, textW);
     if (era === 2) {
       // Cartaz rasgado e desbotado.
-      for (let i = 0; i < 7; i++) { ctx.fillStyle = 'rgba(120,115,105,.85)'; ctx.beginPath(); const x = rng() * 1024, yy = y + rng() * AD_H; ctx.moveTo(x, yy); for (let p = 0; p < 6; p++) ctx.lineTo(x + (rng() - .3) * 120, yy + (rng() - .5) * 90); ctx.fill(); }
-      ctx.fillStyle = 'rgba(200,190,170,.18)'; ctx.fillRect(0, y, 1024, AD_H);
+      for (let i = 0; i < 7; i++) { ctx.fillStyle = 'rgba(120,115,105,.85)'; ctx.beginPath(); const x = rng() * AD_W, yy = y + rng() * (AD_H - 46); ctx.moveTo(x, yy); for (let p = 0; p < 6; p++) ctx.lineTo(x + (rng() - .3) * 200, yy + (rng() - .5) * 140); ctx.fill(); }
+      ctx.fillStyle = 'rgba(200,190,170,.18)'; ctx.fillRect(0, y, AD_W, AD_H - 42);
     }
+    if (slug) { coverTargets.push({ slug, y, accent }); adAtlas.slots.push({ era, k, y, accent, credit }); }
   }));
-  return texture(c, { repeat: false });
+  const tex = texture(c, { repeat: false }); adAtlas.tex = tex;
+  if (typeof Image !== 'undefined') {
+    for (const { slug, y, accent } of coverTargets) {
+      const img = new Image();
+      img.onload = () => {
+        paintBillboardCover(ctx, img, y, accent);
+        tex.needsUpdate = true;
+      };
+      img.src = `./assets/covers/${slug}.jpg`;
+    }
+  }
+  return tex;
+}
+// Chamada a cada quadro: quando o carro chega a ~80 m de uma era, troca as capas dela pela arte WebP em 256 px (uma vez).
+export function updateEraArt(vehicle) {
+  if (!adAtlas || typeof Image === 'undefined') return;
+  CITY_ERAS.forEach((era, i) => {
+    if (eraArtRequested.has(i) || !era.anchor) return;
+    if (Math.hypot(vehicle.x - era.anchor.x, vehicle.z - era.anchor.z) > ERA_ART_RADIUS) return;
+    // Só depois de andar de verdade: no ponto de partida a era já está perto e não deve pesar no carregamento inicial.
+    if ((vehicle.distanceTravelled ?? 0) < 30) return;
+    eraArtRequested.add(i);
+    for (const slot of adAtlas.slots.filter(item => item.era === i)) {
+      const name = ERA_ART[i]?.[slot.k]; if (!name) continue;
+      const img = new Image();
+      img.onload = () => {
+        const { ctx, tex } = adAtlas;
+        paintBillboardCover(ctx, img, slot.y, slot.accent);
+        if (tex) tex.needsUpdate = true;
+      };
+      img.src = `./assets/art/${name}.webp`;
+    }
+  });
 }
 function gateTexture() {
   const [c, ctx] = canvas(1024, 256 * CITY_ERAS.length);
@@ -263,9 +340,20 @@ function pavingMaterial(color) {
   return new THREE.MeshStandardMaterial({ map: texture(c), roughness: .95 });
 }
 
+function lampGlowTexture() {
+  const [c, ctx] = canvas(128);
+  const g = ctx.createRadialGradient(64, 64, 0, 64, 64, 64);
+  g.addColorStop(0, 'rgba(255, 224, 150, 0.95)');
+  g.addColorStop(.32, 'rgba(255, 185, 92, 0.45)');
+  g.addColorStop(.68, 'rgba(255, 145, 58, 0.14)');
+  g.addColorStop(1, 'rgba(255, 145, 58, 0)');
+  ctx.fillStyle = g; ctx.fillRect(0, 0, 128, 128);
+  return texture(c, { repeat: false });
+}
+
 // ---------------------------------------------------------------- construção
 export function installCity(scene, surfaces) {
-  const signs = signTexture(), ads = adTexture();
+  const signs = signTexture(), ads = adTexture(), lampTex = lampGlowTexture();
   const glowing = (color, intensity) => new THREE.MeshStandardMaterial({ color, emissive: color, emissiveIntensity: intensity });
   const mat = {
     trim: new THREE.MeshStandardMaterial({ color: '#d6cdb8', roughness: .85 }),
@@ -277,20 +365,20 @@ export function installCity(scene, surfaces) {
     steel: new THREE.MeshStandardMaterial({ color: '#9aa3a6', roughness: .45, metalness: .5 }),
     door: new THREE.MeshStandardMaterial({ color: '#4a2f24', roughness: .8 }),
     plank: new THREE.MeshStandardMaterial({ color: '#8b6a45', roughness: 1 }),
-    glow: glowing('#ffd98a', 1.8), dead: new THREE.MeshStandardMaterial({ color: '#3a3d3c', roughness: .6 }),
+    glow: glowing('#ffd27a', 2.6), dead: new THREE.MeshStandardMaterial({ color: '#3a3d3c', roughness: .6 }),
     red: glowing('#ff2a2a', 2), neonPink: glowing('#ff4fa0', 2.4), neonCyan: glowing('#3fe0ff', 2.4),
     wood: surfaces.get('wood', 2, 1), murals: muralAtlas(), storefront: storefrontMaterial(), shutter: shutterMaterial(),
-    signs: new THREE.MeshStandardMaterial({ map: signs, emissiveMap: signs, emissive: '#ffffff', emissiveIntensity: 1.1, roughness: .6 }),
+    signs: new THREE.MeshStandardMaterial({ map: signs, emissiveMap: signs, emissive: '#ffffff', emissiveIntensity: 1.35, roughness: .6 }),
     signsFlat: new THREE.MeshStandardMaterial({ map: signs, roughness: .8 }),
-    billboard: new THREE.MeshStandardMaterial({ map: ads, emissiveMap: ads, emissive: '#ffffff', emissiveIntensity: .35, roughness: .7 }),
+    billboard: new THREE.MeshStandardMaterial({ map: ads, emissiveMap: ads, emissive: '#ffffff', emissiveIntensity: .45, roughness: .65 }),
     billboardFaded: new THREE.MeshStandardMaterial({ map: ads, roughness: .95 }),
-    screen: new THREE.MeshStandardMaterial({ map: ads, emissiveMap: ads, emissive: '#ffffff', emissiveIntensity: 1.4, roughness: .3 }),
-    gate: (() => { const t = gateTexture(); return new THREE.MeshStandardMaterial({ map: t, emissiveMap: t, emissive: '#ffffff', emissiveIntensity: .45, roughness: .6, side: THREE.DoubleSide }); })(),
+    screen: new THREE.MeshStandardMaterial({ map: ads, emissiveMap: ads, emissive: '#ffffff', emissiveIntensity: 1.45, roughness: .3 }),
+    gate: (() => { const t = gateTexture(); return new THREE.MeshStandardMaterial({ map: t, emissiveMap: t, emissive: '#ffffff', emissiveIntensity: .85, roughness: .6, side: THREE.DoubleSide }); })(),
   };
   const paving = ['#a8a397', '#d9c9a3', '#8f8c85', '#7e8790'].map(pavingMaterial);
   const awnings = ERA_AWNINGS.map(colors => colors.map(stripeMaterial));
   const plastic = PLASTIC.map(color => new THREE.MeshStandardMaterial({ color, roughness: .45 }));
-  const batches = new Map(), skyline = new Map(), casters = [];
+  const batches = new Map(), skyline = new Map(), casters = [], lampMatrices = [];
   // Sombra por volumes simples: uma caixa por prédio projeta a sombra no lugar de todos os detalhes.
   const caster = (base, size, position) => casters.push(place(base, new THREE.BoxGeometry(...size), position));
   const put = (target, material, geometry) => { if (!target.has(material)) target.set(material, []); target.get(material).push(geometry); };
@@ -309,24 +397,27 @@ export function installCity(scene, surfaces) {
     if (uv) { const a = g.attributes.uv; for (let i = 0; i < a.count; i++) a.setXY(i, uv[0] + a.getX(i) * (uv[2] - uv[0]), uv[1] + a.getY(i) * (uv[3] - uv[1])); }
     put(batches, material, place(base, g, position, rotation));
   }
-  // Paredes com UV por vão e andar: as janelas nunca são cortadas nas quinas.
+  // Paredes com UV por vão e andar e AO falso por gradiente vertical (escurece a base e clareia o topo).
   function walls(base, material, w, d, floors, rng, target = batches) {
-    const h = floors * FLOOR, positions = [], normals = [], uvs = [], index = [];
+    const h = floors * FLOOR, yMid = Math.min(FLOOR * 1.45, h * .45);
+    const positions = [], normals = [], uvs = [], colors = [], index = [];
     const u0 = Math.floor(rng() * 4) / 4, v0 = Math.floor(rng() * 4) / 4;
     const faces = [
-      [[-w / 2, d / 2], [w / 2, d / 2], [0, 1], w], [[w / 2, d / 2], [w / 2, -d / 2], [1, 0], d],
-      [[w / 2, -d / 2], [-w / 2, -d / 2], [0, -1], w], [[-w / 2, -d / 2], [-w / 2, d / 2], [-1, 0], d],
+      [[-w / 2, d / 2], [w / 2, d / 2], [0, 1], w, 1.04], [[w / 2, d / 2], [w / 2, -d / 2], [1, 0], d, .95],
+      [[w / 2, -d / 2], [-w / 2, -d / 2], [0, -1], w, .88], [[-w / 2, -d / 2], [-w / 2, d / 2], [-1, 0], d, 1.0],
     ];
-    for (const [[ax, az], [bx, bz], [nx, nz], width] of faces) {
-      const n = positions.length / 3, bays = Math.max(1, Math.round(width / 3.3)) / 4, rise = floors / 4;
-      positions.push(ax, 0, az, bx, 0, bz, bx, h, bz, ax, h, az);
-      for (let k = 0; k < 4; k++) normals.push(nx, 0, nz);
-      uvs.push(u0, v0, u0 + bays, v0, u0 + bays, v0 + rise, u0, v0 + rise);
-      index.push(n, n + 1, n + 2, n, n + 2, n + 3);
+    const cBot = [.38, .37, .42], cMid = [.88, .88, .90], cTop = [1.22, 1.20, 1.16];
+    for (const [[ax, az], [bx, bz], [nx, nz], width, shade] of faces) {
+      const n = positions.length / 3, bays = Math.max(1, Math.round(width / 3.3)) / 4, rise = floors / 4, riseMid = rise * (yMid / h);
+      positions.push(ax, 0, az, bx, 0, bz, bx, yMid, bz, ax, yMid, az, bx, h, bz, ax, h, az);
+      for (let k = 0; k < 6; k++) normals.push(nx, 0, nz);
+      uvs.push(u0, v0, u0 + bays, v0, u0 + bays, v0 + riseMid, u0, v0 + riseMid, u0 + bays, v0 + rise, u0, v0 + rise);
+      for (const c of [cBot, cBot, cMid, cMid, cTop, cTop]) colors.push(c[0] * shade, c[1] * shade, c[2] * shade);
+      index.push(n, n + 1, n + 2, n, n + 2, n + 3, n + 3, n + 2, n + 4, n + 3, n + 4, n + 5);
     }
     const g = new THREE.BufferGeometry();
     g.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3)); g.setAttribute('normal', new THREE.Float32BufferAttribute(normals, 3));
-    g.setAttribute('uv', new THREE.Float32BufferAttribute(uvs, 2)); g.setIndex(index);
+    g.setAttribute('uv', new THREE.Float32BufferAttribute(uvs, 2)); g.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3)); g.setIndex(index);
     put(target, material, g.applyMatrix4(base));
   }
   const adIndex = (era, rng) => ERA_ADS.slice(0, era).reduce((n, list) => n + list.length, 0) + Math.floor(rng() * ERA_ADS[era].length);
@@ -399,9 +490,9 @@ export function installCity(scene, surfaces) {
       for (let f = 1; f <= floors; f++) { box(base, mat.plank, [w, .07, 1], [0, f * FLOOR - .1, z - .1]); box(base, mat.steel, [w, .06, .06], [0, f * FLOOR + .9, z + .45]); }
       for (let k = 0; k < cols; k++) box(base, mat.steel, [.06, Math.hypot(w / cols, FLOOR * 2), .06], [-w / 2 + (k + .5) * w / cols, FLOOR * 1.5, z + .05], [0, 0, Math.atan2(w / cols, FLOOR * 2) * (k % 2 ? 1 : -1)]);
     }
-    // Telão de LED na fachada (Ato 4): os lançamentos de 2017 a 2026.
+    // Telão de LED na fachada (Ato 4): os lançamentos de 2017 a 2023.
     if (lot.screen && floors >= 4) {
-      const sw = Math.min(w * .8, 9), sh = sw / (1024 / AD_H), y = h - sh / 2 - 1.2;
+      const sw = Math.min(w * .8, 9), sh = sw / (AD_W / AD_H), y = h - sh / 2 - 1.2;
       box(base, mat.trimDark, [sw + .4, sh + .4, .3], [0, y, d / 2 + .2]);
       plane(base, mat.screen, sw, sh, [0, y, d / 2 + .36], null, atlasUV(adIndex(3, rng), AD_ROWS.length));
     }
@@ -443,23 +534,28 @@ export function installCity(scene, surfaces) {
     }
     // Outdoor no telhado com um marco da época.
     if (floors >= 3 && floors < 9 && rng() < (modern ? .2 : .35)) {
-      const bw = w * .8, bh = bw / (1024 / AD_H);
+      const bw = w * .8 * BILLBOARD_SCALE, bh = bw / (AD_W / AD_H);
       for (const s of [-1, 1]) box(base, dark ? mat.rust : mat.metal, [.15, 2.4 + bh, .15], [s * bw * .4, h + 1.2 + bh / 2, -d / 2 + 1]);
       box(base, dark ? mat.rust : mat.metal, [bw, .15, .8], [0, h + 2.1, -d / 2 + 1.2]);
       plane(base, dark ? mat.billboardFaded : mat.billboard, bw, bh, [0, h + 2.25 + bh / 2, -d / 2 + 1.12], dark ? [0, 0, .05] : null, atlasUV(adIndex(era, rng), AD_ROWS.length));
     }
-    // Poste na calçada das lojas (apagado no hiato).
-    if (lot.shop) {
+    // Poste na calçada com cabeça emissiva quente e glow aditivo instanciado (apagado no hiato).
+    if (lot.shop || (!dark && rng() < .52)) {
       const lx = (rng() < .5 ? -1 : 1) * (w / 2 + .4);
       cyl(base, mat.metal, .09, .14, 5.2, [lx, 2.8, d / 2 + 3.1], 8);
       caster(base, [.2, 5.2, .2], [lx, 2.8, d / 2 + 3.1]);
       box(base, mat.metal, [.08, .08, 1.3], [lx, 5.3, d / 2 + 2.5]);
-      box(base, dark ? mat.dead : modern ? mat.neonCyan : mat.glow, [.45, .18, .7], [lx, 5.2, d / 2 + 2.1]);
+      box(base, dark ? mat.dead : mat.glow, [.56, .22, .82], [lx, 5.2, d / 2 + 2.1]);
+      if (!dark) {
+        local.compose(new THREE.Vector3(lx, 5.15, d / 2 + 2.1), quat.set(0, 0, 0, 1), one);
+        lampMatrices.push(new THREE.Matrix4().multiplyMatrices(base, local));
+      }
     }
   }
   CITY_LOTS.forEach(building);
 
-  // Portais de entrada de cada bairro, sobre a rua: "ATO n · título · anos · álbuns".
+  // Portais de entrada de cada bairro, sobre a rua: "ATO n · título · anos · álbuns" + totem ampliado (1,5x) e halo fraco.
+  const gateHalos = [];
   for (const gate of ERA_GATES) {
     const base = frame(gate.x, -.3, gate.z, gate.heading), span = gate.width + 6, row = gate.era;
     const color = new THREE.MeshStandardMaterial({ color: CITY_ERAS[row].color, roughness: .6 });
@@ -468,26 +564,32 @@ export function installCity(scene, surfaces) {
     box(base, color, [span + .6, .18, .5], [0, 8.6, 0]);
     caster(base, [span + .6, 2.2, .3], [0, 7.4, 0]);
     for (const s of [-1, 1]) caster(base, [.5, 8.4, .5], [s * span / 2, 4.2, 0]);
-    // Mounted on the portal, the objects stay clear of the vehicle lane.
-    const top = 9.65;
+    // Totens sobre o portal ampliados a 1,5x (fora do alcance dos veículos).
+    const top = 9.9, sc = NON_DISCOVERY_PROP_SCALE;
     if (row === 0) {
-      box(base,mat.wood,[3,1.9,1.1],[0,top,0]);
-      for (const side of [-1,1]) box(base,mat.glow,[2.35,1.32,.08],[0,top,side*.56]);
-      for (const side of [-1,1]) box(base,mat.steel,[.06,1.25,.06],[side*.33,top+1.4,0],[0,0,-side*.52]);
+      box(base,mat.wood,[3*sc,1.9*sc,1.1*sc],[0,top,0]);
+      for (const side of [-1,1]) box(base,mat.glow,[2.35*sc,1.32*sc,.08*sc],[0,top,side*.56*sc]);
+      for (const side of [-1,1]) box(base,mat.steel,[.06*sc,1.25*sc,.06*sc],[side*.33*sc,top+1.4*sc,0],[0,0,-side*.52]);
     } else if (row === 1) {
-      cyl(base,plastic[0],.52,.92,1.05,[0,top-.45,0]);
-      cyl(base,mat.trim,.52,.52,.42,[0,top+.29,0]);
-      cyl(base,mat.red,.24,.5,.8,[0,top+.9,0]);
+      cyl(base,plastic[0],.52*sc,.92*sc,1.05*sc,[0,top-.45*sc,0]);
+      cyl(base,mat.trim,.52*sc,.52*sc,.42*sc,[0,top+.29*sc,0]);
+      cyl(base,mat.red,.24*sc,.5*sc,.8*sc,[0,top+.9*sc,0]);
     } else if (row === 2) {
-      box(base,mat.dead,[3.1,2,.38],[0,top,0]);
+      box(base,mat.dead,[3.1*sc,2*sc,.38*sc],[0,top,0]);
       for (const side of [-1,1]) for (const y of [-.45,.45])
-        box(base,mat.plank,[3.3,.29,.12],[0,top+y,side*.24],[0,0,.12]);
+        box(base,mat.plank,[3.3*sc,.29*sc,.12*sc],[0,top+y*sc,side*.24*sc],[0,0,.12]);
     } else {
-      cyl(base,mat.steel,.09,.3,3.6,[0,top+.65,0]);
-      for (let i=0;i<3;i++) box(base,mat.neonCyan,[2.3-i*.55,.1,.14],[0,top+i*.68,0]);
-      cyl(base,mat.red,.12,.12,.23,[0,top+2.5,0]);
+      cyl(base,mat.steel,.09*sc,.3*sc,3.6*sc,[0,top+.65*sc,0]);
+      for (let i=0;i<3;i++) box(base,mat.neonCyan,[2.3*sc-i*.55*sc,.1*sc,.14*sc],[0,top+i*.68*sc,0]);
+      cyl(base,mat.red,.12*sc,.12*sc,.23*sc,[0,top+2.5*sc,0]);
     }
     for (const s of [1, -1]) plane(base, mat.gate, Math.min(span - 1, 8), 2, [0, 7.4, s * .17], s < 0 ? [0, Math.PI, 0] : null, atlasUV(row, CITY_ERAS.length));
+    // Halo fraco nos arcos de ato (aditivo, sem PointLight real).
+    const haloMesh = new THREE.Mesh(
+      place(base, new THREE.PlaneGeometry(span + 2.5, 5.2), [0, 7.4, 0]),
+      new THREE.MeshBasicMaterial({ map: lampTex, color: CITY_ERAS[row].color, transparent: true, opacity: .26, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide, toneMapped: false })
+    );
+    gateHalos.push(haloMesh);
   }
 
   // Skyline distante: a cidade continua além das colinas.
@@ -509,6 +611,20 @@ export function installCity(scene, surfaces) {
   for (const [target, shadows] of [[batches, true], [skyline, false]]) for (const [material, geometries] of target) {
     const mesh = new THREE.Mesh(mergeGeometries(geometries), material); geometries.forEach(g => g.dispose());
     mesh.receiveShadow = shadows; group.add(mesh);
+  }
+  for (const halo of gateHalos) group.add(halo);
+  // Glow aditivo instanciado dos postes (halo cruzado na luminária + poça suave na calçada, 1 draw call, 0 PointLights).
+  if (lampMatrices.length) {
+    const g1 = new THREE.PlaneGeometry(2.6, 2.6);
+    const g2 = new THREE.PlaneGeometry(2.6, 2.6); g2.rotateY(Math.PI / 2);
+    const g3 = new THREE.PlaneGeometry(4.4, 4.4); g3.rotateX(-Math.PI / 2); g3.translate(0, -4.92, 0);
+    const proto = mergeGeometries([g1, g2, g3]); g1.dispose(); g2.dispose(); g3.dispose();
+    const lampGlows = new THREE.InstancedMesh(proto, new THREE.MeshBasicMaterial({ map: lampTex, color: '#ffd480', transparent: true, opacity: .68, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide, toneMapped: false }), lampMatrices.length);
+    lampGlows.name = 'street-lamp-glows';
+    lampMatrices.forEach((m, i) => lampGlows.setMatrixAt(i, m));
+    lampGlows.instanceMatrix.needsUpdate = true;
+    lampGlows.computeBoundingSphere();
+    group.add(lampGlows);
   }
   // Invisível para a câmera (não escreve cor nem profundidade), presente só no mapa de sombras.
   const shadowVolumes = new THREE.Mesh(mergeGeometries(casters), new THREE.MeshBasicMaterial({ colorWrite: false, depthWrite: false }));

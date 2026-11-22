@@ -12,8 +12,11 @@ test('acabamentos regionais cabem no terreno existente, abaixo das ruas e sem te
     assert.ok(bounds.min.x >= -140 && bounds.max.x <= 140);
     assert.ok(bounds.min.z >= -200 && bounds.max.z <= 50);
     assert.ok(bounds.min.y >= -.13 && bounds.max.y < -.095);
+    assert.ok(bounds.max.y <= -.105, `${mesh.name} deve manter folga abaixo do asfalto (-0.09)`);
     assert.ok(mesh.geometry.attributes.color);
     assert.equal(mesh.material.map,null);
+    assert.equal(mesh.material.polygonOffset,true);
+    assert.ok(mesh.material.polygonOffsetFactor > 0);
     assert.equal(mesh.castShadow,false);
     const normals = mesh.geometry.attributes.normal;
     for (let i=0;i<normals.count;i++) assert.ok(normals.getY(i) > .99);

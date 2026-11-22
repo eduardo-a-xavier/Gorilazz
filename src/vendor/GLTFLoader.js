@@ -2673,7 +2673,8 @@ class GLTFParser {
 
 		}
 
-		if ( typeof createImageBitmap === 'undefined' || ( isSafari && safariVersion < 17 ) || ( isFirefox && firefoxVersion < 98 ) ) {
+		// Projeto: com globalThis.__gltfForceImageElement, texturas embutidas passam pelo <img> (sem fetch do blob).
+		if ( typeof createImageBitmap === 'undefined' || globalThis.__gltfForceImageElement === true || ( isSafari && safariVersion < 17 ) || ( isFirefox && firefoxVersion < 98 ) ) {
 
 			this.textureLoader = new TextureLoader( this.options.manager );
 

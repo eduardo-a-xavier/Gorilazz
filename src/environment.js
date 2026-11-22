@@ -2,6 +2,7 @@ import * as THREE from './vendor/three.module.min.js';
 import { GLTFLoader } from './vendor/GLTFLoader.js';
 import { nearestRoad, TREE_LOCATIONS, VISUAL_LANDMARKS } from './world-data.js';
 import { letteringTexture } from './materials.js';
+import { NON_DISCOVERY_PROP_SCALE } from './discovery-scale.js';
 
 export function createFrequencyGarden() {
   const garden = new THREE.Group(); garden.name = 'frequency-garden';
@@ -27,7 +28,7 @@ export function createFrequencyGarden() {
 
 export function createRegionalGrounds() {
   const group = new THREE.Group(); group.name = 'regional-grounds';
-  const material = new THREE.MeshStandardMaterial({vertexColors:true,roughness:1});
+  const material = new THREE.MeshStandardMaterial({vertexColors:true,roughness:1,polygonOffset:true,polygonOffsetFactor:2,polygonOffsetUnits:2});
   function region(name, paint) {
     const positions = [], colors = [], palette = new Map();
     const triangle = (a,b,c,y,color) => {
@@ -57,25 +58,25 @@ export function createRegionalGrounds() {
     const mesh = new THREE.Mesh(geometry,material); mesh.name=name; mesh.receiveShadow=true; group.add(mesh);
   }
   region('studio-ground',({rect}) => {
-    rect(-18,-23,36,36,-.115,'#414c50');
-    for (const x of [-16,15.65]) rect(x,-21,.35,32,-.109,'#d6c27f');
-    for (let i=0;i<7;i++) for (const x of [-16,11]) rect(x,-21+i*5,5,.3,-.109,'#d6c27f');
-    for (const z of [-22,11.5]) rect(-17,z,34,.5,-.109,'#89958e');
+    rect(-18,-23,36,36,-.126,'#414c50');
+    for (const x of [-16,15.65]) rect(x,-21,.35,32,-.118,'#d6c27f');
+    for (let i=0;i<7;i++) for (const x of [-16,11]) rect(x,-21+i*5,5,.3,-.118,'#d6c27f');
+    for (const z of [-22,11.5]) rect(-17,z,34,.5,-.118,'#89958e');
   });
   region('coast-ground',({quad,rect}) => {
     for (let i=0;i<32;i++) {
       const z=-65+i*3,zNext=z+3,edge=104+Math.sin(z*.07)*5,nextEdge=104+Math.sin(zNext*.07)*5;
-      quad([edge,z],[139.8,z],[139.8,zNext],[nextEdge,zNext],-.115,'#c8b588');
-      quad([edge+2,z],[edge+5,z],[nextEdge+5,zNext],[nextEdge+2,zNext],-.109,'#e3cf9f');
+      quad([edge,z],[139.8,z],[139.8,zNext],[nextEdge,zNext],-.126,'#c8b588');
+      quad([edge+2,z],[edge+5,z],[nextEdge+5,zNext],[nextEdge+2,zNext],-.120,'#e3cf9f');
     }
-    for (let i=0;i<40;i++) rect(125,-30+i*1.2,7,1.05,-.103,i%2?'#98764e':'#ad8959');
-    for (const x of [125,131.8]) rect(x,-30,.2,48,-.101,'#5e5241');
+    for (let i=0;i<40;i++) rect(125,-30+i*1.2,7,1.05,-.114,i%2?'#98764e':'#ad8959');
+    for (const x of [125,131.8]) rect(x,-30,.2,48,-.108,'#5e5241');
   });
   region('lookout-ground',({circle,ring}) => {
-    circle(72,-123,29,25,-.115,'#7f975b');
-    ring(72,-123,23,20,.9,-.109,'#b9b397');
-    ring(72,-123,17,14,.6,-.109,'#d5caa2');
-    circle(72,-123,15.8,13,-.108,'#8ba568');
+    circle(72,-123,29,25,-.126,'#7f975b');
+    ring(72,-123,23,20,.9,-.120,'#b9b397');
+    ring(72,-123,17,14,.6,-.120,'#d5caa2');
+    circle(72,-123,15.8,13,-.114,'#8ba568');
   });
   return group;
 }
@@ -101,12 +102,14 @@ export function installEnvironment(scene, renderer, surfaces, onModel = () => {}
   const signTexture=letteringTexture('KONG STUDIOS|THE ROAD / MUSIC & STORIES',{height:256});
   const sign=new THREE.Mesh(new THREE.PlaneGeometry(10,.7),new THREE.MeshStandardMaterial({map:signTexture,roughness:.9,metalness:0}));
   sign.position.set(-28,6.65,12.67);scene.add(sign);
-  // Posters use existing credited character portraits, not newly sourced artwork.
+  // Posters use existing credited character portraits (WebP otimizado de 15 KB primeiro, fallback PNG).
   const imageLoader=new THREE.TextureLoader();
+  const posterWebp=['2d','murdoc','noodle','russel'];
   ['twod','murdoc','noodle','russel'].forEach((name,i)=>{
-    const paper=new THREE.Mesh(new THREE.PlaneGeometry(1.65,2.5),surfaces.get('plaster'));paper.rotation.y=Math.PI/2;paper.position.set(-21.54,3.6,1.8+i*2.6);scene.add(paper);
-    const map=imageLoader.load(`./assets/portraits/phase7-${name}.png`);map.colorSpace=THREE.SRGBColorSpace;
-    const art=new THREE.Mesh(new THREE.PlaneGeometry(1.35,2.2),new THREE.MeshStandardMaterial({map,transparent:true,alphaTest:.1,roughness:1,metalness:0}));art.rotation.y=Math.PI/2;art.position.copy(paper.position);art.position.x+=.02;scene.add(art);
+    const paper=new THREE.Mesh(new THREE.PlaneGeometry(1.65*1.3,2.5*1.3),surfaces.get('plaster'));paper.rotation.y=Math.PI/2;paper.position.set(-21.54,3.6,1.8+i*2.6);scene.add(paper);
+    const map=imageLoader.load(`./assets/art/member-${posterWebp[i]}.webp`,undefined,undefined,()=>{imageLoader.load(`./assets/portraits/phase7-${name}.png`,fallback=>{map.image=fallback.image;map.needsUpdate=true;});});
+    map.colorSpace=THREE.SRGBColorSpace;
+    const art=new THREE.Mesh(new THREE.PlaneGeometry(1.35*1.3,2.2*1.3),new THREE.MeshStandardMaterial({map,transparent:true,alphaTest:.1,roughness:1,metalness:0}));art.rotation.y=Math.PI/2;art.position.copy(paper.position);art.position.x+=.02;scene.add(art);
   });
   const gardenAt = VISUAL_LANDMARKS.diorama, echoAt = VISUAL_LANDMARKS.sculpture;
   const garden = createFrequencyGarden(); garden.position.set(gardenAt.x,gardenAt.y,gardenAt.z); scene.add(garden);
@@ -114,7 +117,7 @@ export function installEnvironment(scene, renderer, surfaces, onModel = () => {}
   for(const [key,label] of [['sculpture','JARDIM / ECOS'],['diorama','JARDIM / FREQUÊNCIAS']]) {
     const point=VISUAL_LANDMARKS[key];
     const plinth=new THREE.Mesh(new THREE.CylinderGeometry(2.5,2.7,point.y,40),surfaces.get('plaster',2));plinth.position.set(point.x,point.y/2-.05,point.z);plinth.receiveShadow=plinth.castShadow=true;scene.add(plinth);
-    const plaque=new THREE.Mesh(new THREE.PlaneGeometry(3.8,.8),new THREE.MeshStandardMaterial({map:letteringTexture(label,{height:128}),roughness:.9}));plaque.position.set(point.x,.8,point.z+2.76);scene.add(plaque);
+    const plaque=new THREE.Mesh(new THREE.PlaneGeometry(3.8*NON_DISCOVERY_PROP_SCALE,.8*NON_DISCOVERY_PROP_SCALE),new THREE.MeshStandardMaterial({map:letteringTexture(label,{height:128}),roughness:.9}));plaque.position.set(point.x,.8*NON_DISCOVERY_PROP_SCALE,point.z+2.76);scene.add(plaque);
   }
   // Shared prototype geometry/materials: repeated trees use only a few draw calls.
   // Low planting beds follow the tree groves but leave the shoulders clear.

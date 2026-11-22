@@ -144,3 +144,32 @@ test('os quatro portais podem ser percorridos em sequência pela malha viária',
     assert.equal(nearbyInteraction(vehicle), null);
   }
 });
+test('passeio sequencial com o mesmo veículo visita todas as 5 descobertas sem travar em murais nem gerar picos de aceleração', () => {
+  const vehicle = createVehicle();
+  for (const target of DISCOVERIES) {
+    const navigation = planPath(vehicle, target);
+    let arrived = false;
+    for (let tick = 0; tick < 120 * 90; tick++) {
+      const input = navigationInput(vehicle, navigation);
+      if (input.arrived) { arrived = true; break; }
+      stepVehicle(vehicle, input, 1 / 120);
+      assert.ok(Math.abs(vehicle.acceleration) <= 20, `pico de aceleração (${vehicle.acceleration.toFixed(2)} m/s²) rumo a ${target.id}`);
+    }
+    assert.ok(arrived, `não chegou a ${target.id}`);
+    assert.ok(distance(vehicle, target) < 8, `longe de ${target.id}`);
+    assert.equal(nearbyInteraction(vehicle)?.id, target.id);
+  }
+});
+test('colisão em obstáculo sólido expõe blocked=true e zera aceleração sem pico artificial', () => {
+  const vehicle = createVehicle();
+  const obstacle = OBSTACLES[0];
+  vehicle.x = obstacle.x;
+  vehicle.z = obstacle.z + obstacle.radius + 2.35;
+  vehicle.speed = 12;
+  stepVehicle(vehicle, { throttle: true }, 1 / 120);
+  assert.equal(vehicle.blocked, true);
+  assert.equal(vehicle.speed, 0);
+  assert.equal(vehicle.acceleration, 0);
+  haltVehicle(vehicle);
+  assert.equal(vehicle.blocked, false);
+});

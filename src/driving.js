@@ -4,7 +4,7 @@ const MAX_REVERSE_SPEED = MAX_REVERSE_SPEED_KMH / 3.6;
 const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
 const approach = (n, target, delta) => n < target ? Math.min(target, n + delta) : Math.max(target, n - delta);
 export function createVehicle() {
-  return { x: 0, z: 0, heading: 0, speed: 0, steering: 0, acceleration: 0, distanceTravelled: 0, brakeWasDown: false, reverseReady: false, surface: 'asfalto', braking: false };
+  return { x: 0, z: 0, heading: 0, speed: 0, steering: 0, acceleration: 0, distanceTravelled: 0, brakeWasDown: false, reverseReady: false, surface: 'asfalto', braking: false, blocked: false };
 }
 export function stepVehicle(state, input, dt) {
   const oldSpeed = state.speed;
@@ -28,15 +28,15 @@ export function stepVehicle(state, input, dt) {
   const travel = state.speed * dt;
   const x = state.x - Math.sin(state.heading) * travel, z = state.z - Math.cos(state.heading) * travel;
   const blocked = x < WORLD_BOUNDS.minX + 3 || x > WORLD_BOUNDS.maxX - 3 || z < WORLD_BOUNDS.minZ + 3 || z > WORLD_BOUNDS.maxZ - 3 || OBSTACLES.some(o => Math.hypot(x - o.x, z - o.z) < o.radius + 2.3);
-  if (blocked) { state.speed = 0; state.reverseReady = false; }
-  else { state.x = x; state.z = z; state.distanceTravelled += travel; }
-  state.acceleration = (state.speed - oldSpeed) / dt;
+  state.blocked = blocked;
+  if (blocked) { state.speed = 0; state.reverseReady = false; state.acceleration = 0; }
+  else { state.x = x; state.z = z; state.distanceTravelled += travel; state.acceleration = (state.speed - oldSpeed) / dt; }
   state.braking = brake && !state.reverseReady;
   state.brakeWasDown = brake;
   return state;
 }
 export function haltVehicle(state) {
-  state.speed = 0; state.acceleration = 0; state.steering = 0; state.braking = false; state.brakeWasDown = false; state.reverseReady = false;
+  state.speed = 0; state.acceleration = 0; state.steering = 0; state.braking = false; state.brakeWasDown = false; state.reverseReady = false; state.blocked = false;
 }
 export function recoverVehicle(state) {
   const road = nearestRoad(state); state.x = road.x; state.z = road.z; state.heading = road.heading; haltVehicle(state);

@@ -1,6 +1,7 @@
 import * as THREE from './vendor/three.module.min.js';
 import { GRAVEYARD } from './world-data.js';
 import { letteringTexture } from './materials.js';
+import { NON_DISCOVERY_PROP_SCALE } from './discovery-scale.js';
 
 // Referências autorais ao universo da banda, feitas só com geometria simples:
 //   · a ilha rosa de Plastic Beach no mar, vista do bairro do Ato 2;
@@ -64,8 +65,8 @@ export function installLandmarks(scene, material, bake) {
     solid(yard, tube, '#2b2622', [-4.6, 2.6, -3.4], { scale: [.38, 5.2, .38], rotation: [0, 0, .12] });
     for (const [lift, yaw, roll, length] of [[4.4, 0, .9, 2.8], [3.6, 2.1, -1, 2.3], [5, 4, .7, 2], [4.8, 1, -.6, 1.7]]) solid(yard, tube, '#2b2622', [-4.6 + Math.cos(yaw) * .9, lift, -3.4 + Math.sin(yaw) * .9], { scale: [.14, length, .14], rotation: [roll * Math.sin(yaw), yaw, roll * Math.cos(yaw)] });
     for (let i = 0; i < 22; i++) { const a = i / 22 * Math.PI * 2; if (i % 11 === 0) continue; solid(yard, cube, '#2a2f2c', [Math.cos(a) * 7.6, .55, Math.sin(a) * 7.6], { scale: [.1, 1.1, .1], shadow: false }); solid(yard, cube, '#2a2f2c', [Math.cos(a) * 7.6, .95, Math.sin(a) * 7.6], { scale: [2.2, .07, .07], rotation: [0, -a + Math.PI / 2, 0], shadow: false }); }
-    const plaque = new THREE.Mesh(new THREE.PlaneGeometry(3.6, .9), new THREE.MeshStandardMaterial({ map: letteringTexture('CLINT EASTWOOD / 2001', { height: 128, accent: '#6fe3ff' }), roughness: .9 }));
-    plaque.position.set(0, 1.1, 7.9); yard.add(plaque);
+    const plaque = new THREE.Mesh(new THREE.PlaneGeometry(3.6 * NON_DISCOVERY_PROP_SCALE, .9 * NON_DISCOVERY_PROP_SCALE), new THREE.MeshStandardMaterial({ map: letteringTexture('CLINT EASTWOOD / 2001', { height: 128, accent: '#6fe3ff' }), roughness: .9 }));
+    plaque.position.set(0, 1.1 * NON_DISCOVERY_PROP_SCALE, 7.9); yard.add(plaque);
     // Fantasma azul: corpo translúcido que sobe e desce sobre as lápides.
     const ghost = new THREE.Group(); ghost.position.set(.6, 3.2, .4);
     const spirit = new THREE.MeshStandardMaterial({ color: '#7fd9ff', emissive: '#3fb8ff', emissiveIntensity: 1.5, transparent: true, opacity: .62, roughness: .4, depthWrite: false });

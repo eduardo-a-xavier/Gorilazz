@@ -4,10 +4,55 @@ import { gzipSync } from 'node:zlib';
 const routes = new Map([
   ['/src/atmosphere.js', ['src/atmosphere.js', 'text/javascript; charset=utf-8']],
   ['/src/band-pose.js', ['src/band-pose.js', 'text/javascript; charset=utf-8']],
+  ['/src/pilot-rig.js', ['src/pilot-rig.js', 'text/javascript; charset=utf-8']],
+  ['/src/fauna.js', ['src/fauna.js', 'text/javascript; charset=utf-8']],
+  ['/src/onboarding.js', ['src/onboarding.js', 'text/javascript; charset=utf-8']],
+  ['/src/onboarding.css', ['src/onboarding.css', 'text/css; charset=utf-8']],
+  ['/src/arcade.js', ['src/arcade.js', 'text/javascript; charset=utf-8']],
+  ['/src/arcade-screen.js', ['src/arcade-screen.js', 'text/javascript; charset=utf-8']],
+  ['/src/arcade-cabinet.js', ['src/arcade-cabinet.js', 'text/javascript; charset=utf-8']],
+  ['/src/arcade.css', ['src/arcade.css', 'text/css; charset=utf-8']],
+  ['/src/landing-fixes.css', ['src/landing-fixes.css', 'text/css; charset=utf-8']],
+  ['/src/era-places.js', ['src/era-places.js', 'text/javascript; charset=utf-8']],
+  ['/src/world-loader.js', ['src/world-loader.js', 'text/javascript; charset=utf-8']],
+  ['/src/model-safety.js', ['src/model-safety.js', 'text/javascript; charset=utf-8']],
+  ['/src/discovery-scale.js', ['src/discovery-scale.js', 'text/javascript; charset=utf-8']],
+  ['/src/art-panels.js', ['src/art-panels.js', 'text/javascript; charset=utf-8']],
+  ['/src/street-props.js', ['src/street-props.js', 'text/javascript; charset=utf-8']],
+  ['/src/street-props-plan.js', ['src/street-props-plan.js', 'text/javascript; charset=utf-8']],
+  ['/src/escape-stack.js', ['src/escape-stack.js', 'text/javascript; charset=utf-8']],
+  ['/src/piano-game.js', ['src/piano-game.js', 'text/javascript; charset=utf-8']],
+  ['/src/piano-screen.js', ['src/piano-screen.js', 'text/javascript; charset=utf-8']],
+  ['/src/member-viewer.js', ['src/member-viewer.js', 'text/javascript; charset=utf-8']],
+  ['/src/guided-tour.js', ['src/guided-tour.js', 'text/javascript; charset=utf-8']],
+  ['/assets/art/manifest.json', ['assets/art/manifest.json', 'application/json; charset=utf-8']],
+  ['/assets/art/album-cracker-island-2023.webp', ['assets/art/album-cracker-island-2023.webp', 'image/webp']],
+  ['/assets/art/album-demon-days-2005.webp', ['assets/art/album-demon-days-2005.webp', 'image/webp']],
+  ['/assets/art/album-gorillaz-2001.webp', ['assets/art/album-gorillaz-2001.webp', 'image/webp']],
+  ['/assets/art/album-humanz-2017.webp', ['assets/art/album-humanz-2017.webp', 'image/webp']],
+  ['/assets/art/album-plastic-beach-2010.webp', ['assets/art/album-plastic-beach-2010.webp', 'image/webp']],
+  ['/assets/art/album-song-machine-2020.webp', ['assets/art/album-song-machine-2020.webp', 'image/webp']],
+  ['/assets/art/album-the-fall-2010.webp', ['assets/art/album-the-fall-2010.webp', 'image/webp']],
+  ['/assets/art/album-the-now-now-2018.webp', ['assets/art/album-the-now-now-2018.webp', 'image/webp']],
+  ['/assets/art/art-dare-2005.webp', ['assets/art/art-dare-2005.webp', 'image/webp']],
+  ['/assets/art/art-feel-good-inc-2005.webp', ['assets/art/art-feel-good-inc-2005.webp', 'image/webp']],
+  ['/assets/art/art-sleeping-powder-2017.webp', ['assets/art/art-sleeping-powder-2017.webp', 'image/webp']],
+  ['/assets/art/art-stylo-2010.webp', ['assets/art/art-stylo-2010.webp', 'image/webp']],
+  ['/assets/art/member-2d.webp', ['assets/art/member-2d.webp', 'image/webp']],
+  ['/assets/art/member-murdoc.webp', ['assets/art/member-murdoc.webp', 'image/webp']],
+  ['/assets/art/member-noodle.webp', ['assets/art/member-noodle.webp', 'image/webp']],
+  ['/assets/art/member-russel.webp', ['assets/art/member-russel.webp', 'image/webp']],
+  ['/assets/art/press-band-phase7.webp', ['assets/art/press-band-phase7.webp', 'image/webp']],
+  ['/assets/art/press-creators-band.webp', ['assets/art/press-creators-band.webp', 'image/webp']],
+  ['/assets/art/press-gorillaz-live.webp', ['assets/art/press-gorillaz-live.webp', 'image/webp']],
   ['/src/roads.js', ['src/roads.js', 'text/javascript; charset=utf-8']],
   ['/src/landmarks.js', ['src/landmarks.js', 'text/javascript; charset=utf-8']],
   ['/src/postfx.js', ['src/postfx.js', 'text/javascript; charset=utf-8']],
   ['/assets/models/gorillaz-phase7-web.glb', ['assets/models/gorillaz-phase7-web.glb', 'model/gltf-binary']],
+  ['/assets/models/gorillaz-phase7-web-v2.glb', ['assets/models/gorillaz-phase7-web-v2.glb', 'model/gltf-binary']],
+  ['/assets/models/gorillaz-phase7-v2.glb', ['assets/models/gorillaz-phase7-v2.glb', 'model/gltf-binary']],
+  ['/assets/models/noodle-guitar-v2.glb', ['assets/models/noodle-guitar-v2.glb', 'model/gltf-binary']],
+  ['/assets/models/noodle-stage-props-v2.glb', ['assets/models/noodle-stage-props-v2.glb', 'model/gltf-binary']],
   ['/src/city.js', ['src/city.js', 'text/javascript; charset=utf-8']],
   ['/src/cabin.js', ['src/cabin.js', 'text/javascript; charset=utf-8']],
   ['/assets/radio/concreto.mp3', ['assets/radio/concreto.mp3', 'audio/mpeg']],
@@ -25,20 +70,35 @@ const routes = new Map([
   ['/src/environment.js', ['src/environment.js', 'text/javascript; charset=utf-8']],
   ['/src/materials.js', ['src/materials.js', 'text/javascript; charset=utf-8']],
   ['/assets/materials/asphalt-normal.png', ['assets/materials/asphalt-normal.png', 'image/png']],
+  ['/assets/materials/asphalt-normal.webp', ['assets/materials/asphalt-normal.webp', 'image/webp']],
   ['/assets/materials/asphalt.png', ['assets/materials/asphalt.png', 'image/png']],
+  ['/assets/materials/asphalt.webp', ['assets/materials/asphalt.webp', 'image/webp']],
   ['/assets/materials/brick.png', ['assets/materials/brick.png', 'image/png']],
+  ['/assets/materials/brick.webp', ['assets/materials/brick.webp', 'image/webp']],
   ['/assets/materials/earth-normal.png', ['assets/materials/earth-normal.png', 'image/png']],
+  ['/assets/materials/earth-normal.webp', ['assets/materials/earth-normal.webp', 'image/webp']],
   ['/assets/materials/earth.png', ['assets/materials/earth.png', 'image/png']],
+  ['/assets/materials/earth.webp', ['assets/materials/earth.webp', 'image/webp']],
   ['/assets/materials/foliage-normal.png', ['assets/materials/foliage-normal.png', 'image/png']],
+  ['/assets/materials/foliage-normal.webp', ['assets/materials/foliage-normal.webp', 'image/webp']],
   ['/assets/materials/foliage.png', ['assets/materials/foliage.png', 'image/png']],
+  ['/assets/materials/foliage.webp', ['assets/materials/foliage.webp', 'image/webp']],
   ['/assets/materials/grass-normal.png', ['assets/materials/grass-normal.png', 'image/png']],
+  ['/assets/materials/grass-normal.webp', ['assets/materials/grass-normal.webp', 'image/webp']],
   ['/assets/materials/grass.png', ['assets/materials/grass.png', 'image/png']],
+  ['/assets/materials/grass.webp', ['assets/materials/grass.webp', 'image/webp']],
   ['/assets/materials/plaster-normal.png', ['assets/materials/plaster-normal.png', 'image/png']],
+  ['/assets/materials/plaster-normal.webp', ['assets/materials/plaster-normal.webp', 'image/webp']],
   ['/assets/materials/plaster.png', ['assets/materials/plaster.png', 'image/png']],
+  ['/assets/materials/plaster.webp', ['assets/materials/plaster.webp', 'image/webp']],
   ['/assets/materials/roof-normal.png', ['assets/materials/roof-normal.png', 'image/png']],
+  ['/assets/materials/roof-normal.webp', ['assets/materials/roof-normal.webp', 'image/webp']],
   ['/assets/materials/roof.png', ['assets/materials/roof.png', 'image/png']],
+  ['/assets/materials/roof.webp', ['assets/materials/roof.webp', 'image/webp']],
   ['/assets/materials/wood-normal.png', ['assets/materials/wood-normal.png', 'image/png']],
+  ['/assets/materials/wood-normal.webp', ['assets/materials/wood-normal.webp', 'image/webp']],
   ['/assets/materials/wood.png', ['assets/materials/wood.png', 'image/png']],
+  ['/assets/materials/wood.webp', ['assets/materials/wood.webp', 'image/webp']],
   ['/assets/environment/broadleaf-tree.glb', ['assets/environment/broadleaf-tree.glb', 'model/gltf-binary']],
   ['/assets/environment/kong-studio.glb', ['assets/environment/kong-studio.glb', 'model/gltf-binary']],
   ['/assets/environment/CREDITS.txt', ['assets/environment/CREDITS.txt', 'text/plain; charset=utf-8']],
@@ -59,8 +119,16 @@ const routes = new Map([
   ['/assets/portraits/phase7-russel.png', ['assets/portraits/phase7-russel.png', 'image/png']],
   ['/assets/models/gorillaz-geep.glb', ['assets/models/gorillaz-geep.glb', 'model/gltf-binary']],
   ['/assets/models/GEEP-CREDITS.txt', ['assets/models/GEEP-CREDITS.txt', 'text/plain; charset=utf-8']],
+  ['/assets/models/driver-pilot-v4.glb', ['assets/models/driver-pilot-v4.glb', 'model/gltf-binary']],
+  ['/assets/models/driver-pilot-v2.glb', ['assets/models/driver-pilot-v2.glb', 'model/gltf-binary']],
   ['/assets/models/driver-pilot.glb', ['assets/models/driver-pilot.glb', 'model/gltf-binary']],
+  ['/assets/models/DRIVER-CREDITS.txt', ['assets/models/DRIVER-CREDITS.txt', 'text/plain; charset=utf-8']],
   ['/assets/models/kenney-suv.glb', ['assets/models/kenney-suv.glb', 'model/gltf-binary']],
+  ...['gorillaz-2001', 'demon-days-2005', 'plastic-beach-2010', 'the-fall-2010', 'humanz-2017', 'the-now-now-2018', 'song-machine-2020', 'cracker-island-2023'].map(name => [`/assets/covers/${name}.jpg`, [`assets/covers/${name}.jpg`, 'image/jpeg']]),
+  ['/assets/fonts/anton-latin.woff2', ['assets/fonts/anton-latin.woff2', 'font/woff2']],
+  ['/assets/fonts/anton-latin-ext.woff2', ['assets/fonts/anton-latin-ext.woff2', 'font/woff2']],
+  ['/assets/fonts/Anton-Regular.ttf', ['assets/fonts/Anton-Regular.ttf', 'font/ttf']],
+  ['/assets/fonts/ANTON-OFL.txt', ['assets/fonts/ANTON-OFL.txt', 'text/plain; charset=utf-8']],
   ['/assets/models/kenney-suv-luxury.glb', ['assets/models/kenney-suv-luxury.glb', 'model/gltf-binary']],
   ['/assets/models/KENNEY-LICENSE.txt', ['assets/models/KENNEY-LICENSE.txt', 'text/plain; charset=utf-8']],
   ['/src/vendor/three.module.min.js', ['src/vendor/three.module.min.js', 'text/javascript; charset=utf-8']],
@@ -79,6 +147,7 @@ const server = http.createServer(async (req, res) => {
   catch { res.writeHead(400, headers); return res.end('Requisição inválida'); }
   if (!route) { res.writeHead(404, headers); return res.end('Não encontrado'); }
   try {
+    // Textos e GLB (-36% no conjunto medido) seguem comprimidos; PNG/JPG/MP3 já vêm comprimidos.
     // Cada arquivo fica em memória enquanto não muda no disco. O navegador revalida por ETag
     // (304 sem corpo) e textos seguem comprimidos: recarregar a página não baixa 19 MB de novo.
     const file = new URL(route[0], import.meta.url), { mtimeMs, size } = await stat(file);
@@ -86,11 +155,27 @@ const server = http.createServer(async (req, res) => {
     let entry = cache.get(route[0]);
     if (entry?.etag !== etag) {
       const body = await readFile(file);
-      entry = { etag, body, gzip: /^text\//.test(route[1]) && body.length > 1024 ? gzipSync(body) : null };
+      entry = { etag, body, gzip: /^(text\/|model\/gltf-binary)/.test(route[1]) && body.length > 1024 ? gzipSync(body) : null };
       cache.set(route[0], entry);
     }
     Object.assign(headers, { ETag: etag, 'Cache-Control': 'no-cache', Vary: 'Accept-Encoding' });
-    if (req.headers['if-none-match'] === etag) { res.writeHead(304, headers); return res.end(); }
+    // 304 nunca responde a um pedido com Range: o <audio> (rádio) precisa do trecho; revisita com ETag dava "não pôde ser reproduzido".
+    if (!req.headers.range && req.headers['if-none-match'] === etag) { res.writeHead(304, headers); return res.end(); }
+    // Áudio: anuncia Accept-Ranges e responde 206 quando o navegador pede um trecho (alguns Chrome exigem para tocar MP3).
+    if (/^audio\//.test(route[1])) {
+      const total = entry.body.length;
+      const range = /^bytes=(\d*)-(\d*)$/.exec(req.headers.range ?? '');
+      if (range && (range[1] !== '' || range[2] !== '')) {
+        const start = range[1] === '' ? Math.max(0, total - Number(range[2])) : Number(range[1]);
+        const end = range[1] === '' || range[2] === '' ? total - 1 : Math.min(Number(range[2]), total - 1);
+        if (start > end || start >= total) { res.writeHead(416, { ...headers, 'Accept-Ranges': 'bytes', 'Content-Range': `bytes */${total}` }); return res.end(); }
+        const slice = entry.body.subarray(start, end + 1);
+        res.writeHead(206, { ...headers, 'Accept-Ranges': 'bytes', 'Content-Type': route[1], 'Content-Length': slice.length, 'Content-Range': `bytes ${start}-${end}/${total}` });
+        return res.end(req.method === 'HEAD' ? undefined : slice);
+      }
+      res.writeHead(200, { ...headers, 'Accept-Ranges': 'bytes', 'Content-Type': route[1], 'Content-Length': total });
+      return res.end(req.method === 'HEAD' ? undefined : entry.body);
+    }
     const compressed = entry.gzip && /\bgzip\b/.test(req.headers['accept-encoding'] ?? '');
     const body = compressed ? entry.gzip : entry.body;
     res.writeHead(200, { ...headers, 'Content-Type': route[1], 'Content-Length': body.length, ...(compressed ? { 'Content-Encoding': 'gzip' } : {}) });
@@ -100,4 +185,6 @@ const server = http.createServer(async (req, res) => {
     res.writeHead(500, headers); res.end('Erro interno');
   }
 });
+// Conexões keep-alive de 65 s: o padrão do Node (5 s) fecha sockets ociosos que o Chrome ainda reutiliza, e o reload vira "Failed to fetch".
+server.keepAliveTimeout = 65000; server.headersTimeout = 66000;
 server.listen(port, '0.0.0.0', () => console.log(`Gorilazz disponível na porta ${server.address().port}`));

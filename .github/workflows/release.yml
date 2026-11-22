@@ -1,0 +1,32 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Tag de versão (ex: v1.0.0)'
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Criar GitHub Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v4
+
+      - name: Publicar Release com Changelog Automático
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG_NAME: ${{ github.event.inputs.tag || github.ref_name }}
+        run: |
+          gh release create "$TAG_NAME" \
+            --title "Release $TAG_NAME" \
+            --generate-notes

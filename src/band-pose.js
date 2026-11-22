@@ -5,11 +5,13 @@ import * as THREE from './vendor/three.module.min.js';
 // As máscaras são aproximadas: não substituem pesos revisados em ferramenta de autoria.
 // Coordenadas no espaço local já normalizado por bake(visual).
 
+// `contact` (opcional): [lado +x, lado −x] onde cada mão toca o instrumento (y e z na altura/profundidade do kit).
+// Sem `contact`, a mão vai para a pose de POSES. O kit é montado a partir de `hand` (repouso), então ele não muda.
 const SPECS = [
-  { shoulder: [.13, 1.08, -.03], hand: [.225, .66, .04], radius: .062, play: 'keys' },   // 2-D
-  { shoulder: [.15, 1.08, -.02], hand: [.235, .65, .03], radius: .068, play: 'bass' },   // Murdoc
-  { shoulder: [.14, 1.10, -.03], hand: [.245, .69, .04], radius: .062, play: 'guitar' }, // Noodle
-  { shoulder: [.24, 1.07, -.05], hand: [.59, .66, .05], radius: .115, play: 'drums' },   // Russel
+  { shoulder: [.13, 1.08, -.03], hand: [.225, .66, .04], radius: .062, play: 'keys', contact: [[.22, .89, .18], [-.22, .89, .18]], lean: -.04, gaze: [.18, 0] },   // 2-D: teclas na cintura; tronco inclinado para o público; olha para as teclas
+  { shoulder: [.15, 1.08, -.02], hand: [.235, .65, .03], radius: .068, play: 'bass', contact: [[.33, 1.10, .28], [-.04, .90, .19]], lean: -.03, gaze: [.06, .1] },   // Murdoc: mão da escala no braço do baixo, mão do corpo no corpo do instrumento, tronco leve, olhar para a pista
+  { shoulder: [.14, 1.10, -.03], hand: [.245, .69, .04], radius: .062, play: 'guitar', contact: [[.33, 1.10, .28], [-.04, .90, .19]], lean: -.03, gaze: [.08, .12] }, // Noodle: sockets da guitarra v2 (socket_hand_neck_R e socket_hand_strum_L); olhar para a pista
+  { shoulder: [.24, 1.07, -.05], hand: [.59, .66, .05], radius: .115, play: 'drums', contact: [[.3, .93, .2], [-.3, .93, .2]], lean: -.05, gaze: [.3, 0] },   // Russel: caixa na altura da cintura; olha para a bateria
 ];
 const smooth = (a, b, x) => { const t = Math.min(1, Math.max(0, (x - a) / (b - a))); return t * t * (3 - 2 * t); };
 const dir = (x, y, z) => new THREE.Vector3(x, y, z).normalize();
@@ -39,6 +41,10 @@ export function rigBand(visual, index, material) {
     for (let i = 0; i < position.count; i++) {
       weights[i * 4] = 1;
       v.fromBufferAttribute(position, i); const sideIndex = v.x >= 0 ? 0 : 1, side = sides[sideIndex];
+      // Cabeça e pescoço seguem o osso `head` (índice 5): acima do ombro, ou perto do eixo na faixa do ombro.
+      const sy = spec.shoulder[1], band = smooth(sy - .12, sy + .14, v.y) * (1 - smooth(spec.shoulder[0] * .8, spec.shoulder[0] * 1.3, Math.abs(v.x)));
+      const headW = Math.max(band, smooth(sy + .1, sy + .24, v.y));
+      if (headW > .01) { indices[i * 4 + 3] = 5; weights[i * 4] = 1 - headW; weights[i * 4 + 3] = headW; continue; }
       offset.subVectors(v, side.shoulder); const along = offset.dot(side.rest), t = along / side.length;
       if (t < 0 || t > 1.3) continue;
       const away = offset.addScaledVector(side.rest, -along).length(), limit = spec.radius * (t > .8 ? 1.35 : 1);
@@ -56,7 +62,7 @@ export function rigBand(visual, index, material) {
     skin.name = mesh.name; skin.userData = {...mesh.userData, rig: 'phase7-arms-v1'};
     skin.position.copy(mesh.position); skin.quaternion.copy(mesh.quaternion); skin.scale.copy(mesh.scale);
     skin.castShadow = mesh.castShadow; skin.receiveShadow = mesh.receiveShadow;
-    const base = new THREE.Bone(); base.name = 'body'; skin.add(base);
+    const base = new THREE.Bone(); base.name = 'body'; base.rotation.x = spec.lean ?? 0; skin.add(base); // inclinação do tronco: gira o corpo e os braços em torno dos pés
     const bones = [base], joints = sides.map((side, i) => {
       const upper = new THREE.Bone(), fore = new THREE.Bone();
       upper.name = `${i === 0 ? 'left' : 'right'}_upper_arm`;
@@ -65,6 +71,8 @@ export function rigBand(visual, index, material) {
       base.add(upper); upper.add(fore); bones.push(upper, fore);
       return {upper, fore};
     });
+    // Osso da cabeça/pescoço (índice 5): balanço no ritmo sem tocar nos braços nem no tronco.
+    const headBone = new THREE.Bone(); headBone.name = 'head'; headBone.position.set(0, spec.shoulder[1] + .04, spec.shoulder[2]); base.add(headBone); bones.push(headBone);
     mesh.parent.add(skin); mesh.removeFromParent();
     skin.updateMatrixWorld(true); skin.bind(new THREE.Skeleton(bones));
     skin.normalizeSkinWeights();
@@ -73,20 +81,58 @@ export function rigBand(visual, index, material) {
     skin.boundingSphere = geometry.boundingSphere.clone();
     skin.boundingSphere.radius += Math.max(...sides.map(side => side.length));
     mesh.geometry.dispose();
-    return { skin, joints, influenced };
+    return { skin, joints, head: headBone, influenced };
   });
   const sticks = [], axisZ = new THREE.Vector3(0, 0, 1);
   const inverse = new THREE.Quaternion();
+  // Sockets: ponto de contato de cada mão no instrumento (a pose de repouso de POSES) e o lado do cotovelo.
+  // Cada quadro resolve uma IK de dois ossos até socket + pequeno movimento de tocar, então a mão encosta
+  // no instrumento no ponto do toque em vez de oscilar solta no ar.
+  // Mãos de contato são dadas no espaço do corpo (sem a inclinação do tronco): o inverso da inclinação leva o ponto para dentro do osso.
+  const Rinv = new THREE.Quaternion().setFromEuler(new THREE.Euler(spec.lean ?? 0, 0, 0)).invert(), gaze = spec.gaze ?? [0, 0];
+  const sockets = sides.map(side => {
+    const t = POSES[spec.play](side.s, 0), half = side.length / 2;
+    const elbow = side.shoulder.clone().addScaledVector(t.upper, half);
+    const hand = spec.contact ? new THREE.Vector3(...spec.contact[side.s > 0 ? 0 : 1]).applyQuaternion(Rinv) : elbow.clone().addScaledVector(t.fore, half);
+    const line = hand.clone().sub(side.shoulder).normalize(), e = elbow.clone().sub(side.shoulder);
+    const pole = e.addScaledVector(line, -e.dot(line));
+    return { hand, pole: pole.lengthSq() > 1e-8 ? pole.normalize() : new THREE.Vector3(side.s * .5, -1, 0).normalize() };
+  });
+  const neck = sockets[0].hand.clone().sub(sockets[1].hand).normalize();  // braço da guitarra/baixo (mão da escala → corpo)
+  const offset = new THREE.Vector3(), aimAt = new THREE.Vector3(), poleNow = new THREE.Vector3(), upperDir = new THREE.Vector3(), foreAim = new THREE.Vector3();
+  // Movimento de tocar por instrumento, somado ao socket. `beat` é o tempo em segundos (sem custo de alocação).
+  function motion(s, beat) {
+    switch (spec.play) {
+      case 'keys': { const tap = Math.max(0, Math.sin(beat * 6 + s * 1.3)); return offset.set(Math.sin(beat * .9 + s) * .035, -.03 * tap * tap, 0); }
+      case 'drums': {
+        // Baqueta sobe e desce (contato no ponto mais baixo) e as mãos alternam entre caixa e surdo.
+        const lift = .5 + .5 * Math.sin(beat * 7.5 + (s > 0 ? 0 : Math.PI * .5));
+        return offset.set(Math.sin(beat * 1.7 + (s > 0 ? 0 : Math.PI)) * .07, .12 * lift * lift, -.03 * lift);
+      }
+      default: // guitar / bass
+        return s > 0 ? offset.copy(neck).multiplyScalar(.05 * Math.sin(beat * .8)) : offset.set(.008 * Math.sin(beat * 2), .035 * Math.sin(beat * 9), 0);
+    }
+  }
+  function solve(side, socket, move) {
+    aimAt.copy(socket.hand).add(move).sub(side.shoulder);
+    const half = side.length / 2, reach = THREE.MathUtils.clamp(aimAt.length(), .12 * side.length, .985 * side.length);
+    aimAt.normalize();
+    const along = reach / 2, bend = Math.sqrt(Math.max(0, half * half - along * along));
+    poleNow.copy(socket.pole).addScaledVector(aimAt, -socket.pole.dot(aimAt)).normalize();
+    side.elbowNow.copy(side.shoulder).addScaledVector(aimAt, along).addScaledVector(poleNow, bend);
+    upperDir.subVectors(side.elbowNow, side.shoulder).normalize();
+    foreAim.copy(side.shoulder).addScaledVector(aimAt, reach).sub(side.elbowNow).normalize();
+    side.upper.setFromUnitVectors(side.rest, upperDir); side.fore.setFromUnitVectors(side.rest, foreAim);
+    side.foreDir.copy(foreAim);
+    side.hand.copy(side.elbowNow).addScaledVector(foreAim, half);
+  }
   function pose(time, still) {
     const beat = still ? 0 : time;
-    for (const side of sides) {
-      const target = POSES[spec.play](side.s, beat);
-      side.upper.setFromUnitVectors(side.rest, target.upper); side.fore.setFromUnitVectors(side.rest, target.fore);
-      side.foreDir.copy(target.fore);
-      side.elbowNow.copy(side.shoulder).addScaledVector(target.upper, side.length / 2);
-      side.hand.copy(side.elbowNow).addScaledVector(target.fore, side.length / 2);
-    }
-    for (const {skin, joints} of skins) {
+    sides.forEach((side, i) => solve(side, sockets[i], still ? offset.set(0, 0, 0) : motion(side.s, beat)));
+    // Cabeça: aceno no tempo forte, inclinação e giro lentos; parado (movimento reduzido) volta à pose neutra.
+    const nod = still ? 0 : .07 * Math.sin(beat * 5.2) + .03 * Math.sin(beat * 2.6), tilt = still ? 0 : .05 * Math.sin(beat * 2.6 + .7), turn = still ? 0 : .08 * Math.sin(beat * 1.3 + index);
+    for (const {skin, joints, head} of skins) {
+      head.rotation.set(nod + gaze[0], turn + gaze[1], tilt);
       joints.forEach((joint, i) => {
         joint.upper.quaternion.copy(sides[i].upper);
         joint.fore.quaternion.copy(inverse.copy(sides[i].upper).invert()).multiply(sides[i].fore);
@@ -105,9 +151,10 @@ export function rigBand(visual, index, material) {
   const box = (parent, size, color, position, options) => add(parent, new THREE.BoxGeometry(...size), color, position, options);
   const disc = (parent, radius, depth, color, position, options) => add(parent, new THREE.CylinderGeometry(radius, radius, depth, 24), color, position, options);
   const [right, left] = sides, flat = [Math.PI / 2, 0, 0];
+  let guitar = null; // guitarra procedural (fallback): fica fora da fusão do bake para poder ser trocada pelo GLB v2
   if (spec.play === 'guitar' || spec.play === 'bass') {
     // Corpo junto à mão que dedilha; o braço do instrumento aponta para a mão da escala.
-    const bass = spec.play === 'bass', strap = new THREE.Group(); kit.add(strap);
+    const bass = spec.play === 'bass', strap = new THREE.Group(); strap.name = 'guitar-procedural'; kit.add(strap); guitar = strap;
     const anchor = left.hand.clone().add(new THREE.Vector3(.06, .02, .01)), axis = right.hand.clone().sub(anchor), reach = axis.length(); axis.normalize();
     const face = new THREE.Vector3(0, 0, 1).addScaledVector(axis, -axis.z).normalize(), up = new THREE.Vector3().crossVectors(face, axis);
     strap.position.copy(anchor); strap.quaternion.setFromRotationMatrix(new THREE.Matrix4().makeBasis(axis, up, face));
@@ -146,5 +193,6 @@ export function rigBand(visual, index, material) {
     for (const sideIndex of [0, 1]) { const stick = box(kit, [.016, .016, .42], '#d8b98a', [0, 0, 0]); stick.userData.side = sideIndex; sticks.push(stick); }
     pose(0, true);
   }
-  return { pose, kit, sticks, vertices: skins.reduce((sum, skin) => sum + skin.influenced, 0) };
+  // hands(): posição atual das mãos no espaço local do visual (depuração de pose e testes).
+  return { pose, kit, sticks, guitar, visual, hands: () => sides.map(side => side.hand.clone()), vertices: skins.reduce((sum, skin) => sum + skin.influenced, 0) };
 }

@@ -7,7 +7,7 @@ import * as THREE from './vendor/three.module.min.js';
 const SKY_VERTEX = 'varying vec3 vDir; void main(){ vDir = position; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.); }';
 const SKY_FRAGMENT = `
 varying vec3 vDir;
-uniform vec3 zenith; uniform vec3 horizon; uniform vec3 sunColor; uniform vec3 sunDir; uniform float time;
+uniform vec3 zenith; uniform vec3 midSky; uniform vec3 horizon; uniform vec3 sunColor; uniform vec3 sunDir; uniform float time;
 float hash(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
 float noise(vec2 p) {
   vec2 i = floor(p), f = fract(p); f = f * f * (3. - 2. * f);
@@ -16,18 +16,23 @@ float noise(vec2 p) {
 float fbm(vec2 p) { float a = .5, s = 0.; for (int i = 0; i < 4; i++) { s += a * noise(p); p = p * 2.03 + 7.1; a *= .5; } return s; }
 void main() {
   vec3 d = normalize(vDir); float h = clamp(d.y, 0., 1.);
-  vec3 color = mix(horizon, zenith, pow(h, .5));
+  // Gradiente vertical em 3 faixas: horizonte colado à FogExp2 (sem corte), faixa média luminosa do bairro e zênite profundo.
+  float low = smoothstep(0., .22, h);
+  float high = pow(clamp((h - .08) / .92, 0., 1.), .62);
+  vec3 color = mix(horizon, midSky, low);
+  color = mix(color, zenith, high);
   float s = max(dot(d, sunDir), 0.);
-  color += sunColor * (pow(s, 6.) * .22 + pow(s, 48.) * .45);
+  float horizonFade = smoothstep(.01, .16, h);
+  color += sunColor * (pow(s, 5.) * .26 + pow(s, 42.) * .48) * horizonFade;
   if (d.y > .02) {
     vec2 p = d.xz / (d.y + .12) * 1.5 + time * vec2(.008, .003);
-    float cover = smoothstep(.5, .82, fbm(p)) * smoothstep(.02, .22, d.y);
-    vec3 cloud = mix(horizon * 1.2, sunColor, .3) * (.6 + .4 * pow(s, 3.)) + .06;
-    color = mix(color, cloud, cover * .75);
+    float cover = smoothstep(.48, .80, fbm(p)) * smoothstep(.04, .24, d.y);
+    vec3 cloud = mix(midSky * 1.15, sunColor, .35) * (.65 + .35 * pow(s, 3.)) + .05;
+    color = mix(color, cloud, cover * .72);
   }
   // Disco solar gráfico, acima de 1.0 para alimentar o bloom.
   color += sunColor * smoothstep(.9962, .9968, s) * 3.;
-  color = mix(horizon, color, smoothstep(-.03, .05, d.y));
+  color = mix(horizon, color, smoothstep(-.02, .09, d.y));
   gl_FragColor = vec4(color, 1.);
   #include <tonemapping_fragment>
   #include <colorspace_fragment>
@@ -58,7 +63,7 @@ export function createAtmosphere(scene, renderer) {
   // Sol à frente e à esquerda da vista inicial, a ~45°: um lado da rua iluminado, o outro em sombra.
   const sunDirection = new THREE.Vector3(-.6, .74, -.42).normalize();
   const uniforms = {
-    zenith: { value: new THREE.Color() }, horizon: { value: new THREE.Color() }, sunColor: { value: new THREE.Color() },
+    zenith: { value: new THREE.Color() }, midSky: { value: new THREE.Color() }, horizon: { value: new THREE.Color() }, sunColor: { value: new THREE.Color() },
     sunDir: { value: sunDirection }, time: { value: 0 },
   };
   const material = new THREE.ShaderMaterial({ vertexShader: SKY_VERTEX, fragmentShader: SKY_FRAGMENT, uniforms, side: THREE.BackSide, depthWrite: false, fog: false });
@@ -75,12 +80,13 @@ export function createAtmosphere(scene, renderer) {
     scene.environment = next.texture; environment?.dispose(); environment = next;
     baked.copy(uniforms.horizon.value); bakedAt = time;
   }
-  const tint = new THREE.Color('#3b6ea8');
+  const tint = new THREE.Color('#132444');
   return {
     sunDirection,
     update(sun, skyColor, haze, time, reduced) {
       uniforms.sunColor.value.copy(sun); uniforms.horizon.value.copy(haze);
-      uniforms.zenith.value.copy(tint).lerp(skyColor, .28);
+      uniforms.midSky.value.copy(haze).lerp(skyColor, .52);
+      uniforms.zenith.value.copy(tint).lerp(skyColor, .18);
       if (!reduced) { uniforms.time.value = time; water.material.normalMap.offset.set(time * .012, time * .007); }
       // O ambiente só é refeito quando a cor do bairro mudou de forma perceptível.
       const drift = Math.abs(baked.r - haze.r) + Math.abs(baked.g - haze.g) + Math.abs(baked.b - haze.b);

@@ -1,0 +1,179 @@
+/* Ajustes da landing (paginação, faixa de eras, botão fixo, rádio, mobile). Arquivo próprio: carregado por último. */
+
+/* Paginação das eras: estado desabilitado nas pontas, com gap claro entre os dois botões. */
+.era-step-controls { gap:12px; }
+.era-step-controls button { transition:opacity .2s ease, background-color .2s ease; }
+#prev-era:disabled, #next-era:disabled,
+#prev-era[aria-disabled=true], #next-era[aria-disabled=true] {
+  opacity:.4; cursor:not-allowed; pointer-events:none;
+}
+#prev-era:focus-visible, #next-era:focus-visible { outline:3px solid var(--acid); outline-offset:3px; }
+
+/* Faixa de capas ao lado do título (preenche o espaço vazio e também navega entre as eras). */
+.era-strip-wrap { display:flex; flex-direction:column; align-items:flex-end; gap:10px; }
+.era-strip-caption { margin:0; font:11px/1.4 'Courier New', monospace; letter-spacing:1px; color:var(--acid); }
+.era-strip { display:grid; grid-template-columns:repeat(4, 52px); justify-content:end; gap:8px; }
+.era-strip button {
+  width:52px; height:52px; padding:0; border:1px solid #e9e4d433; border-radius:10px;
+  background:#111415; overflow:hidden; cursor:pointer; transition:transform .2s ease, border-color .2s ease;
+}
+.era-strip button:hover { transform:translateY(-2px); border-color:#e9e4d466; }
+.era-strip button[aria-current=true] { outline:2px solid var(--acid); outline-offset:2px; }
+.era-strip button:focus-visible { outline:3px solid var(--acid); outline-offset:2px; }
+.era-strip img { display:block; width:100%; height:100%; object-fit:cover; }
+
+/* Botão fixo "ENTRAR NO UNIVERSO 3D", visível depois de rolar a página. */
+.enter-3d-fixed {
+  position:fixed; top:14px; right:4%; z-index:30;
+  min-height:40px; padding:0 16px; border:0; border-radius:999px;
+  background:var(--acid); color:#111415; cursor:pointer;
+  font:700 12px/1 'Courier New', monospace; letter-spacing:.5px;
+  box-shadow:0 6px 18px #0008;
+}
+.enter-3d-fixed[hidden] { display:none; }
+.enter-3d-fixed:focus-visible { outline:3px solid #ffcc4d; outline-offset:3px; }
+
+/* Rádio: com o clipe aberto, o vinil gira e o equalizador anima (feedback visual do player). */
+#radio.video-open .vinyl { animation:landing-spin 4s linear infinite; }
+#radio.video-open .radio-spectrum i { animation:landing-eq .9s ease-in-out infinite alternate; }
+#radio.video-open .radio-spectrum i:nth-child(2n) { animation-delay:.2s; }
+#radio.video-open .radio-spectrum i:nth-child(3n) { animation-delay:.45s; }
+#radio.video-open .radio-spectrum i:nth-child(4n) { animation-delay:.7s; }
+@keyframes landing-spin { to { transform:rotate(360deg); } }
+@keyframes landing-eq { from { transform:scaleY(.35); } to { transform:scaleY(1); } }
+@media(prefers-reduced-motion:reduce) {
+  #radio.video-open .vinyl, #radio.video-open .radio-spectrum i { animation:none; }
+  .era-strip button { transition:none; }
+}
+
+/* Telas estreitas: as oito eras quebram em grade de duas colunas, sem corte de texto nem rolagem horizontal. */
+@media(max-width:700px) {
+  #era-menu { display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); grid-auto-flow:row; overflow:visible; }
+  #era-menu button { min-width:0; min-height:96px; }
+  #era-menu button strong { overflow-wrap:anywhere; }
+  .era-strip-wrap { align-items:flex-start; }
+  .era-strip { justify-content:start; }
+  .enter-3d-fixed { top:10px; right:12px; font-size:11px; min-height:36px; }
+}
+
+/* Rádio: "ABRIR NO YOUTUBE" com cara de botão, na mesma altura dos controles da faixa. */
+#listen-link {
+  display:inline-flex; align-items:center; min-height:42px; padding:0 16px;
+  border:1px solid #e9e4d466; border-radius:999px; color:var(--cream); text-decoration:none;
+  font:600 12px/1 'Courier New', monospace; letter-spacing:.5px;
+}
+#listen-link:hover { border-color:var(--acid); color:var(--acid); }
+#listen-link:focus-visible { outline:3px solid var(--acid); outline-offset:3px; }
+
+/* Capa da era: a arte preenche o quadro. Fundo = mesma capa borrada; à esquerda a capa nítida (object-fit: cover);
+   à direita a legenda e o crédito ("uso acadêmico" continua no texto). Troca de era com fade. */
+.era-cover-frame {
+  grid-template-columns:minmax(200px, 340px) minmax(0, 1fr);
+  gap:0; padding:0; min-height:300px; align-items:stretch;
+  isolation:isolate; border-radius:18px; overflow:hidden;
+}
+.era-cover-frame::before {
+  content:''; position:absolute; inset:-28px; z-index:-1;
+  background-image:var(--era-cover-url, none); background-size:cover; background-position:center;
+  filter:blur(24px) saturate(1.15) brightness(.42); transform:scale(1.06);
+  transition:background-image .5s ease;
+}
+.era-cover-img {
+  width:100%; height:100%; min-height:300px; aspect-ratio:auto; object-fit:cover;
+  border:0; border-radius:0; box-shadow:none; opacity:0; transition:opacity .5s ease;
+}
+.era-cover-img.is-ready { opacity:1; }
+.era-cover-caption {
+  align-self:center; display:grid; gap:14px; margin:0; padding:28px 34px;
+  background:transparent; border-left:0; border-radius:0;
+  font-size:14px; line-height:1.65;
+}
+.era-cover-kicker {
+  display:inline-flex; width:max-content; max-width:100%; padding:5px 12px; border-radius:999px;
+  border:1px solid var(--era-color, var(--acid)); color:var(--era-color, var(--acid));
+  font:700 11px/1.3 'Courier New', monospace; letter-spacing:1px;
+}
+.era-cover-credit { color:#e9e4d4; font:13px/1.6 'Courier New', monospace; }
+@media(max-width:700px) {
+  .era-cover-frame { grid-template-columns:1fr; min-height:0; }
+  .era-cover-img { width:100%; max-width:none; min-height:0; height:auto; aspect-ratio:1 / 1; max-height:340px; }
+  .era-cover-caption { padding:18px 16px; }
+}
+@media(prefers-reduced-motion:reduce) {
+  .era-cover-img, .era-cover-frame::before { transition:none; }
+}
+
+/* Aviso quando o 3D não carrega: mostra o motivo real e um botão para tentar de novo. */
+.world-failure {
+  position:absolute; left:50%; top:50%; transform:translate(-50%, -50%); z-index:12;
+  width:min(440px, calc(100% - 32px)); padding:20px 22px; border-radius:14px;
+  background:#101d1ef5; border:2px solid #ffcc4d88; color:#e9e4d4;
+  box-shadow:6px 6px 0 #090b0c, 0 18px 40px #0009;
+  font:14px/1.5 system-ui, sans-serif;
+}
+.world-failure[hidden] { display:none; }
+.world-failure-title { margin:0 0 8px; font:700 16px/1.3 system-ui, sans-serif; color:#ffcc4d; }
+.world-failure-text { margin:0 0 10px; color:#d9d5c7; overflow-wrap:anywhere; }
+.world-failure-button {
+  min-height:42px; padding:0 18px; border-radius:999px; border:1px solid #c4dc9d;
+  background:#c4dc9d; color:#111415; font:700 14px/1 system-ui, sans-serif; cursor:pointer;
+}
+.world-failure-button:focus-visible { outline:3px solid #ffcc4d; outline-offset:2px; }
+
+/* Polimento da HUD inferior (desktop): barra a 18 px da borda, translúcida com blur 8px, sem corte em nenhum tamanho. */
+@media (min-width:701px) and (any-pointer:fine) {
+  #jogo #road-radio, #jogo #drive-hud { bottom:18px; }
+  #jogo .controls { bottom:18px; }
+}
+#jogo #road-radio, #jogo #drive-hud, #jogo .cabin-tools, #jogo .controls {
+  -webkit-backdrop-filter:blur(8px); backdrop-filter:blur(8px);
+}
+
+/* No modo 3D a seção do mundo ocupa a viewport inteira: a barra inferior fica encostada na borda (18 px) e não sobra faixa vazia. */
+html.mode-3d #jogo { height:100vh; min-height:100vh; height:100dvh; min-height:100dvh; }
+
+/* Crédito da imagem da descoberta (uso acadêmico), abaixo do texto do cartão. */
+.art-credit { margin:8px 0 0; font:11px/1.5 'Courier New', monospace; color:#a9bdb2; }
+.art-credit[hidden] { display:none; }
+/* Volta ao carro 3D a partir da leitura (fixo, sobre o conteúdo; some enquanto o 3D está ativo). */
+#back-to-car { position:fixed; right:16px; bottom:16px; z-index:40; min-height:44px; padding:0 18px; border-radius:999px; border:1px solid #111415; background:#d2e2a8; color:#111415; font:700 13px/1 system-ui,sans-serif; cursor:pointer; box-shadow:0 6px 18px #0006; }
+#back-to-car[hidden] { display:none; }
+#back-to-car:focus-visible { outline:3px solid #ffcc4d; outline-offset:3px; }
+/* Visualizador 360° do integrante (modal "EXPLORAR"). */
+.member-view { display:grid; justify-items:center; gap:6px; margin:0 0 10px; }
+.member-view[hidden] { display:none; }
+#member-canvas { width:180px; height:240px; cursor:grab; touch-action:none; }
+#member-canvas.dragging { cursor:grabbing; }
+.member-view-controls { display:flex; align-items:center; gap:8px; }
+.member-view-controls button { width:36px; height:36px; border-radius:999px; border:1px solid #c4dc9d88; background:transparent; color:#e9e4d4; font:700 18px/1 system-ui,sans-serif; cursor:pointer; }
+.member-view-controls button:focus-visible { outline:3px solid #ffcc4d; outline-offset:2px; }
+.member-view-hint { font:600 10px/1.3 'Courier New', monospace; letter-spacing:1px; color:#c4dc9d; text-transform:uppercase; }
+/* 360° nos cards da seção editorial: o canvas cobre o retrato; arrastar gira; o clique sem arrastar abre a ficha. */
+.band-portrait { position:relative; }
+.spin-wrap { position:absolute; inset:0; }
+.spin-wrap[hidden] { display:none; }
+.spin-canvas { width:100%; height:100%; object-fit:contain; cursor:grab; touch-action:none; }
+.spin-canvas.dragging { cursor:grabbing; }
+.spin-controls { position:absolute; left:4px; right:4px; bottom:6px; display:flex; align-items:center; justify-content:space-between; gap:6px; }
+.spin-controls button { width:30px; height:30px; border-radius:999px; border:1px solid #c4dc9d88; background:#101b1ccc; color:#e9e4d4; font:700 16px/1 system-ui,sans-serif; cursor:pointer; }
+.spin-hint { font:600 9px/1.2 'Courier New', monospace; letter-spacing:1px; color:#c4dc9d; text-transform:uppercase; background:#101b1ccc; padding:3px 6px; border-radius:6px; }
+/* Passeio guiado e contador de descobertas (9 paradas). Só aparece no 3D. */
+#jogo .stops-counter { position:absolute; z-index:6; left:50%; top:calc(var(--top) + 52px); transform:translateX(-50%); width:min(260px,40vw); padding:6px 10px; border-radius:10px; background:#101b1ccc; color:#e3eddb; font:700 11px/1.2 'Courier New',monospace; letter-spacing:.5px; pointer-events:none; display:none; }
+#jogo[data-entered=true] .stops-counter { display:block; }
+.stops-bar { display:block; height:3px; margin-top:5px; border-radius:3px; background:#e9e4d433; overflow:hidden; }
+.stops-bar b { display:block; height:100%; width:0; background:var(--acid,#d2e2a8); transition:width .4s ease; }
+#jogo .guided-bar { position:absolute; z-index:6; left:50%; bottom:var(--instrument-bottom,calc(var(--bottom,16px) + 68px)); transform:translateX(-50%); display:none; align-items:center; gap:10px; max-width:min(560px,92vw); padding:8px 12px; border-radius:999px; background:#101b1ce6; color:#e3eddb; font:600 12px/1.3 system-ui,sans-serif; }
+#jogo[data-entered=true] .guided-bar:not([hidden]) { display:flex; }
+.guided-bar button { min-height:36px; padding:0 12px; border-radius:999px; border:1px solid #c4dc9d; background:#c4dc9d; color:#111415; font:700 12px/1 system-ui,sans-serif; cursor:pointer; white-space:nowrap; }
+#jogo .guided-card { position:absolute; z-index:7; right:var(--right,16px); top:50%; transform:translateY(-50%); width:min(300px,30vw); padding:14px 16px; border-radius:14px 5px 14px 5px; border-left:3px solid var(--acid,#d2e2a8); background:#101b1cf2; color:#e3eddb; box-shadow:0 8px 24px #0007; }
+#jogo .guided-card[hidden] { display:none; }
+.guided-card h3 { font:600 18px/1.2 Georgia,serif; margin:6px 0 4px; }
+.guided-card .guided-year { font:700 11px/1 'Courier New',monospace; color:#c4dc9d; margin:0 0 8px; }
+.guided-card p { font:13px/1.5 system-ui,sans-serif; margin:0; }
+.stops-toast { position:fixed; z-index:50; left:50%; bottom:24px; transform:translateX(-50%); padding:12px 18px; border-radius:999px; background:#d2e2a8; color:#111415; font:700 14px/1.2 system-ui,sans-serif; box-shadow:0 8px 24px #0008; pointer-events:none; }
+.stops-toast[hidden] { display:none; }
+@media (max-width:700px) { #jogo .guided-card { top:auto; bottom:190px; transform:none; width:min(280px,70vw); } }
+/* Títulos: a regra global de h1–h3 usa letter-spacing negativo, que também encolhia o espaço entre palavras
+   ("Aexplosão", "Areinvenção"). word-spacing só afeta os espaços e mantém o aspecto condensado das letras. */
+h1, h2, h3, h4 { word-spacing: .14em; }
+#jogo .guided-card h3 { letter-spacing: .01em; word-spacing: .14em; }

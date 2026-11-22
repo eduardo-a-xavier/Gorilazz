@@ -13,8 +13,8 @@ export const NODES = [
 const connections = [
   [0, 1, [[-2, -24]]], [1, 2, [[-37, -54]]], [2, 3, [[-83, -84]]],
   [3, 4, [[-57, -144]]], [4, 5, [[36, -161]]], [5, 6, [[96, -91]]],
-  [6, 0, [[69, -9], [30, 8]]], [1, 7, [[3, -78]]], [7, 5, [[49, -101]]],
-  [3, 7, [[-42, -103]]], [7, 6, [[55, -73]]],
+  [6, 0, [[69, -9], [30, 8]]], [1, 7, [[14, -68]]], [7, 5, [[46, -110]]],
+  [3, 7, [[-36, -101]]], [7, 6, [[56, -70]]],
 ];
 // Cada rua leva o nome de uma faixa ou disco ligado ao bairro que atravessa: [placa, pintura no asfalto].
 const ROAD_NAMES = [
@@ -55,7 +55,7 @@ export function behind(place, back, side = 0) {
 }
 export const MEMBER_LOCATIONS = [
   { x: -68, z: -73, heading: -.5 }, { x: -55, z: -131, heading: 1 },
-  { x: 42, z: -110, heading: -1 }, { x: 62, z: -98, heading: .5 },
+  { x: 42, z: -110, heading: -1 }, { x: 62, z: -98, heading: .5 },
 ].map(point => { const placed = settle(point, 8.5); return { ...placed, heading: placed.facing }; /* o grupo do integrante gira heading + π e a frente do modelo é −z */ });
 export const DISCOVERIES = [
   { id: 'beginning', x: -16, z: -25, title: 'Duas mentes, um universo', label: 'O COMEÇO / 1998', kind: 'MURAL', region: 0, track: 0, chapter: 1,
@@ -108,6 +108,8 @@ export function clearPath(a, b) {
 }
 export const TREE_LOCATIONS = Array.from({length:70},(_,i)=>({x:Math.sin(i*23.71)*126,z:-75+Math.cos(i*16.37)*112})).filter(at =>
   nearestRoad(at).distance >= 15 && !DISCOVERIES.some(p=>distance(p,at)<15) &&
+  // Nenhuma copa entre a câmera e o palco de um integrante (copas tapavam Noodle e Russel ao chegar).
+  !MEMBER_LOCATIONS.some(m=>distance(m,at)<16) &&
   !BUILDINGS.some(p=>distance(p,at)<p.radius+4) && !Object.values(VISUAL_LANDMARKS).some(p=>distance(p,at)<9)
 );
 
@@ -195,13 +197,23 @@ function buildCity() {
   };
   const describe = (lot, urban, row) => {
     const era = eraAt(lot), style = ERA_STYLES[era](rng);
-    let floors = 2 + Math.floor(rng() * 2) + Math.round(urban * 3) + row;
-    if (era === 1) floors = Math.min(floors, 4);
-    if (era === 3) floors += 2 + Math.floor(rng() * 3) + (rng() < .35 ? 5 : 0);
-    return { ...lot, era, style, floors, tint: Math.floor(rng() * 5), shop: row === 0 && rng() < .35 + urban * .4,
-      seed: Math.floor(rng() * 1e9), mural: era === 0 ? rng() < .55 : era === 3 && rng() < .25,
-      tank: era < 2 && rng() < .6, escape: era === 0 ? style === 'brick' && rng() < .75 : era === 2 && rng() < .4,
-      junk: era === 1, scaffold: era === 2 && rng() < .5, screen: era === 3 && rng() < .65, neon: era === 3 };
+    const rFloor1 = rng(), rFloor2 = era === 3 ? rng() : 0, rFloor3 = era === 3 ? rng() : 0;
+    // Gradiente orgânico centro → bordas: mais altos no núcleo central dos bairros, reduzindo
+    // gradualmente rumo às bordas da ilha e ao mirante do moinho.
+    const radial = Math.hypot((lot.x + 14) / 118, (lot.z + 82) / 110);
+    const coreWeight = Math.max(0, Math.min(1, 1 - Math.max(0, radial - .22) / .78));
+    const zoneBoost = Math.max(urban, coreWeight * .85);
+    let floors = 2 + Math.round(zoneBoost * 3.2) + Math.floor(rFloor1 * 2) + row;
+    if (era === 1) floors = Math.max(2, Math.min(4, Math.round(2 + zoneBoost * 1.8)));
+    else if (era === 3) floors = Math.round(3 + zoneBoost * 4.2 + Math.floor(rFloor2 * 2) + (rFloor3 < .35 && coreWeight > .45 ? 2 : 0) + row);
+    else floors = Math.max(2, Math.min(7, Math.round(2 + zoneBoost * 3.4 + row * .8)));
+    if (radial > .84) floors = Math.min(floors, era === 3 ? 4 : 3);
+    const tint = Math.floor(rng() * 5), shop = row === 0 && rng() < .35 + urban * .4;
+    const seed = Math.floor(rng() * 1e9), mural = era === 0 ? rng() < .55 : era === 3 && rng() < .25;
+    const tank = era < 2 && rng() < .6, escape = era === 0 ? style === 'brick' && rng() < .75 : era === 2 && rng() < .4;
+    const junk = era === 1, scaffold = era === 2 && rng() < .5, screen = era === 3 && rng() < .65, neon = era === 3;
+    if (screen && floors < 4) floors = 4;
+    return { ...lot, era, style, floors, tint, shop, seed, mural, tank, escape, junk, scaffold, screen, neon };
   };
   for (const road of ROADS) {
     const cumulative = [0]; for (let i = 1; i < road.samples.length; i++) cumulative.push(cumulative[i - 1] + distance(road.samples[i], road.samples[i - 1]));
@@ -257,10 +269,30 @@ function buildCity() {
     const front = { x: road.x - b.x, z: road.z - b.z };
     const era = eraAt(b), lrng = seeded(i * 7919);
     lots.push({ x: b.x, z: b.z, rotation: Math.atan2(front.x, front.z), w: size, d: size, landmark: true, era,
-      style: ERA_STYLES[era](lrng), floors: Math.max(3, Math.round(b.height / 3.2)), tint: i % 5, shop: i % 2 === 0,
+      style: ERA_STYLES[era](lrng), floors: Math.max(era === 3 ? 4 : 3, Math.round(b.height / 3.2)), tint: i % 5, shop: i % 2 === 0,
       seed: i * 7919, mural: era === 0 || (era === 3 && i % 2 === 1), tank: era < 2, escape: era === 0 || (era === 2 && i % 2 === 0),
       junk: era === 1, scaffold: era === 2, screen: era === 3, neon: era === 3 });
   });
+  // Transição gradual entre vizinhos: suaviza saltos abruptos de gabarito mantendo a silhueta orgânica.
+  for (let pass = 0; pass < 2; pass++) {
+    const nextFloors = lots.map(lot => {
+      if (lot.landmark) return lot.floors;
+      let sum = lot.floors * 1.6, weight = 1.6;
+      for (const other of lots) {
+        if (other === lot) continue;
+        const d = distance(lot, other);
+        if (d < 28) {
+          const w = 1 - d / 28;
+          sum += other.floors * w;
+          weight += w;
+        }
+      }
+      const Limit = lot.era === 1 ? 4 : lot.era === 3 ? 10 : 7;
+      const smoothed = Math.max(2, Math.min(Limit, Math.round(sum / weight)));
+      return lot.screen ? Math.max(4, smoothed) : smoothed;
+    });
+    lots.forEach((lot, i) => { lot.floors = nextFloors[i]; });
+  }
   return lots;
 }
 export const CITY_LOTS = buildCity();

@@ -14,6 +14,14 @@ export function nearbyInteraction(vehicle) {
   choices.sort((a, b) => distance(vehicle, a) - distance(vehicle, b));
   return choices[0] || null;
 }
+/** Ranking de proximidade dos pontos de interesse a partir do veículo (não encontrados primeiro, ordenados por distância). */
+export function rankByProximity(vehicle, points = DISCOVERIES, known = new Set()) {
+  const pool = points.some(p => !known.has(p.id)) ? points.filter(p => !known.has(p.id)) : [...points];
+  return pool
+    .map(point => ({ point, id: point.id, kind: point.kind, title: point.title, distance: Math.round(distance(vehicle, point)), found: known.has(point.id) }))
+    .sort((a, b) => a.distance - b.distance)
+    .map((entry, idx) => ({ ...entry, rank: idx + 1 }));
+}
 
 
 const recordings = {

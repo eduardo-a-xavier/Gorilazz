@@ -47,6 +47,23 @@ export function navigationInput(vehicle, navigation) {
   if (navigation.index === points.length - 1 && remaining < 8 && Math.abs(vehicle.speed) < 1) return { arrived: true, throttle: false, brake: true, steer: 0 };
   const angle = Math.atan2(-(target.x - vehicle.x), -(target.z - vehicle.z));
   const turn = Math.atan2(Math.sin(angle - vehicle.heading), Math.cos(angle - vehicle.heading));
+  if (!navigation.reversing && ((Math.abs(turn) > 1.65 && remaining > 10) || (vehicle.blocked && remaining > 8))) {
+    navigation.reversing = true;
+    navigation.reverseTicks = 0;
+    navigation.reverseSteer = -Math.sign(turn || 1);
+  }
+  if (navigation.reversing) {
+    navigation.reverseTicks++;
+    if ((vehicle.blocked && vehicle.speed <= 0 && navigation.reverseTicks > 15) || (Math.abs(turn) < 1.15 && navigation.reverseTicks >= 45) || navigation.reverseTicks > 300) {
+      navigation.reversing = false;
+    } else {
+      if (!vehicle.reverseReady && vehicle.speed >= -.05) {
+        if (Math.abs(vehicle.speed) >= .05) return { throttle: false, brake: true, steer: 0, arrived: false };
+        return { throttle: false, brake: !vehicle.brakeWasDown, steer: 0, arrived: false };
+      }
+      return { throttle: false, brake: true, steer: clamp((navigation.reverseSteer ?? -Math.sign(turn || 1)) * .9, -1, 1), arrived: false };
+    }
+  }
   const desiredSpeed = Math.min(10, Math.max(2, 10 / (1 + Math.abs(turn) * 3)), Math.sqrt(Math.max(0, remaining - 5) * 7));
-  return { throttle: vehicle.speed < desiredSpeed - .5, brake: vehicle.speed > desiredSpeed + .5 || vehicle.speed < 0, steer: clamp(turn * 2.2, -1, 1), arrived: false };
+  return { throttle: vehicle.speed < desiredSpeed - .5, brake: vehicle.speed > desiredSpeed + .5, steer: clamp(turn * 2.2, -1, 1), arrived: false };
 }
