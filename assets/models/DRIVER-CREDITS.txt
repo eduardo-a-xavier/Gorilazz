@@ -1,0 +1,31 @@
+Piloto do Geep (driver-pilot.glb)
+Base de personagem e animação: Quaternius
+Pacotes: Universal Base Characters e Universal Animation Library
+Fonte: https://quaternius.com/
+Licença: Creative Commons Zero 1.0 Universal (CC0 1.0)
+https://creativecommons.org/publicdomain/zero/1.0/
+
+Material derivado de: Superhero_Male_FullBody.gltf (malha e esqueleto) e UAL1_Standard.glb (ação base de condução), ambos de Quaternius.
+
+Acréscimos autorais do projeto Gorilazz — A estrada (sem fonte externa):
+- jaqueta com painel peitoral, lapelas e barra contínua na cintura;
+- óculos/viseira e calota do capacete;
+- luvas de direção com punhos;
+- fones over-ear Kong FM.
+
+Adaptações no projeto:
+- ajuste de proporções, materiais sólidos na paleta do site e simplificação da malha;
+- esqueleto de 65 ossos preservado; clipe Driving_Loop com 195 canais;
+- nós de contrato para a cena: driver, driver-head, upperArmL e upperArmR;
+- encaixe no banco esquerdo do Geep por medição (driver_fit.json): posição (-0.6213, 0.208, 0.4471), escala 1.22, rotação Y 0.
+- exportação GLB única, sem imagens externas.
+
+Dados técnicos do arquivo distribuído:
+- 6 malhas e 1.526 triângulos na exportação;
+- 1 skin (65 ossos);
+- clipe Driving_Loop (195 canais);
+- 0 imagens externas;
+- 188.920 bytes;
+- SHA-256: db07755496a3426af1349b99dea99644918daf573b8c7b45608571fed9784200
+
+Não há vínculo nem endosso de Quaternius ao projeto acadêmico. A CC0 dispensa atribuição; ela é mantida por transparência.
