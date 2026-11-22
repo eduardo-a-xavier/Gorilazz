@@ -1,0 +1,1326 @@
+{
+  "timestamp": "2026-11-20 21:52:05",
+  "port": 3115,
+  "covers_http": {
+    "gorillaz-2001.jpg": {
+      "status": 200,
+      "content_type": "image/jpeg",
+      "bytes": 86384
+    },
+    "demon-days-2005.jpg": {
+      "status": 200,
+      "content_type": "image/jpeg",
+      "bytes": 73897
+    },
+    "plastic-beach-2010.jpg": {
+      "status": 200,
+      "content_type": "image/jpeg",
+      "bytes": 91276
+    },
+    "the-fall-2010.jpg": {
+      "status": 200,
+      "content_type": "image/jpeg",
+      "bytes": 108336
+    },
+    "humanz-2017.jpg": {
+      "status": 200,
+      "content_type": "image/jpeg",
+      "bytes": 65312
+    },
+    "the-now-now-2018.jpg": {
+      "status": 200,
+      "content_type": "image/jpeg",
+      "bytes": 130387
+    },
+    "song-machine-2020.jpg": {
+      "status": 200,
+      "content_type": "image/jpeg",
+      "bytes": 147776
+    },
+    "cracker-island-2023.jpg": {
+      "status": 200,
+      "content_type": "image/jpeg",
+      "bytes": 135480
+    }
+  },
+  "console_errors": [],
+  "page_errors": [],
+  "http_errors": [],
+  "camera_eduardo": {
+    "trechoA_kong_rente_predios": {
+      "frames": 229,
+      "jumps_gt_0_30m": 35,
+      "max_delta_dist_m": 1.379,
+      "inside_building_frames": 0,
+      "occluded_frames": 0,
+      "min_dist_m": 8.23,
+      "max_speed_kmh": 108.0
+    },
+    "trechoB_portal3_alta_velocidade": {
+      "frames": 145,
+      "jumps_gt_0_30m": 3,
+      "max_delta_dist_m": 0.51,
+      "inside_building_frames": 0,
+      "occluded_frames": 0,
+      "min_dist_m": 21.44,
+      "max_speed_kmh": 108.0
+    },
+    "trechoC_neon_re_entre_predios": {
+      "frames": 187,
+      "jumps_gt_0_30m": 2,
+      "max_delta_dist_m": 0.668,
+      "inside_building_frames": 0,
+      "occluded_frames": 0,
+      "min_dist_m": 24.96,
+      "max_speed_kmh": 56.6
+    }
+  },
+  "first_person": {
+    "parado_visao_padrao": {
+      "cabinVisible": true,
+      "driverVisible": true,
+      "boxArmCount": 12,
+      "boxArmsAnyVisible": false,
+      "visibleDriverMeshes": [
+        "gloves_mesh",
+        "gloves_mesh_1",
+        "gloves_mesh_2",
+        "jacket_mesh",
+        "jacket_mesh_1",
+        "jacket_mesh_2"
+      ],
+      "hiddenDriverMeshes": [
+        "Eyebrows",
+        "Eyes",
+        "headgear_mesh",
+        "headgear_mesh_1",
+        "headgear_mesh_2",
+        "headgear_mesh_3",
+        "Sphere005_Retopology004",
+        "Sphere005_Retopology004_1",
+        "Sphere005_Retopology004_2",
+        "Sphere005_Retopology004_3"
+      ],
+      "viewport": {
+        "w": 1440,
+        "h": 808,
+        "top": 92,
+        "bottom": 900
+      },
+      "bonesOnScreen": {
+        "hand_l": {
+          "ndcX": -0.338,
+          "ndcY": -1.841,
+          "ndcZ": 0.711,
+          "px": 477,
+          "py": 1240,
+          "inFrame": false
+        },
+        "hand_r": {
+          "ndcX": 0.341,
+          "ndcY": -1.845,
+          "ndcZ": 0.708,
+          "px": 965,
+          "py": 1241,
+          "inFrame": false
+        },
+        "lowerarm_l": {
+          "ndcX": -0.608,
+          "ndcY": -3.328,
+          "ndcZ": 0.568,
+          "px": 282,
+          "py": 1841,
+          "inFrame": false
+        },
+        "lowerarm_r": {
+          "ndcX": 0.592,
+          "ndcY": -3.478,
+          "ndcZ": 0.525,
+          "px": 1147,
+          "py": 1901,
+          "inFrame": false
+        }
+      }
+    },
+    "parado_olhando_volante": {
+      "hand_l": {
+        "ndcX": -0.22,
+        "ndcY": -0.602,
+        "inFrame": true
+      },
+      "hand_r": {
+        "ndcX": 0.223,
+        "ndcY": -0.604,
+        "inFrame": true
+      }
+    },
+    "esterco_esquerda": {
+      "steering": 0.49,
+      "speed": 6.42,
+      "hand_l": [
+        -1.269,
+        2.129,
+        -14.394
+      ],
+      "hand_r": [
+        -0.911,
+        2.457,
+        -14.602
+      ]
+    },
+    "esterco_direita": {
+      "steering": -0.376,
+      "speed": 17,
+      "hand_l": [
+        -10.314,
+        2.392,
+        -29.749
+      ],
+      "hand_r": [
+        -9.867,
+        2.14,
+        -29.582
+      ]
+    },
+    "radio": {
+      "radioPressed": "true",
+      "hand_l": [
+        -0.088,
+        2.328,
+        -39.914
+      ],
+      "hand_r": [
+        0.233,
+        2.218,
+        -39.137
+      ]
+    }
+  },
+  "band": {
+    "members": [
+      {
+        "member": "twod",
+        "found": true,
+        "hasSkinnedRig": true,
+        "hasInstrument": true,
+        "deltas": {
+          "body": 0,
+          "left_upper_arm": 0.01778,
+          "left_forearm": 0.02754,
+          "right_upper_arm": 0.00765,
+          "right_forearm": 0.01968,
+          "head": 0.05119
+        },
+        "fps": 56.1,
+        "triangles": "154803",
+        "drawCalls": "244"
+      },
+      {
+        "member": "murdoc",
+        "found": true,
+        "hasSkinnedRig": true,
+        "hasInstrument": true,
+        "deltas": {
+          "body": 0,
+          "left_upper_arm": 0.04349,
+          "left_forearm": 0.06813,
+          "right_upper_arm": 0.03197,
+          "right_forearm": 0.0836,
+          "head": 0.05539
+        },
+        "fps": 52.7,
+        "triangles": "138067",
+        "drawCalls": "168"
+      },
+      {
+        "member": "noodle",
+        "found": true,
+        "hasSkinnedRig": true,
+        "hasInstrument": true,
+        "deltas": {
+          "body": 0,
+          "left_upper_arm": 0.02766,
+          "left_forearm": 0.04607,
+          "right_upper_arm": 0.01583,
+          "right_forearm": 0.03441,
+          "head": 0.02426
+        },
+        "fps": 54.4,
+        "triangles": "167845",
+        "drawCalls": "171"
+      },
+      {
+        "member": "russel",
+        "found": true,
+        "hasSkinnedRig": true,
+        "hasInstrument": true,
+        "deltas": {
+          "body": 0,
+          "left_upper_arm": 0.05153,
+          "left_forearm": 0.1035,
+          "right_upper_arm": 0.05916,
+          "right_forearm": 0.08775,
+          "head": 0.00845
+        },
+        "fps": 56.1,
+        "triangles": "160861",
+        "drawCalls": "161"
+      }
+    ]
+  },
+  "panels": {
+    "eras_8_covers": [
+      {
+        "index": 0,
+        "title": "Uma banda que atravessa a tela.",
+        "imgSrc": null,
+        "complete": false,
+        "naturalW": 0,
+        "naturalH": 0,
+        "hasFrame": true,
+        "frameRect": {
+          "w": 1179,
+          "h": 162
+        },
+        "creditText": "Gorillaz (2001) · Arte: Jamie Hewlett · Parlophone Records / uso acadêmico"
+      },
+      {
+        "index": 1,
+        "title": "O mundo escurece. O som se expande.",
+        "imgSrc": null,
+        "complete": false,
+        "naturalW": 0,
+        "naturalH": 0,
+        "hasFrame": true,
+        "frameRect": {
+          "w": 1179,
+          "h": 162
+        },
+        "creditText": "Demon Days (2005) · Arte: Jamie Hewlett · Parlophone Records / uso acadêmico"
+      },
+      {
+        "index": 2,
+        "title": "Uma ilha feita do que descartamos.",
+        "imgSrc": null,
+        "complete": false,
+        "naturalW": 0,
+        "naturalH": 0,
+        "hasFrame": true,
+        "frameRect": {
+          "w": 1179,
+          "h": 162
+        },
+        "creditText": "Plastic Beach (2010) · Arte: Jamie Hewlett · Parlophone Records / uso acadêmico"
+      },
+      {
+        "index": 3,
+        "title": "A estrada vira um caderno de som.",
+        "imgSrc": null,
+        "complete": false,
+        "naturalW": 0,
+        "naturalH": 0,
+        "hasFrame": true,
+        "frameRect": {
+          "w": 1179,
+          "h": 162
+        },
+        "creditText": "The Fall (2010) · Arte: Jamie Hewlett · Parlophone Records / uso acadêmico"
+      },
+      {
+        "index": 4,
+        "title": "Muitas vozes numa mesma sala.",
+        "imgSrc": null,
+        "complete": false,
+        "naturalW": 0,
+        "naturalH": 0,
+        "hasFrame": true,
+        "frameRect": {
+          "w": 1179,
+          "h": 162
+        },
+        "creditText": "Humanz (2017) · Arte: Jamie Hewlett · Parlophone Records / uso acadêmico"
+      },
+      {
+        "index": 5,
+        "title": "Mais espaço para a voz de 2-D.",
+        "imgSrc": null,
+        "complete": false,
+        "naturalW": 0,
+        "naturalH": 0,
+        "hasFrame": true,
+        "frameRect": {
+          "w": 1179,
+          "h": 162
+        },
+        "creditText": "The Now Now (2018) · Arte: Jamie Hewlett · Parlophone Records / uso acadêmico"
+      },
+      {
+        "index": 6,
+        "title": "Cada canção abre uma porta.",
+        "imgSrc": null,
+        "complete": false,
+        "naturalW": 0,
+        "naturalH": 0,
+        "hasFrame": true,
+        "frameRect": {
+          "w": 1179,
+          "h": 162
+        },
+        "creditText": "Song Machine, Season One (2020) · Arte: Jamie Hewlett · Gorillaz Partnership / Parlophone / uso acadêmico"
+      },
+      {
+        "index": 7,
+        "title": "Neon, rituais e aparência.",
+        "imgSrc": null,
+        "complete": false,
+        "naturalW": 0,
+        "naturalH": 0,
+        "hasFrame": true,
+        "frameRect": {
+          "w": 1179,
+          "h": 162
+        },
+        "creditText": "Cracker Island (2023) · Arte: Jamie Hewlett · Parlophone Records / uso acadêmico"
+      }
+    ],
+    "desktop_1440": {
+      "innerWidth": 1440,
+      "docScrollWidth": 1440,
+      "bodyScrollWidth": 1440,
+      "overflow": false,
+      "emptyHeadings": [],
+      "wikiHits": []
+    },
+    "mobile_390": {
+      "innerWidth": 390,
+      "docScrollWidth": 390,
+      "bodyScrollWidth": 390,
+      "overflow": false,
+      "emptyHeadings": 0
+    },
+    "outdoors_3d": {
+      "canvasAdMaterials": 23,
+      "sample": [
+        {
+          "w": 512,
+          "h": 1056,
+          "pos": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "w": 512,
+          "h": 1056,
+          "pos": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "w": 512,
+          "h": 512,
+          "pos": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "w": 512,
+          "h": 1536,
+          "pos": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "w": 512,
+          "h": 512,
+          "pos": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "w": 512,
+          "h": 512,
+          "pos": [
+            0,
+            0,
+            0
+          ]
+        }
+      ]
+    },
+    "eras_8_covers_dom_verified": [
+      {
+        "i": 0,
+        "src": "./assets/covers/gorillaz-2001.jpg",
+        "complete": true,
+        "w": 600,
+        "h": 600
+      },
+      {
+        "i": 1,
+        "src": "./assets/covers/demon-days-2005.jpg",
+        "complete": true,
+        "w": 600,
+        "h": 600
+      },
+      {
+        "i": 2,
+        "src": "./assets/covers/plastic-beach-2010.jpg",
+        "complete": true,
+        "w": 600,
+        "h": 600
+      },
+      {
+        "i": 3,
+        "src": "./assets/covers/the-fall-2010.jpg",
+        "complete": true,
+        "w": 600,
+        "h": 600
+      },
+      {
+        "i": 4,
+        "src": "./assets/covers/humanz-2017.jpg",
+        "complete": true,
+        "w": 600,
+        "h": 600
+      },
+      {
+        "i": 5,
+        "src": "./assets/covers/the-now-now-2018.jpg",
+        "complete": true,
+        "w": 600,
+        "h": 600
+      },
+      {
+        "i": 6,
+        "src": "./assets/covers/song-machine-2020.jpg",
+        "complete": true,
+        "w": 600,
+        "h": 600
+      },
+      {
+        "i": 7,
+        "src": "./assets/covers/cracker-island-2023.jpg",
+        "complete": true,
+        "w": 600,
+        "h": 600
+      }
+    ]
+  },
+  "screenshots": [
+    {
+      "name": "paineis-02-eras-cracker-1440",
+      "path": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\polimento-2026-11-20\\paineis-02-eras-cracker-1440.png"
+    },
+    {
+      "name": "paineis-01-eras-gorillaz-1440",
+      "path": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\polimento-2026-11-20\\paineis-01-eras-gorillaz-1440.png"
+    },
+    {
+      "name": "paineis-04-eras-mobile-390",
+      "path": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\polimento-2026-11-20\\paineis-04-eras-mobile-390.png"
+    },
+    {
+      "name": "1p-01-parado-visao-padrao",
+      "path": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\polimento-2026-11-20\\1p-01-parado-visao-padrao.png"
+    },
+    {
+      "name": "1p-02-parado-olhando-volante",
+      "path": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\polimento-2026-11-20\\1p-02-parado-olhando-volante.png"
+    },
+    {
+      "name": "1p-03-esterco-esquerda",
+      "path": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\polimento-2026-11-20\\1p-03-esterco-esquerda.png"
+    },
+    {
+      "name": "1p-04-esterco-direita",
+      "path": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\polimento-2026-11-20\\1p-04-esterco-direita.png"
+    },
+    {
+      "name": "1p-05-radio",
+      "path": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\polimento-2026-11-20\\1p-05-radio.png"
+    },
+    {
+      "name": "banda-01-twod",
+      "path": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\polimento-2026-11-20\\banda-01-twod.png"
+    },
+    {
+      "name": "banda-02-murdoc",
+      "path": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\polimento-2026-11-20\\banda-02-murdoc.png"
+    },
+    {
+      "name": "banda-03-noodle",
+      "path": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\polimento-2026-11-20\\banda-03-noodle.png"
+    },
+    {
+      "name": "banda-04-russel",
+      "path": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\polimento-2026-11-20\\banda-04-russel.png"
+    },
+    {
+      "name": "paineis-03-outdoors-cidade3d",
+      "path": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\polimento-2026-11-20\\paineis-03-outdoors-cidade3d.png"
+    },
+    {
+      "name": "paineis-05-outdoors-ato4",
+      "path": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\polimento-2026-11-20\\paineis-05-outdoors-ato4.png"
+    },
+    {
+      "name": "cam-eduardo-trechoA-predios",
+      "path": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\polimento-2026-11-20\\cam-eduardo-trechoA-predios.png"
+    },
+    {
+      "name": "cam-eduardo-trechoB-portal3",
+      "path": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\polimento-2026-11-20\\cam-eduardo-trechoB-portal3.png"
+    },
+    {
+      "name": "cam-eduardo-trechoC-re-neon",
+      "path": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\polimento-2026-11-20\\cam-eduardo-trechoC-re-neon.png"
+    }
+  ],
+  "camera_eduardo_clean": {
+    "A": {
+      "frames": 178,
+      "jumps_gt_030": 7,
+      "max_dd": 0.452,
+      "max_dt_ms": 50,
+      "inside": 0,
+      "occluded": 0,
+      "min_d": 25.92,
+      "max_spd_kmh": 108,
+      "sample_jumps": [
+        {
+          "dt": 17,
+          "dd": 0.452,
+          "d": 31.75,
+          "spd": 0.3,
+          "inB": false,
+          "occ": false
+        },
+        {
+          "dt": 17,
+          "dd": 0.417,
+          "d": 31.34,
+          "spd": 0.8,
+          "inB": false,
+          "occ": false
+        },
+        {
+          "dt": 17,
+          "dd": 0.388,
+          "d": 30.95,
+          "spd": 1.3,
+          "inB": false,
+          "occ": false
+        },
+        {
+          "dt": 17,
+          "dd": 0.357,
+          "d": 30.59,
+          "spd": 1.8,
+          "inB": false,
+          "occ": false
+        },
+        {
+          "dt": 17,
+          "dd": 0.334,
+          "d": 30.26,
+          "spd": 2.4,
+          "inB": false,
+          "occ": false
+        }
+      ]
+    },
+    "B": {
+      "frames": 105,
+      "jumps_gt_030": 18,
+      "max_dd": 0.489,
+      "max_dt_ms": 50,
+      "inside": 0,
+      "occluded": 0,
+      "min_d": 22.39,
+      "max_spd_kmh": 108,
+      "sample_jumps": [
+        {
+          "dt": 17,
+          "dd": 0.322,
+          "d": 22.71,
+          "spd": 86.1,
+          "inB": false,
+          "occ": false
+        },
+        {
+          "dt": 17,
+          "dd": 0.489,
+          "d": 23.2,
+          "spd": 86.6,
+          "inB": false,
+          "occ": false
+        },
+        {
+          "dt": 17,
+          "dd": 0.305,
+          "d": 23.51,
+          "spd": 86.9,
+          "inB": false,
+          "occ": false
+        },
+        {
+          "dt": 17,
+          "dd": 0.467,
+          "d": 24.1,
+          "spd": 87.6,
+          "inB": false,
+          "occ": false
+        },
+        {
+          "dt": 17,
+          "dd": 0.412,
+          "d": 25.55,
+          "spd": 89.6,
+          "inB": false,
+          "occ": false
+        }
+      ]
+    },
+    "C": {
+      "frames": 141,
+      "jumps_gt_030": 5,
+      "max_dd": 0.428,
+      "max_dt_ms": 50,
+      "inside": 0,
+      "occluded": 0,
+      "min_d": 25.11,
+      "max_spd_kmh": 55.4,
+      "sample_jumps": [
+        {
+          "dt": 50,
+          "dd": 0.428,
+          "d": 30.86,
+          "spd": 55,
+          "inB": false,
+          "occ": false
+        },
+        {
+          "dt": 17,
+          "dd": 0.39,
+          "d": 30.38,
+          "spd": 0.3,
+          "inB": false,
+          "occ": false
+        },
+        {
+          "dt": 17,
+          "dd": 0.358,
+          "d": 30.02,
+          "spd": 0.8,
+          "inB": false,
+          "occ": false
+        },
+        {
+          "dt": 17,
+          "dd": 0.327,
+          "d": 29.69,
+          "spd": 1.3,
+          "inB": false,
+          "occ": false
+        },
+        {
+          "dt": 17,
+          "dd": 0.302,
+          "d": 29.39,
+          "spd": 1.8,
+          "inB": false,
+          "occ": false
+        }
+      ]
+    }
+  },
+  "revalidacao_pos_correcao": {
+    "timestamp": "2026-11-20 22:09:21",
+    "port": 3115,
+    "console_errors": [],
+    "page_errors": [],
+    "http_errors": [],
+    "first_person_viewports": {
+      "1440x900": {
+        "parado": {
+          "viewport": {
+            "w": 1440,
+            "h": 900,
+            "canvasH": 808
+          },
+          "steering": 0,
+          "speedKmh": 0,
+          "boxArmsAnyVisible": false,
+          "driverVisible": true,
+          "fov": 72.5,
+          "hand_l": {
+            "ndcX": -0.199,
+            "ndcY": -0.573,
+            "px": 577,
+            "py": 728,
+            "inFrame": true
+          },
+          "hand_r": {
+            "ndcX": 0.2,
+            "ndcY": -0.573,
+            "px": 864,
+            "py": 728,
+            "inFrame": true
+          },
+          "lowerarm_l": {
+            "ndcX": -0.314,
+            "ndcY": -1.009,
+            "px": 494,
+            "py": 904,
+            "inFrame": false
+          },
+          "lowerarm_r": {
+            "ndcX": 0.314,
+            "ndcY": -1.046,
+            "px": 946,
+            "py": 918,
+            "inFrame": false
+          }
+        },
+        "esquerda": {
+          "viewport": {
+            "w": 1440,
+            "h": 900,
+            "canvasH": 808
+          },
+          "steering": 0.496,
+          "speedKmh": 21.4,
+          "boxArmsAnyVisible": false,
+          "driverVisible": true,
+          "fov": 75,
+          "hand_l": {
+            "ndcX": -0.227,
+            "ndcY": -0.696,
+            "px": 557,
+            "py": 777,
+            "inFrame": true
+          },
+          "hand_r": {
+            "ndcX": 0.101,
+            "ndcY": -0.361,
+            "px": 793,
+            "py": 642,
+            "inFrame": true
+          },
+          "lowerarm_l": {
+            "ndcX": -0.364,
+            "ndcY": -1.175,
+            "px": 458,
+            "py": 971,
+            "inFrame": false
+          },
+          "lowerarm_r": {
+            "ndcX": 0.2,
+            "ndcY": -0.751,
+            "px": 864,
+            "py": 799,
+            "inFrame": true
+          }
+        },
+        "direita": {
+          "viewport": {
+            "w": 1440,
+            "h": 900,
+            "canvasH": 808
+          },
+          "steering": -0.38,
+          "speedKmh": 59.4,
+          "boxArmsAnyVisible": false,
+          "driverVisible": true,
+          "fov": 75,
+          "hand_l": {
+            "ndcX": -0.119,
+            "ndcY": -0.393,
+            "px": 634,
+            "py": 655,
+            "inFrame": true
+          },
+          "hand_r": {
+            "ndcX": 0.232,
+            "ndcY": -0.635,
+            "px": 887,
+            "py": 753,
+            "inFrame": true
+          },
+          "lowerarm_l": {
+            "ndcX": -0.212,
+            "ndcY": -0.76,
+            "px": 568,
+            "py": 803,
+            "inFrame": true
+          },
+          "lowerarm_r": {
+            "ndcX": 0.361,
+            "ndcY": -1.114,
+            "px": 980,
+            "py": 946,
+            "inFrame": false
+          }
+        },
+        "radio": {
+          "viewport": {
+            "w": 1440,
+            "h": 900,
+            "canvasH": 808
+          },
+          "steering": 0,
+          "speedKmh": 0,
+          "boxArmsAnyVisible": false,
+          "driverVisible": true,
+          "fov": 75,
+          "hand_l": {
+            "ndcX": -0.609,
+            "ndcY": -0.517,
+            "px": 282,
+            "py": 705,
+            "inFrame": true
+          },
+          "hand_r": {
+            "ndcX": 0.051,
+            "ndcY": -0.34,
+            "px": 757,
+            "py": 633,
+            "inFrame": true
+          },
+          "lowerarm_l": {
+            "ndcX": -0.584,
+            "ndcY": -1.004,
+            "px": 300,
+            "py": 902,
+            "inFrame": false
+          },
+          "lowerarm_r": {
+            "ndcX": 0.136,
+            "ndcY": -0.614,
+            "px": 818,
+            "py": 744,
+            "inFrame": true
+          }
+        },
+        "overflow": {
+          "iw": 1440,
+          "docSW": 1440,
+          "bodySW": 1440,
+          "ok": true
+        }
+      },
+      "1585x746": {
+        "parado": {
+          "viewport": {
+            "w": 1585,
+            "h": 746,
+            "canvasH": 654
+          },
+          "steering": 0,
+          "speedKmh": 0,
+          "boxArmsAnyVisible": false,
+          "driverVisible": true,
+          "fov": 73.5,
+          "hand_l": {
+            "ndcX": -0.143,
+            "ndcY": -0.547,
+            "px": 679,
+            "py": 598,
+            "inFrame": true
+          },
+          "hand_r": {
+            "ndcX": 0.144,
+            "ndcY": -0.547,
+            "px": 907,
+            "py": 598,
+            "inFrame": true
+          },
+          "lowerarm_l": {
+            "ndcX": -0.225,
+            "ndcY": -0.969,
+            "px": 614,
+            "py": 736,
+            "inFrame": true
+          },
+          "lowerarm_r": {
+            "ndcX": 0.226,
+            "ndcY": -1.005,
+            "px": 971,
+            "py": 748,
+            "inFrame": false
+          }
+        },
+        "esquerda": {
+          "viewport": {
+            "w": 1585,
+            "h": 746,
+            "canvasH": 654
+          },
+          "steering": 0.492,
+          "speedKmh": 22.7,
+          "boxArmsAnyVisible": false,
+          "driverVisible": true,
+          "fov": 75,
+          "hand_l": {
+            "ndcX": -0.167,
+            "ndcY": -0.693,
+            "px": 660,
+            "py": 646,
+            "inFrame": true
+          },
+          "hand_r": {
+            "ndcX": 0.074,
+            "ndcY": -0.363,
+            "px": 852,
+            "py": 538,
+            "inFrame": true
+          },
+          "lowerarm_l": {
+            "ndcX": -0.267,
+            "ndcY": -1.17,
+            "px": 581,
+            "py": 802,
+            "inFrame": false
+          },
+          "lowerarm_r": {
+            "ndcX": 0.147,
+            "ndcY": -0.757,
+            "px": 909,
+            "py": 667,
+            "inFrame": true
+          }
+        },
+        "direita": {
+          "viewport": {
+            "w": 1585,
+            "h": 746,
+            "canvasH": 654
+          },
+          "steering": -0.386,
+          "speedKmh": 57,
+          "boxArmsAnyVisible": false,
+          "driverVisible": true,
+          "fov": 75,
+          "hand_l": {
+            "ndcX": -0.09,
+            "ndcY": -0.388,
+            "px": 721,
+            "py": 546,
+            "inFrame": true
+          },
+          "hand_r": {
+            "ndcX": 0.166,
+            "ndcY": -0.644,
+            "px": 924,
+            "py": 630,
+            "inFrame": true
+          },
+          "lowerarm_l": {
+            "ndcX": -0.16,
+            "ndcY": -0.753,
+            "px": 665,
+            "py": 665,
+            "inFrame": true
+          },
+          "lowerarm_r": {
+            "ndcX": 0.257,
+            "ndcY": -1.128,
+            "px": 997,
+            "py": 788,
+            "inFrame": false
+          }
+        },
+        "radio": {
+          "viewport": {
+            "w": 1585,
+            "h": 746,
+            "canvasH": 654
+          },
+          "steering": 0,
+          "speedKmh": 0,
+          "boxArmsAnyVisible": false,
+          "driverVisible": true,
+          "fov": 75,
+          "hand_l": {
+            "ndcX": -0.447,
+            "ndcY": -0.516,
+            "px": 438,
+            "py": 588,
+            "inFrame": true
+          },
+          "hand_r": {
+            "ndcX": 0.038,
+            "ndcY": -0.341,
+            "px": 823,
+            "py": 530,
+            "inFrame": true
+          },
+          "lowerarm_l": {
+            "ndcX": -0.429,
+            "ndcY": -1.003,
+            "px": 453,
+            "py": 747,
+            "inFrame": false
+          },
+          "lowerarm_r": {
+            "ndcX": 0.1,
+            "ndcY": -0.615,
+            "px": 872,
+            "py": 620,
+            "inFrame": true
+          }
+        }
+      },
+      "390x844": {
+        "parado": {
+          "viewport": {
+            "w": 390,
+            "h": 844,
+            "canvasH": 766
+          },
+          "steering": 0,
+          "speedKmh": 0,
+          "boxArmsAnyVisible": false,
+          "driverVisible": true,
+          "fov": 82.7,
+          "hand_l": {
+            "ndcX": -0.585,
+            "ndcY": -0.497,
+            "px": 81,
+            "py": 651,
+            "inFrame": true
+          },
+          "hand_r": {
+            "ndcX": 0.588,
+            "ndcY": -0.497,
+            "px": 310,
+            "py": 651,
+            "inFrame": true
+          },
+          "lowerarm_l": {
+            "ndcX": -0.925,
+            "ndcY": -0.866,
+            "px": 15,
+            "py": 793,
+            "inFrame": true
+          },
+          "lowerarm_r": {
+            "ndcX": 0.927,
+            "ndcY": -0.897,
+            "px": 376,
+            "py": 805,
+            "inFrame": true
+          }
+        },
+        "esquerda": {
+          "viewport": {
+            "w": 390,
+            "h": 844,
+            "canvasH": 766
+          },
+          "steering": 0.497,
+          "speedKmh": 21.2,
+          "boxArmsAnyVisible": false,
+          "driverVisible": true,
+          "fov": 87.8,
+          "hand_l": {
+            "ndcX": -0.633,
+            "ndcY": -0.557,
+            "px": 72,
+            "py": 674,
+            "inFrame": true
+          },
+          "hand_r": {
+            "ndcX": 0.282,
+            "ndcY": -0.289,
+            "px": 250,
+            "py": 572,
+            "inFrame": true
+          },
+          "lowerarm_l": {
+            "ndcX": -1.017,
+            "ndcY": -0.94,
+            "px": -3,
+            "py": 821,
+            "inFrame": false
+          },
+          "lowerarm_r": {
+            "ndcX": 0.559,
+            "ndcY": -0.6,
+            "px": 304,
+            "py": 691,
+            "inFrame": true
+          }
+        },
+        "direita": {
+          "viewport": {
+            "w": 390,
+            "h": 844,
+            "canvasH": 766
+          },
+          "steering": -0.405,
+          "speedKmh": 49.4,
+          "boxArmsAnyVisible": false,
+          "driverVisible": true,
+          "fov": 88,
+          "hand_l": {
+            "ndcX": -0.321,
+            "ndcY": -0.306,
+            "px": 132,
+            "py": 578,
+            "inFrame": true
+          },
+          "hand_r": {
+            "ndcX": 0.639,
+            "ndcY": -0.515,
+            "px": 320,
+            "py": 658,
+            "inFrame": true
+          },
+          "lowerarm_l": {
+            "ndcX": -0.582,
+            "ndcY": -0.599,
+            "px": 82,
+            "py": 690,
+            "inFrame": true
+          },
+          "lowerarm_r": {
+            "ndcX": 0.994,
+            "ndcY": -0.899,
+            "px": 389,
+            "py": 805,
+            "inFrame": true
+          }
+        },
+        "radio": {
+          "viewport": {
+            "w": 390,
+            "h": 844,
+            "canvasH": 766
+          },
+          "steering": 0,
+          "speedKmh": 0,
+          "boxArmsAnyVisible": false,
+          "driverVisible": true,
+          "fov": 88,
+          "hand_l": {
+            "ndcX": -1.694,
+            "ndcY": -0.411,
+            "px": -135,
+            "py": 618,
+            "inFrame": false
+          },
+          "hand_r": {
+            "ndcX": 0.143,
+            "ndcY": -0.27,
+            "px": 223,
+            "py": 565,
+            "inFrame": true
+          },
+          "lowerarm_l": {
+            "ndcX": -1.623,
+            "ndcY": -0.797,
+            "px": -122,
+            "py": 766,
+            "inFrame": false
+          },
+          "lowerarm_r": {
+            "ndcX": 0.38,
+            "ndcY": -0.488,
+            "px": 269,
+            "py": 648,
+            "inFrame": true
+          }
+        },
+        "overflow": {
+          "iw": 390,
+          "docSW": 390,
+          "bodySW": 390,
+          "ok": true
+        }
+      }
+    },
+    "outdoors_check": {
+      "has_null_for_monkey_and_mountain": true
+    },
+    "regression": {
+      "era_covers_loaded_count": 8,
+      "wiki_mentions": 0,
+      "band": {
+        "fpsNearBand": 58
+      },
+      "camera_portal3": {
+        "frames": 70,
+        "insideBuildingFrames": 0
+      }
+    },
+    "screenshots": [
+      {
+        "name": "reval-1p-1440x900-parado",
+        "path": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\polimento-2026-11-20\\reval-1p-1440x900-parado.png"
+      },
+      {
+        "name": "reval-1p-1440x900-esquerda",
+        "path": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\polimento-2026-11-20\\reval-1p-1440x900-esquerda.png"
+      },
+      {
+        "name": "reval-1p-1440x900-direita",
+        "path": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\polimento-2026-11-20\\reval-1p-1440x900-direita.png"
+      },
+      {
+        "name": "reval-1p-1440x900-radio",
+        "path": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\polimento-2026-11-20\\reval-1p-1440x900-radio.png"
+      },
+      {
+        "name": "reval-outdoors-ato4-closeup",
+        "path": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\polimento-2026-11-20\\reval-outdoors-ato4-closeup.png"
+      },
+      {
+        "name": "reval-outdoors-ato4-detalhe",
+        "path": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\polimento-2026-11-20\\reval-outdoors-ato4-detalhe.png"
+      },
+      {
+        "name": "reval-1p-1585x746-parado",
+        "path": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\polimento-2026-11-20\\reval-1p-1585x746-parado.png"
+      },
+      {
+        "name": "reval-1p-1585x746-esquerda",
+        "path": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\polimento-2026-11-20\\reval-1p-1585x746-esquerda.png"
+      },
+      {
+        "name": "reval-1p-1585x746-direita",
+        "path": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\polimento-2026-11-20\\reval-1p-1585x746-direita.png"
+      },
+      {
+        "name": "reval-1p-1585x746-radio",
+        "path": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\polimento-2026-11-20\\reval-1p-1585x746-radio.png"
+      },
+      {
+        "name": "reval-1p-390x844-parado",
+        "path": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\polimento-2026-11-20\\reval-1p-390x844-parado.png"
+      },
+      {
+        "name": "reval-1p-390x844-esquerda",
+        "path": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\polimento-2026-11-20\\reval-1p-390x844-esquerda.png"
+      },
+      {
+        "name": "reval-1p-390x844-direita",
+        "path": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\polimento-2026-11-20\\reval-1p-390x844-direita.png"
+      },
+      {
+        "name": "reval-1p-390x844-radio",
+        "path": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\polimento-2026-11-20\\reval-1p-390x844-radio.png"
+      }
+    ]
+  }
+}

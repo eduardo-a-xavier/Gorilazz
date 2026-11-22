@@ -1,0 +1,15 @@
+{
+  "bytes": 9627595,
+  "fps": {
+    "kong_estudios": 60.2,
+    "bairro_murais": 60.1,
+    "mirante_moinho": 60.3
+  },
+  "draw": {
+    "kong_estudios": 316,
+    "bairro_murais": 164,
+    "mirante_moinho": 333
+  },
+  "errors": [],
+  "bytes_art": 4368
+}

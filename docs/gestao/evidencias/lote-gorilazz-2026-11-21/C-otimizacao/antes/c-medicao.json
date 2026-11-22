@@ -1,0 +1,572 @@
+{
+  "assets": [
+    {
+      "path": "/assets/models/gorillaz-phase7-web.glb",
+      "status": 200,
+      "bytes": 3407964,
+      "type": "fetch"
+    },
+    {
+      "path": "/assets/models/gorillaz-geep.glb",
+      "status": 200,
+      "bytes": 785068,
+      "type": "fetch"
+    },
+    {
+      "path": "/assets/environment/kong-studio.glb",
+      "status": 200,
+      "bytes": 668736,
+      "type": "fetch"
+    },
+    {
+      "path": "/assets/materials/asphalt-normal.png",
+      "status": 200,
+      "bytes": 477696,
+      "type": "image"
+    },
+    {
+      "path": "/assets/materials/wood-normal.png",
+      "status": 200,
+      "bytes": 477609,
+      "type": "image"
+    },
+    {
+      "path": "/assets/materials/earth-normal.png",
+      "status": 200,
+      "bytes": 477434,
+      "type": "image"
+    },
+    {
+      "path": "/assets/materials/plaster-normal.png",
+      "status": 200,
+      "bytes": 477409,
+      "type": "image"
+    },
+    {
+      "path": "/assets/materials/grass-normal.png",
+      "status": 200,
+      "bytes": 477321,
+      "type": "image"
+    },
+    {
+      "path": "/assets/materials/roof-normal.png",
+      "status": 200,
+      "bytes": 477306,
+      "type": "image"
+    },
+    {
+      "path": "/assets/materials/wood.png",
+      "status": 200,
+      "bytes": 310477,
+      "type": "image"
+    },
+    {
+      "path": "/assets/materials/roof.png",
+      "status": 200,
+      "bytes": 306557,
+      "type": "image"
+    },
+    {
+      "path": "/cf319c7d-0c02-4dfe-a2f6-13bfd63ad841",
+      "status": 200,
+      "bytes": 304904,
+      "type": "fetch"
+    },
+    {
+      "path": "/assets/materials/plaster.png",
+      "status": 200,
+      "bytes": 297959,
+      "type": "image"
+    },
+    {
+      "path": "/assets/materials/earth.png",
+      "status": 200,
+      "bytes": 273142,
+      "type": "image"
+    },
+    {
+      "path": "/assets/materials/grass.png",
+      "status": 200,
+      "bytes": 272448,
+      "type": "image"
+    },
+    {
+      "path": "/assets/materials/asphalt.png",
+      "status": 200,
+      "bytes": 267839,
+      "type": "image"
+    },
+    {
+      "path": "/assets/portraits/phase7-russel.png",
+      "status": 200,
+      "bytes": 212713,
+      "type": "image"
+    },
+    {
+      "path": "/abbbe496-f7b9-4f7f-bf7f-e758b53a8d52",
+      "status": 200,
+      "bytes": 212270,
+      "type": "fetch"
+    },
+    {
+      "path": "/assets/models/driver-pilot.glb",
+      "status": 200,
+      "bytes": 188920,
+      "type": "fetch"
+    },
+    {
+      "path": "/assets/portraits/phase7-noodle.png",
+      "status": 200,
+      "bytes": 186676,
+      "type": "image"
+    },
+    {
+      "path": "/assets/portraits/phase7-twod.png",
+      "status": 200,
+      "bytes": 182046,
+      "type": "image"
+    },
+    {
+      "path": "/assets/portraits/phase7-murdoc.png",
+      "status": 200,
+      "bytes": 181908,
+      "type": "image"
+    },
+    {
+      "path": "/assets/covers/song-machine-2020.jpg",
+      "status": 200,
+      "bytes": 147776,
+      "type": "image"
+    },
+    {
+      "path": "/assets/covers/cracker-island-2023.jpg",
+      "status": 200,
+      "bytes": 135480,
+      "type": "image"
+    },
+    {
+      "path": "/217c3a16-300a-400d-b537-fdd6d24a1c5a",
+      "status": 200,
+      "bytes": 132903,
+      "type": "fetch"
+    },
+    {
+      "path": "/assets/covers/the-now-now-2018.jpg",
+      "status": 200,
+      "bytes": 130387,
+      "type": "image"
+    },
+    {
+      "path": "/assets/covers/the-fall-2010.jpg",
+      "status": 200,
+      "bytes": 108336,
+      "type": "image"
+    },
+    {
+      "path": "/src/vendor/three.core.min.js",
+      "status": 200,
+      "bytes": 101312,
+      "type": "script"
+    },
+    {
+      "path": "/4c6685e9-8871-4aad-8923-0802b74ed610",
+      "status": 200,
+      "bytes": 101064,
+      "type": "fetch"
+    },
+    {
+      "path": "/assets/covers/plastic-beach-2010.jpg",
+      "status": 200,
+      "bytes": 91276,
+      "type": "image"
+    },
+    {
+      "path": "/assets/covers/gorillaz-2001.jpg",
+      "status": 200,
+      "bytes": 86384,
+      "type": "image"
+    },
+    {
+      "path": "/src/vendor/three.module.min.js",
+      "status": 200,
+      "bytes": 79335,
+      "type": "script"
+    },
+    {
+      "path": "/assets/radio/concreto.mp3",
+      "status": 200,
+      "bytes": 78109,
+      "type": "media"
+    },
+    {
+      "path": "/assets/covers/demon-days-2005.jpg",
+      "status": 200,
+      "bytes": 73897,
+      "type": "image"
+    },
+    {
+      "path": "/assets/covers/humanz-2017.jpg",
+      "status": 200,
+      "bytes": 65312,
+      "type": "image"
+    },
+    {
+      "path": "/assets/environment/broadleaf-tree.glb",
+      "status": 200,
+      "bytes": 59516,
+      "type": "fetch"
+    },
+    {
+      "path": "/bb81393b-86e5-497d-a80d-80cd240c8128",
+      "status": 200,
+      "bytes": 52704,
+      "type": "fetch"
+    },
+    {
+      "path": "/53c4cabd-eaea-48cf-b230-7cee2f0d8b2c",
+      "status": 200,
+      "bytes": 38725,
+      "type": "fetch"
+    },
+    {
+      "path": "/811ca67b-e537-47e6-9c9b-f5f36d192fb3",
+      "status": 200,
+      "bytes": 38724,
+      "type": "fetch"
+    },
+    {
+      "path": "/src/scene.js",
+      "status": 200,
+      "bytes": 28157,
+      "type": "script"
+    },
+    {
+      "path": "/src/vendor/GLTFLoader.js",
+      "status": 200,
+      "bytes": 25026,
+      "type": "script"
+    },
+    {
+      "path": "/05805b37-a3f1-4f05-9eb9-b7ee0fd7fcf5",
+      "status": 200,
+      "bytes": 22451,
+      "type": "fetch"
+    },
+    {
+      "path": "/src/app.js",
+      "status": 200,
+      "bytes": 22175,
+      "type": "script"
+    },
+    {
+      "path": "/assets/fonts/anton-latin.woff2",
+      "status": 200,
+      "bytes": 18612,
+      "type": "font"
+    },
+    {
+      "path": "/a003c4c2-7b92-4f49-b39b-4ef66357f405",
+      "status": 200,
+      "bytes": 18363,
+      "type": "fetch"
+    },
+    {
+      "path": "/9e4f1e9f-336c-4ca3-b5ca-2c015461d717",
+      "status": 200,
+      "bytes": 17049,
+      "type": "fetch"
+    },
+    {
+      "path": "/9539b6ed-e34e-4edb-81e5-13f3ab862f9e",
+      "status": 200,
+      "bytes": 17049,
+      "type": "fetch"
+    },
+    {
+      "path": "/d8cf2117-a728-4e7a-b2b1-d75c42904cff",
+      "status": 200,
+      "bytes": 15881,
+      "type": "fetch"
+    },
+    {
+      "path": "/src/city.js",
+      "status": 200,
+      "bytes": 12975,
+      "type": "script"
+    },
+    {
+      "path": "/688562f2-3818-44b6-99fe-5b609422b84d",
+      "status": 200,
+      "bytes": 12925,
+      "type": "fetch"
+    },
+    {
+      "path": "/9aade728-1fcb-4ecd-a48a-4ee455a83fc7",
+      "status": 200,
+      "bytes": 12447,
+      "type": "fetch"
+    },
+    {
+      "path": "/39adb6df-b7e7-4983-930e-e11b4aaa05f7",
+      "status": 200,
+      "bytes": 11757,
+      "type": "fetch"
+    },
+    {
+      "path": "/",
+      "status": 200,
+      "bytes": 11736,
+      "type": "document"
+    },
+    {
+      "path": "/src/content.js",
+      "status": 200,
+      "bytes": 9826,
+      "type": "script"
+    },
+    {
+      "path": "/src/world.css",
+      "status": 200,
+      "bytes": 9152,
+      "type": "stylesheet"
+    },
+    {
+      "path": "/src/editorial.css",
+      "status": 200,
+      "bytes": 8864,
+      "type": "stylesheet"
+    },
+    {
+      "path": "/src/world-data.js",
+      "status": 200,
+      "bytes": 8820,
+      "type": "script"
+    },
+    {
+      "path": "/src/vendor/BufferGeometryUtils.js",
+      "status": 200,
+      "bytes": 8092,
+      "type": "script"
+    },
+    {
+      "path": "/src/style.css",
+      "status": 200,
+      "bytes": 7834,
+      "type": "stylesheet"
+    },
+    {
+      "path": "/3579bc0e-8162-4b45-8c9a-97a5b9aaebb5",
+      "status": 200,
+      "bytes": 5933,
+      "type": "fetch"
+    },
+    {
+      "path": "/src/roads.js",
+      "status": 200,
+      "bytes": 5724,
+      "type": "script"
+    },
+    {
+      "path": "/src/cabin.js",
+      "status": 200,
+      "bytes": 5489,
+      "type": "script"
+    },
+    {
+      "path": "/src/band-pose.js",
+      "status": 200,
+      "bytes": 5427,
+      "type": "script"
+    },
+    {
+      "path": "/ba1da0d2-3c40-4488-9e32-1faab2cb507c",
+      "status": 200,
+      "bytes": 5329,
+      "type": "fetch"
+    },
+    {
+      "path": "/d51769a3-ab4e-4d5d-92cd-7cb6bf13cbfd",
+      "status": 200,
+      "bytes": 5102,
+      "type": "fetch"
+    },
+    {
+      "path": "/src/fauna.js",
+      "status": 200,
+      "bytes": 4414,
+      "type": "script"
+    },
+    {
+      "path": "/src/environment.js",
+      "status": 200,
+      "bytes": 3791,
+      "type": "script"
+    },
+    {
+      "path": "/src/pilot-rig.js",
+      "status": 200,
+      "bytes": 3768,
+      "type": "script"
+    },
+    {
+      "path": "/d100c0b2-270c-45ed-91d4-44583ffca7ba",
+      "status": 200,
+      "bytes": 3701,
+      "type": "fetch"
+    },
+    {
+      "path": "/4989ad7c-870e-4435-acdd-05ca3ba07206",
+      "status": 200,
+      "bytes": 3532,
+      "type": "fetch"
+    },
+    {
+      "path": "/src/landmarks.js",
+      "status": 200,
+      "bytes": 3462,
+      "type": "script"
+    },
+    {
+      "path": "/d2822577-246e-417c-913d-89b6106a5e49",
+      "status": 200,
+      "bytes": 3314,
+      "type": "fetch"
+    },
+    {
+      "path": "/6233fcb9-3b8d-41c4-ba4f-fda7086e7770",
+      "status": 200,
+      "bytes": 3105,
+      "type": "fetch"
+    },
+    {
+      "path": "/src/arcade.js",
+      "status": 200,
+      "bytes": 2753,
+      "type": "script"
+    },
+    {
+      "path": "/e5e0b7ec-b0bc-45df-b411-8861c80af256",
+      "status": 200,
+      "bytes": 2633,
+      "type": "fetch"
+    },
+    {
+      "path": "/6171b6cb-523f-406b-96f3-f04c270d8376",
+      "status": 200,
+      "bytes": 2531,
+      "type": "fetch"
+    },
+    {
+      "path": "/src/discoveries.js",
+      "status": 200,
+      "bytes": 2479,
+      "type": "script"
+    },
+    {
+      "path": "/src/atmosphere.js",
+      "status": 200,
+      "bytes": 2417,
+      "type": "script"
+    },
+    {
+      "path": "/src/arcade-screen.js",
+      "status": 200,
+      "bytes": 2344,
+      "type": "script"
+    },
+    {
+      "path": "/src/postfx.js",
+      "status": 200,
+      "bytes": 1981,
+      "type": "script"
+    },
+    {
+      "path": "/src/materials.js",
+      "status": 200,
+      "bytes": 1463,
+      "type": "script"
+    },
+    {
+      "path": "/src/local-radio.js",
+      "status": 200,
+      "bytes": 1414,
+      "type": "script"
+    },
+    {
+      "path": "/src/journey-guide.js",
+      "status": 200,
+      "bytes": 1394,
+      "type": "script"
+    },
+    {
+      "path": "/src/navigation.js",
+      "status": 200,
+      "bytes": 1371,
+      "type": "script"
+    },
+    {
+      "path": "/src/arcade-cabinet.js",
+      "status": 200,
+      "bytes": 1308,
+      "type": "script"
+    },
+    {
+      "path": "/src/onboarding.js",
+      "status": 200,
+      "bytes": 1168,
+      "type": "script"
+    },
+    {
+      "path": "/src/input.js",
+      "status": 200,
+      "bytes": 1135,
+      "type": "script"
+    },
+    {
+      "path": "/src/onboarding.css",
+      "status": 200,
+      "bytes": 1067,
+      "type": "stylesheet"
+    },
+    {
+      "path": "/src/driving.js",
+      "status": 200,
+      "bytes": 1064,
+      "type": "script"
+    },
+    {
+      "path": "/src/arcade.css",
+      "status": 200,
+      "bytes": 1010,
+      "type": "stylesheet"
+    },
+    {
+      "path": "/src/route.js",
+      "status": 200,
+      "bytes": 740,
+      "type": "script"
+    },
+    {
+      "path": "/src/progress.js",
+      "status": 200,
+      "bytes": 693,
+      "type": "script"
+    }
+  ],
+  "fps": {
+    "kong_estudios": 60.5,
+    "bairro_murais": 60.6,
+    "mirante_moinho": 60.4
+  },
+  "bytes_by_ext": {
+    ".png": 5356540,
+    ".glb": 5110204,
+    "other": 1056132,
+    ".jpg": 838848,
+    ".js": 351517,
+    ".mp3": 78109,
+    ".css": 27927,
+    ".woff2": 18612
+  },
+  "total_bytes": 12837889
+}

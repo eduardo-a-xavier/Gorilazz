@@ -1,0 +1,93 @@
+{
+  "timestamp": "2026-11-21 23:19:27",
+  "verdict": "APROVADO",
+  "item1_rodape_foco": {
+    "verdict": "APROVADO",
+    "mode_3d_active": true,
+    "trip_meter_2d": {
+      "exists": true,
+      "display": "flex",
+      "visibility": "hidden",
+      "bottom": "auto"
+    },
+    "trip_meter_3d_1440": {
+      "exists": true,
+      "display": "none",
+      "height": 0,
+      "width": 0,
+      "offsetParentIsNull": true
+    },
+    "trip_meter_3d_1346": {
+      "display": "none",
+      "offsetParentIsNull": true
+    },
+    "pink_pixels_found": 0,
+    "radio_visible_1440": true,
+    "radio_box_1440": {
+      "top": 758,
+      "bottom": 816,
+      "left": 28.796875,
+      "right": 384.796875,
+      "width": 356,
+      "height": 58,
+      "visible": true
+    },
+    "radio_visible_1346": true,
+    "radio_box_1346": {
+      "top": 538,
+      "bottom": 596,
+      "left": 26.90625,
+      "right": 376.859375,
+      "width": 349.953125,
+      "height": 58,
+      "visible": true
+    },
+    "canvas_outline": {
+      "outline": "rgb(233, 228, 212) none 3px",
+      "outlineStyle": "none",
+      "outlineWidth": "3px"
+    },
+    "button_outline": {
+      "exists": true,
+      "id": "map-open",
+      "outline": "rgb(210, 226, 168) solid 2px",
+      "outlineStyle": "solid",
+      "outlineWidth": "2px",
+      "outlineColor": "rgb(210, 226, 168)"
+    }
+  },
+  "item2_pose_banda": {
+    "verdict": "APROVADO",
+    "analise_comparativa": {
+      "2d": "Antes: mãos ~20 cm acima das teclas, mão direita no ar; Depois: duas mãos tocam as teclas na altura da cintura (SPECS[0].contact), tronco com lean -0.04 (2.3°) e olhar para as teclas (gaze [.18, 0]). Sem flutuação.",
+      "noodle": "Antes: mão na escala solta no vazio; Depois: mãos ancoradas nos sockets da guitarra v2 (socket_hand_neck_R e socket_hand_strum_L). Guitarra não atravessa pernas nem tronco. Olhar para a pista (gaze [.08, .12]).",
+      "russel": "Antes: braço esticado artificialmente para cima sem tocar a bateria; Depois: baquetas descem até a pele da caixa (SPECS[3].contact), olhar voltado para o instrumento (gaze [.3, 0])."
+    },
+    "limite_angulo": "A frente de Noodle e Russel tem visibilidade bloqueada pela massa de edifícios do cenário no local do palco (limite arquitetural do mapa). A validação dos sockets, contato e empunhadura foi confirmada por vistas traseiras/laterais e testes unitários analíticos (tests/band-pose.test.mjs PASS)."
+  },
+  "item3_metricas": {
+    "fps": {
+      "kong_studios": 60.1,
+      "bairro_dos_murais": 60.2,
+      "mirante_do_moinho": 59.9
+    },
+    "network": {
+      "http_errors": 0,
+      "failed_urls": [],
+      "transferred_bytes": 9120675,
+      "transferred_mb": 8.7,
+      "decoded_bytes": 11823990,
+      "decoded_mb": 11.28
+    },
+    "console_errors": [],
+    "verdict": "APROVADO"
+  },
+  "screenshots": [
+    "verif-final-2d-inicial-1440x900.png",
+    "verif-final-rodape-3a-pessoa-1440x900.png",
+    "verif-final-rodape-1a-pessoa-1440x900.png",
+    "verif-final-botao-foco.png",
+    "verif-final-rodape-1346x680.png",
+    "verif-final-palco-noodle-banda.png"
+  ]
+}

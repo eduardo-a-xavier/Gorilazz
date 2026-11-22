@@ -1,0 +1,274 @@
+{
+  "1346x680": {
+    "#road-radio": {
+      "x": 27,
+      "y": 503,
+      "w": 350,
+      "h": 58,
+      "bottomGap": 119,
+      "op": "1",
+      "bf": "none"
+    },
+    ".cabin-tools": {
+      "x": 0,
+      "y": 0,
+      "w": 0,
+      "h": 0,
+      "bottomGap": 680,
+      "op": "1",
+      "bf": "blur(8px)"
+    },
+    "#drive-hud": {
+      "x": 1185,
+      "y": 427,
+      "w": 135,
+      "h": 135,
+      "bottomGap": 119,
+      "op": "1",
+      "bf": "none"
+    },
+    ".quick-view": {
+      "x": 376,
+      "y": 14,
+      "w": 593,
+      "h": 36,
+      "bottomGap": 630,
+      "op": "1",
+      "bf": "none"
+    },
+    ".mini-map": {
+      "x": 1131,
+      "y": 27,
+      "w": 188,
+      "h": 228,
+      "bottomGap": 425,
+      "op": "1",
+      "bf": "none"
+    },
+    ".world-overlay": null,
+    "#interact": null,
+    ".controls": {
+      "x": 534,
+      "y": 519,
+      "w": 278,
+      "h": 42,
+      "bottomGap": 119,
+      "op": "1",
+      "bf": "none"
+    },
+    ".pedals": null,
+    "#journey": {
+      "x": 27,
+      "y": 27,
+      "w": 296,
+      "h": 194,
+      "bottomGap": 460,
+      "op": "1",
+      "bf": "none"
+    }
+  },
+  "1440x900": {
+    "#road-radio": {
+      "x": 29,
+      "y": 721,
+      "w": 356,
+      "h": 58,
+      "bottomGap": 121,
+      "op": "1",
+      "bf": "none"
+    },
+    ".cabin-tools": {
+      "x": 0,
+      "y": 0,
+      "w": 0,
+      "h": 0,
+      "bottomGap": 900,
+      "op": "1",
+      "bf": "blur(8px)"
+    },
+    "#drive-hud": {
+      "x": 1267,
+      "y": 635,
+      "w": 144,
+      "h": 144,
+      "bottomGap": 121,
+      "op": "1",
+      "bf": "none"
+    },
+    ".quick-view": {
+      "x": 423,
+      "y": 14,
+      "w": 593,
+      "h": 36,
+      "bottomGap": 850,
+      "op": "1",
+      "bf": "none"
+    },
+    ".mini-map": {
+      "x": 1215,
+      "y": 29,
+      "w": 196,
+      "h": 222,
+      "bottomGap": 649,
+      "op": "1",
+      "bf": "none"
+    },
+    ".world-overlay": null,
+    "#interact": null,
+    ".controls": {
+      "x": 581,
+      "y": 737,
+      "w": 278,
+      "h": 42,
+      "bottomGap": 121,
+      "op": "1",
+      "bf": "none"
+    },
+    ".pedals": null,
+    "#journey": {
+      "x": 29,
+      "y": 29,
+      "w": 317,
+      "h": 194,
+      "bottomGap": 678,
+      "op": "1",
+      "bf": "none"
+    }
+  },
+  "390x844": {
+    "#road-radio": {
+      "x": 12,
+      "y": 646,
+      "w": 196,
+      "h": 40,
+      "bottomGap": 158,
+      "op": "1",
+      "bf": "none"
+    },
+    ".cabin-tools": {
+      "x": 0,
+      "y": 0,
+      "w": 0,
+      "h": 0,
+      "bottomGap": 844,
+      "op": "1",
+      "bf": "blur(8px)"
+    },
+    "#drive-hud": {
+      "x": 300,
+      "y": 608,
+      "w": 78,
+      "h": 78,
+      "bottomGap": 158,
+      "op": "1",
+      "bf": "none"
+    },
+    ".quick-view": {
+      "x": 218,
+      "y": 184,
+      "w": 160,
+      "h": 132,
+      "bottomGap": 528,
+      "op": "1",
+      "bf": "none"
+    },
+    ".mini-map": {
+      "x": 270,
+      "y": 12,
+      "w": 108,
+      "h": 159,
+      "bottomGap": 673,
+      "op": "1",
+      "bf": "none"
+    },
+    ".world-overlay": null,
+    "#interact": null,
+    ".controls": {
+      "x": 12,
+      "y": 698,
+      "w": 366,
+      "h": 56,
+      "bottomGap": 90,
+      "op": "1",
+      "bf": "none"
+    },
+    ".pedals": null,
+    "#journey": {
+      "x": 12,
+      "y": 12,
+      "w": 254,
+      "h": 183,
+      "bottomGap": 649,
+      "op": "1",
+      "bf": "none"
+    }
+  },
+  "320x568": {
+    "#road-radio": {
+      "x": 12,
+      "y": 370,
+      "w": 196,
+      "h": 40,
+      "bottomGap": 158,
+      "op": "1",
+      "bf": "none"
+    },
+    ".cabin-tools": {
+      "x": 0,
+      "y": 0,
+      "w": 0,
+      "h": 0,
+      "bottomGap": 568,
+      "op": "1",
+      "bf": "blur(8px)"
+    },
+    "#drive-hud": {
+      "x": 230,
+      "y": 332,
+      "w": 78,
+      "h": 78,
+      "bottomGap": 158,
+      "op": "1",
+      "bf": "none"
+    },
+    ".quick-view": {
+      "x": 148,
+      "y": 184,
+      "w": 160,
+      "h": 132,
+      "bottomGap": 252,
+      "op": "1",
+      "bf": "none"
+    },
+    ".mini-map": {
+      "x": 200,
+      "y": 12,
+      "w": 108,
+      "h": 159,
+      "bottomGap": 397,
+      "op": "1",
+      "bf": "none"
+    },
+    ".world-overlay": null,
+    "#interact": null,
+    ".controls": {
+      "x": 12,
+      "y": 422,
+      "w": 296,
+      "h": 56,
+      "bottomGap": 90,
+      "op": "1",
+      "bf": "none"
+    },
+    ".pedals": null,
+    "#journey": {
+      "x": 12,
+      "y": 12,
+      "w": 184,
+      "h": 218,
+      "bottomGap": 338,
+      "op": "1",
+      "bf": "none"
+    }
+  }
+}

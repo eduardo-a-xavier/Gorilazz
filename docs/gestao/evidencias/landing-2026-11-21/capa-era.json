@@ -1,0 +1,38 @@
+{
+  "errors": [],
+  "http": [],
+  "1440x900": {
+    "frame": [
+      1179,
+      344
+    ],
+    "img": [
+      340,
+      340
+    ],
+    "caption": [
+      835,
+      117
+    ],
+    "ready": true,
+    "fit": "cover",
+    "bgVar": "url(\"http://127.0.0.1:3000/assets/covers"
+  },
+  "390x844": {
+    "frame": [
+      317,
+      456
+    ],
+    "img": [
+      313,
+      313
+    ],
+    "caption": [
+      313,
+      139
+    ],
+    "ready": true,
+    "fit": "cover",
+    "bgVar": "url(\"http://127.0.0.1:3000/assets/covers"
+  }
+}

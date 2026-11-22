@@ -1,0 +1,150 @@
+{
+ "servidor": "cópia estática em /Gorilazz/ (servidor de teste próprio, não é o Pages)",
+ "glbs": [
+  {
+   "arquivo": "assets/environment/2d-sculpture.glb",
+   "status": 200,
+   "content_type": "model/gltf-binary",
+   "content_length_header": 1580892,
+   "bytes_lidos": 1580892,
+   "content_encoding": null,
+   "magic": "glTF",
+   "versao_glb": 2,
+   "comprimento_no_cabecalho_glb": 1580892,
+   "chunk_json": "JSON",
+   "asset_version": "2.0",
+   "extensoes_exigidas": [],
+   "uris_externas": [],
+   "ok": true
+  },
+  {
+   "arquivo": "assets/environment/broadleaf-tree.glb",
+   "status": 200,
+   "content_type": "model/gltf-binary",
+   "content_length_header": 59516,
+   "bytes_lidos": 59516,
+   "content_encoding": null,
+   "magic": "glTF",
+   "versao_glb": 2,
+   "comprimento_no_cabecalho_glb": 59516,
+   "chunk_json": "JSON",
+   "asset_version": "2.0",
+   "extensoes_exigidas": [],
+   "uris_externas": [],
+   "ok": true
+  },
+  {
+   "arquivo": "assets/environment/kong-studio.glb",
+   "status": 200,
+   "content_type": "model/gltf-binary",
+   "content_length_header": 668736,
+   "bytes_lidos": 668736,
+   "content_encoding": null,
+   "magic": "glTF",
+   "versao_glb": 2,
+   "comprimento_no_cabecalho_glb": 668736,
+   "chunk_json": "JSON",
+   "asset_version": "2.0",
+   "extensoes_exigidas": [],
+   "uris_externas": [],
+   "ok": true
+  },
+  {
+   "arquivo": "assets/models/gorillaz-geep.glb",
+   "status": 200,
+   "content_type": "model/gltf-binary",
+   "content_length_header": 785068,
+   "bytes_lidos": 785068,
+   "content_encoding": null,
+   "magic": "glTF",
+   "versao_glb": 2,
+   "comprimento_no_cabecalho_glb": 785068,
+   "chunk_json": "JSON",
+   "asset_version": "2.0",
+   "extensoes_exigidas": [],
+   "uris_externas": [],
+   "ok": true
+  },
+  {
+   "arquivo": "assets/models/gorillaz-phase7-web.glb",
+   "status": 200,
+   "content_type": "model/gltf-binary",
+   "content_length_header": 3407964,
+   "bytes_lidos": 3407964,
+   "content_encoding": null,
+   "magic": "glTF",
+   "versao_glb": 2,
+   "comprimento_no_cabecalho_glb": 3407964,
+   "chunk_json": "JSON",
+   "asset_version": "2.0",
+   "extensoes_exigidas": [
+    "EXT_texture_webp"
+   ],
+   "uris_externas": [],
+   "ok": true
+  },
+  {
+   "arquivo": "assets/models/gorillaz-phase7.glb",
+   "status": 200,
+   "content_type": "model/gltf-binary",
+   "content_length_header": 9535300,
+   "bytes_lidos": 9535300,
+   "content_encoding": null,
+   "magic": "glTF",
+   "versao_glb": 2,
+   "comprimento_no_cabecalho_glb": 9535300,
+   "chunk_json": "JSON",
+   "asset_version": "2.0",
+   "extensoes_exigidas": [],
+   "uris_externas": [],
+   "ok": true
+  },
+  {
+   "arquivo": "assets/models/kenney-suv-luxury.glb",
+   "status": 200,
+   "content_type": "model/gltf-binary",
+   "content_length_header": 188200,
+   "bytes_lidos": 188200,
+   "content_encoding": null,
+   "magic": "glTF",
+   "versao_glb": 2,
+   "comprimento_no_cabecalho_glb": 188200,
+   "chunk_json": "JSON",
+   "asset_version": "2.0",
+   "extensoes_exigidas": [],
+   "uris_externas": [],
+   "ok": true
+  },
+  {
+   "arquivo": "assets/models/kenney-suv.glb",
+   "status": 200,
+   "content_type": "model/gltf-binary",
+   "content_length_header": 219840,
+   "bytes_lidos": 219840,
+   "content_encoding": null,
+   "magic": "glTF",
+   "versao_glb": 2,
+   "comprimento_no_cabecalho_glb": 219840,
+   "chunk_json": "JSON",
+   "asset_version": "2.0",
+   "extensoes_exigidas": [],
+   "uris_externas": [],
+   "ok": true
+  }
+ ],
+ "verificacoes_extras": {
+  "GEEP-credits.txt com caixa trocada": "200 no servidor de teste (Windows ignora maiúsculas/minúsculas): NÃO prova nada sobre o Pages",
+  "/Gorilazz sem barra final": "301 para /Gorilazz/ no servidor de teste",
+  "assets/environment/noodle-diorama.glb": 404,
+  "HEAD gorillaz-geep.glb": 200
+ },
+ "caixa_das_referencias": {
+  "metodo": "cada ./assets/... e ./src/... literal em index.html e src/*.js comparado com `git ls-files` (diferencia maiúsculas/minúsculas); nomes com ${} conferidos contra os arquivos rastreados",
+  "literais_verificados": 22,
+  "divergencias": [],
+  "com_template": [
+   "phase7-${nome}.png (4 retratos)",
+   "materials/${nome}.png e -normal.png (15 arquivos)"
+  ]
+ }
+}

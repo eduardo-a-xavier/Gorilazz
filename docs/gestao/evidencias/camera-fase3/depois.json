@@ -1,0 +1,44 @@
+{
+  "mode": "novo",
+  "threshold_m_per_frame": 0.3,
+  "occluded": 0,
+  "frames": 32736,
+  "jump": 19,
+  "flips": 255,
+  "clip": 0,
+  "maxJump": 0.342,
+  "minGap": 9.79,
+  "minDist": 13.56,
+  "maxRate": 40.3,
+  "runs": 132,
+  "worst": [
+    {
+      "road": 5,
+      "offset": 5,
+      "reverse": true,
+      "speed": 12,
+      "jumps": 8
+    },
+    {
+      "road": 7,
+      "offset": 5,
+      "reverse": false,
+      "speed": 12,
+      "jumps": 6
+    },
+    {
+      "road": 6,
+      "offset": -5,
+      "reverse": false,
+      "speed": 12,
+      "jumps": 1
+    },
+    {
+      "road": 6,
+      "offset": -5,
+      "reverse": true,
+      "speed": 12,
+      "jumps": 1
+    }
+  ]
+}

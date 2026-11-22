@@ -1,0 +1,20 @@
+{
+  "bytes": 9561857,
+  "fps": {
+    "kong_estudios": 60.3,
+    "bairro_murais": 60.2,
+    "mirante_moinho": 60.2
+  },
+  "draw": {
+    "kong_estudios": 417,
+    "bairro_murais": 162,
+    "mirante_moinho": 207
+  },
+  "errors": [
+    "THREE.GLTFLoader: Couldn't load texture blob:http://127.0.0.1:3000/8fdf363b-0d2a-48bd-9fa0-fdfb359ccc7e",
+    "THREE.GLTFLoader: Couldn't load texture blob:http://127.0.0.1:3000/fb039ba1-2303-42b8-b368-0612805c54a6",
+    "THREE.GLTFLoader: Couldn't load texture blob:http://127.0.0.1:3000/d5af6b19-e6c1-4eaa-b231-376887eed149",
+    "THREE.GLTFLoader: Couldn't load texture blob:http://127.0.0.1:3000/3ea3c37c-5da9-4a5f-ad21-60e0d42801d3"
+  ],
+  "bytes_art": 0
+}

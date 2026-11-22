@@ -1,0 +1,147 @@
+--- docs/gestao/evidencias/motorista-comparacao-2026-11-12/baseline/src/scene.js	2026-11-12 19:55:51.356567300 -0300
++++ src/scene.js	2026-11-12 20:10:28.443020300 -0300
+@@ -42,36 +42,56 @@
+ 
+ export function createDriver(material) {
+   const driver = new THREE.Group(); driver.position.set(-.54,.12,.42); driver.scale.setScalar(1.22); driver.name='driver';
+-  const smooth = new THREE.SphereGeometry(1,10,6), face = new THREE.SphereGeometry(1,12,10), detail = new THREE.SphereGeometry(1,8,4);
++  // Variante A: mesmas peças, encaixes e cores (5 materiais), com rosto, roupa, mãos e pernas mais definidos.
++  const smooth = new THREE.SphereGeometry(1,10,6), face = new THREE.SphereGeometry(1,14,10), round = new THREE.SphereGeometry(1,12,8), soft = new THREE.SphereGeometry(1,8,6), detail = new THREE.SphereGeometry(1,8,4), dot = new THREE.SphereGeometry(1,6,3);
++  const capShell = new THREE.SphereGeometry(1,14,6,0,Math.PI*2,0,Math.PI/2), smile = new THREE.TorusGeometry(1,.14,5,8,Math.PI*.8), collar = new THREE.TorusGeometry(1,.2,4,10), neck = new THREE.CylinderGeometry(.8,1,1,8,1);
++  const SKIN='#d9a37c', CREAM='#e2d8c0', PINK='#f2559c', DARK='#2a3036', INK='#141414';
+   const part = (parent,geometry,size,at,color) => {
+     const mesh = new THREE.Mesh(geometry,material(color)); mesh.scale.set(...size); mesh.position.set(...at);
+     mesh.castShadow=mesh.receiveShadow=true; parent.add(mesh); return mesh;
+   };
+-  part(driver,smooth,[.33,.39,.19],[0,1.52,.06],'#e2d8c0');
+-  part(driver,smooth,[.35,.06,.2],[0,1.2,.06],'#f2559c');
+-  part(driver,smooth,[.1,.08,.1],[0,1.97,.04],'#d9a37c');
++  // Tronco: peito e abdômen em duas peças, cinto rosa, gola, pescoço e ombros arredondados.
++  part(driver,round,[.335,.36,.2],[0,1.6,.06],CREAM);
++  part(driver,soft,[.3,.2,.18],[0,1.3,.06],CREAM);
++  part(driver,detail,[.35,.055,.2],[0,1.2,.06],PINK);
++  part(driver,neck,[.075,.2,.075],[0,1.98,.04],SKIN);
++  part(driver,collar,[.12,.12,.12],[0,1.91,.04],PINK).rotation.x=Math.PI/2;
+   const driverHead = new THREE.Group(); driverHead.position.set(0,2.24,.02); driverHead.name='driver-head'; driver.add(driverHead);
+-  part(driverHead,face,[.27,.2916,.27],[0,0,0],'#d9a37c');
+-  part(driverHead,new THREE.SphereGeometry(1,12,6,0,Math.PI*2,0,Math.PI/2),[.29,.22,.29],[0,.1,.03],'#f2559c');
+-  part(driverHead,smooth,[.3,.035,.18],[0,.08,-.18],'#f2559c');
++  // Cabeça: crânio, costeletas e cabelo escuros atrás, boné rosa com botão e aba.
++  part(driverHead,face,[.27,.2916,.27],[0,0,0],SKIN);
++  part(driverHead,capShell,[.29,.22,.29],[0,.1,.03],PINK);
++  part(driverHead,dot,[.03,.03,.03],[0,.32,.03],CREAM);
++  part(driverHead,detail,[.3,.035,.18],[0,.08,-.18],PINK);
++  part(driverHead,soft,[.245,.19,.13],[0,-.005,.2],DARK);
+   for (const side of [-1,1]) {
+-    part(driverHead,smooth,[.035,.06,.035],[side*.25,-.015,0],'#d9a37c');
+-    part(driverHead,detail,[.045,.055,.025],[side*.1,-.025,-.252],'#141414');
+-    part(driverHead,detail,[.012,.015,.007],[side*.1-.012,-.012,-.277],'#e2d8c0');
+-    part(driverHead,detail,[.07,.017,.022],[side*.1,.06,-.25],'#141414').rotation.z=side*.12;
+-    part(driver,smooth,[.12,.11,.35],[side*.17,1.12,-.3],'#2a3036');
+-    part(driver,smooth,[.11,.3,.11],[side*.17,.8,-.62],'#2a3036');
++    part(driverHead,detail,[.035,.06,.035],[side*.25,-.015,0],SKIN);
++    part(driverHead,detail,[.03,.075,.03],[side*.252,.03,-.1],DARK);
++    part(driverHead,soft,[.062,.07,.03],[side*.1,-.02,-.228],CREAM);
++    part(driverHead,detail,[.034,.043,.016],[side*.1,-.022,-.256],INK);
++    part(driverHead,dot,[.01,.012,.006],[side*.1-.011,-.008,-.27],CREAM);
++    part(driverHead,detail,[.07,.017,.022],[side*.1,.062,-.25],INK).rotation.z=side*.14;
++    part(driverHead,dot,[.04,.026,.012],[side*.165,-.1,-.2],PINK);
++    part(driver,soft,[.12,.11,.35],[side*.17,1.12,-.3],DARK);
++    part(driver,soft,[.11,.3,.11],[side*.17,.8,-.62],DARK);
++    part(driver,soft,[.1,.1,.1],[side*.29,1.8,.07],CREAM);
+   }
+-  part(driverHead,detail,[.035,.045,.045],[0,-.055,-.269],'#d9a37c');
+-  part(driverHead,detail,[.065,.017,.02],[0,-.15,-.23],'#141414');
++  part(driverHead,detail,[.035,.045,.045],[0,-.055,-.269],SKIN);
++  const mouth = part(driverHead,smile,[.065,.065,.065],[0,-.115,-.232],INK); mouth.rotation.z=-(Math.PI/2+Math.PI*.4);
+   const driverArms = new THREE.Group(); driverArms.position.set(0,1.62,-.5); driverArms.name='driver-arms'; driver.add(driverArms);
++  const link = (from,to,radius,color) => {
++    const direction = new THREE.Vector3().subVectors(to,from), centre = new THREE.Vector3().addVectors(from,to).multiplyScalar(.5);
++    const mesh = part(driverArms,soft,[radius,radius,direction.length()/2+.025],centre.toArray(),color);
++    mesh.quaternion.setFromUnitVectors(new THREE.Vector3(0,0,1),direction.normalize()); return mesh;
++  };
+   for (const side of [-1,1]) {
+     const shoulder = new THREE.Vector3(side*.28,.18,.58), wrist = new THREE.Vector3(side*.19,.01,.055);
+-    const direction = new THREE.Vector3().subVectors(wrist,shoulder), centre = new THREE.Vector3().addVectors(shoulder,wrist).multiplyScalar(.5);
+-    const arm = part(driverArms,smooth,[.085,.085,direction.length()/2+.025],centre.toArray(),'#e2d8c0');
+-    arm.quaternion.setFromUnitVectors(new THREE.Vector3(0,0,1),direction.normalize());
+-    part(driverArms,detail,[.1,.08,.055],wrist.toArray(),'#f2559c').quaternion.copy(arm.quaternion);
+-    part(driverArms,smooth,[.085,.085,.085],[side*.19,0,0],'#d9a37c');
++    const elbow = new THREE.Vector3().addVectors(shoulder,wrist).multiplyScalar(.5).add(new THREE.Vector3(side*.05,-.07,0));
++    link(shoulder,elbow,.08,CREAM); const forearm = link(elbow,wrist,.073,CREAM);
++    part(driverArms,detail,[.1,.08,.055],wrist.toArray(),PINK).quaternion.copy(forearm.quaternion);
++    // Mão: palma, polegar e dedos fechados no volante.
++    part(driverArms,soft,[.07,.055,.075],[side*.19,-.005,-.02],SKIN);
++    part(driverArms,dot,[.03,.028,.05],[side*.135,.02,-.03],SKIN);
++    part(driverArms,detail,[.065,.04,.04],[side*.195,-.02,-.085],SKIN);
+   }
+   bake(driverHead); bake(driverArms); bake(driver,[driverHead,driverArms]);
+   return {driver,driverHead,driverArms};
+@@ -518,6 +538,21 @@
+     }
+   }
+   loadVehicle();
++  // Diagnóstico: ?motorista=trellis troca o ocupante por um GLB gerado com o TRELLIS (MIT) a partir de uma
++  // captura do próprio boneco. É uma malha estática (sem reação de cabeça nem braços no volante).
++  // Origem e licença: docs/gestao/evidencias/motorista-comparacao-2026-11-12/ORIGEM.md. Falhou? Fica a variante A.
++  async function loadTrellisDriver() {
++    if (new URLSearchParams(location.search).get('motorista') !== 'trellis') return;
++    try {
++      const source = (await new GLTFLoader().loadAsync('./assets/models/motorista-trellis.glb')).scene.getObjectByProperty('isMesh', true);
++      source.geometry.computeVertexNormals();
++      const mesh = new THREE.Mesh(source.geometry, new THREE.MeshStandardMaterial({ map: source.material.map, roughness: .9, metalness: 0 }));
++      mesh.castShadow = mesh.receiveShadow = true; mesh.name = 'driver-trellis'; mesh.scale.setScalar(2.12); mesh.position.set(0, 1.56, .04); mesh.rotation.y = Math.PI;
++      driver.traverse(object => { if (object.isMesh) object.visible = false; });
++      driver.add(mesh); driver.userData.variant = 'trellis';
++    } catch (error) { console.warn('Motorista TRELLIS indisponível; variante A mantida:', error.message); }
++  }
++  loadTrellisDriver();
+   function person(index) {
+     const g = new THREE.Group();
+     const skin = ['#e2d8c0', '#91a568', '#e2d8c0', '#986b50'][index];
+--- docs/gestao/evidencias/motorista-comparacao-2026-11-12/baseline/server.mjs	2026-11-12 19:55:51.383560400 -0300
++++ server.mjs	2026-11-12 20:05:15.880187900 -0300
+@@ -61,6 +61,7 @@
+   ['/assets/models/gorillaz-geep.glb', ['assets/models/gorillaz-geep.glb', 'model/gltf-binary']],
+   ['/assets/models/GEEP-CREDITS.txt', ['assets/models/GEEP-CREDITS.txt', 'text/plain; charset=utf-8']],
+   ['/assets/models/kenney-suv.glb', ['assets/models/kenney-suv.glb', 'model/gltf-binary']],
++  ['/assets/models/motorista-trellis.glb', ['assets/models/motorista-trellis.glb', 'model/gltf-binary']],
+   ['/assets/models/kenney-suv-luxury.glb', ['assets/models/kenney-suv-luxury.glb', 'model/gltf-binary']],
+   ['/assets/models/KENNEY-LICENSE.txt', ['assets/models/KENNEY-LICENSE.txt', 'text/plain; charset=utf-8']],
+   ['/src/vendor/three.module.min.js', ['src/vendor/three.module.min.js', 'text/javascript; charset=utf-8']],
+--- /dev/null	2026-11-12 20:17:26.000000000 -0300
++++ tests/driver-trellis.test.mjs	2026-11-12 20:16:49.066377400 -0300
+@@ -0,0 +1,32 @@
++import test from 'node:test';
++import assert from 'node:assert/strict';
++import { readFile } from 'node:fs/promises';
++
++// Variante B do motorista (diagnóstico ?motorista=trellis): GLB gerado com o TRELLIS e reduzido.
++test('GLB do motorista TRELLIS respeita o orçamento e está nas rotas do servidor', async () => {
++  const bytes = await readFile(new URL('../assets/models/motorista-trellis.glb', import.meta.url));
++  assert.equal(bytes.toString('latin1', 0, 4), 'glTF');
++  assert.equal(bytes.readUInt32LE(4), 2);
++  assert.equal(bytes.readUInt32LE(8), bytes.length);
++  assert.ok(bytes.length <= 300 * 1024, `arquivo com ${bytes.length} bytes`);
++  const jsonLength = bytes.readUInt32LE(12), json = JSON.parse(bytes.toString('utf8', 20, 20 + jsonLength));
++  assert.equal(json.meshes.length, 1);
++  assert.equal(json.materials.length, 1);
++  assert.equal(json.images.length, 1);
++  assert.equal(json.images[0].mimeType, 'image/jpeg');
++  const triangles = json.accessors[json.meshes[0].primitives[0].indices].count / 3;
++  assert.ok(triangles > 0 && triangles <= 3000, `${triangles} triângulos`);
++  assert.ok(!json.buffers.some(buffer => buffer.uri), 'sem arquivos externos');
++  // Dimensões da textura JPEG (marcador SOF): no máximo 512 × 512.
++  const view = json.bufferViews[json.images[0].bufferView], binary = 20 + jsonLength + 8 + view.byteOffset;
++  const jpeg = bytes.subarray(binary, binary + view.byteLength);
++  let at = 2, size = null;
++  while (at < jpeg.length) {
++    const marker = jpeg[at + 1], length = jpeg.readUInt16BE(at + 2);
++    if (marker >= 0xc0 && marker <= 0xc2) { size = [jpeg.readUInt16BE(at + 7), jpeg.readUInt16BE(at + 5)]; break; }
++    at += 2 + length;
++  }
++  assert.ok(size && size[0] <= 512 && size[1] <= 512, `textura ${size}`);
++  const server = await readFile(new URL('../server.mjs', import.meta.url), 'utf8');
++  assert.match(server, /'\/assets\/models\/motorista-trellis\.glb'/);
++});
+Arquivo novo (binário): assets/models/motorista-trellis.glb (110.832 bytes, sha256 8e48de0631304b2827746261f7fc21ae5d1f56ae9c10195de69a79c71a14517f)

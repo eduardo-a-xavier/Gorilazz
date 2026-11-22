@@ -1,0 +1,1226 @@
+{
+  "timestamp": "2026-11-21 00:13:25",
+  "port": 3116,
+  "console_errors": [
+    "Failed to load resource: the server responded with a status of 404 (Not Found)",
+    "Failed to load resource: the server responded with a status of 404 (Not Found)"
+  ],
+  "page_errors": [
+    "Cannot read properties of undefined (reading 'name')"
+  ],
+  "http_errors": [
+    {
+      "url": "http://127.0.0.1:3116/assets/fonts/anton-latin.woff2",
+      "status": 404
+    },
+    {
+      "url": "http://127.0.0.1:3116/assets/fonts/Anton-Regular.ttf",
+      "status": 404
+    }
+  ],
+  "audio_http": {
+    "/assets/radio/concreto.mp3": {
+      "status": 200,
+      "bytes": 78109
+    },
+    "/assets/radio/mare.mp3": {
+      "status": 200,
+      "bytes": 75399
+    }
+  },
+  "covers_http": {
+    "gorillaz-2001.jpg": {
+      "status": 200,
+      "bytes": 86384
+    },
+    "demon-days-2005.jpg": {
+      "status": 200,
+      "bytes": 73897
+    },
+    "plastic-beach-2010.jpg": {
+      "status": 200,
+      "bytes": 91276
+    },
+    "the-fall-2010.jpg": {
+      "status": 200,
+      "bytes": 108336
+    },
+    "humanz-2017.jpg": {
+      "status": 200,
+      "bytes": 65312
+    },
+    "the-now-now-2018.jpg": {
+      "status": 200,
+      "bytes": 130387
+    },
+    "song-machine-2020.jpg": {
+      "status": 200,
+      "bytes": 147776
+    },
+    "cracker-island-2023.jpg": {
+      "status": 200,
+      "bytes": 135480
+    }
+  },
+  "general_1440": {
+    "innerWidth": 1440,
+    "docScrollWidth": 1440,
+    "bodyScrollWidth": 1440,
+    "overflow": false,
+    "wikiText": 0,
+    "wikiLinks": [],
+    "emptyHeadings": 0
+  },
+  "era_covers_dom": [
+    {
+      "src": "./assets/covers/gorillaz-2001.jpg",
+      "complete": true,
+      "w": 600,
+      "h": 600
+    },
+    {
+      "src": "./assets/covers/demon-days-2005.jpg",
+      "complete": true,
+      "w": 600,
+      "h": 600
+    },
+    {
+      "src": "./assets/covers/plastic-beach-2010.jpg",
+      "complete": true,
+      "w": 600,
+      "h": 600
+    },
+    {
+      "src": "./assets/covers/the-fall-2010.jpg",
+      "complete": true,
+      "w": 600,
+      "h": 600
+    },
+    {
+      "src": "./assets/covers/humanz-2017.jpg",
+      "complete": true,
+      "w": 600,
+      "h": 600
+    },
+    {
+      "src": "./assets/covers/the-now-now-2018.jpg",
+      "complete": true,
+      "w": 600,
+      "h": 600
+    },
+    {
+      "src": "./assets/covers/song-machine-2020.jpg",
+      "complete": true,
+      "w": 600,
+      "h": 600
+    },
+    {
+      "src": "./assets/covers/cracker-island-2023.jpg",
+      "complete": true,
+      "w": 600,
+      "h": 600
+    }
+  ],
+  "first_person_and_hud": {
+    "1440x900": {
+      "hands": {
+        "fov": 73.2,
+        "cabinVisible": true,
+        "boxArmCount": 12,
+        "boxArmsAnyVisible": false,
+        "hand_l": {
+          "ndcX": -0.197,
+          "ndcY": -0.553,
+          "px": 578,
+          "py": 719,
+          "inFrame": true
+        },
+        "hand_r": {
+          "ndcX": 0.197,
+          "ndcY": -0.553,
+          "px": 862,
+          "py": 720,
+          "inFrame": true
+        }
+      },
+      "hud": {
+        "viewport": {
+          "w": 1440,
+          "h": 900
+        },
+        "horizontalOverflow": false,
+        "docScrollWidth": 1440,
+        "bodyScrollWidth": 1440,
+        "boxes": {
+          "cabinTools": {
+            "x": 577.8,
+            "y": 825.2,
+            "width": 284.4,
+            "height": 46,
+            "right": 862.2,
+            "bottom": 871.2,
+            "opacity": 1,
+            "overflowsViewport": false
+          },
+          "consoleFocus": {
+            "x": 586.8,
+            "y": 831.2,
+            "width": 89.5,
+            "height": 34,
+            "right": 676.3,
+            "bottom": 865.2,
+            "opacity": 1,
+            "overflowsViewport": false
+          },
+          "cabinRecenter": {
+            "x": 682.3,
+            "y": 831.2,
+            "width": 93.1,
+            "height": 34,
+            "right": 775.4,
+            "bottom": 865.2,
+            "opacity": 1,
+            "overflowsViewport": false
+          },
+          "cabinControlsSummary": {
+            "x": 793.4,
+            "y": 842.7,
+            "width": 47.8,
+            "height": 11,
+            "right": 841.2,
+            "bottom": 853.7,
+            "opacity": 1,
+            "overflowsViewport": false
+          },
+          "roadRadio": {
+            "x": 28.8,
+            "y": 813.2,
+            "width": 356,
+            "height": 58,
+            "right": 384.8,
+            "bottom": 871.2,
+            "opacity": 0.88,
+            "overflowsViewport": false
+          },
+          "miniMap": {
+            "x": 1215.2,
+            "y": 120.8,
+            "width": 196,
+            "height": 221.8,
+            "right": 1411.2,
+            "bottom": 342.6,
+            "opacity": 1,
+            "overflowsViewport": false
+          },
+          "pedals": null,
+          "quickView": {
+            "x": 522,
+            "y": 106,
+            "width": 396,
+            "height": 36,
+            "right": 918,
+            "bottom": 142,
+            "opacity": 1,
+            "overflowsViewport": false
+          },
+          "journey": {
+            "x": 28.8,
+            "y": 120.8,
+            "width": 316.8,
+            "height": 193.5,
+            "right": 345.6,
+            "bottom": 314.3,
+            "opacity": 1,
+            "overflowsViewport": false
+          }
+        },
+        "cabinTextClipped": false,
+        "overlaps": {
+          "cabin_vs_radio": false,
+          "cabin_vs_minimap": false,
+          "cabin_vs_pedals": false,
+          "cabin_vs_quickView": false,
+          "cabin_vs_journey": false,
+          "quickView_vs_minimap": false,
+          "quickView_vs_journey": false,
+          "radio_vs_pedals": false,
+          "journey_vs_minimap": false
+        }
+      }
+    },
+    "1585x746": {
+      "hands": {
+        "fov": 73.9,
+        "cabinVisible": true,
+        "boxArmCount": 12,
+        "boxArmsAnyVisible": false,
+        "hand_l": {
+          "ndcX": -0.143,
+          "ndcY": -0.544,
+          "px": 679,
+          "py": 597,
+          "inFrame": true
+        },
+        "hand_r": {
+          "ndcX": 0.143,
+          "ndcY": -0.545,
+          "px": 906,
+          "py": 597,
+          "inFrame": true
+        }
+      },
+      "hud": {
+        "viewport": {
+          "w": 1585,
+          "h": 746
+        },
+        "horizontalOverflow": false,
+        "docScrollWidth": 1585,
+        "bodyScrollWidth": 1585,
+        "boxes": {
+          "cabinTools": {
+            "x": 650.3,
+            "y": 668.3,
+            "width": 284.4,
+            "height": 46,
+            "right": 934.7,
+            "bottom": 714.3,
+            "opacity": 1,
+            "overflowsViewport": false
+          },
+          "consoleFocus": {
+            "x": 659.3,
+            "y": 674.3,
+            "width": 89.5,
+            "height": 34,
+            "right": 748.8,
+            "bottom": 708.3,
+            "opacity": 1,
+            "overflowsViewport": false
+          },
+          "cabinRecenter": {
+            "x": 754.8,
+            "y": 674.3,
+            "width": 93.1,
+            "height": 34,
+            "right": 847.9,
+            "bottom": 708.3,
+            "opacity": 1,
+            "overflowsViewport": false
+          },
+          "cabinControlsSummary": {
+            "x": 865.9,
+            "y": 685.8,
+            "width": 47.8,
+            "height": 11,
+            "right": 913.7,
+            "bottom": 696.8,
+            "opacity": 1,
+            "overflowsViewport": false
+          },
+          "roadRadio": {
+            "x": 31.7,
+            "y": 656.3,
+            "width": 356,
+            "height": 58,
+            "right": 387.7,
+            "bottom": 714.3,
+            "opacity": 0.88,
+            "overflowsViewport": false
+          },
+          "miniMap": {
+            "x": 1357.3,
+            "y": 123.7,
+            "width": 196,
+            "height": 221.8,
+            "right": 1553.3,
+            "bottom": 345.5,
+            "opacity": 1,
+            "overflowsViewport": false
+          },
+          "pedals": null,
+          "quickView": {
+            "x": 594.5,
+            "y": 106,
+            "width": 396,
+            "height": 36,
+            "right": 990.5,
+            "bottom": 142,
+            "opacity": 1,
+            "overflowsViewport": false
+          },
+          "journey": {
+            "x": 31.7,
+            "y": 123.7,
+            "width": 340,
+            "height": 193.5,
+            "right": 371.7,
+            "bottom": 317.2,
+            "opacity": 1,
+            "overflowsViewport": false
+          }
+        },
+        "cabinTextClipped": false,
+        "overlaps": {
+          "cabin_vs_radio": false,
+          "cabin_vs_minimap": false,
+          "cabin_vs_pedals": false,
+          "cabin_vs_quickView": false,
+          "cabin_vs_journey": false,
+          "quickView_vs_minimap": false,
+          "quickView_vs_journey": false,
+          "radio_vs_pedals": false,
+          "journey_vs_minimap": false
+        }
+      }
+    },
+    "390x844": {
+      "hands": {
+        "fov": 86.7,
+        "cabinVisible": true,
+        "boxArmCount": 12,
+        "boxArmsAnyVisible": false,
+        "hand_l": {
+          "ndcX": -0.539,
+          "ndcY": -0.43,
+          "px": 90,
+          "py": 626,
+          "inFrame": true
+        },
+        "hand_r": {
+          "ndcX": 0.542,
+          "ndcY": -0.43,
+          "px": 301,
+          "py": 626,
+          "inFrame": true
+        }
+      },
+      "hud": {
+        "viewport": {
+          "w": 390,
+          "h": 844
+        },
+        "horizontalOverflow": false,
+        "docScrollWidth": 390,
+        "bodyScrollWidth": 390,
+        "boxes": {
+          "cabinTools": {
+            "x": 230.1,
+            "y": 726,
+            "width": 147.9,
+            "height": 38,
+            "right": 378,
+            "bottom": 764,
+            "opacity": 1,
+            "overflowsViewport": false
+          },
+          "consoleFocus": {
+            "x": 237.1,
+            "y": 731,
+            "width": 72.6,
+            "height": 28,
+            "right": 309.7,
+            "bottom": 759,
+            "opacity": 1,
+            "overflowsViewport": false
+          },
+          "cabinRecenter": null,
+          "cabinControlsSummary": {
+            "x": 321.7,
+            "y": 740.3,
+            "width": 41.3,
+            "height": 9.5,
+            "right": 363,
+            "bottom": 749.8,
+            "opacity": 1,
+            "overflowsViewport": false
+          },
+          "roadRadio": {
+            "x": 12,
+            "y": 724,
+            "width": 196,
+            "height": 40,
+            "right": 208,
+            "bottom": 764,
+            "opacity": 0.88,
+            "overflowsViewport": false
+          },
+          "miniMap": {
+            "x": 270,
+            "y": 90,
+            "width": 108,
+            "height": 159.3,
+            "right": 378,
+            "bottom": 249.3,
+            "opacity": 1,
+            "overflowsViewport": false
+          },
+          "pedals": {
+            "x": 12,
+            "y": 776,
+            "width": 366,
+            "height": 56,
+            "right": 378,
+            "bottom": 832,
+            "opacity": 1,
+            "overflowsViewport": false
+          },
+          "quickView": {
+            "x": 264.8,
+            "y": 262,
+            "width": 113.2,
+            "height": 98,
+            "right": 378,
+            "bottom": 360,
+            "opacity": 1,
+            "overflowsViewport": false
+          },
+          "journey": {
+            "x": 12,
+            "y": 90,
+            "width": 254,
+            "height": 183,
+            "right": 266,
+            "bottom": 273,
+            "opacity": 1,
+            "overflowsViewport": false
+          }
+        },
+        "cabinTextClipped": false,
+        "overlaps": {
+          "cabin_vs_radio": false,
+          "cabin_vs_minimap": false,
+          "cabin_vs_pedals": false,
+          "cabin_vs_quickView": false,
+          "cabin_vs_journey": false,
+          "quickView_vs_minimap": false,
+          "quickView_vs_journey": true,
+          "radio_vs_pedals": false,
+          "journey_vs_minimap": false
+        }
+      }
+    },
+    "320x568": {
+      "hands": {
+        "fov": 86.6,
+        "cabinVisible": true,
+        "boxArmCount": 12,
+        "boxArmsAnyVisible": false,
+        "hand_l": {
+          "ndcX": -0.421,
+          "ndcY": -0.43,
+          "px": 93,
+          "py": 428,
+          "inFrame": true
+        },
+        "hand_r": {
+          "ndcX": 0.423,
+          "ndcY": -0.43,
+          "px": 228,
+          "py": 428,
+          "inFrame": true
+        }
+      },
+      "hud": {
+        "viewport": {
+          "w": 320,
+          "h": 568
+        },
+        "horizontalOverflow": false,
+        "docScrollWidth": 320,
+        "bodyScrollWidth": 320,
+        "boxes": {
+          "cabinTools": {
+            "x": 212,
+            "y": 450,
+            "width": 96,
+            "height": 38,
+            "right": 308,
+            "bottom": 488,
+            "opacity": 1,
+            "overflowsViewport": false
+          },
+          "consoleFocus": {
+            "x": 167.1,
+            "y": 455,
+            "width": 72.6,
+            "height": 28,
+            "right": 239.7,
+            "bottom": 483,
+            "opacity": 1,
+            "overflowsViewport": false
+          },
+          "cabinRecenter": null,
+          "cabinControlsSummary": {
+            "x": 251.7,
+            "y": 464.3,
+            "width": 41.3,
+            "height": 9.5,
+            "right": 293,
+            "bottom": 473.8,
+            "opacity": 1,
+            "overflowsViewport": false
+          },
+          "roadRadio": {
+            "x": 12,
+            "y": 448,
+            "width": 196,
+            "height": 40,
+            "right": 208,
+            "bottom": 488,
+            "opacity": 0.88,
+            "overflowsViewport": false
+          },
+          "miniMap": {
+            "x": 200,
+            "y": 90,
+            "width": 108,
+            "height": 159.3,
+            "right": 308,
+            "bottom": 249.3,
+            "opacity": 1,
+            "overflowsViewport": false
+          },
+          "pedals": {
+            "x": 12,
+            "y": 500,
+            "width": 296,
+            "height": 56,
+            "right": 308,
+            "bottom": 556,
+            "opacity": 1,
+            "overflowsViewport": false
+          },
+          "quickView": {
+            "x": 194.8,
+            "y": 262,
+            "width": 113.2,
+            "height": 98,
+            "right": 308,
+            "bottom": 360,
+            "opacity": 1,
+            "overflowsViewport": false
+          },
+          "journey": {
+            "x": 12,
+            "y": 90,
+            "width": 184,
+            "height": 218,
+            "right": 196,
+            "bottom": 308,
+            "opacity": 1,
+            "overflowsViewport": false
+          }
+        },
+        "cabinTextClipped": true,
+        "overlaps": {
+          "cabin_vs_radio": false,
+          "cabin_vs_minimap": false,
+          "cabin_vs_pedals": false,
+          "cabin_vs_quickView": false,
+          "cabin_vs_journey": false,
+          "quickView_vs_minimap": false,
+          "quickView_vs_journey": true,
+          "radio_vs_pedals": false,
+          "journey_vs_minimap": false
+        }
+      }
+    }
+  },
+  "music": {
+    "initial": {
+      "track": "Concreto",
+      "album": "01/02 · Kong FM · instrumental original",
+      "playText": "▶",
+      "status": ""
+    },
+    "after_next_btn": {
+      "track": "Maré de plástico",
+      "album": "02/02 · Kong FM · instrumental original"
+    },
+    "after_prev_btn": {
+      "track": "Concreto",
+      "album": "01/02 · Kong FM · instrumental original"
+    },
+    "after_bracket_next": {
+      "track": "Maré de plástico",
+      "album": "02/02 · Kong FM · instrumental original"
+    },
+    "after_play_track2": {
+      "track": "Maré de plástico",
+      "album": "02/02 · Kong FM · instrumental original",
+      "playText": "Ⅱ",
+      "status": ""
+    },
+    "after_bracket_prev": {
+      "track": "Concreto",
+      "album": "01/02 · Kong FM · instrumental original",
+      "playText": "Ⅱ",
+      "status": ""
+    }
+  },
+  "hud_fade": {
+    "before_5s": {
+      "hudState": "driving",
+      "hasIdle": false,
+      "cabinOpacity": "1",
+      "minimapOpacity": "1",
+      "radioOpacity": "0.88"
+    },
+    "after_5_6s": {
+      "hudState": "driving",
+      "hasIdle": true,
+      "cabinOpacity": "1",
+      "minimapOpacity": "0.18",
+      "radioOpacity": "0.18"
+    }
+  },
+  "quick_view": {
+    "buttons": [
+      {
+        "id": "",
+        "text": "◉ 1ª pessoa · V",
+        "visible": true
+      },
+      {
+        "id": "quick-map",
+        "text": "🗺 Mapa · M",
+        "visible": true
+      },
+      {
+        "id": "",
+        "text": "⛶ Tela cheia · F",
+        "visible": true
+      }
+    ],
+    "v_activated_inside_geep": true,
+    "v_returned_3p": true,
+    "m_opened_overlay": true
+  },
+  "minimap_and_fullmap": {
+    "minimap": {
+      "stopped": {
+        "viewBox": "-92.0 -110.0 184 165",
+        "zoomLabel": "AUTO",
+        "pois": 5,
+        "members": 4,
+        "gates": 4,
+        "car": true
+      },
+      "zoomed": {
+        "viewBox": "-66.5 -64.0 133 119",
+        "zoomLabel": "ZOOM +"
+      },
+      "moving_fast": {
+        "viewBox": "-114.5 -150.0 229 205",
+        "zoomLabel": "72 KM/H"
+      }
+    },
+    "opened_on_M": true,
+    "closed_on_M": true,
+    "closed_on_Esc": true,
+    "closed_on_outside_click": true,
+    "M_ignored_in_text_input": true,
+    "svg_label_audit": {
+      "regionTexts": [
+        {
+          "text": "KONG",
+          "rect": {
+            "x": 497.7,
+            "y": 687,
+            "w": 35.9,
+            "h": 16,
+            "right": 533.6,
+            "bottom": 703
+          }
+        },
+        {
+          "text": "BAIRRO",
+          "rect": {
+            "x": 316.4,
+            "y": 365.5,
+            "w": 53.1,
+            "h": 16,
+            "right": 369.6,
+            "bottom": 381.5
+          }
+        },
+        {
+          "text": "MIRANTE",
+          "rect": {
+            "x": 633.7,
+            "y": 365.5,
+            "w": 61.4,
+            "h": 16,
+            "right": 695.1,
+            "bottom": 381.5
+          }
+        }
+      ],
+      "collisions": [],
+      "destButtons": 12,
+      "sidebarScrollable": true,
+      "sidebarClientH": 470,
+      "sidebarScrollH": 696
+    },
+    "nav_region": {
+      "before": {
+        "x": 0,
+        "z": 0
+      },
+      "after": {
+        "overlayClosed": true,
+        "hint": "Passeio guiado · Bairro dos murais",
+        "x": -0.0,
+        "z": -0.03,
+        "speed": 0.73
+      }
+    },
+    "nav_story": {
+      "overlayClosed": true,
+      "hint": "Passeio guiado · Bairro dos murais",
+      "speed": 0
+    }
+  },
+  "fauna": {
+    "scene_meshes": [
+      {
+        "name": "fauna-bodies",
+        "isInstancedMesh": true,
+        "count": 56,
+        "visible": true
+      },
+      {
+        "name": "fauna-wings",
+        "isInstancedMesh": true,
+        "count": 56,
+        "visible": true
+      }
+    ],
+    "cluster0_idle_t0": [
+      {
+        "id": 0,
+        "x": -15.7,
+        "y": 2.88,
+        "z": -9.76
+      },
+      {
+        "id": 1,
+        "x": -11.12,
+        "y": 3.99,
+        "z": -23.25
+      },
+      {
+        "id": 2,
+        "x": -20.33,
+        "y": 5.16,
+        "z": -16.56
+      },
+      {
+        "id": 3,
+        "x": 22.96,
+        "y": 4.15,
+        "z": -12.81
+      },
+      {
+        "id": 4,
+        "x": 10.11,
+        "y": 3.93,
+        "z": -25.25
+      },
+      {
+        "id": 5,
+        "x": 14.45,
+        "y": 4.88,
+        "z": -23.68
+      }
+    ],
+    "cluster0_idle_t1": [
+      {
+        "id": 0,
+        "x": -15.7,
+        "y": 2.88,
+        "z": -9.76
+      },
+      {
+        "id": 1,
+        "x": -11.12,
+        "y": 3.99,
+        "z": -23.25
+      },
+      {
+        "id": 2,
+        "x": -20.33,
+        "y": 5.16,
+        "z": -16.56
+      },
+      {
+        "id": 3,
+        "x": 22.96,
+        "y": 4.15,
+        "z": -12.81
+      },
+      {
+        "id": 4,
+        "x": 10.11,
+        "y": 3.93,
+        "z": -25.25
+      },
+      {
+        "id": 5,
+        "x": 14.45,
+        "y": 4.88,
+        "z": -23.68
+      }
+    ],
+    "cluster0_flee": [
+      {
+        "id": 0,
+        "x": -15.7,
+        "y": 2.88,
+        "z": -9.76
+      },
+      {
+        "id": 1,
+        "x": -11.12,
+        "y": 3.99,
+        "z": -23.25
+      },
+      {
+        "id": 2,
+        "x": -20.33,
+        "y": 5.16,
+        "z": -16.56
+      },
+      {
+        "id": 3,
+        "x": 22.96,
+        "y": 4.15,
+        "z": -12.81
+      },
+      {
+        "id": 4,
+        "x": 10.11,
+        "y": 3.93,
+        "z": -25.25
+      },
+      {
+        "id": 5,
+        "x": 14.45,
+        "y": 4.88,
+        "z": -23.68
+      }
+    ],
+    "cluster0_returned": [
+      {
+        "id": 0,
+        "x": -15.7,
+        "y": 2.88,
+        "z": -9.76
+      },
+      {
+        "id": 1,
+        "x": -11.12,
+        "y": 3.99,
+        "z": -23.25
+      },
+      {
+        "id": 2,
+        "x": -20.33,
+        "y": 5.16,
+        "z": -16.56
+      },
+      {
+        "id": 3,
+        "x": 22.96,
+        "y": 4.15,
+        "z": -12.81
+      },
+      {
+        "id": 4,
+        "x": 10.11,
+        "y": 3.93,
+        "z": -25.25
+      },
+      {
+        "id": 5,
+        "x": 14.45,
+        "y": 4.88,
+        "z": -23.68
+      }
+    ],
+    "fps_3_points": {
+      "ponto1_kong_ato1": {
+        "samples": 85,
+        "avgFps": 60,
+        "p95Fps": 59.9,
+        "avgFrameMs": 16.67,
+        "drawCalls": 271,
+        "triangles": 136328
+      },
+      "ponto2_murais_ato4": {
+        "samples": 85,
+        "avgFps": 60,
+        "p95Fps": 59.5,
+        "avgFrameMs": 16.67,
+        "drawCalls": 271,
+        "triangles": 136328
+      },
+      "ponto3_mirante_ato3": {
+        "samples": 85,
+        "avgFps": 60,
+        "p95Fps": 59.9,
+        "avgFrameMs": 16.67,
+        "drawCalls": 271,
+        "triangles": 136328
+      }
+    }
+  },
+  "camera_portal3_live": {
+    "frames": 60,
+    "start": [
+      -72,
+      22,
+      -96
+    ],
+    "end": [
+      -72,
+      22,
+      -96
+    ]
+  },
+  "part2_clean_fauna_and_error_repro": {
+    "page_errors": [
+      {
+        "message": "Cannot read properties of undefined (reading 'name')",
+        "stack": "TypeError: Cannot read properties of undefined (reading 'name')\n    at Object.update (http://127.0.0.1:3116/src/journey-guide.js:46:47)\n    at frame (http://127.0.0.1:3116/src/app.js:440:9)"
+      }
+    ],
+    "console_errors": [
+      "Failed to load resource: the server responded with a status of 404 (Not Found)"
+    ],
+    "http_errors": [
+      {
+        "url": "http://127.0.0.1:3116/src/assets/covers/gorillaz-2001.jpg",
+        "status": 404
+      }
+    ],
+    "birds": {
+      "idle_t0": [
+        {
+          "id": 0,
+          "x": -10.57,
+          "y": 0,
+          "z": -13.66,
+          "pitchSig": 0.0366
+        },
+        {
+          "id": 1,
+          "x": -11.31,
+          "y": 0,
+          "z": -14.88,
+          "pitchSig": 0.0022
+        },
+        {
+          "id": 2,
+          "x": -10.04,
+          "y": 0,
+          "z": -16.74,
+          "pitchSig": -0.0177
+        },
+        {
+          "id": 3,
+          "x": 9.55,
+          "y": 1.798,
+          "z": -13.84,
+          "pitchSig": -0.2544
+        },
+        {
+          "id": 4,
+          "x": 7.38,
+          "y": 2.123,
+          "z": -15.08,
+          "pitchSig": -0.1201
+        },
+        {
+          "id": 5,
+          "x": 7.74,
+          "y": 2.448,
+          "z": -14.29,
+          "pitchSig": -0.2849
+        }
+      ],
+      "idle_t1": [
+        {
+          "id": 0,
+          "x": -10.57,
+          "y": 0,
+          "z": -13.66,
+          "pitchSig": 0.0061
+        },
+        {
+          "id": 1,
+          "x": -11.31,
+          "y": 0,
+          "z": -14.88,
+          "pitchSig": -0.1518
+        },
+        {
+          "id": 2,
+          "x": -10.04,
+          "y": 0.009,
+          "z": -16.74,
+          "pitchSig": -0.022
+        },
+        {
+          "id": 3,
+          "x": 5.8,
+          "y": 3.483,
+          "z": -10.86,
+          "pitchSig": -0.2321
+        },
+        {
+          "id": 4,
+          "x": 6.7,
+          "y": 4.158,
+          "z": -11.53,
+          "pitchSig": -0.2028
+        },
+        {
+          "id": 5,
+          "x": 6.25,
+          "y": 4.833,
+          "z": -10.57,
+          "pitchSig": -0.3262
+        }
+      ],
+      "idle_animated": true,
+      "flee": [
+        {
+          "id": 0,
+          "x": -12.76,
+          "y": 3.376,
+          "z": -7.45,
+          "pitchSig": -0.2544
+        },
+        {
+          "id": 1,
+          "x": -18.5,
+          "y": 4.028,
+          "z": -16.17,
+          "pitchSig": -0.0313
+        },
+        {
+          "id": 2,
+          "x": -17.6,
+          "y": 4.676,
+          "z": -19.41,
+          "pitchSig": 0.1434
+        },
+        {
+          "id": 3,
+          "x": -8.96,
+          "y": 6.5,
+          "z": -14.81,
+          "pitchSig": 0.0767
+        },
+        {
+          "id": 4,
+          "x": 11.78,
+          "y": 6.545,
+          "z": -5.72,
+          "pitchSig": -0.1082
+        },
+        {
+          "id": 5,
+          "x": -6.09,
+          "y": 8.9,
+          "z": -7.32,
+          "pitchSig": -0.0693
+        }
+      ],
+      "flee_max_y": 8.9,
+      "return": [
+        {
+          "id": 0,
+          "x": -10.57,
+          "y": 0,
+          "z": -13.66,
+          "pitchSig": -0.0059
+        },
+        {
+          "id": 1,
+          "x": -11.31,
+          "y": 0,
+          "z": -14.88,
+          "pitchSig": -0.0503
+        },
+        {
+          "id": 2,
+          "x": -10.04,
+          "y": 0.04,
+          "z": -16.74,
+          "pitchSig": 0.0148
+        },
+        {
+          "id": 3,
+          "x": 11.67,
+          "y": 0.051,
+          "z": -17.77,
+          "pitchSig": 0.0243
+        },
+        {
+          "id": 4,
+          "x": 9.26,
+          "y": 0.078,
+          "z": -17.86,
+          "pitchSig": 0.0138
+        },
+        {
+          "id": 5,
+          "x": 7.65,
+          "y": 0.048,
+          "z": -18.01,
+          "pitchSig": 0.0249
+        }
+      ],
+      "return_max_y": 0.078
+    },
+    "cam_portal3_live": {
+      "frames": 50,
+      "first": {
+        "vx": -34.6,
+        "vz": -153,
+        "cx": 45.7,
+        "cy": 11.9,
+        "cz": -72.6
+      },
+      "last": {
+        "vx": -14.2,
+        "vz": -153,
+        "cx": -50.9,
+        "cy": 10.8,
+        "cz": -139.7
+      }
+    },
+    "nav_errors_after_R2": 1,
+    "nav_errors_after_H1": 1,
+    "fps_live_3_points": {
+      "ponto1_kong_ato1": {
+        "avgFps": 60,
+        "drawCalls": 141,
+        "triangles": 126710
+      },
+      "ponto2_murais_ato4": {
+        "avgFps": 60,
+        "drawCalls": 141,
+        "triangles": 126710
+      },
+      "ponto3_mirante_ato3": {
+        "avgFps": 60,
+        "drawCalls": 141,
+        "triangles": 126710
+      }
+    }
+  }
+}

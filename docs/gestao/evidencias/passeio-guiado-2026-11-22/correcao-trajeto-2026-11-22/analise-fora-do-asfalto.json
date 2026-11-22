@@ -1,0 +1,56 @@
+{
+ "samplesTotal": 582,
+ "guidedSamples": 581,
+ "offRoadSamples": 0,
+ "offRoadEarly_t_le_5s": 0,
+ "worstGap": -3.56,
+ "worstAt": {
+  "wall": 99.47,
+  "x": 26.94,
+  "z": -93.01
+ },
+ "reversingSamples": 0,
+ "visits": [
+  {
+   "t": 4.55,
+   "count": 1
+  },
+  {
+   "t": 17.39,
+   "count": 2
+  },
+  {
+   "t": 38.98,
+   "count": 3
+  },
+  {
+   "t": 54.73,
+   "count": 4
+  },
+  {
+   "t": 73.8,
+   "count": 5
+  },
+  {
+   "t": 91.8,
+   "count": 6
+  },
+  {
+   "t": 121.51,
+   "count": 7
+  },
+  {
+   "t": 138.95,
+   "count": 8
+  },
+  {
+   "t": 159.2,
+   "count": 9
+  }
+ ],
+ "totalWall": 163.7,
+ "finalCount": 9,
+ "finalToast": true,
+ "errors": [],
+ "firstOff": []
+}

@@ -1,0 +1,32 @@
+{
+  "antes_1346": [
+    "manifest.json",
+    "manifest.json",
+    "manifest.json",
+    "manifest.json"
+  ],
+  "depois_1346": [
+    "manifest.json",
+    "manifest.json",
+    "manifest.json",
+    "manifest.json",
+    "member-2d.webp",
+    "member-murdoc.webp"
+  ],
+  "erros_1346": [],
+  "antes_1440": [
+    "manifest.json",
+    "manifest.json",
+    "manifest.json",
+    "manifest.json"
+  ],
+  "depois_1440": [
+    "manifest.json",
+    "manifest.json",
+    "manifest.json",
+    "manifest.json",
+    "member-2d.webp",
+    "member-murdoc.webp"
+  ],
+  "erros_1440": []
+}

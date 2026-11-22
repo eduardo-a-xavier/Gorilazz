@@ -1,0 +1,67 @@
+{
+  "failed_requests": [],
+  "bad_status": [],
+  "console_errors": [],
+  "fps_3p": 60.6,
+  "hud_overlaps": {
+    "1585x746": {
+      "cabin_vs_radio": false,
+      "cabin_vs_map": false,
+      "cabin_vs_pedals": false,
+      "cabin_box": {
+        "x": 650.28125,
+        "y": 668.3125,
+        "width": 284.4375,
+        "height": 46
+      },
+      "radio_box": {
+        "x": 31.6875,
+        "y": 656.3125,
+        "width": 356,
+        "height": 58
+      }
+    },
+    "1440x900": {
+      "cabin_vs_radio": false,
+      "cabin_vs_map": false,
+      "cabin_vs_pedals": false,
+      "cabin_box": {
+        "x": 577.78125,
+        "y": 825.203125,
+        "width": 284.4375,
+        "height": 46
+      },
+      "radio_box": {
+        "x": 28.796875,
+        "y": 813.203125,
+        "width": 356,
+        "height": 58
+      }
+    },
+    "390x844": {
+      "cabin_vs_radio": false,
+      "cabin_vs_map": false,
+      "cabin_vs_pedals": false,
+      "cabin_box": {
+        "x": 230.125,
+        "y": 726,
+        "width": 147.875,
+        "height": 38
+      },
+      "radio_box": {
+        "x": 12,
+        "y": 724,
+        "width": 196,
+        "height": 40
+      }
+    }
+  },
+  "radio_tracks": {
+    "before": "Concreto",
+    "after": "Maré de plástico"
+  },
+  "full_map_m": {
+    "opened_on_M": true,
+    "closed_on_Esc": true
+  }
+}

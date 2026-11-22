@@ -1,0 +1,38 @@
+--- docs/gestao/evidencias/motorista-comparacao-2026-11-12/baseline-remocao/src/scene.js	2026-11-12 20:48:59.797480500 -0300
++++ src/scene.js	2026-11-12 20:48:59.969790700 -0300
+@@ -538,21 +538,6 @@
+     }
+   }
+   loadVehicle();
+-  // Diagnóstico: ?motorista=trellis troca o ocupante por um GLB gerado com o TRELLIS (MIT) a partir de uma
+-  // captura do próprio boneco. É uma malha estática (sem reação de cabeça nem braços no volante).
+-  // Origem e licença: docs/gestao/evidencias/motorista-comparacao-2026-11-12/ORIGEM.md. Falhou? Fica a variante A.
+-  async function loadTrellisDriver() {
+-    if (new URLSearchParams(location.search).get('motorista') !== 'trellis') return;
+-    try {
+-      const source = (await new GLTFLoader().loadAsync('./assets/models/motorista-trellis.glb')).scene.getObjectByProperty('isMesh', true);
+-      source.geometry.computeVertexNormals();
+-      const mesh = new THREE.Mesh(source.geometry, new THREE.MeshStandardMaterial({ map: source.material.map, roughness: .9, metalness: 0 }));
+-      mesh.castShadow = mesh.receiveShadow = true; mesh.name = 'driver-trellis'; mesh.scale.setScalar(2.12); mesh.position.set(0, 1.56, .04); mesh.rotation.y = Math.PI;
+-      driver.traverse(object => { if (object.isMesh) object.visible = false; });
+-      driver.add(mesh); driver.userData.variant = 'trellis';
+-    } catch (error) { console.warn('Motorista TRELLIS indisponível; variante A mantida:', error.message); }
+-  }
+-  loadTrellisDriver();
+   function person(index) {
+     const g = new THREE.Group();
+     const skin = ['#e2d8c0', '#91a568', '#e2d8c0', '#986b50'][index];
+--- docs/gestao/evidencias/motorista-comparacao-2026-11-12/baseline-remocao/server.mjs	2026-11-12 20:48:59.824542800 -0300
++++ server.mjs	2026-11-12 20:48:59.970792300 -0300
+@@ -61,7 +61,6 @@
+   ['/assets/models/gorillaz-geep.glb', ['assets/models/gorillaz-geep.glb', 'model/gltf-binary']],
+   ['/assets/models/GEEP-CREDITS.txt', ['assets/models/GEEP-CREDITS.txt', 'text/plain; charset=utf-8']],
+   ['/assets/models/kenney-suv.glb', ['assets/models/kenney-suv.glb', 'model/gltf-binary']],
+-  ['/assets/models/motorista-trellis.glb', ['assets/models/motorista-trellis.glb', 'model/gltf-binary']],
+   ['/assets/models/kenney-suv-luxury.glb', ['assets/models/kenney-suv-luxury.glb', 'model/gltf-binary']],
+   ['/assets/models/KENNEY-LICENSE.txt', ['assets/models/KENNEY-LICENSE.txt', 'text/plain; charset=utf-8']],
+   ['/src/vendor/three.module.min.js', ['src/vendor/three.module.min.js', 'text/javascript; charset=utf-8']],
+--- docs/gestao/evidencias/motorista-comparacao-2026-11-12/baseline-remocao/tests/driver-trellis.test.mjs	2026-11-12 20:48:59.850125900 -0300
++++ /dev/null	2026-11-12 20:49:21.000000000 -0300
+@@ -1,32 +0,0 @@
+Removidos: assets/models/motorista-trellis.glb (110.832 bytes, sha256 em baseline-remocao/assets/) e tests/driver-trellis.test.mjs

@@ -1,0 +1,104 @@
+{
+  "era_gates": [
+    {
+      "era_act": 1,
+      "gate": {
+        "x": 15.91199999999999,
+        "z": 6.215999999999995,
+        "heading": -1.8864251684600604,
+        "width": 15,
+        "score": 50.943246853729285,
+        "era": 0
+      },
+      "frames": 151,
+      "min_dist_to_gate_m": 0.27,
+      "crossed_portal": true,
+      "max_speed_ms": 20.15,
+      "min_reach_m": 10.76,
+      "max_reach_m": 30.27,
+      "min_cam_y": 8.8,
+      "max_jump_m": 0.916
+    },
+    {
+      "era_act": 2,
+      "gate": {
+        "x": 87.7530625,
+        "z": -64.85600781250001,
+        "heading": -0.4813858550924199,
+        "width": 15,
+        "score": 21.137150928613053,
+        "era": 1
+      },
+      "frames": 154,
+      "min_dist_to_gate_m": 0.02,
+      "crossed_portal": true,
+      "max_speed_ms": 20.36,
+      "min_reach_m": 9.26,
+      "max_reach_m": 30.47,
+      "min_cam_y": 11.69,
+      "max_jump_m": 2.794
+    },
+    {
+      "era_act": 3,
+      "gate": {
+        "x": 8.02409375,
+        "z": -160.4442265625,
+        "heading": 1.7760218150553118,
+        "width": 15,
+        "score": 26.679481739205883,
+        "era": 2
+      },
+      "frames": 148,
+      "min_dist_to_gate_m": 0.27,
+      "crossed_portal": true,
+      "max_speed_ms": 20.05,
+      "min_reach_m": 18.83,
+      "max_reach_m": 30.33,
+      "min_cam_y": 11.69,
+      "max_jump_m": 2.981
+    },
+    {
+      "era_act": 4,
+      "gate": {
+        "x": -57.3125,
+        "z": -58.125,
+        "heading": -1.8087254082572717,
+        "width": 15,
+        "score": 61.3146661187191,
+        "era": 3
+      },
+      "frames": 153,
+      "min_dist_to_gate_m": 0.01,
+      "crossed_portal": true,
+      "max_speed_ms": 20.46,
+      "min_reach_m": 24.84,
+      "max_reach_m": 30.47,
+      "min_cam_y": 11.69,
+      "max_jump_m": 1.918
+    }
+  ],
+  "reverse_maneuver": {
+    "frames": 202,
+    "reverse_frames": 91,
+    "min_speed_ms": -4.17,
+    "max_jump_m": 1.515,
+    "max_yaw_delta_deg_per_frame": 3.15,
+    "flip_180_detected": false
+  },
+  "block_cornering": {
+    "frames": 275,
+    "max_jump_m": 1.334,
+    "min_reach_m": 12.03,
+    "max_reach_m": 27.87,
+    "min_cam_y": 7.18,
+    "max_cam_y": 11.8,
+    "clippedFrames": 0,
+    "totalFrames": 275
+  },
+  "summary": {
+    "overall_max_jump_m": 2.981,
+    "all_4_gates_crossed": true,
+    "reverse_zero_flip_180": true,
+    "zero_building_clipping": true
+  }
+}

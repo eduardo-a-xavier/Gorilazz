@@ -1,0 +1,44 @@
+{
+  "mode": "legacy",
+  "threshold_m_per_frame": 0.3,
+  "occluded": 0,
+  "frames": 32736,
+  "jump": 449,
+  "flips": 274,
+  "clip": 0,
+  "maxJump": 0.689,
+  "minGap": 9.26,
+  "minDist": 13.02,
+  "maxRate": 41.7,
+  "runs": 132,
+  "worst": [
+    {
+      "road": 9,
+      "offset": 5,
+      "reverse": false,
+      "speed": 12,
+      "jumps": 42
+    },
+    {
+      "road": 9,
+      "offset": 5,
+      "reverse": true,
+      "speed": 28,
+      "jumps": 33
+    },
+    {
+      "road": 9,
+      "offset": 5,
+      "reverse": false,
+      "speed": 28,
+      "jumps": 29
+    },
+    {
+      "road": 5,
+      "offset": 5,
+      "reverse": true,
+      "speed": 12,
+      "jumps": 28
+    }
+  ]
+}

@@ -1,0 +1,179 @@
+{
+  "item1_render_storage_retry": {
+    "first_visit": {
+      "entered": "true",
+      "has3d": true,
+      "renderStatus": "MUNDO ABERTO / 3D EM TEMPO REAL",
+      "canvasOk": true
+    },
+    "saved_position": {
+      "x": 95,
+      "z": -89,
+      "schema_requirement": "Exige 'version: 1' em gorilazz.world.v1 para deserialização no progress.js",
+      "restored_correctly": true
+    },
+    "failure": {
+      "has3d": false,
+      "failureVisible": true,
+      "retryVisible": true,
+      "renderStatus": "MODO 2D / 3D NÃO CARREGOU"
+    },
+    "recovered": {
+      "has3d": true,
+      "renderStatus": "MUNDO ABERTO / 3D EM TEMPO REAL",
+      "failureHidden": true
+    },
+    "status": "APROVADO"
+  },
+  "item2_scroll_lock_hud": {
+    "hud_viewports": {
+      "1440x900": {
+        "windowHeight": 900,
+        "radioBottom": 882,
+        "radioFits": true,
+        "driveHudBottom": 882,
+        "driveHudFits": true,
+        "controlsBottom": 882,
+        "controlsFits": true,
+        "driveButtonsBottom": 0,
+        "driveButtonsFits": true
+      },
+      "1346x680": {
+        "windowHeight": 680,
+        "radioBottom": 662,
+        "radioFits": true,
+        "driveHudBottom": 662,
+        "driveHudFits": true,
+        "controlsBottom": 662,
+        "controlsFits": true,
+        "driveButtonsBottom": 0,
+        "driveButtonsFits": true
+      },
+      "390x844": {
+        "windowHeight": 844,
+        "radioBottom": 764,
+        "radioFits": true,
+        "driveHudBottom": 764,
+        "driveHudFits": true,
+        "controlsBottom": 832,
+        "controlsFits": true,
+        "driveButtonsBottom": 832,
+        "driveButtonsFits": true
+      },
+      "320x568": {
+        "windowHeight": 568,
+        "radioBottom": 488,
+        "radioFits": true,
+        "driveHudBottom": 488,
+        "driveHudFits": true,
+        "controlsBottom": 556,
+        "controlsFits": true,
+        "driveButtonsBottom": 556,
+        "driveButtonsFits": true
+      }
+    },
+    "scroll_lock": {
+      "scroll_locked": true,
+      "init_scroll": 92,
+      "post_scroll": 92,
+      "exit3d_mode3d": false,
+      "eras_top": 43.78125,
+      "reentered_mode3d": true,
+      "anchor_exit_mode3d": false,
+      "radio_top": 44.171875
+    },
+    "status": "APROVADO"
+  },
+  "item3_map_and_tip": {
+    "map_key_open": true,
+    "map_esc_close": true,
+    "map_btn_open": true,
+    "map_btn_close": true,
+    "tip_visible": true,
+    "tip_auto_hide_4s": true,
+    "status": "APROVADO"
+  },
+  "item4_radio": {
+    "track1": "Concreto",
+    "track2": "Maré de plástico",
+    "track3": "Concreto",
+    "switched": true,
+    "error_skip": {
+      "hasAudio": false
+    },
+    "status": "APROVADO"
+  },
+  "item5_murais_palcos_outdoors": {
+    "initial_art_reqs_count": 2,
+    "near_art_reqs_count": 3,
+    "prompt_text": "[E] Ler História Completa — Duas mentes, um universo",
+    "prompt_matches": true,
+    "discovery_card": {
+      "open": true,
+      "title": "Duas mentes, um universo",
+      "text": "Segundo Jamie Hewlett, Gorillaz nasceu em 1998 de uma ideia de Damon Albarn para unir composição musical e narrativa em quadrinhos. O EP Tomorrow Comes Today (novembro de 2000) abriu caminho para o álbum de estreia em 26 de março de 2001.",
+      "saved": "✓ Nova descoberta salva no seu diário."
+    },
+    "status": "APROVADO"
+  },
+  "item6_lighting_luminance": {
+    "points": {
+      "kong_estudios": {
+        "fps": 60,
+        "luminance": {
+          "avg_lum": 72.27,
+          "dark_pct": 1.78
+        }
+      },
+      "bairro_murais": {
+        "fps": 61,
+        "luminance": {
+          "avg_lum": 80.75,
+          "dark_pct": 0.06
+        }
+      },
+      "mirante_moinho": {
+        "fps": 57,
+        "luminance": {
+          "avg_lum": 82.23,
+          "dark_pct": 0.08
+        }
+      }
+    },
+    "status": "APROVADO"
+  },
+  "item7_pilot_hands_1st_person": {
+    "first_person_active": true,
+    "screenshots": [
+      "07-piloto-1a-pessoa-centro.png",
+      "07-piloto-1a-pessoa-esquerda.png",
+      "07-piloto-1a-pessoa-direita.png"
+    ],
+    "status": "APROVADO"
+  },
+  "item8_regressions": {
+    "eras_count": 8,
+    "strip_count": 8,
+    "onboard_dialog_ok": true,
+    "tactical_map_ok": true,
+    "arcade_ok": true,
+    "status": "APROVADO"
+  },
+  "item9_payload_weight": {
+    "requests_count": 100,
+    "transfer_bytes": 9576820,
+    "transfer_mb": 9.13,
+    "decoded_bytes": 12219854,
+    "decoded_mb": 11.65,
+    "metodo_transfer": "Soma dos tamanhos transmitidos na rede (Content-Length das respostas comprimidas gzip + arquivos já comprimidos)",
+    "metodo_decoded": "Soma do tamanho decodificado e descompactado de todos os corpos em memória (uncompressed response body)",
+    "status": "APROVADO"
+  },
+  "fps_records": {
+    "kong_estudios": 60,
+    "bairro_murais": 61,
+    "mirante_moinho": 57
+  },
+  "console_errors": [],
+  "http_errors": []
+}

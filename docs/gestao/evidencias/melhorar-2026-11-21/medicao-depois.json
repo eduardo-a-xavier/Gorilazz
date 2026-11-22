@@ -1,0 +1,111 @@
+{
+  "label": "depois",
+  "bytes": 5508367,
+  "bytes_art": 4368,
+  "fps": {},
+  "draw": {},
+  "http_errors": 0,
+  "console_errors": [],
+  "top_assets": [
+    {
+      "url": "/assets/models/gorillaz-phase7-web.glb",
+      "bytes": 2819277
+    },
+    {
+      "url": "/assets/models/gorillaz-geep.glb",
+      "bytes": 380319
+    },
+    {
+      "url": "/assets/materials/roof-normal.webp",
+      "bytes": 336914
+    },
+    {
+      "url": "/f3473154-99cd-4845-b52f-035aa4502f58",
+      "bytes": 304904
+    },
+    {
+      "url": "/d01fc564-a3ce-4d62-8936-07a725d080f9",
+      "bytes": 212270
+    },
+    {
+      "url": "/assets/materials/roof.webp",
+      "bytes": 154022
+    },
+    {
+      "url": "/assets/environment/kong-studio.glb",
+      "bytes": 146743
+    },
+    {
+      "url": "/c46e91c9-4b23-4db1-8164-0e49ddd0f2a3",
+      "bytes": 132903
+    },
+    {
+      "url": "/assets/models/driver-pilot-v2.glb",
+      "bytes": 109151
+    },
+    {
+      "url": "/src/vendor/three.core.min.js",
+      "bytes": 101312
+    },
+    {
+      "url": "/ea7af83d-5b27-454b-be50-86209bbec114",
+      "bytes": 101064
+    },
+    {
+      "url": "/src/vendor/three.module.min.js",
+      "bytes": 79335
+    },
+    {
+      "url": "/4389ef21-9a9d-47b1-aa35-6d2a1dc27a77",
+      "bytes": 52704
+    },
+    {
+      "url": "/assets/environment/broadleaf-tree.glb",
+      "bytes": 44458
+    },
+    {
+      "url": "/49a9f24d-436c-4681-b3bf-4a5901e2b12c",
+      "bytes": 38725
+    },
+    {
+      "url": "/db0f3684-9203-4799-ab3b-07333d88accb",
+      "bytes": 38724
+    },
+    {
+      "url": "/src/scene.js",
+      "bytes": 31453
+    },
+    {
+      "url": "/src/vendor/GLTFLoader.js",
+      "bytes": 25110
+    },
+    {
+      "url": "/src/app.js",
+      "bytes": 24787
+    },
+    {
+      "url": "/7271d7b3-114f-42b3-b82f-264c42dcda46",
+      "bytes": 22451
+    },
+    {
+      "url": "/a3c071f7-a254-4d2d-a8b8-b6515d0e0f30",
+      "bytes": 18363
+    },
+    {
+      "url": "/3b1bb762-55fc-4860-9c79-1ddd082862ba",
+      "bytes": 17049
+    },
+    {
+      "url": "/21f27480-aefa-41bd-a65a-80d1552b40d6",
+      "bytes": 17049
+    },
+    {
+      "url": "/7c347a29-88ce-4ff8-a75f-64cfd8757c4c",
+      "bytes": 17049
+    },
+    {
+      "url": "/59bc1738-7645-4d6b-a29f-b4b5716602f7",
+      "bytes": 15881
+    }
+  ]
+}

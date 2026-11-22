@@ -1,0 +1,194 @@
+{
+  "suite_tests": {},
+  "item_A_onboarding": {
+    "boas_vindas_1a_entrada": true,
+    "fechou_com_escape": true,
+    "reabriu_com_H": true,
+    "reabriu_com_F1": true,
+    "opt_out_present": false,
+    "respeitado_no_recarregamento": true,
+    "aria_e_foco": {
+      "role": "dialog",
+      "aria_labelledby": "onboarding-title",
+      "aria_describedby": "onboarding-intro",
+      "h2_letter_spacing": "0.9px",
+      "dt_align_self": "start",
+      "active_id": "onboarding-start"
+    },
+    "dicas_sobreposicao": {
+      "1440x900": {
+        "tip_visible": false,
+        "tip_rect": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0,
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        },
+        "overlap_mini": false,
+        "overlap_radio": false
+      },
+      "390x844": {
+        "tip_visible": false,
+        "tip_rect": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0,
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        },
+        "overlap_mini": false,
+        "overlap_radio": false
+      },
+      "320x568": {
+        "tip_visible": false,
+        "tip_rect": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0,
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        },
+        "overlap_mini": false,
+        "overlap_radio": false
+      }
+    },
+    "page_errors": []
+  },
+  "item_B_fliperama": {
+    "prompt_text": "E / JOGAR FLIPERAMA",
+    "prompt_visible": true,
+    "abertura_com_E": true,
+    "pausa_com_P": "PAUSA · P para continuar",
+    "fechou_com_Escape": true,
+    "veiculo_parado_pos_saida": true,
+    "sprites_info": {
+      "w": 510,
+      "h": 390,
+      "score": "00000",
+      "lives": "♥♥♥"
+    },
+    "mobile_dpad": {
+      "pad_visible": true,
+      "directions": [
+        "up",
+        "left",
+        "down",
+        "right"
+      ]
+    },
+    "page_errors": [],
+    "console_errors": []
+  },
+  "item_C_otimizacao": {
+    "total_bytes_transferidos": 10317150,
+    "bytes_por_extensao": {
+      "other": 1056134,
+      ".css": 27944,
+      ".js": 352692,
+      ".woff2": 18612,
+      ".jpg": 838848,
+      ".mp3": 78109,
+      ".png": 1526686,
+      ".webp": 2954706,
+      ".glb": 3463419
+    },
+    "webp_carregados_count": 12,
+    "glb_transfers": [
+      {
+        "url": "http://127.0.0.1:3118/assets/environment/kong-studio.glb",
+        "status": 200,
+        "bytes": 146743,
+        "encoding": "gzip"
+      },
+      {
+        "url": "http://127.0.0.1:3118/assets/environment/broadleaf-tree.glb",
+        "status": 200,
+        "bytes": 44458,
+        "encoding": "gzip"
+      },
+      {
+        "url": "http://127.0.0.1:3118/assets/models/driver-pilot.glb",
+        "status": 200,
+        "bytes": 72622,
+        "encoding": "gzip"
+      },
+      {
+        "url": "http://127.0.0.1:3118/assets/models/gorillaz-geep.glb",
+        "status": 200,
+        "bytes": 380319,
+        "encoding": "gzip"
+      },
+      {
+        "url": "http://127.0.0.1:3118/assets/models/gorillaz-phase7-web.glb",
+        "status": 200,
+        "bytes": 2819277,
+        "encoding": "gzip"
+      }
+    ],
+    "fps_e_draw_calls": {
+      "kong_studios": {
+        "avgFps": 60.6,
+        "drawCalls": 314,
+        "triangles": 252517
+      },
+      "bairro_murais": {
+        "avgFps": 60.4,
+        "drawCalls": 314,
+        "triangles": 252517
+      },
+      "mirante_moinho": {
+        "avgFps": 60.6,
+        "drawCalls": 314,
+        "triangles": 252517
+      }
+    },
+    "fallback_png_com_webp_bloqueado": {
+      "status": {
+        "pilot": "glb",
+        "vehicle_loaded": "true"
+      },
+      "errors": []
+    }
+  },
+  "item_D_integracao": {
+    "font_anton_check": {
+      "1440x900": true,
+      "390x844": true,
+      "320x568": true
+    },
+    "http_errors": [],
+    "console_errors": []
+  },
+  "item_E_geral": {
+    "overflow_horizontal": {
+      "1440x900": {
+        "has_overflow": false,
+        "scrollWidth": 1440,
+        "innerWidth": 1440
+      },
+      "390x844": {
+        "has_overflow": false,
+        "scrollWidth": 390,
+        "innerWidth": 390
+      },
+      "320x568": {
+        "has_overflow": false,
+        "scrollWidth": 320,
+        "innerWidth": 320
+      }
+    },
+    "wikipedia_references": 0,
+    "creditos_preservados": true
+  },
+  "defeitos": []
+}

@@ -1,0 +1,7 @@
+62 arquivos copiados
+motorista/trellis no pacote do Pages: 0
+servidor de teste na porta 65452
+GET /assets/models/motorista-trellis.glb -> 404
+GET /assets/models/gorillaz-geep.glb -> 200
+GET /src/scene.js -> 200
+grep -ri trellis em src server.mjs tests .github package.json index.html: 0 arquivos

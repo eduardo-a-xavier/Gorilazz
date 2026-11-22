@@ -1,0 +1,80 @@
+--- docs/gestao/evidencias/graficos-2026-11-12/baseline/src/materials.js	2026-11-12 19:36:51.461245300 -0300
++++ src/materials.js	2026-11-12 19:46:31.798139300 -0300
+@@ -2,7 +2,24 @@
+ 
+ // Original baked surfaces. Textures are local and share a small material cache.
+ export function createSurfaceLibrary() {
+-  const loader = new THREE.TextureLoader(), cache = new Map();
++  const loader = new THREE.TextureLoader(), cache = new Map(), images = new Map();
++  // Uma imagem por URL: cada combinação de repetição usa um clone, que compartilha o mesmo Source
++  // (e a mesma textura na GPU) mas mantém repeat próprio. Um clone criado antes do fim do download
++  // é marcado para envio à GPU assim que a imagem chega. clone() já chama needsUpdate; sem imagem isso
++  // geraria o aviso "Texture marked for update but no image data found", então a versão volta a 0.
++  function sharedTexture(url, repeatX, repeatY) {
++    let entry = images.get(url), texture;
++    if (!entry) {
++      entry = { loaded: false, clones: [] };
++      texture = entry.base = loader.load(url, () => { entry.loaded = true; for (const clone of entry.clones) clone.needsUpdate = true; });
++      images.set(url, entry);
++    } else {
++      texture = entry.base.clone();
++      if (!entry.loaded) { texture.version = 0; entry.clones.push(texture); }
++    }
++    texture.wrapS = texture.wrapT = THREE.RepeatWrapping; texture.repeat.set(repeatX, repeatY);
++    return texture;
++  }
+   const definitions = {
+     asphalt: ['#dfe3dc', .93], earth: ['#b9b19b', 1], grass: ['#b6c69d', 1],
+     plaster: ['#e3dfca', .94], brick: ['#dbc2ad', .97], wood: ['#d6c7a1', .91],
+@@ -13,12 +30,10 @@
+       const key = `${name}/${repeatX}/${repeatY}`;
+       if (cache.has(key)) return cache.get(key);
+       const [color, roughness] = definitions[name] || definitions.plaster;
+-      const map = loader.load(`./assets/materials/${name}.png`); map.colorSpace = THREE.SRGBColorSpace;
+-      map.wrapS = map.wrapT = THREE.RepeatWrapping; map.repeat.set(repeatX, repeatY); map.anisotropy = 4;
++      const map = sharedTexture(`./assets/materials/${name}.png`, repeatX, repeatY); map.colorSpace = THREE.SRGBColorSpace; map.anisotropy = 4;
+       const result = new THREE.MeshStandardMaterial({map, color, roughness, metalness:0});
+       if (name !== 'brick') {
+-        const normalMap = loader.load(`./assets/materials/${name}-normal.png`);
+-        normalMap.wrapS = normalMap.wrapT = THREE.RepeatWrapping; normalMap.repeat.copy(map.repeat);
++        const normalMap = sharedTexture(`./assets/materials/${name}-normal.png`, repeatX, repeatY);
+         result.normalMap = normalMap; result.normalScale.set(.16,.16);
+       }
+       cache.set(key,result); return result;
+--- docs/gestao/evidencias/graficos-2026-11-12/baseline/src/scene.js	2026-11-12 19:36:51.462253500 -0300
++++ src/scene.js	2026-11-12 19:42:17.610010500 -0300
+@@ -99,7 +99,9 @@
+ export function createWorld(container, onMember, {onLost = () => {}, onRestored = () => {}, onViewReset = () => {}, onFullscreen = () => {}, onExplore = () => {}, radio, onRadio, onSteer} = {}) {
+   // Perfil gráfico: automático por padrão; ?qualidade=leve ou ?qualidade=alta força um perfil.
+   const requested = new URLSearchParams(location.search).get('qualidade');
+-  const compact = container.clientWidth > 0 && container.clientWidth < 700;
++  // O contêiner ainda não tem largura quando o mundo é criado (clientWidth = 0); sem o recurso à janela,
++  // celulares caíam no perfil alto (bloom, sombras de 2048, teto de pixel 1,75 e meta de 60 quadros/s).
++  const compact = (container.clientWidth || innerWidth) < 700;
+   const light = requested === 'leve' || (requested !== 'alta' && compact);
+   const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false, powerPreference: 'high-performance' });
+   const maxRatio = Math.min(devicePixelRatio, light ? 1.5 : 1.75), minRatio = Math.min(maxRatio, .7);
+@@ -129,7 +131,7 @@
+   scene.add(skylight);
+   const sunlight = new THREE.DirectionalLight('#ffe4c2', 3.1);
+   sunlight.castShadow = true;
+-  const shadowSize = light ? 1024 : 2048;
++  const shadowSize = light ? 1024 : 2048, lightProfile = light;
+   sunlight.shadow.mapSize.set(shadowSize, shadowSize);
+   Object.assign(sunlight.shadow.camera, { left: -SHADOW_SPAN / 2, right: SHADOW_SPAN / 2, top: SHADOW_SPAN / 2, bottom: -SHADOW_SPAN / 2, near: 1, far: 260 });
+   sunlight.shadow.normalBias = .05; sunlight.shadow.bias = -.0003;
+@@ -871,10 +873,12 @@
+       camera.lookAt(cameraTarget);
+       // Tranco de câmera no impacto: curto, proporcional à velocidade, sem acumular no estado da câmera.
+       if (impact > .01) { camera.rotateZ(Math.sin(t * 58) * impact * .022); camera.rotateX(Math.sin(t * 47) * impact * .012); impact *= Math.exp(-5 * dt); }
+-      if (frameCount++ % 2 === 0) aimSun(x, z);
++      // Perfil leve na vista aérea: a sombra cobre só 90 m ao redor do jipe, então atualiza a cada 4 quadros.
++      if (frameCount++ % (lightProfile && overview ? 4 : 2) === 0) aimSun(x, z);
+       cardTint.copy(sunlight.color).lerp(skylight.color, .45);
+       for (const entry of heavyCasters) {
+-        const casting = Math.hypot(entry.at.x - x, entry.at.z - z) < 55;
++        // Perfil leve na vista aérea: modelos densos (banda, escultura) não projetam sombra; a 290 m ela ocupa poucos pixels.
++        const casting = Math.hypot(entry.at.x - x, entry.at.z - z) < 55 && !(lightProfile && overview);
+         if (casting !== entry.casting) { entry.casting = casting; for (const mesh of entry.meshes) mesh.castShadow = casting; }
+         // Histerese de 10 m evita alternar entre modelo e cartaz na fronteira.
+         const range = Math.hypot(entry.at.x - camera.position.x, entry.at.z - camera.position.z);

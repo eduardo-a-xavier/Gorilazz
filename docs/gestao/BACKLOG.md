@@ -10,7 +10,7 @@ Estados permitidos: `A fazer`, `Em andamento`, `Em revisão`, `Concluído`, `Blo
 | GZ-02 | Validar primeiro uso com pessoa nova | Pessoa sem contato prévio inicia, abre a primeira história e entende o próximo passo sem explicação; observar desktop, celular e alternativa sem WebGL quando disponíveis | Engenharia Gorilazz + QA Gorilazz | Em revisão |
 | GZ-03 | Alinhar cidade, eras, diário e narrativa | Explicar os recortes 1998–2023 e até 2026 e tornar consistente o vínculo de descoberta, bairro e ato; não presumir relação um a um entre 8 eras, 4 atos, 3 regiões e 5 descobertas | Pesquisa Gorilazz + Engenharia Gorilazz | Em revisão |
 | GZ-04 | Conferir fatos e fontes | Inventário afirmação por afirmação com fonte primária direta, trecho/data consultada e status confirmado, não confirmado ou interpretação | Pesquisa Gorilazz | Em revisão |
-| GZ-05 | Resolver origem/licença do diorama de Noodle | Crédito verificável ou substituição por arte própria antes da publicação | Pesquisa Gorilazz + Engenharia Gorilazz | A fazer |
+| GZ-05 | Resolver origem/licença do diorama de Noodle | Crédito verificável ou substituição por arte própria antes da publicação | Pesquisa Gorilazz + Engenharia Gorilazz | Em revisão |
 | GZ-06 | Planejar e executar validação física | Fluxos principais verificados em computador e Android intermediário; registrar aparelho e evidência | QA Gorilazz + Eduardo | A fazer |
 | GZ-07 | Ensaiar a versão publicada | URL final testada em sessão limpa: HTTPS, modelos, áudio, links e erros básicos | QA Gorilazz + Eduardo | Bloqueado — aguarda hospedagem/URL de GZ-01 |
 

@@ -1,0 +1,119 @@
+{
+  "label": "antes",
+  "bytes": 5682517,
+  "bytes_art": 4368,
+  "fps": {
+    "kong_estudios": 60.3,
+    "bairro_murais": 60.3,
+    "mirante_moinho": 60.1
+  },
+  "draw": {
+    "kong_estudios": 317,
+    "bairro_murais": 248,
+    "mirante_moinho": 209
+  },
+  "http_errors": 0,
+  "console_errors": [],
+  "top_assets": [
+    {
+      "url": "/assets/models/gorillaz-phase7-web.glb",
+      "bytes": 2819277
+    },
+    {
+      "url": "/assets/models/gorillaz-geep.glb",
+      "bytes": 380319
+    },
+    {
+      "url": "/f9969b51-9c79-4bfd-8c4d-db9246611f67",
+      "bytes": 304904
+    },
+    {
+      "url": "/assets/portraits/phase7-russel.png",
+      "bytes": 212713
+    },
+    {
+      "url": "/e37c671e-b88a-4e70-a4b6-a2bcb57a7718",
+      "bytes": 212270
+    },
+    {
+      "url": "/assets/portraits/phase7-noodle.png",
+      "bytes": 186676
+    },
+    {
+      "url": "/assets/portraits/phase7-twod.png",
+      "bytes": 182046
+    },
+    {
+      "url": "/assets/portraits/phase7-murdoc.png",
+      "bytes": 181908
+    },
+    {
+      "url": "/assets/environment/kong-studio.glb",
+      "bytes": 146743
+    },
+    {
+      "url": "/bf14b760-7c2c-4e55-ac55-9b1557b013da",
+      "bytes": 132903
+    },
+    {
+      "url": "/src/vendor/three.core.min.js",
+      "bytes": 101312
+    },
+    {
+      "url": "/42cf5b42-a94c-4ed9-a16b-7034c0057c73",
+      "bytes": 101064
+    },
+    {
+      "url": "/src/vendor/three.module.min.js",
+      "bytes": 79335
+    },
+    {
+      "url": "/assets/models/driver-pilot.glb",
+      "bytes": 72622
+    },
+    {
+      "url": "/fcc6c54f-7962-460d-b5c1-102f3ce9e5fb",
+      "bytes": 52704
+    },
+    {
+      "url": "/assets/environment/broadleaf-tree.glb",
+      "bytes": 44458
+    },
+    {
+      "url": "/10e206ca-33a7-4c56-a2e7-4cd0d2e22505",
+      "bytes": 38725
+    },
+    {
+      "url": "/e3c6ea58-f0d8-416b-94dd-32a261f0b37a",
+      "bytes": 38724
+    },
+    {
+      "url": "/src/scene.js",
+      "bytes": 30211
+    },
+    {
+      "url": "/src/vendor/GLTFLoader.js",
+      "bytes": 25110
+    },
+    {
+      "url": "/src/app.js",
+      "bytes": 24715
+    },
+    {
+      "url": "/d5e545df-b3dd-4bc0-a0e0-5fe22c66f551",
+      "bytes": 22451
+    },
+    {
+      "url": "/413dac04-d32e-49bf-95fc-f50e0fe406c1",
+      "bytes": 18363
+    },
+    {
+      "url": "/8ee79b2f-e027-4a20-803f-4a7947d6eadf",
+      "bytes": 17049
+    },
+    {
+      "url": "/954baf3b-6f45-4a37-99ff-3a8115f587db",
+      "bytes": 17049
+    }
+  ]
+}

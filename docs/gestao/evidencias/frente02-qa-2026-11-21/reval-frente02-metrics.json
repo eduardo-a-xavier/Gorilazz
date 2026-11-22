@@ -1,0 +1,174 @@
+{
+  "p0_map_clicks": {
+    "steps": [
+      {
+        "target": "regiao_0",
+        "btn_text": "R1 Kong Studios Ato 1 · Clique para ir",
+        "map_closed": true,
+        "frames_30": 30,
+        "errors_so_far": 0
+      },
+      {
+        "target": "regiao_1",
+        "btn_text": "R2 Bairro dos murais Ato 4 · Clique para ir",
+        "map_closed": true,
+        "frames_30": 30,
+        "errors_so_far": 0
+      },
+      {
+        "target": "regiao_2",
+        "btn_text": "R3 Mirante do moinho Ato 3 · Clique para ir",
+        "map_closed": true,
+        "frames_30": 30,
+        "errors_so_far": 0
+      },
+      {
+        "target": "integrante_0_2D",
+        "btn_text": "H1 Duas mentes, um universo MURAL · Kong Studios",
+        "map_closed": true,
+        "frames_30": 30,
+        "errors_so_far": 0
+      },
+      {
+        "target": "integrante_1_Murdoc",
+        "btn_text": "H2 Quatro rostos. Muitas histórias. ARQUIVO · Bairro dos murais",
+        "map_closed": true,
+        "frames_30": 30,
+        "errors_so_far": 0
+      },
+      {
+        "target": "integrante_2_Noodle",
+        "btn_text": "H3 Um som sem fronteiras RÁDIO · Bairro dos murais",
+        "map_closed": true,
+        "frames_30": 30,
+        "errors_so_far": 0
+      },
+      {
+        "target": "integrante_3_Russel",
+        "btn_text": "H4 A paisagem de Demon Days MIRANTE · Mirante do moinho",
+        "map_closed": true,
+        "frames_30": 30,
+        "errors_so_far": 0
+      },
+      {
+        "target": "historia_0",
+        "btn_text": "H5 Quando o desenho encontra o palco PALCO · Mirante do moinho",
+        "map_closed": true,
+        "frames_30": 30,
+        "errors_so_far": 0
+      },
+      {
+        "target": "historia_2",
+        "btn_text": "M Murdoc Baixo · Feel Good Inc.",
+        "map_closed": true,
+        "frames_30": 30,
+        "errors_so_far": 0
+      },
+      {
+        "target": "historia_4",
+        "btn_text": "R Russel Bateria · Clint Eastwood",
+        "map_closed": true,
+        "frames_30": 30,
+        "errors_so_far": 0
+      }
+    ],
+    "post_nav_fps": 60.3,
+    "page_errors": 0
+  },
+  "p1_http_console_errors": {
+    "console_errors": [],
+    "http_errors": [],
+    "page_errors": []
+  },
+  "p2a_hud_320x568": {
+    "cabin_rect": {
+      "x": 86.0625,
+      "y": 402,
+      "w": 147.875,
+      "h": 38,
+      "r": 233.9375,
+      "b": 440
+    },
+    "radio_rect": {
+      "x": 12,
+      "y": 448,
+      "w": 196,
+      "h": 40,
+      "r": 208,
+      "b": 488
+    },
+    "mini_rect": {
+      "x": 200,
+      "y": 90,
+      "w": 108,
+      "h": 159.28125,
+      "r": 308,
+      "b": 249.28125
+    },
+    "overlap_cabin_radio": false,
+    "buttons": [
+      {
+        "text": "R · Sintonizar",
+        "rect": {
+          "x": 93.0625,
+          "y": 407,
+          "width": 72.59375,
+          "height": 28,
+          "top": 407,
+          "right": 165.65625,
+          "bottom": 435,
+          "left": 93.0625
+        }
+      },
+      {
+        "text": "C · Centralizar",
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0,
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        }
+      }
+    ],
+    "cabin_css": {
+      "position": "absolute",
+      "left": "160px",
+      "bottom": "128px",
+      "transform": "matrix(1, 0, 0, 1, -73.9375, 0)"
+    }
+  },
+  "p2b_cabin_fade": {
+    "has_hud_idle": true,
+    "hud_state": "stopped",
+    "cabin_opacity": "1",
+    "jogo_classes": "inside-geep hud-idle"
+  },
+  "p2c_velocimetro_clipping": {
+    "radio_active_btn": null,
+    "is_radio_focused": true
+  },
+  "fps_city_points": {
+    "ponto1_kong_ato1": {
+      "avgFps": 60.1,
+      "frames": 91,
+      "duration": 1.52,
+      "renderer": null
+    },
+    "ponto2_murais_ato4": {
+      "avgFps": 60.4,
+      "frames": 91,
+      "duration": 1.51,
+      "renderer": null
+    },
+    "ponto3_mirante_ato3": {
+      "avgFps": 60.5,
+      "frames": 91,
+      "duration": 1.5,
+      "renderer": null
+    }
+  }
+}

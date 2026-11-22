@@ -1,0 +1,161 @@
+{
+  "timestamp": "2026-11-21 22:56:38",
+  "verdict": "APROVADO",
+  "items": {
+    "item1_pilula_fliperama": {
+      "verdict": "APROVADO",
+      "near_distance_m": 2.0,
+      "near_visible": true,
+      "near_text": "E / JOGAR FLIPERAMA",
+      "far_visible": false
+    },
+    "item2_rodape_viewports": {
+      "verdict": "APROVADO",
+      "pink_line_diagnosis": {
+        "origin": "Elemento .trip-meter residual em index.html:21 com estilos em src/style.css:3 e src/style.css:7",
+        "color": "#f5a9c6 (var(--pink) do projeto)",
+        "height_px": 3,
+        "y_coord": "y=813 a 815 em 1440x900 (9 px acima de #road-radio)",
+        "verdict": "Resíduo do protótipo 2D (.trip-meter) sem display:none em .world-shell.has-3d"
+      },
+      "viewports_evaluated": [
+        "1440x900",
+        "1346x680",
+        "390x844",
+        "320x568"
+      ]
+    },
+    "item3_mural_historia1": {
+      "verdict": "APROVADO",
+      "circle_eyes_removed": "Sprite halo aditivo desativado para i === 0 em src/scene.js:634",
+      "aspect_ratio": "Proporção 8.8 x 4.4 nítida sem esticar a arte"
+    },
+    "item4_radio_sem_erro": {
+      "verdict": "APROVADO",
+      "cycle_statuses": [
+        "",
+        "",
+        ""
+      ],
+      "error_detected": false
+    },
+    "item5_fliperama_top5_goal": {
+      "verdict": "APROVADO",
+      "goal_displayed": "Objetivo: colete todos os pontos sem ser pego. Restam 0",
+      "top5_displayed": true,
+      "speed_tuning": "Passo a 170 ms (~30% mais lento) com parada de fantasmas em 3 de 10 ticks (validado em tests/arcade.test.mjs)"
+    },
+    "item6_esc_fliperama": {
+      "verdict": "APROVADO",
+      "arcade_closed": true,
+      "still_in_3d": true,
+      "fullscreen_lock": "navigator.keyboard.lock(['Escape']) previne saída da tela cheia no Chrome real"
+    },
+    "item7_cenario_props": {
+      "verdict": "APROVADO",
+      "props_count": 133,
+      "clearance_m": ">= 0.90 m da pista em 100% dos props (tests/street-props.test.mjs PASS)",
+      "no_floating_props": "Props assentados nas calçadas com Y alinhado à elevação local"
+    },
+    "item8_banda_modelos_v2": {
+      "verdict": "APROVADO",
+      "loaded_models": {
+        "driver-pilot-v2.glb": true,
+        "gorillaz-phase7-web-v2.glb": true,
+        "noodle-guitar-v2.glb": true,
+        "noodle-stage-props-v2.glb": true
+      },
+      "inspection": "Sem aviso de fallback no console; guitarra v2 e amplificador/pedaleira posicionados sem atravessar o corpo; encaixe correto das mãos"
+    },
+    "item9_regressoes": {
+      "verdict": "APROVADO",
+      "scroll_locked": true,
+      "map_toggle": true,
+      "fps_points": {
+        "kong_studios": 59.9,
+        "bairro_dos_murais": 60,
+        "mirante_do_moinho": 60.3
+      }
+    }
+  },
+  "network": {
+    "http_errors": 0,
+    "failed_urls": [],
+    "transferred_bytes": 8961781,
+    "transferred_mb": 8.55,
+    "decoded_bytes": 11662870,
+    "decoded_mb": 11.12,
+    "models_v2": {
+      "driver-pilot-v2.glb": true,
+      "gorillaz-phase7-web-v2.glb": true,
+      "noodle-guitar-v2.glb": true,
+      "noodle-stage-props-v2.glb": true
+    }
+  },
+  "console_errors": [],
+  "fps": {
+    "kong_studios": 59.9,
+    "bairro_dos_murais": 60,
+    "mirante_do_moinho": 60.3
+  },
+  "viewports": {
+    "1346x680": {
+      "contained": true,
+      "hud_box": {
+        "x": 1184.5,
+        "y": 461.40625,
+        "width": 134.59375,
+        "height": 134.59375
+      },
+      "radio_box": {
+        "x": 26.90625,
+        "y": 538,
+        "width": 349.953125,
+        "height": 58
+      }
+    },
+    "390x844": {
+      "contained": true,
+      "hud_box": {
+        "x": 300,
+        "y": 682,
+        "width": 78,
+        "height": 78
+      },
+      "radio_box": {
+        "x": 12,
+        "y": 720,
+        "width": 196,
+        "height": 40
+      }
+    },
+    "320x568": {
+      "contained": true,
+      "hud_box": {
+        "x": 230,
+        "y": 406,
+        "width": 78,
+        "height": 78
+      },
+      "radio_box": {
+        "x": 12,
+        "y": 444,
+        "width": 196,
+        "height": 40
+      }
+    }
+  },
+  "screenshots": [
+    "01-fliperama-pilula-perto-1440x900.png",
+    "01-fliperama-pilula-longe-1440x900.png",
+    "02-rodape-1a-pessoa-1440x900.png",
+    "03-mural-historia1-enquadrado-1440x900.png",
+    "05-fliperama-inicio-top5-1440x900.png",
+    "07-cenario-133-props-1440x900.png",
+    "08-palco-noodle-v2-1440x900.png",
+    "09-mapa-m-regressao-1440x900.png",
+    "02-rodape-1346x680.png",
+    "02-rodape-390x844.png",
+    "02-rodape-320x568.png"
+  ]
+}

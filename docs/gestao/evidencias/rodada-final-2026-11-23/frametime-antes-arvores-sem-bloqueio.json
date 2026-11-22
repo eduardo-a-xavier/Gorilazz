@@ -1,0 +1,16 @@
+{
+ "secs": 40.0,
+ "frames": 2345,
+ "fps_mean": 58.5,
+ "p50_ms": 16.7,
+ "p95_ms": 17.0,
+ "p99_ms": 17.2,
+ "max_ms": 217.4,
+ "frames_over_33ms": 7,
+ "frames_over_50ms": 5,
+ "erros": [],
+ "tour": {
+  "index": 2,
+  "paused": false
+ }
+}

@@ -1,0 +1,117 @@
+{
+  "bad_status": [],
+  "failed": [],
+  "errors": [],
+  "stops": [
+    {
+      "vw": "1440x900",
+      "stop": 1,
+      "poster_bg": "linear-gradient(rgba(17, 20, 21, 0.32) 0%, rgba(17, 20, 21, ",
+      "title": "A ESTRADA ANTES DA LEGENDA."
+    },
+    {
+      "vw": "1440x900",
+      "stop": 2,
+      "poster_bg": "linear-gradient(rgba(17, 20, 21, 0.32) 0%, rgba(17, 20, 21, ",
+      "title": "DO DESENHO AO PRIMEIRO DISCO."
+    },
+    {
+      "vw": "1440x900",
+      "stop": 3,
+      "poster_bg": "linear-gradient(rgba(17, 20, 21, 0.32) 0%, rgba(17, 20, 21, ",
+      "title": "QUATRO ROSTOS. MUITAS HISTÓRIAS."
+    },
+    {
+      "vw": "1440x900",
+      "stop": 4,
+      "poster_bg": "linear-gradient(rgba(17, 20, 21, 0.32) 0%, rgba(17, 20, 21, ",
+      "title": "A IDENTIDADE ESTÁ NO ENCONTRO."
+    },
+    {
+      "vw": "1440x900",
+      "stop": 5,
+      "poster_bg": "linear-gradient(rgba(17, 20, 21, 0.32) 0%, rgba(17, 20, 21, ",
+      "title": "OITO DISCOS. OITO PORTAS."
+    },
+    {
+      "vw": "1440x900",
+      "stop": 6,
+      "poster_bg": "linear-gradient(rgba(17, 20, 21, 0.32) 0%, rgba(17, 20, 21, ",
+      "title": "QUANDO O UNIVERSO ENCONTRA O PALCO."
+    },
+    {
+      "vw": "1440x900",
+      "stop": 7,
+      "poster_bg": "linear-gradient(rgba(17, 20, 21, 0.32) 0%, rgba(17, 20, 21, ",
+      "title": "O MUNDO NO RETROVISOR."
+    },
+    {
+      "vw": "1440x900",
+      "stop": 8,
+      "poster_bg": "linear-gradient(rgba(17, 20, 21, 0.32) 0%, rgba(17, 20, 21, ",
+      "title": "UMA ESTRADA FEITA POR NÓS."
+    },
+    {
+      "vw": "1440x900",
+      "stop": 9,
+      "poster_bg": "linear-gradient(rgba(17, 20, 21, 0.32) 0%, rgba(17, 20, 21, ",
+      "title": "A VIAGEM CONTINUA NA PESQUISA."
+    },
+    {
+      "vw": "390x844",
+      "stop": 1,
+      "poster_bg": "linear-gradient(rgba(17, 20, 21, 0.32) 0%, rgba(17, 20, 21, ",
+      "title": "A ESTRADA ANTES DA LEGENDA."
+    },
+    {
+      "vw": "390x844",
+      "stop": 2,
+      "poster_bg": "linear-gradient(rgba(17, 20, 21, 0.32) 0%, rgba(17, 20, 21, ",
+      "title": "DO DESENHO AO PRIMEIRO DISCO."
+    },
+    {
+      "vw": "390x844",
+      "stop": 3,
+      "poster_bg": "linear-gradient(rgba(17, 20, 21, 0.32) 0%, rgba(17, 20, 21, ",
+      "title": "QUATRO ROSTOS. MUITAS HISTÓRIAS."
+    },
+    {
+      "vw": "390x844",
+      "stop": 4,
+      "poster_bg": "linear-gradient(rgba(17, 20, 21, 0.32) 0%, rgba(17, 20, 21, ",
+      "title": "A IDENTIDADE ESTÁ NO ENCONTRO."
+    },
+    {
+      "vw": "390x844",
+      "stop": 5,
+      "poster_bg": "linear-gradient(rgba(17, 20, 21, 0.32) 0%, rgba(17, 20, 21, ",
+      "title": "OITO DISCOS. OITO PORTAS."
+    },
+    {
+      "vw": "390x844",
+      "stop": 6,
+      "poster_bg": "linear-gradient(rgba(17, 20, 21, 0.32) 0%, rgba(17, 20, 21, ",
+      "title": "QUANDO O UNIVERSO ENCONTRA O PALCO."
+    },
+    {
+      "vw": "390x844",
+      "stop": 7,
+      "poster_bg": "linear-gradient(rgba(17, 20, 21, 0.32) 0%, rgba(17, 20, 21, ",
+      "title": "O MUNDO NO RETROVISOR."
+    },
+    {
+      "vw": "390x844",
+      "stop": 8,
+      "poster_bg": "linear-gradient(rgba(17, 20, 21, 0.32) 0%, rgba(17, 20, 21, ",
+      "title": "UMA ESTRADA FEITA POR NÓS."
+    },
+    {
+      "vw": "390x844",
+      "stop": 9,
+      "poster_bg": "linear-gradient(rgba(17, 20, 21, 0.32) 0%, rgba(17, 20, 21, ",
+      "title": "A VIAGEM CONTINUA NA PESQUISA."
+    }
+  ],
+  "discoveries": [],
+  "font_anton_loaded": true
+}

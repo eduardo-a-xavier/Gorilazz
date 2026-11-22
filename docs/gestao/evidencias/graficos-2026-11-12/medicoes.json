@@ -1,0 +1,29 @@
+{
+  "_nota": "Medições reais do Chromium em 12/11/2026. Antes = cópia estática com o código anterior à mudança; depois = cópia com a mudança. O navegador entregou ~1 a 3 quadros/s (variação de 3x entre repetições idênticas), então FPS e percentis NÃO servem como prova de ganho; contagens de chamadas, triângulos, Sources e perfil não dependem do ritmo.",
+  "B1_texturas_cena_parada_padrao": {
+    "antes": { "sources_de_superficie": 32, "estimativa_MiB": 42.67, "texturas_na_GPU": 150 },
+    "depois": { "sources_de_superficie": 12, "estimativa_MiB": 16.0, "texturas_na_GPU": 130 },
+    "imagem": { "diferenca_maxima": 5, "pixels_acima_de_8": 0, "de": 863600 },
+    "correcao_posterior": "clone() antes do fim do download vinha com version=1 e sem imagem (aviso do Three.js 'Texture marked for update but no image data found'); agora version=0 até a imagem chegar. Verificado em página: clone pré-carga version 1→0; após a carga ambos ≥1, com dados, repeat independente e Source compartilhado."
+  },
+  "B2a_sombra_a_cada_4_quadros_leve_aerea_28_quadros": {
+    "antes": { "media_chamadas": 371.0, "media_triangulos": 377522, "quadro_de_sombra": "1 em 2 (327/415 chamadas)" },
+    "depois": { "media_chamadas": 349.0, "media_triangulos": 328501, "quadro_de_sombra": "1 em 4" },
+    "imagem": { "diferenca_maxima": 0, "pixels_acima_de_8": 0 }
+  },
+  "B2b_modelos_densos_sem_sombra_leve_aerea_28_quadros": {
+    "antes_B2a": { "quadro_sem_sombra": [327, 279480], "quadro_de_sombra": [415, 475564], "media_chamadas": 349.0, "media_triangulos": 328501 },
+    "depois": { "quadro_sem_sombra": [327, 279480], "quadro_de_sombra": [383, 333276], "media_chamadas": 341.0, "media_triangulos": 292929 },
+    "diferenca": { "triangulos_extra_do_quadro_de_sombra": "196.084 → 53.796 (−73%)", "triangulos_quadro_de_sombra": "−30%", "media_triangulos_por_quadro": "−10,8%", "media_chamadas_por_quadro": "−2,3%" },
+    "imagem": { "diferenca_maxima": 23, "pixels_acima_de_8": 204, "de": 863600, "regiao_px": [632, 514, 699, 551], "leitura": "sombras de banda/escultura perto do jipe" },
+    "acumulado_vs_original_sem_B2a_nem_B2b": { "media_triangulos": "377.522 → 292.929 (−22,4%)", "media_chamadas": "371,0 → 341,0 (−8,1%)" }
+  },
+  "item1_perfil_e_pixel_ratio_celular_emulado_375x844_DPR3": {
+    "antes": { "container_clientWidth_na_criacao": 0, "compact": false, "perfil_inicial": "alta (bloom, sombra 2048, teto 1,75, meta de 60 quadros/s)", "perfil_apos_35s": "padrao (bloom descartado pela adaptação)", "pixel_ratio_inicial": 1.75, "buffer_inicial_px": "656x1477 (0,97 MP)", "trajetoria_primeiros_quadros": [1.75, 1.75, 1.75, 1.75, 1.49, 1.26, 1.26, 1.07, 0.91, 0.78, 0.7], "chamadas_medias": 173.9, "triangulos_medios": 317598 },
+    "depois": { "container_largura_usada": "innerWidth", "compact": true, "perfil_inicial": "leve (sem bloom, sombra 1024, teto 1,5, meta de 30 quadros/s)", "perfil_apos_35s": "leve", "pixel_ratio_inicial": 1.5, "buffer_inicial_px": "562x1266 (0,71 MP, −27%)", "trajetoria_primeiros_quadros": [1.5, 1.5, 1.5, 1.27, 1.08, 0.92, 0.78, 0.7], "chamadas_medias": 171.0, "triangulos_medios": 317595 },
+    "estado_estavel": "ambos terminam em pixel ratio 0,7 neste ambiente",
+    "imagem_estavel": { "diferenca_maxima": 12, "pixels_acima_de_16": 0, "de": 329160 }
+  },
+  "frames_ambiente_NAO_confiaveis": { "antes_rodada_1": { "quadros_em_35s": 36, "p50_ms": 1003, "p95_ms": 1007 }, "antes_rodada_2": { "quadros_em_35s": 109, "p50_ms": 99, "p95_ms": 1004 }, "depois_rodada_1": { "quadros_em_35s": 52, "p50_ms": 990, "p95_ms": 1005 }, "leitura": "O mesmo código variou de 36 a 109 quadros em 35 s; não use para afirmar ganho de FPS." },
+  "carregamento_celular_emulado": { "antes": { "evento_load_ms": 272, "mundo_pronto_ms": 1697, "recursos": 54, "corpos_decodificados_MiB": 13.22 }, "depois": { "evento_load_ms": 275, "mundo_pronto_ms": 1725, "recursos": 54, "corpos_decodificados_MiB": 13.22 }, "leitura": "sem mudança de carregamento (a mudança não altera arquivos baixados)" }
+}

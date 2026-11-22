@@ -1,0 +1,1620 @@
+{
+  "timestamp": "2026-11-20 17:12:43",
+  "port": 3115,
+  "routes": [
+    {
+      "route": "/src/atmosphere.js",
+      "status": 200,
+      "content_type": "text/javascript; charset=utf-8",
+      "bytes": 5238
+    },
+    {
+      "route": "/src/band-pose.js",
+      "status": 200,
+      "content_type": "text/javascript; charset=utf-8",
+      "bytes": 12172
+    },
+    {
+      "route": "/src/pilot-rig.js",
+      "status": 200,
+      "content_type": "text/javascript; charset=utf-8",
+      "bytes": 1990
+    },
+    {
+      "route": "/src/roads.js",
+      "status": 200,
+      "content_type": "text/javascript; charset=utf-8",
+      "bytes": 18216
+    },
+    {
+      "route": "/src/landmarks.js",
+      "status": 200,
+      "content_type": "text/javascript; charset=utf-8",
+      "bytes": 9690
+    },
+    {
+      "route": "/src/postfx.js",
+      "status": 200,
+      "content_type": "text/javascript; charset=utf-8",
+      "bytes": 5232
+    },
+    {
+      "route": "/assets/models/gorillaz-phase7-web.glb",
+      "status": 200,
+      "content_type": "model/gltf-binary",
+      "bytes": 3407964
+    },
+    {
+      "route": "/src/city.js",
+      "status": 200,
+      "content_type": "text/javascript; charset=utf-8",
+      "bytes": 40279
+    },
+    {
+      "route": "/src/cabin.js",
+      "status": 200,
+      "content_type": "text/javascript; charset=utf-8",
+      "bytes": 11055
+    },
+    {
+      "route": "/assets/radio/concreto.mp3",
+      "status": 200,
+      "content_type": "audio/mpeg",
+      "bytes": 78109
+    },
+    {
+      "route": "/assets/radio/mare.mp3",
+      "status": 200,
+      "content_type": "audio/mpeg",
+      "bytes": 75399
+    },
+    {
+      "route": "/",
+      "status": 200,
+      "content_type": "text/html; charset=utf-8",
+      "bytes": 32457
+    },
+    {
+      "route": "/index.html",
+      "status": 200,
+      "content_type": "text/html; charset=utf-8",
+      "bytes": 32457
+    },
+    {
+      "route": "/src/style.css",
+      "status": 200,
+      "content_type": "text/css; charset=utf-8",
+      "bytes": 32838
+    },
+    {
+      "route": "/src/world.css",
+      "status": 200,
+      "content_type": "text/css; charset=utf-8",
+      "bytes": 28267
+    },
+    {
+      "route": "/src/editorial.css",
+      "status": 200,
+      "content_type": "text/css; charset=utf-8",
+      "bytes": 31575
+    },
+    {
+      "route": "/src/content.js",
+      "status": 200,
+      "content_type": "text/javascript; charset=utf-8",
+      "bytes": 13667
+    },
+    {
+      "route": "/src/progress.js",
+      "status": 200,
+      "content_type": "text/javascript; charset=utf-8",
+      "bytes": 2070
+    },
+    {
+      "route": "/src/local-radio.js",
+      "status": 200,
+      "content_type": "text/javascript; charset=utf-8",
+      "bytes": 3416
+    },
+    {
+      "route": "/src/app.js",
+      "status": 200,
+      "content_type": "text/javascript; charset=utf-8",
+      "bytes": 63091
+    },
+    {
+      "route": "/src/scene.js",
+      "status": 200,
+      "content_type": "text/javascript; charset=utf-8",
+      "bytes": 81728
+    },
+    {
+      "route": "/src/environment.js",
+      "status": 200,
+      "content_type": "text/javascript; charset=utf-8",
+      "bytes": 9989
+    },
+    {
+      "route": "/src/materials.js",
+      "status": 200,
+      "content_type": "text/javascript; charset=utf-8",
+      "bytes": 3106
+    },
+    {
+      "route": "/assets/materials/asphalt-normal.png",
+      "status": 200,
+      "content_type": "image/png",
+      "bytes": 477696
+    },
+    {
+      "route": "/assets/materials/asphalt.png",
+      "status": 200,
+      "content_type": "image/png",
+      "bytes": 267839
+    },
+    {
+      "route": "/assets/materials/brick.png",
+      "status": 200,
+      "content_type": "image/png",
+      "bytes": 226067
+    },
+    {
+      "route": "/assets/materials/earth-normal.png",
+      "status": 200,
+      "content_type": "image/png",
+      "bytes": 477434
+    },
+    {
+      "route": "/assets/materials/earth.png",
+      "status": 200,
+      "content_type": "image/png",
+      "bytes": 273142
+    },
+    {
+      "route": "/assets/materials/foliage-normal.png",
+      "status": 200,
+      "content_type": "image/png",
+      "bytes": 477494
+    },
+    {
+      "route": "/assets/materials/foliage.png",
+      "status": 200,
+      "content_type": "image/png",
+      "bytes": 303650
+    },
+    {
+      "route": "/assets/materials/grass-normal.png",
+      "status": 200,
+      "content_type": "image/png",
+      "bytes": 477321
+    },
+    {
+      "route": "/assets/materials/grass.png",
+      "status": 200,
+      "content_type": "image/png",
+      "bytes": 272448
+    },
+    {
+      "route": "/assets/materials/plaster-normal.png",
+      "status": 200,
+      "content_type": "image/png",
+      "bytes": 477409
+    },
+    {
+      "route": "/assets/materials/plaster.png",
+      "status": 200,
+      "content_type": "image/png",
+      "bytes": 297959
+    },
+    {
+      "route": "/assets/materials/roof-normal.png",
+      "status": 200,
+      "content_type": "image/png",
+      "bytes": 477306
+    },
+    {
+      "route": "/assets/materials/roof.png",
+      "status": 200,
+      "content_type": "image/png",
+      "bytes": 306557
+    },
+    {
+      "route": "/assets/materials/wood-normal.png",
+      "status": 200,
+      "content_type": "image/png",
+      "bytes": 477609
+    },
+    {
+      "route": "/assets/materials/wood.png",
+      "status": 200,
+      "content_type": "image/png",
+      "bytes": 310477
+    },
+    {
+      "route": "/assets/environment/broadleaf-tree.glb",
+      "status": 200,
+      "content_type": "model/gltf-binary",
+      "bytes": 59516
+    },
+    {
+      "route": "/assets/environment/kong-studio.glb",
+      "status": 200,
+      "content_type": "model/gltf-binary",
+      "bytes": 668736
+    },
+    {
+      "route": "/assets/environment/CREDITS.txt",
+      "status": 200,
+      "content_type": "text/plain; charset=utf-8",
+      "bytes": 2334
+    },
+    {
+      "route": "/src/route.js",
+      "status": 200,
+      "content_type": "text/javascript; charset=utf-8",
+      "bytes": 740
+    },
+    {
+      "route": "/src/world-data.js",
+      "status": 200,
+      "content_type": "text/javascript; charset=utf-8",
+      "bytes": 22029
+    },
+    {
+      "route": "/src/driving.js",
+      "status": 200,
+      "content_type": "text/javascript; charset=utf-8",
+      "bytes": 2913
+    },
+    {
+      "route": "/src/journey-guide.js",
+      "status": 200,
+      "content_type": "text/javascript; charset=utf-8",
+      "bytes": 3329
+    },
+    {
+      "route": "/src/input.js",
+      "status": 200,
+      "content_type": "text/javascript; charset=utf-8",
+      "bytes": 3180
+    },
+    {
+      "route": "/src/discoveries.js",
+      "status": 200,
+      "content_type": "text/javascript; charset=utf-8",
+      "bytes": 5279
+    },
+    {
+      "route": "/src/navigation.js",
+      "status": 200,
+      "content_type": "text/javascript; charset=utf-8",
+      "bytes": 3102
+    },
+    {
+      "route": "/src/vendor/GLTFLoader.js",
+      "status": 200,
+      "content_type": "text/javascript; charset=utf-8",
+      "bytes": 119638
+    },
+    {
+      "route": "/src/vendor/BufferGeometryUtils.js",
+      "status": 200,
+      "content_type": "text/javascript; charset=utf-8",
+      "bytes": 36990
+    },
+    {
+      "route": "/assets/models/gorillaz-phase7.glb",
+      "status": 200,
+      "content_type": "model/gltf-binary",
+      "bytes": 9535300
+    },
+    {
+      "route": "/assets/models/PHASE7-CREDITS.txt",
+      "status": 200,
+      "content_type": "text/plain; charset=utf-8",
+      "bytes": 1412
+    },
+    {
+      "route": "/assets/portraits/phase7-twod.png",
+      "status": 200,
+      "content_type": "image/png",
+      "bytes": 182046
+    },
+    {
+      "route": "/assets/portraits/phase7-murdoc.png",
+      "status": 200,
+      "content_type": "image/png",
+      "bytes": 181908
+    },
+    {
+      "route": "/assets/portraits/phase7-noodle.png",
+      "status": 200,
+      "content_type": "image/png",
+      "bytes": 186676
+    },
+    {
+      "route": "/assets/portraits/phase7-russel.png",
+      "status": 200,
+      "content_type": "image/png",
+      "bytes": 212713
+    },
+    {
+      "route": "/assets/models/gorillaz-geep.glb",
+      "status": 200,
+      "content_type": "model/gltf-binary",
+      "bytes": 785068
+    },
+    {
+      "route": "/assets/models/GEEP-CREDITS.txt",
+      "status": 200,
+      "content_type": "text/plain; charset=utf-8",
+      "bytes": 900
+    },
+    {
+      "route": "/assets/models/driver-pilot.glb",
+      "status": 200,
+      "content_type": "model/gltf-binary",
+      "bytes": 188920
+    },
+    {
+      "route": "/assets/models/DRIVER-CREDITS.txt",
+      "status": 200,
+      "content_type": "text/plain; charset=utf-8",
+      "bytes": 1507
+    },
+    {
+      "route": "/assets/models/kenney-suv.glb",
+      "status": 200,
+      "content_type": "model/gltf-binary",
+      "bytes": 219840
+    },
+    {
+      "route": "/assets/models/kenney-suv-luxury.glb",
+      "status": 200,
+      "content_type": "model/gltf-binary",
+      "bytes": 188200
+    },
+    {
+      "route": "/assets/models/KENNEY-LICENSE.txt",
+      "status": 200,
+      "content_type": "text/plain; charset=utf-8",
+      "bytes": 696
+    },
+    {
+      "route": "/src/vendor/three.module.min.js",
+      "status": 200,
+      "content_type": "text/javascript; charset=utf-8",
+      "bytes": 338914
+    },
+    {
+      "route": "/src/vendor/three.core.min.js",
+      "status": 200,
+      "content_type": "text/javascript; charset=utf-8",
+      "bytes": 381130
+    }
+  ],
+  "console_errors": [],
+  "page_errors": [],
+  "failed_requests": [
+    {
+      "url": "http://127.0.0.1:3115/assets/radio/concreto.mp3",
+      "failure": "net::ERR_ABORTED"
+    }
+  ],
+  "http_errors": [],
+  "specific_routes_browser": {
+    "/src/pilot-rig.js": 200,
+    "/assets/models/driver-pilot.glb": 200,
+    "/assets/models/DRIVER-CREDITS.txt": 200,
+    "/assets/models/DRIVER-CREDITS.txt (fetch)": {
+      "status": 200,
+      "textLen": 1463
+    }
+  },
+  "pilot": {
+    "runtime_check": {
+      "found": true,
+      "pilotDataset": "glb",
+      "visible": true,
+      "position": [
+        -0.6213311375716635,
+        0.36388333889444047,
+        0.41534367008364315
+      ],
+      "scale": [
+        1.22,
+        1.22,
+        1.22
+      ],
+      "rotationY": 0,
+      "meshCount": 16,
+      "skinnedCount": 16,
+      "boneCount": 65,
+      "totalTris": 1526,
+      "meshNames": [
+        "Eyebrows",
+        "Eyes",
+        "gloves_mesh",
+        "gloves_mesh_1",
+        "gloves_mesh_2",
+        "headgear_mesh",
+        "headgear_mesh_1",
+        "headgear_mesh_2",
+        "headgear_mesh_3",
+        "jacket_mesh",
+        "jacket_mesh_1",
+        "jacket_mesh_2",
+        "Sphere005_Retopology004",
+        "Sphere005_Retopology004_1",
+        "Sphere005_Retopology004_2",
+        "Sphere005_Retopology004_3"
+      ],
+      "hasContractNodes": {
+        "driverHead": true,
+        "upperArmL": true,
+        "upperArmR": true
+      },
+      "drivingLoopDelta": {
+        "head": 0.000633,
+        "spine": 0.000633,
+        "armL": 0.002782,
+        "armR": 0.001091
+      },
+      "webgl2": true,
+      "trianglesFrame": "134420",
+      "drawCallsFrame": "273"
+    },
+    "click_reaction": {
+      "sx": 647.2019877570667,
+      "sy": 611.2486752793445,
+      "beforeHeadQ": [
+        -0.1412318972789164,
+        0.09456255553742629,
+        -0.016354622468118623,
+        0.9853141634043197
+      ],
+      "ndc": [
+        -0.10110835033740732,
+        -0.2852689982161994,
+        0.9885051583009807
+      ],
+      "sampleCount": 43,
+      "maxHeadAngleDeg": 14.4,
+      "cursor": "grab"
+    },
+    "first_person": {
+      "driverVisible": false,
+      "insideClass": true,
+      "fpPressed": "true"
+    },
+    "position_revalidated": {
+      "pilotDataset": "glb",
+      "vehicleModel": "geep",
+      "wheels": "4",
+      "position": [
+        -0.6213,
+        0.208,
+        0.4471
+      ],
+      "expected": [
+        -0.6213,
+        0.208,
+        0.4471
+      ],
+      "exactMatch": true,
+      "scale": [
+        1.22,
+        1.22,
+        1.22
+      ],
+      "rotationY": 0,
+      "drivingLoopDeltaHead": 0.006879,
+      "drivingLoopDeltaArmL": 0.014975,
+      "firstPersonDriverVisible": false
+    }
+  },
+  "roads": {},
+  "camera_telemetry": {
+    "era_gates": [
+      {
+        "era_act": 1,
+        "gate": {
+          "x": 15.91199999999999,
+          "z": 6.215999999999995,
+          "heading": -1.8864251684600604,
+          "width": 15,
+          "score": 50.943246853729285,
+          "era": 0
+        },
+        "frames": 151,
+        "min_dist_to_gate_m": 0.27,
+        "crossed_portal": true,
+        "max_speed_ms": 20.15,
+        "min_reach_m": 10.76,
+        "max_reach_m": 30.27,
+        "min_cam_y": 8.8,
+        "max_jump_m": 0.916
+      },
+      {
+        "era_act": 2,
+        "gate": {
+          "x": 87.7530625,
+          "z": -64.85600781250001,
+          "heading": -0.4813858550924199,
+          "width": 15,
+          "score": 21.137150928613053,
+          "era": 1
+        },
+        "frames": 154,
+        "min_dist_to_gate_m": 0.02,
+        "crossed_portal": true,
+        "max_speed_ms": 20.36,
+        "min_reach_m": 9.26,
+        "max_reach_m": 30.47,
+        "min_cam_y": 11.69,
+        "max_jump_m": 2.794
+      },
+      {
+        "era_act": 3,
+        "gate": {
+          "x": 8.02409375,
+          "z": -160.4442265625,
+          "heading": 1.7760218150553118,
+          "width": 15,
+          "score": 26.679481739205883,
+          "era": 2
+        },
+        "frames": 148,
+        "min_dist_to_gate_m": 0.27,
+        "crossed_portal": true,
+        "max_speed_ms": 20.05,
+        "min_reach_m": 18.83,
+        "max_reach_m": 30.33,
+        "min_cam_y": 11.69,
+        "max_jump_m": 2.981
+      },
+      {
+        "era_act": 4,
+        "gate": {
+          "x": -57.3125,
+          "z": -58.125,
+          "heading": -1.8087254082572717,
+          "width": 15,
+          "score": 61.3146661187191,
+          "era": 3
+        },
+        "frames": 153,
+        "min_dist_to_gate_m": 0.01,
+        "crossed_portal": true,
+        "max_speed_ms": 20.46,
+        "min_reach_m": 24.84,
+        "max_reach_m": 30.47,
+        "min_cam_y": 11.69,
+        "max_jump_m": 1.918
+      }
+    ],
+    "reverse_maneuver": {
+      "frames": 202,
+      "reverse_frames": 91,
+      "min_speed_ms": -4.17,
+      "max_jump_m": 1.515,
+      "max_yaw_delta_deg_per_frame": 3.15,
+      "flip_180_detected": false
+    },
+    "block_cornering": {
+      "frames": 275,
+      "max_jump_m": 1.334,
+      "min_reach_m": 12.03,
+      "max_reach_m": 27.87,
+      "min_cam_y": 7.18,
+      "max_cam_y": 11.8,
+      "clippedFrames": 0,
+      "totalFrames": 275
+    },
+    "summary": {
+      "overall_max_jump_m": 2.981,
+      "all_4_gates_crossed": true,
+      "reverse_zero_flip_180": true,
+      "zero_building_clipping": true
+    }
+  },
+  "bottom_layout": {
+    "1440x900": {
+      "headingCount": 41,
+      "emptyHeadings": [],
+      "wikiTextMatches": [],
+      "wikiLinks": [],
+      "backstageOpen": true,
+      "refGridStyle": "300.5px 300.5px 300.5px 300.5px",
+      "refRects": [
+        {
+          "x": 101,
+          "y": 7608,
+          "w": 301,
+          "h": 592
+        },
+        {
+          "x": 414,
+          "y": 7608,
+          "w": 301,
+          "h": 592
+        },
+        {
+          "x": 726,
+          "y": 7608,
+          "w": 301,
+          "h": 592
+        },
+        {
+          "x": 1039,
+          "y": 7608,
+          "w": 301,
+          "h": 592
+        }
+      ],
+      "bandRects": [
+        {
+          "x": 72,
+          "y": 5393,
+          "w": 315,
+          "h": 544
+        },
+        {
+          "x": 399,
+          "y": 5393,
+          "w": 315,
+          "h": 544
+        },
+        {
+          "x": 726,
+          "y": 5393,
+          "w": 315,
+          "h": 544
+        },
+        {
+          "x": 1053,
+          "y": 5393,
+          "w": 315,
+          "h": 544
+        }
+      ],
+      "quaterniusLinks": [
+        {
+          "href": "https://quaternius.com/",
+          "text": "Quaternius",
+          "visible": true
+        },
+        {
+          "href": "https://quaternius.com/",
+          "text": "Quaternius",
+          "visible": false
+        }
+      ],
+      "driverCreditLinks": [
+        {
+          "href": "./assets/models/DRIVER-CREDITS.txt",
+          "text": "créditos do piloto",
+          "visible": true
+        },
+        {
+          "href": "./assets/models/DRIVER-CREDITS.txt",
+          "text": "créditos e adaptações",
+          "visible": false
+        },
+        {
+          "href": "./assets/models/DRIVER-CREDITS.txt",
+          "text": "CRÉDITOS DO PILOTO ↗",
+          "visible": false
+        }
+      ],
+      "yameLinks": [
+        {
+          "href": "https://mola-zone.com/",
+          "text": "Yamê — The Molazone",
+          "visible": true
+        }
+      ],
+      "tokens": {
+        "black": "#111415",
+        "surface": "#181d20",
+        "surfaceRaised": "#20272b",
+        "cream": "#e9e4d4",
+        "muted": "#a9aaa3",
+        "pink": "#f5a9c6",
+        "acid": "#d2e2a8",
+        "blue": "#3a68d8"
+      },
+      "typography": {
+        "bodyFont": "\"Courier New\", monospace",
+        "h2Font": "Impact, \"Arial Narrow\", sans-serif",
+        "h3Font": "Georgia, serif",
+        "h3Style": "italic",
+        "eraIntroSize": "15px",
+        "panelPSize": "15px"
+      },
+      "overflow": {
+        "innerWidth": 1440,
+        "docScrollWidth": 1440,
+        "bodyScrollWidth": 1440,
+        "hasOverflow": false
+      },
+      "garageButtons": [
+        {
+          "id": "garage-action-drive",
+          "text": "Voltar ao Volante ↗",
+          "h": 44
+        },
+        {
+          "id": "garage-action-cockpit",
+          "text": "Cabine 1ª Pessoa ◉",
+          "h": 44
+        },
+        {
+          "id": "garage-action-overview",
+          "text": "Vista Aérea ◎",
+          "h": 44
+        },
+        {
+          "id": "garage-action-tour",
+          "text": "Passeio Guiado ▶",
+          "h": 44
+        },
+        {
+          "id": "garage-tab-geep",
+          "text": "Veículo · Geep",
+          "h": 44
+        },
+        {
+          "id": "garage-tab-pilot",
+          "text": "Piloto & Cabine",
+          "h": 44
+        },
+        {
+          "id": "garage-tab-band",
+          "text": "Banda Phase 7",
+          "h": 44
+        },
+        {
+          "id": "garage-tab-scenery",
+          "text": "Cenário & Jardins",
+          "h": 44
+        }
+      ],
+      "vehicleStatus": {
+        "text": "GEEP / SHABAEV / CC BY 4.0",
+        "model": "geep",
+        "wheels": "4",
+        "pilot": "glb"
+      }
+    },
+    "all_stops_and_eras_wiki_check": {
+      "stopCount": 9,
+      "eraCount": 8,
+      "wikiHits": []
+    },
+    "garage_pilot_tab": {
+      "hidden": false,
+      "text": "Piloto de estrada no banco esquerdo do Geep, com esqueleto de 65 ossos e o clipe Driving_Loop. Cabeça, tronco e braços reagem à direção e ao clique quando o carro está parado; a câmera em 1ª pessoa usa o mesmo veículo (retrovisor funcional e rádio Kong FM no painel).\n\nMALHAS / TRIÂNGULOS\n6 · 1.526 tris\nESQUELETO / ANIMAÇÃO\n65 ossos · Driving_Loop\n\nBase de personagem e animação por Quaternius · CC0 1.0. Jaqueta, óculos/viseira, luvas e fones Kong FM são acessórios autorais do projeto · créditos e adaptações.\n\n↓ BAIXAR PILOTO · GLB\nCRÉDITOS DO PILOTO ↗"
+    },
+    "1920x1080": {
+      "innerWidth": 1920,
+      "docScrollWidth": 1920,
+      "hasOverflow": false,
+      "refGridStyle": "339px 339px 339px 339px",
+      "refRects": [
+        {
+          "x": 264,
+          "y": 3047,
+          "w": 339,
+          "h": 579
+        },
+        {
+          "x": 615,
+          "y": 3047,
+          "w": 339,
+          "h": 579
+        },
+        {
+          "x": 966,
+          "y": 3047,
+          "w": 339,
+          "h": 579
+        },
+        {
+          "x": 1317,
+          "y": 3047,
+          "w": 339,
+          "h": 579
+        }
+      ]
+    },
+    "tokens_revalidated": {
+      "black": "#111415",
+      "surface": "#181d20",
+      "surfaceRaised": "#20272b",
+      "cream": "#e9e4d4",
+      "muted": "#a9aaa3",
+      "pink": "#f5a9c6",
+      "acid": "#d2e2a8",
+      "blue": "#7fa6ff"
+    }
+  },
+  "responsive": {
+    "390x844": {
+      "innerWidth": 390,
+      "docScrollWidth": 390,
+      "bodyScrollWidth": 390,
+      "docOk": true,
+      "bodyOk": true,
+      "worldManifesto": {
+        "scrollW": 351,
+        "clientW": 351,
+        "ok": true
+      },
+      "shortcutCount": 5,
+      "allShortcutsVisible": true,
+      "shortcuts": [
+        {
+          "text": "A HISTÓRIA",
+          "href": "#eras",
+          "left": 19.5,
+          "right": 127.5,
+          "width": 108,
+          "height": 44,
+          "visibleInViewport": true
+        },
+        {
+          "text": "A TRILHA",
+          "href": "#radio",
+          "left": 135.5,
+          "right": 228.7,
+          "width": 93.2,
+          "height": 44,
+          "visibleInViewport": true
+        },
+        {
+          "text": "9 OLHARES",
+          "href": "#paradas",
+          "left": 236.7,
+          "right": 337.4,
+          "width": 100.6,
+          "height": 44,
+          "visibleInViewport": true
+        },
+        {
+          "text": "A BANDA",
+          "href": "#band-title",
+          "left": 19.5,
+          "right": 105.3,
+          "width": 85.8,
+          "height": 44,
+          "visibleInViewport": true
+        },
+        {
+          "text": "GARAGEM 3D",
+          "href": "#modelos",
+          "left": 113.3,
+          "right": 221.3,
+          "width": 108,
+          "height": 44,
+          "visibleInViewport": true
+        }
+      ],
+      "garageAllOk": false,
+      "garage": [
+        {
+          "sel": "#backstage",
+          "left": 19.5,
+          "right": 370.5,
+          "rectW": 351,
+          "scrollW": 354,
+          "clientW": 349,
+          "ok": false
+        },
+        {
+          "sel": "#modelos",
+          "left": 34.5,
+          "right": 355.5,
+          "rectW": 321,
+          "scrollW": 321,
+          "clientW": 321,
+          "ok": true
+        },
+        {
+          "sel": ".garage-bento",
+          "left": 34.5,
+          "right": 355.5,
+          "rectW": 321,
+          "scrollW": 321,
+          "clientW": 321,
+          "ok": true
+        },
+        {
+          "sel": ".garage-hero",
+          "left": 34.5,
+          "right": 355.5,
+          "rectW": 321,
+          "scrollW": 319,
+          "clientW": 319,
+          "ok": true
+        },
+        {
+          "sel": ".garage-telemetry",
+          "left": 34.5,
+          "right": 355.5,
+          "rectW": 321,
+          "scrollW": 319,
+          "clientW": 319,
+          "ok": true
+        },
+        {
+          "sel": ".garage-specs",
+          "left": 34.5,
+          "right": 355.5,
+          "rectW": 321,
+          "scrollW": 319,
+          "clientW": 319,
+          "ok": true
+        }
+      ],
+      "emptyHeadings": 0
+    },
+    "320x568": {
+      "innerWidth": 320,
+      "docScrollWidth": 320,
+      "bodyScrollWidth": 320,
+      "docOk": true,
+      "bodyOk": true,
+      "worldManifesto": {
+        "scrollW": 288,
+        "clientW": 288,
+        "ok": true
+      },
+      "shortcutCount": 5,
+      "allShortcutsVisible": true,
+      "shortcuts": [
+        {
+          "text": "A HISTÓRIA",
+          "href": "#eras",
+          "left": 16,
+          "right": 124,
+          "width": 108,
+          "height": 44,
+          "visibleInViewport": true
+        },
+        {
+          "text": "A TRILHA",
+          "href": "#radio",
+          "left": 132,
+          "right": 225.2,
+          "width": 93.2,
+          "height": 44,
+          "visibleInViewport": true
+        },
+        {
+          "text": "9 OLHARES",
+          "href": "#paradas",
+          "left": 16,
+          "right": 116.6,
+          "width": 100.6,
+          "height": 44,
+          "visibleInViewport": true
+        },
+        {
+          "text": "A BANDA",
+          "href": "#band-title",
+          "left": 124.6,
+          "right": 210.4,
+          "width": 85.8,
+          "height": 44,
+          "visibleInViewport": true
+        },
+        {
+          "text": "GARAGEM 3D",
+          "href": "#modelos",
+          "left": 16,
+          "right": 124,
+          "width": 108,
+          "height": 44,
+          "visibleInViewport": true
+        }
+      ],
+      "garageAllOk": false,
+      "garage": [
+        {
+          "sel": "#backstage",
+          "left": 16,
+          "right": 304,
+          "rectW": 288,
+          "scrollW": 291,
+          "clientW": 286,
+          "ok": false
+        },
+        {
+          "sel": "#modelos",
+          "left": 31,
+          "right": 289,
+          "rectW": 258,
+          "scrollW": 258,
+          "clientW": 258,
+          "ok": true
+        },
+        {
+          "sel": ".garage-bento",
+          "left": 31,
+          "right": 289,
+          "rectW": 258,
+          "scrollW": 258,
+          "clientW": 258,
+          "ok": true
+        },
+        {
+          "sel": ".garage-hero",
+          "left": 31,
+          "right": 289,
+          "rectW": 258,
+          "scrollW": 256,
+          "clientW": 256,
+          "ok": true
+        },
+        {
+          "sel": ".garage-telemetry",
+          "left": 31,
+          "right": 289,
+          "rectW": 258,
+          "scrollW": 256,
+          "clientW": 256,
+          "ok": true
+        },
+        {
+          "sel": ".garage-specs",
+          "left": 31,
+          "right": 289,
+          "rectW": 258,
+          "scrollW": 256,
+          "clientW": 256,
+          "ok": true
+        }
+      ],
+      "emptyHeadings": 0
+    }
+  },
+  "screenshots": [
+    {
+      "name": "layout-1440-garagem-geep",
+      "path": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\entrega-final-2026-11-20\\layout-1440-garagem-geep.png"
+    },
+    {
+      "name": "layout-1440-garagem-piloto-tab",
+      "path": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\entrega-final-2026-11-20\\layout-1440-garagem-piloto-tab.png"
+    },
+    {
+      "name": "layout-1440-referencias-creditos",
+      "path": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\entrega-final-2026-11-20\\layout-1440-referencias-creditos.png"
+    },
+    {
+      "name": "layout-1440-banda",
+      "path": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\entrega-final-2026-11-20\\layout-1440-banda.png"
+    },
+    {
+      "name": "layout-1920-garagem",
+      "path": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\entrega-final-2026-11-20\\layout-1920-garagem.png"
+    },
+    {
+      "name": "layout-1920-referencias-creditos",
+      "path": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\entrega-final-2026-11-20\\layout-1920-referencias-creditos.png"
+    },
+    {
+      "name": "mobile-390-garagem",
+      "path": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\entrega-final-2026-11-20\\mobile-390-garagem.png"
+    },
+    {
+      "name": "mobile-390-referencias",
+      "path": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\entrega-final-2026-11-20\\mobile-390-referencias.png"
+    },
+    {
+      "name": "mobile-320-garagem",
+      "path": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\entrega-final-2026-11-20\\mobile-320-garagem.png"
+    },
+    {
+      "name": "mobile-320-referencias",
+      "path": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\entrega-final-2026-11-20\\mobile-320-referencias.png"
+    },
+    {
+      "name": "piloto-01-traseira-3pessoa",
+      "path": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\entrega-final-2026-11-20\\piloto-01-traseira-3pessoa.png"
+    },
+    {
+      "name": "piloto-02-direcao-estercada-3pessoa",
+      "path": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\entrega-final-2026-11-20\\piloto-02-direcao-estercada-3pessoa.png"
+    },
+    {
+      "name": "piloto-03-direcao-estercada-closeup",
+      "path": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\entrega-final-2026-11-20\\piloto-03-direcao-estercada-closeup.png"
+    },
+    {
+      "name": "piloto-04-3quartos-frontal",
+      "path": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\entrega-final-2026-11-20\\piloto-04-3quartos-frontal.png"
+    },
+    {
+      "name": "piloto-05-lateral",
+      "path": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\entrega-final-2026-11-20\\piloto-05-lateral.png"
+    },
+    {
+      "name": "piloto-06-chassi-lateral-baixo",
+      "path": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\entrega-final-2026-11-20\\piloto-06-chassi-lateral-baixo.png"
+    },
+    {
+      "name": "piloto-07-primeira-pessoa",
+      "path": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\entrega-final-2026-11-20\\piloto-07-primeira-pessoa.png"
+    },
+    {
+      "name": "pistas-01-vista-elevada",
+      "path": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\entrega-final-2026-11-20\\pistas-01-vista-elevada.png"
+    },
+    {
+      "name": "pistas-02-rotatoria-no7",
+      "path": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\entrega-final-2026-11-20\\pistas-02-rotatoria-no7.png"
+    },
+    {
+      "name": "pistas-03-no0-grau2",
+      "path": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\entrega-final-2026-11-20\\pistas-03-no0-grau2.png"
+    },
+    {
+      "name": "pistas-03-no2-grau2",
+      "path": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\entrega-final-2026-11-20\\pistas-03-no2-grau2.png"
+    },
+    {
+      "name": "pistas-03-no4-grau2",
+      "path": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\entrega-final-2026-11-20\\pistas-03-no4-grau2.png"
+    },
+    {
+      "name": "camera-portal-ato1",
+      "path": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\entrega-final-2026-11-20\\camera-portal-ato1.png"
+    },
+    {
+      "name": "camera-portal-ato2",
+      "path": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\entrega-final-2026-11-20\\camera-portal-ato2.png"
+    },
+    {
+      "name": "camera-portal-ato3",
+      "path": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\entrega-final-2026-11-20\\camera-portal-ato3.png"
+    },
+    {
+      "name": "camera-portal-ato4",
+      "path": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\entrega-final-2026-11-20\\camera-portal-ato4.png"
+    },
+    {
+      "name": "camera-manobra-re",
+      "path": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\entrega-final-2026-11-20\\camera-manobra-re.png"
+    },
+    {
+      "name": "camera-curva-quarteirao-1",
+      "path": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\entrega-final-2026-11-20\\camera-curva-quarteirao-1.png"
+    },
+    {
+      "name": "camera-curva-quarteirao-2",
+      "path": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\entrega-final-2026-11-20\\camera-curva-quarteirao-2.png"
+    }
+  ],
+  "reaudit_final": {
+    "timestamp": "2026-11-20 17:30:37",
+    "port": 3115,
+    "console_errors": [],
+    "page_errors": [],
+    "http_errors": [],
+    "specific_routes": {
+      "/assets/models/driver-pilot.glb": {
+        "status": 200,
+        "bytes": 188920
+      },
+      "/assets/models/DRIVER-CREDITS.txt": {
+        "status": 200,
+        "bytes": 1507
+      },
+      "/src/pilot-rig.js": {
+        "status": 200,
+        "bytes": 1990
+      },
+      "/src/editorial.css": {
+        "status": 200,
+        "bytes": 32404
+      },
+      "/src/scene.js": {
+        "status": 200,
+        "bytes": 81743
+      }
+    },
+    "mobile": {
+      "390x844": {
+        "innerWidth": 390,
+        "docScrollWidth": 390,
+        "bodyScrollWidth": 390,
+        "docOk": true,
+        "bodyOk": true,
+        "worldManifesto": {
+          "scrollW": 351,
+          "clientW": 351,
+          "ok": true
+        },
+        "shortcutCount": 5,
+        "allShortcutsVisible": true,
+        "shortcuts": [
+          {
+            "text": "A HISTÓRIA",
+            "href": "#eras",
+            "left": 19.5,
+            "right": 127.5,
+            "width": 108,
+            "height": 44,
+            "visibleInViewport": true
+          },
+          {
+            "text": "A TRILHA",
+            "href": "#radio",
+            "left": 135.5,
+            "right": 228.7,
+            "width": 93.2,
+            "height": 44,
+            "visibleInViewport": true
+          },
+          {
+            "text": "9 OLHARES",
+            "href": "#paradas",
+            "left": 236.7,
+            "right": 337.4,
+            "width": 100.6,
+            "height": 44,
+            "visibleInViewport": true
+          },
+          {
+            "text": "A BANDA",
+            "href": "#band-title",
+            "left": 19.5,
+            "right": 105.3,
+            "width": 85.8,
+            "height": 44,
+            "visibleInViewport": true
+          },
+          {
+            "text": "GARAGEM 3D",
+            "href": "#modelos",
+            "left": 113.3,
+            "right": 221.3,
+            "width": 108,
+            "height": 44,
+            "visibleInViewport": true
+          }
+        ],
+        "garageAllOk": false,
+        "garage": [
+          {
+            "sel": "#backstage",
+            "left": 19.5,
+            "right": 370.5,
+            "rectW": 351,
+            "scrollW": 354,
+            "clientW": 349,
+            "ok": false
+          },
+          {
+            "sel": "#modelos",
+            "left": 34.5,
+            "right": 355.5,
+            "rectW": 321,
+            "scrollW": 321,
+            "clientW": 321,
+            "ok": true
+          },
+          {
+            "sel": ".garage-bento",
+            "left": 34.5,
+            "right": 355.5,
+            "rectW": 321,
+            "scrollW": 321,
+            "clientW": 321,
+            "ok": true
+          },
+          {
+            "sel": ".garage-hero",
+            "left": 34.5,
+            "right": 355.5,
+            "rectW": 321,
+            "scrollW": 319,
+            "clientW": 319,
+            "ok": true
+          },
+          {
+            "sel": ".garage-telemetry",
+            "left": 34.5,
+            "right": 355.5,
+            "rectW": 321,
+            "scrollW": 319,
+            "clientW": 319,
+            "ok": true
+          },
+          {
+            "sel": ".garage-specs",
+            "left": 34.5,
+            "right": 355.5,
+            "rectW": 321,
+            "scrollW": 319,
+            "clientW": 319,
+            "ok": true
+          }
+        ],
+        "emptyHeadings": 0
+      },
+      "320x568": {
+        "innerWidth": 320,
+        "docScrollWidth": 320,
+        "bodyScrollWidth": 320,
+        "docOk": true,
+        "bodyOk": true,
+        "worldManifesto": {
+          "scrollW": 288,
+          "clientW": 288,
+          "ok": true
+        },
+        "shortcutCount": 5,
+        "allShortcutsVisible": true,
+        "shortcuts": [
+          {
+            "text": "A HISTÓRIA",
+            "href": "#eras",
+            "left": 16,
+            "right": 124,
+            "width": 108,
+            "height": 44,
+            "visibleInViewport": true
+          },
+          {
+            "text": "A TRILHA",
+            "href": "#radio",
+            "left": 132,
+            "right": 225.2,
+            "width": 93.2,
+            "height": 44,
+            "visibleInViewport": true
+          },
+          {
+            "text": "9 OLHARES",
+            "href": "#paradas",
+            "left": 16,
+            "right": 116.6,
+            "width": 100.6,
+            "height": 44,
+            "visibleInViewport": true
+          },
+          {
+            "text": "A BANDA",
+            "href": "#band-title",
+            "left": 124.6,
+            "right": 210.4,
+            "width": 85.8,
+            "height": 44,
+            "visibleInViewport": true
+          },
+          {
+            "text": "GARAGEM 3D",
+            "href": "#modelos",
+            "left": 16,
+            "right": 124,
+            "width": 108,
+            "height": 44,
+            "visibleInViewport": true
+          }
+        ],
+        "garageAllOk": false,
+        "garage": [
+          {
+            "sel": "#backstage",
+            "left": 16,
+            "right": 304,
+            "rectW": 288,
+            "scrollW": 291,
+            "clientW": 286,
+            "ok": false
+          },
+          {
+            "sel": "#modelos",
+            "left": 31,
+            "right": 289,
+            "rectW": 258,
+            "scrollW": 258,
+            "clientW": 258,
+            "ok": true
+          },
+          {
+            "sel": ".garage-bento",
+            "left": 31,
+            "right": 289,
+            "rectW": 258,
+            "scrollW": 258,
+            "clientW": 258,
+            "ok": true
+          },
+          {
+            "sel": ".garage-hero",
+            "left": 31,
+            "right": 289,
+            "rectW": 258,
+            "scrollW": 256,
+            "clientW": 256,
+            "ok": true
+          },
+          {
+            "sel": ".garage-telemetry",
+            "left": 31,
+            "right": 289,
+            "rectW": 258,
+            "scrollW": 256,
+            "clientW": 256,
+            "ok": true
+          },
+          {
+            "sel": ".garage-specs",
+            "left": 31,
+            "right": 289,
+            "rectW": 258,
+            "scrollW": 256,
+            "clientW": 256,
+            "ok": true
+          }
+        ],
+        "emptyHeadings": 0
+      }
+    },
+    "desktop": {
+      "1440x900": {
+        "innerWidth": 1440,
+        "docScrollWidth": 1440,
+        "bodyScrollWidth": 1440,
+        "overflow": false,
+        "emptyHeadings": 0,
+        "wikiMatches": 0,
+        "refRects": [
+          {
+            "x": 101,
+            "y": 7608,
+            "w": 301,
+            "h": 592
+          },
+          {
+            "x": 414,
+            "y": 7608,
+            "w": 301,
+            "h": 592
+          },
+          {
+            "x": 726,
+            "y": 7608,
+            "w": 301,
+            "h": 592
+          },
+          {
+            "x": 1039,
+            "y": 7608,
+            "w": 301,
+            "h": 592
+          }
+        ],
+        "tokens": {
+          "black": "#111415",
+          "surface": "#181d20",
+          "surfaceRaised": "#20272b",
+          "cream": "#e9e4d4",
+          "muted": "#a9aaa3",
+          "pink": "#f5a9c6",
+          "acid": "#d2e2a8",
+          "blue": "#7fa6ff"
+        }
+      },
+      "1920x1080": {
+        "innerWidth": 1920,
+        "docScrollWidth": 1920,
+        "bodyScrollWidth": 1920,
+        "overflow": false,
+        "refRects": [
+          {
+            "x": 264,
+            "y": 7726,
+            "w": 339,
+            "h": 579
+          },
+          {
+            "x": 615,
+            "y": 7726,
+            "w": 339,
+            "h": 579
+          },
+          {
+            "x": 966,
+            "y": 7726,
+            "w": 339,
+            "h": 579
+          },
+          {
+            "x": 1317,
+            "y": 7726,
+            "w": 339,
+            "h": 579
+          }
+        ]
+      }
+    },
+    "pilot": {
+      "pilotDataset": "glb",
+      "vehicleModel": "geep",
+      "wheels": "4",
+      "position": [
+        -0.6213,
+        0.208,
+        0.4471
+      ],
+      "expected": [
+        -0.6213,
+        0.208,
+        0.4471
+      ],
+      "exactMatch": true,
+      "scale": [
+        1.22,
+        1.22,
+        1.22
+      ],
+      "rotationY": 0,
+      "drivingLoopDeltaHead": 0.006879,
+      "drivingLoopDeltaArmL": 0.014975,
+      "firstPersonDriverVisible": false
+    },
+    "tokens": {
+      "black": "#111415",
+      "surface": "#181d20",
+      "surfaceRaised": "#20272b",
+      "cream": "#e9e4d4",
+      "muted": "#a9aaa3",
+      "pink": "#f5a9c6",
+      "acid": "#d2e2a8",
+      "blue": "#7fa6ff"
+    },
+    "screenshots_updated": [
+      {
+        "name": "mobile-390-manifesto",
+        "path": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\entrega-final-2026-11-20\\mobile-390-manifesto.png"
+      },
+      {
+        "name": "mobile-390-garagem",
+        "path": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\entrega-final-2026-11-20\\mobile-390-garagem.png"
+      },
+      {
+        "name": "mobile-390-referencias",
+        "path": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\entrega-final-2026-11-20\\mobile-390-referencias.png"
+      },
+      {
+        "name": "mobile-320-manifesto",
+        "path": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\entrega-final-2026-11-20\\mobile-320-manifesto.png"
+      },
+      {
+        "name": "mobile-320-garagem",
+        "path": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\entrega-final-2026-11-20\\mobile-320-garagem.png"
+      },
+      {
+        "name": "mobile-320-referencias",
+        "path": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\entrega-final-2026-11-20\\mobile-320-referencias.png"
+      },
+      {
+        "name": "piloto-04-3quartos-frontal",
+        "path": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\entrega-final-2026-11-20\\piloto-04-3quartos-frontal.png"
+      },
+      {
+        "name": "piloto-05-lateral",
+        "path": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\entrega-final-2026-11-20\\piloto-05-lateral.png"
+      },
+      {
+        "name": "piloto-06-chassi-lateral-baixo",
+        "path": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\entrega-final-2026-11-20\\piloto-06-chassi-lateral-baixo.png"
+      }
+    ]
+  }
+}

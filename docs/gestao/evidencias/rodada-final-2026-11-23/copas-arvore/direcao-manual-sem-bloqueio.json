@@ -1,0 +1,153 @@
+{
+ "modo": "antes",
+ "amostras": 576,
+ "amostras_atravessando": 9,
+ "amostras_perto_3_5m": 83,
+ "cenarios": [
+  {
+   "arvore": [
+    0,
+    37
+   ],
+   "amostras": 36,
+   "atravessando": 1,
+   "perto_3_5m": 2
+  },
+  {
+   "arvore": [
+    70.3,
+    -173.6
+   ],
+   "amostras": 36,
+   "atravessando": 0,
+   "perto_3_5m": 0
+  },
+  {
+   "arvore": [
+    116.7,
+    -13.3
+   ],
+   "amostras": 36,
+   "atravessando": 0,
+   "perto_3_5m": 28
+  },
+  {
+   "arvore": [
+    -7.3,
+    -135.6
+   ],
+   "amostras": 36,
+   "atravessando": 0,
+   "perto_3_5m": 0
+  },
+  {
+   "arvore": [
+    -76.3,
+    23.0
+   ],
+   "amostras": 36,
+   "atravessando": 2,
+   "perto_3_5m": 11
+  },
+  {
+   "arvore": [
+    125.9,
+    -101.0
+   ],
+   "amostras": 36,
+   "atravessando": 0,
+   "perto_3_5m": 0
+  },
+  {
+   "arvore": [
+    106.8,
+    -0.5
+   ],
+   "amostras": 36,
+   "atravessando": 6,
+   "perto_3_5m": 17
+  },
+  {
+   "arvore": [
+    121.4,
+    -15.6
+   ],
+   "amostras": 36,
+   "atravessando": 0,
+   "perto_3_5m": 0
+  },
+  {
+   "arvore": [
+    119.5,
+    -172.3
+   ],
+   "amostras": 36,
+   "atravessando": 0,
+   "perto_3_5m": 0
+  },
+  {
+   "arvore": [
+    77.0,
+    37.0
+   ],
+   "amostras": 36,
+   "atravessando": 0,
+   "perto_3_5m": 0
+  },
+  {
+   "arvore": [
+    125.6,
+    34.9
+   ],
+   "amostras": 36,
+   "atravessando": 0,
+   "perto_3_5m": 24
+  },
+  {
+   "arvore": [
+    98.3,
+    -182.0
+   ],
+   "amostras": 36,
+   "atravessando": 0,
+   "perto_3_5m": 1
+  },
+  {
+   "arvore": [
+    -0.9,
+    21.6
+   ],
+   "amostras": 36,
+   "atravessando": 0,
+   "perto_3_5m": 0
+  },
+  {
+   "arvore": [
+    69.6,
+    -186.9
+   ],
+   "amostras": 36,
+   "atravessando": 0,
+   "perto_3_5m": 0
+  },
+  {
+   "arvore": [
+    -30.6,
+    -184.6
+   ],
+   "amostras": 36,
+   "atravessando": 0,
+   "perto_3_5m": 0
+  },
+  {
+   "arvore": [
+    123.5,
+    -140.2
+   ],
+   "amostras": 36,
+   "atravessando": 0,
+   "perto_3_5m": 0
+  }
+ ],
+ "erros": []
+}

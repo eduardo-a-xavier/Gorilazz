@@ -1,0 +1,24 @@
+{
+  "errors": [],
+  "http": [],
+  "1440x900_paginacao_era1": {
+    "prev": [
+      false,
+      "1"
+    ],
+    "next": [
+      false,
+      "1"
+    ]
+  },
+  "390x844_paginacao_era1": {
+    "prev": [
+      false,
+      "1"
+    ],
+    "next": [
+      false,
+      "1"
+    ]
+  }
+}

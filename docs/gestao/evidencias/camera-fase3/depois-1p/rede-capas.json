@@ -1,0 +1,65 @@
+{
+  "failed_requests": [
+    "http://localhost:3123/assets/radio/concreto.mp3"
+  ],
+  "bad_status": [],
+  "console_errors": [],
+  "covers": [
+    {
+      "src": "./assets/covers/gorillaz-2001.jpg",
+      "ok": true,
+      "w": 600,
+      "alt": "Capa oficial do álbum Gorillaz (2001), com os quatro integrantes a bordo do Geep.",
+      "caption": "Gorillaz (2001) · Arte: Jamie Hewlett · Parlophone Records / uso acadêmico"
+    },
+    {
+      "src": "./assets/covers/demon-days-2005.jpg",
+      "ok": true,
+      "w": 600,
+      "alt": "Capa oficial do álbum Demon Days (2005), com os quatro integrantes em quadros de perfil.",
+      "caption": "Demon Days (2005) · Arte: Jamie Hewlett · Parlophone Records / uso acadêmico"
+    },
+    {
+      "src": "./assets/covers/plastic-beach-2010.jpg",
+      "ok": true,
+      "w": 600,
+      "alt": "Capa oficial do álbum Plastic Beach (2010), retratando a maquete da ilha artificial de plástico.",
+      "caption": "Plastic Beach (2010) · Arte: Jamie Hewlett · Parlophone Records / uso acadêmico"
+    },
+    {
+      "src": "./assets/covers/the-fall-2010.jpg",
+      "ok": true,
+      "w": 600,
+      "alt": "Capa oficial do álbum The Fall (2010), com retrato estilizado de 2-D em tons quentes.",
+      "caption": "The Fall (2010) · Arte: Jamie Hewlett · Parlophone Records / uso acadêmico"
+    },
+    {
+      "src": "./assets/covers/humanz-2017.jpg",
+      "ok": true,
+      "w": 600,
+      "alt": "Capa oficial do álbum Humanz (2017), com retratos em close dos quatro integrantes.",
+      "caption": "Humanz (2017) · Arte: Jamie Hewlett · Parlophone Records / uso acadêmico"
+    },
+    {
+      "src": "./assets/covers/the-now-now-2018.jpg",
+      "ok": true,
+      "w": 600,
+      "alt": "Capa oficial do álbum The Now Now (2018), com 2-D iluminado em azul e rosa neon.",
+      "caption": "The Now Now (2018) · Arte: Jamie Hewlett · Parlophone Records / uso acadêmico"
+    },
+    {
+      "src": "./assets/covers/song-machine-2020.jpg",
+      "ok": true,
+      "w": 600,
+      "alt": "Capa oficial de Song Machine, Season One: Strange Timez (2020), com a banda em moldura gráfica.",
+      "caption": "Song Machine, Season One (2020) · Arte: Jamie Hewlett · Gorillaz Partnership / Parlophone / uso acadêmico"
+    },
+    {
+      "src": "./assets/covers/cracker-island-2023.jpg",
+      "ok": true,
+      "w": 600,
+      "alt": "Capa oficial do álbum Cracker Island (2023), com os quatro integrantes sob iluminação neon rosa e violeta.",
+      "caption": "Cracker Island (2023) · Arte: Jamie Hewlett · Parlophone Records / uso acadêmico"
+    }
+  ]
+}

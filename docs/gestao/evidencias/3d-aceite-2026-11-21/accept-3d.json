@@ -1,0 +1,42 @@
+{
+  "http": [],
+  "console": [
+    "Failed to load resource: net::ERR_FAILED",
+    "Failed to load resource: net::ERR_FAILED",
+    "Failed to load resource: net::ERR_FAILED",
+    "[rádio] falha ao carregar ./assets/radio/concreto.mp3 MediaError",
+    "Failed to load resource: net::ERR_FAILED",
+    "Failed to load resource: net::ERR_FAILED",
+    "[rádio] falha ao carregar ./assets/radio/concreto.mp3 MediaError",
+    "Failed to load resource: net::ERR_FAILED",
+    "Failed to load resource: net::ERR_FAILED",
+    "[rádio] falha ao carregar ./assets/radio/concreto.mp3 MediaError"
+  ],
+  "pageerror": [],
+  "checks": {
+    "limpo: canvas 3D": true,
+    "limpo: desenhos por quadro": 417,
+    "limpo: status": "MUNDO ABERTO / 3D EM TEMPO REAL",
+    "limpo: falha visível escondida": true,
+    "limpo: modo 3D ativo": true,
+    "limpo: scroll travado no 3D": true,
+    "limpo: Esc sai do 3D": false,
+    "limpo: botão fixo volta ao 3D": true,
+    "limpo: M abre mapa": true,
+    "limpo: M fecha mapa": true,
+    "limpo: rádio pulou de faixa": "Maré de plástico",
+    "limpo: rádio status": "Concreto não tocou (formato ou caminho não suportado, código 4). Indo para a próxima faixa.",
+    "posicao_salva: canvas 3D": true,
+    "posicao_salva: desenhos por quadro": 259,
+    "posicao_salva: status": "MUNDO ABERTO / 3D EM TEMPO REAL",
+    "posicao_salva: falha visível escondida": true,
+    "posicao_salva: modo 3D ativo": true,
+    "posicao_salva: scroll travado no 3D": true,
+    "posicao_salva: Esc sai do 3D": true,
+    "posicao_salva: botão fixo volta ao 3D": true,
+    "posicao_salva: M abre mapa": true,
+    "posicao_salva: M fecha mapa": true,
+    "posicao_salva: rádio pulou de faixa": "Maré de plástico",
+    "posicao_salva: rádio status": "Concreto não tocou (formato ou caminho não suportado, código 4). Indo para a próxima faixa."
+  }
+}

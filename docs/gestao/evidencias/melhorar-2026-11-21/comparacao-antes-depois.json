@@ -1,0 +1,114 @@
+{
+  "mural-1346x680": {
+    "before": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\melhorar-2026-11-21\\antes-mural-1346x680.png",
+    "after": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\melhorar-2026-11-21\\depois-mural-1346x680.png",
+    "mean_pixel_diff_pct": 4.57,
+    "lum_std_before": 51.62,
+    "lum_std_after": 51.45,
+    "lum_std_delta_pct": -0.33
+  },
+  "mural-1440x900": {
+    "before": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\melhorar-2026-11-21\\antes-mural-1440x900.png",
+    "after": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\melhorar-2026-11-21\\depois-mural-1440x900.png",
+    "mean_pixel_diff_pct": 5.1,
+    "lum_std_before": 46.57,
+    "lum_std_after": 44.95,
+    "lum_std_delta_pct": -3.47
+  },
+  "palco2d-1346x680": {
+    "before": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\melhorar-2026-11-21\\antes-palco2d-1346x680.png",
+    "after": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\melhorar-2026-11-21\\depois-palco2d-1346x680.png",
+    "mean_pixel_diff_pct": 4.05,
+    "lum_std_before": 44.76,
+    "lum_std_after": 45.75,
+    "lum_std_delta_pct": 2.21
+  },
+  "palco2d-1440x900": {
+    "before": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\melhorar-2026-11-21\\antes-palco2d-1440x900.png",
+    "after": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\melhorar-2026-11-21\\depois-palco2d-1440x900.png",
+    "mean_pixel_diff_pct": 4.05,
+    "lum_std_before": 42.58,
+    "lum_std_after": 42.53,
+    "lum_std_delta_pct": -0.1
+  },
+  "reinvencao-a-1346x680": {
+    "before": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\melhorar-2026-11-21\\antes-reinvencao-a-1346x680.png",
+    "after": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\melhorar-2026-11-21\\depois-reinvencao-a-1346x680.png",
+    "mean_pixel_diff_pct": 2.0,
+    "lum_std_before": 41.83,
+    "lum_std_after": 41.51,
+    "lum_std_delta_pct": -0.79
+  },
+  "reinvencao-a-1440x900": {
+    "before": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\melhorar-2026-11-21\\antes-reinvencao-a-1440x900.png",
+    "after": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\melhorar-2026-11-21\\depois-reinvencao-a-1440x900.png",
+    "mean_pixel_diff_pct": 2.27,
+    "lum_std_before": 42.31,
+    "lum_std_after": 41.98,
+    "lum_std_delta_pct": -0.77
+  },
+  "totem-1346x680": {
+    "before": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\melhorar-2026-11-21\\antes-totem-1346x680.png",
+    "after": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\melhorar-2026-11-21\\depois-totem-1346x680.png",
+    "mean_pixel_diff_pct": 5.64,
+    "lum_std_before": 56.75,
+    "lum_std_after": 55.68,
+    "lum_std_delta_pct": -1.88
+  },
+  "totem-1440x900": {
+    "before": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\melhorar-2026-11-21\\antes-totem-1440x900.png",
+    "after": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\melhorar-2026-11-21\\depois-totem-1440x900.png",
+    "mean_pixel_diff_pct": 5.97,
+    "lum_std_before": 55.31,
+    "lum_std_after": 54.5,
+    "lum_std_delta_pct": -1.47
+  },
+  "cabine-1346x680": {
+    "before": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\melhorar-2026-11-21\\antes-cabine-1346x680.png",
+    "after": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\melhorar-2026-11-21\\depois-cabine-1346x680.png",
+    "mean_pixel_diff_pct": 8.03,
+    "lum_std_before": 49.1,
+    "lum_std_after": 45.62,
+    "lum_std_delta_pct": -7.08
+  },
+  "cabine-1440x900": {
+    "before": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\melhorar-2026-11-21\\antes-cabine-1440x900.png",
+    "after": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\melhorar-2026-11-21\\depois-cabine-1440x900.png",
+    "mean_pixel_diff_pct": 2.46,
+    "lum_std_before": 46.17,
+    "lum_std_after": 45.55,
+    "lum_std_delta_pct": -1.35
+  },
+  "vs_original_mural-1346x680": {
+    "before": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\polimento-2026-11-21\\luz\\antes-mural-1346x680.png",
+    "after": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\melhorar-2026-11-21\\depois-mural-1346x680.png",
+    "mean_pixel_diff_pct": 10.28,
+    "lum_std_before": 59.06,
+    "lum_std_after": 51.45,
+    "lum_std_delta_pct": -12.88
+  },
+  "vs_original_mural-1440x900": {
+    "before": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\polimento-2026-11-21\\luz\\antes-mural-1440x900.png",
+    "after": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\melhorar-2026-11-21\\depois-mural-1440x900.png",
+    "mean_pixel_diff_pct": 14.61,
+    "lum_std_before": 56.18,
+    "lum_std_after": 44.95,
+    "lum_std_delta_pct": -19.99
+  },
+  "vs_original_palco2d-1346x680": {
+    "before": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\polimento-2026-11-21\\luz\\antes-palco2d-1346x680.png",
+    "after": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\melhorar-2026-11-21\\depois-palco2d-1346x680.png",
+    "mean_pixel_diff_pct": 9.35,
+    "lum_std_before": 49.77,
+    "lum_std_after": 45.75,
+    "lum_std_delta_pct": -8.08
+  },
+  "vs_original_palco2d-1440x900": {
+    "before": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\polimento-2026-11-21\\luz\\antes-palco2d-1440x900.png",
+    "after": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\melhorar-2026-11-21\\depois-palco2d-1440x900.png",
+    "mean_pixel_diff_pct": 10.39,
+    "lum_std_before": 48.35,
+    "lum_std_after": 42.53,
+    "lum_std_delta_pct": -12.02
+  }
+}

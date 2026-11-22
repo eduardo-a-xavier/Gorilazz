@@ -1,0 +1,37 @@
+{
+  "bad_status": [],
+  "errors": [],
+  "steps": [
+    {
+      "alvo": "regiao[0]",
+      "mapa_fechou": true,
+      "frames_800ms": 50,
+      "erros_ate_agora": 0
+    },
+    {
+      "alvo": "integrante[0]",
+      "mapa_fechou": true,
+      "frames_800ms": 50,
+      "erros_ate_agora": 0
+    },
+    {
+      "alvo": "historia[0]",
+      "mapa_fechou": true,
+      "frames_800ms": 50,
+      "erros_ate_agora": 0
+    },
+    {
+      "alvo": "regiao[2]",
+      "mapa_fechou": true,
+      "frames_800ms": 50,
+      "erros_ate_agora": 0
+    },
+    {
+      "alvo": "integrante[3]",
+      "mapa_fechou": true,
+      "frames_800ms": 50,
+      "erros_ate_agora": 0
+    }
+  ],
+  "final_frames": 50
+}

@@ -1,0 +1,39 @@
+{
+  "rows": [
+    {
+      "vw": "1440x900",
+      "welcome_open_1a_entrada": true,
+      "esc_fecha": true,
+      "H_abre": true,
+      "F1_abre": true,
+      "dica_visivel": true,
+      "dica_rect": {
+        "x": 553.2109375,
+        "y": 300,
+        "r": 886.7890625,
+        "b": 337.546875
+      },
+      "sobrepoe_minimapa": false,
+      "sobrepoe_radio": false,
+      "welcome_salvo": true
+    },
+    {
+      "vw": "390x844",
+      "welcome_open_1a_entrada": true,
+      "esc_fecha": true,
+      "H_abre": true,
+      "F1_abre": true,
+      "dica_visivel": true,
+      "dica_rect": {
+        "x": 97.5,
+        "y": 302,
+        "r": 292.5,
+        "b": 354.375
+      },
+      "sobrepoe_minimapa": false,
+      "sobrepoe_radio": false,
+      "welcome_salvo": true
+    }
+  ],
+  "errors": []
+}

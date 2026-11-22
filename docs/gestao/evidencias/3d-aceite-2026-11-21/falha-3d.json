@@ -1,0 +1,8 @@
+{
+  "aviso_motivo": "Failed to fetch dynamically imported module: http://127.0.0.1:3000/src/scene.js",
+  "status": "MODO 2D / 3D NÃO CARREGOU",
+  "depois_do_retry": {
+    "canvas": true,
+    "status": "MUNDO ABERTO / 3D EM TEMPO REAL"
+  }
+}

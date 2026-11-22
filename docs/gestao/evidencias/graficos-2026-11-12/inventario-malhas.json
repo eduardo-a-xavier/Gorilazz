@@ -1,0 +1,22 @@
+{
+  "_nota": "Inventário em tempo de execução (Chromium, cena parada, ?perf): window.__gorilazz.world.debug.scene percorrida com traverse; malhas agrupadas por contagem de vértices/índices + material + instanciada + castShadow.",
+  "objetos_de_desenho_na_cena": 364,
+  "InstancedMesh_existentes": 3,
+  "triangulos_na_cena_soma_das_malhas": 279892,
+  "maiores_malhas_em_triangulos": [
+    ["2D_Sculpture_Leam (escultura, tem foto/impostor a >88 m)", 33999],
+    ["integrantes da banda (4 malhas de ~20-32 mil; têm impostor a >88 m)", "20309–31696 cada"],
+    ["árvores (InstancedMesh)", 23040],
+    ["arbustos (InstancedMesh)", 10176],
+    ["cidade (lotes fundidos por material)", 12420],
+    ["kong-studio (sem impostor por nome; 8,7 mil triângulos)", 3820]
+  ],
+  "grupos_repetidos_nao_instanciados": [
+    { "descricao": "caixas 24v/36i, mesma geometria, material diferente", "objetos": "2 a 6 por grupo", "triangulos_do_grupo": "24 a 72" },
+    { "descricao": "rodas do Geep (864v/1248i)", "objetos": 4, "triangulos_do_grupo": 1664, "geometrias_distintas": 4 },
+    { "descricao": "peças de 244v/480i e 287v/1440i (carroceria/banda)", "objetos": 5, "triangulos_do_grupo": "800 a 2400", "geometrias_distintas": 5 }
+  ],
+  "conclusao_InstancedMesh": "Nenhum grupo repetido relevante além de árvores e arbustos (já instanciados). O maior grupo não instanciado tem 5 a 6 objetos e no máximo 2.400 triângulos; instanciar não compensa a refatoração.",
+  "conclusao_LOD": "Os objetos densos distantes já têm impostor (banda e escultura, `heavyCaster` em src/scene.js). O que sobra sem LOD são árvores e arbustos (33.216 triângulos, ~12% do quadro) e o estúdio (8,7 mil); um LOD por distância exigiria geometrias simplificadas novas e criaria saltos visuais. Não aplicado.",
+  "onde_estava_o_custo_extra_da_sombra": "O quadro de sombra da vista aérea no perfil leve somava +196.084 triângulos (279.480 → 475.564), vindos dos modelos densos perto do jipe (banda e escultura) e das árvores. Os volumes de sombra da cidade (caixas fundidas) são pequenos."
+}

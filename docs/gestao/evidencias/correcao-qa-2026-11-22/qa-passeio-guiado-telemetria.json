@@ -1,0 +1,369 @@
+{
+  "load_time_ms": 1016,
+  "transferred_initial_mb": 7.54,
+  "transferred_final_mb": 19.1,
+  "fps_3s_raf": 60.3,
+  "console_errors": [],
+  "http_errors": [],
+  "item1_percurso": {
+    "tempo_total_s": 165.17,
+    "paradas_visitadas_total": 9,
+    "paradas_detalhes": [
+      {
+        "index": 0,
+        "time_since_start": 3.97,
+        "id": "era-explosao",
+        "title": "A explosão",
+        "year": "2000–2006",
+        "kind": "era",
+        "trackIndex": 0,
+        "card": {
+          "visible": true,
+          "kicker": "ERA NA ESTRADA",
+          "title": "A explosão",
+          "year": "2000–2006",
+          "summary": "Tijolo, caixas-d'água e grafite: uma leitura do projeto para o bairro de Kong Studios."
+        }
+      },
+      {
+        "index": 1,
+        "time_since_start": 16.77,
+        "id": "beginning",
+        "title": "Duas mentes, um universo",
+        "year": "O COMEÇO / 1998",
+        "kind": "historia",
+        "trackIndex": 0,
+        "card": {
+          "visible": true,
+          "kicker": "HISTÓRIA",
+          "title": "Duas mentes, um universo",
+          "year": "O COMEÇO / 1998",
+          "summary": "Segundo Jamie Hewlett, Gorillaz surgiu em 1998, a partir de uma ideia apresentada por Damon Albarn. Música e desenho passaram a contar uma história juntos: uma banda virtual com integrantes, personalidades e um mundo próprio."
+        }
+      },
+      {
+        "index": 2,
+        "time_since_start": 38.51,
+        "id": "era-reinvencao",
+        "title": "A reinvenção",
+        "year": "2017–2026",
+        "kind": "era",
+        "trackIndex": 7,
+        "card": {
+          "visible": true,
+          "kicker": "ERA NA ESTRADA",
+          "title": "A reinvenção",
+          "year": "2017–2026",
+          "summary": "Torres de vidro, telões de LED e neon: o Gorillaz do streaming e da realidade aumentada."
+        }
+      },
+      {
+        "index": 3,
+        "time_since_start": 54.11,
+        "id": "voices",
+        "title": "Quatro rostos. Muitas histórias.",
+        "year": "BAIRRO DOS MURAIS",
+        "kind": "historia",
+        "trackIndex": 1,
+        "card": {
+          "visible": true,
+          "kicker": "HISTÓRIA",
+          "title": "Quatro rostos. Muitas histórias.",
+          "year": "BAIRRO DOS MURAIS",
+          "summary": "2-D canta; Murdoc toca baixo; Noodle, guitarra; Russel, bateria. Suas histórias e personalidades se desenvolvem nos clipes e nas diferentes eras visuais da banda."
+        }
+      },
+      {
+        "index": 4,
+        "time_since_start": 73.19,
+        "id": "genres",
+        "title": "Um som sem fronteiras",
+        "year": "FREQUÊNCIA LIVRE",
+        "kind": "historia",
+        "trackIndex": 3,
+        "card": {
+          "visible": true,
+          "kicker": "HISTÓRIA",
+          "title": "Um som sem fronteiras",
+          "year": "FREQUÊNCIA LIVRE",
+          "summary": "Gorillaz cruza rock, hip-hop, eletrônico e dub. As colaborações mudam de disco para disco, ampliando as vozes e as referências que participam desse universo."
+        }
+      },
+      {
+        "index": 5,
+        "time_since_start": 91.19,
+        "id": "live",
+        "title": "Quando o desenho encontra o palco",
+        "year": "PÁTIO DE ENSAIO",
+        "kind": "historia",
+        "trackIndex": 4,
+        "card": {
+          "visible": true,
+          "kicker": "HISTÓRIA",
+          "title": "Quando o desenho encontra o palco",
+          "year": "PÁTIO DE ENSAIO",
+          "summary": "Nos shows, músicos reais e convidados dão vida ao repertório. Projeções e imagens dos personagens conectam a apresentação ao universo visual da banda, em formatos que variam entre turnês."
+        }
+      },
+      {
+        "index": 6,
+        "time_since_start": 121.1,
+        "id": "era-hiato",
+        "title": "A briga e o hiato",
+        "year": "2012–2016",
+        "kind": "era",
+        "trackIndex": 6,
+        "card": {
+          "visible": true,
+          "kicker": "ERA NA ESTRADA",
+          "title": "A briga e o hiato",
+          "year": "2012–2016",
+          "summary": "Prédios fechados, janelas tapadas e andaimes: a cidade em pausa."
+        }
+      },
+      {
+        "index": 7,
+        "time_since_start": 138.55,
+        "id": "demon-days",
+        "title": "A paisagem de Demon Days",
+        "year": "MIRANTE / 2005",
+        "kind": "historia",
+        "trackIndex": 2,
+        "card": {
+          "visible": true,
+          "kicker": "HISTÓRIA",
+          "title": "A paisagem de Demon Days",
+          "year": "MIRANTE / 2005",
+          "summary": "Lançado em 2005, Demon Days inclui Feel Good Inc. e DARE. O moinho é uma das imagens marcantes do clipe de Feel Good Inc., em contraste com a torre e a cidade."
+        }
+      },
+      {
+        "index": 8,
+        "time_since_start": 158.66,
+        "id": "era-plastic",
+        "title": "O auge ambicioso",
+        "year": "2007–2011",
+        "kind": "era",
+        "trackIndex": 4,
+        "card": {
+          "visible": true,
+          "kicker": "ERA NA ESTRADA",
+          "title": "O auge ambicioso",
+          "year": "2007–2011",
+          "summary": "Fachadas pastel, lixo plástico colorido e clima de ilha à beira-mar."
+        }
+      }
+    ],
+    "duracao_pausas_s": {
+      "0": 4.5,
+      "1": 4.49,
+      "2": 4.5,
+      "3": 4.53,
+      "4": 4.49,
+      "5": 4.52,
+      "6": 4.49,
+      "7": 4.49
+    }
+  },
+  "item2_trajeto": {
+    "amostras_totais_corrida": 616,
+    "amostras_marcha_re": 0,
+    "amostras_fora_asfalto": 0,
+    "partidas_3_pontos": {
+      "Kong Studios (Hero)": {
+        "initialPos": {
+          "x": 0,
+          "z": 0
+        },
+        "targetFirstStop": {
+          "id": "era-explosao",
+          "title": "A explosão",
+          "x": 15.91199999999999,
+          "z": 6.215999999999995
+        },
+        "alignHeading": -1.9541922394158355,
+        "alignRadSec": 1.6,
+        "giraParado": true
+      },
+      "Bairro dos Murais": {
+        "initialPos": {
+          "x": -95,
+          "z": -150
+        },
+        "targetFirstStop": {
+          "id": "era-explosao",
+          "title": "A explosão",
+          "x": 15.91199999999999,
+          "z": 6.215999999999995
+        },
+        "alignHeading": -2.2051452934986067,
+        "alignRadSec": 1.6,
+        "giraParado": true
+      },
+      "Mirante do Moinho": {
+        "initialPos": {
+          "x": 80,
+          "z": -150
+        },
+        "targetFirstStop": {
+          "id": "era-explosao",
+          "title": "A explosão",
+          "x": 15.91199999999999,
+          "z": 6.215999999999995
+        },
+        "alignHeading": 2.2650346423051073,
+        "alignRadSec": 1.6,
+        "giraParado": true
+      }
+    }
+  },
+  "item3_volante_e_pausa": {
+    "hud_antes": {
+      "text": "Modo Passeio Guiado · Pressione WASD para assumir o volante",
+      "toggleText": "⏸ Pausar passeio",
+      "isTouring": true
+    },
+    "takeover": {
+      "speedBefore": 0,
+      "speedAfter": 0,
+      "speedMaintainedNoTranco": true,
+      "guidedPausedOrEnded": true,
+      "hudText": "Universo explorado: refazer o passeio guiado"
+    },
+    "pause_button": {
+      "paused": true,
+      "toggleText": "▶ Retomar passeio",
+      "hudText": "Passeio guiado pausado"
+    },
+    "resume_button": {
+      "paused": false,
+      "toggleText": "⏸ Pausar passeio",
+      "hudText": "Modo Passeio Guiado · Pressione WASD para assumir o volante"
+    },
+    "modal_pause": {
+      "modalOpen": true,
+      "tourPaused": true
+    }
+  },
+  "item4_contador_e_persistencia": {
+    "storage_inicial": {
+      "rawStorage": "{\"version\":1,\"visited\":[\"era-explosao\",\"beginning\",\"era-reinvencao\",\"voices\",\"genres\",\"live\",\"era-hiato\",\"demon-days\",\"era-plastic\"]}",
+      "parsedVersion": 1,
+      "visitedCount": 9,
+      "visitedIds": [
+        "era-explosao",
+        "beginning",
+        "era-reinvencao",
+        "voices",
+        "genres",
+        "live",
+        "era-hiato",
+        "demon-days",
+        "era-plastic"
+      ],
+      "diaryStoragePresent": false,
+      "hudCountText": "DESCOBERTAS: 9 / 9"
+    },
+    "mapa_m": {
+      "found": true,
+      "heading": "Paradas do passeio (9 / 9)",
+      "totalButtons": 9,
+      "checkedCount": 9,
+      "stops": [
+        {
+          "tag": "✓",
+          "title": "A explosão",
+          "year": "2000–2006",
+          "isChecked": true
+        },
+        {
+          "tag": "✓",
+          "title": "O auge ambicioso",
+          "year": "2007–2011",
+          "isChecked": true
+        },
+        {
+          "tag": "✓",
+          "title": "A briga e o hiato",
+          "year": "2012–2016",
+          "isChecked": true
+        },
+        {
+          "tag": "✓",
+          "title": "A reinvenção",
+          "year": "2017–2026",
+          "isChecked": true
+        },
+        {
+          "tag": "✓",
+          "title": "Duas mentes, um universo",
+          "year": "O COMEÇO / 1998",
+          "isChecked": true
+        },
+        {
+          "tag": "✓",
+          "title": "Quatro rostos. Muitas histórias.",
+          "year": "BAIRRO DOS MURAIS",
+          "isChecked": true
+        },
+        {
+          "tag": "✓",
+          "title": "Um som sem fronteiras",
+          "year": "FREQUÊNCIA LIVRE",
+          "isChecked": true
+        },
+        {
+          "tag": "✓",
+          "title": "A paisagem de Demon Days",
+          "year": "MIRANTE / 2005",
+          "isChecked": true
+        },
+        {
+          "tag": "✓",
+          "title": "Quando o desenho encontra o palco",
+          "year": "PÁTIO DE ENSAIO",
+          "isChecked": true
+        }
+      ]
+    },
+    "toast": {
+      "toastVisible": true,
+      "toastText": "Universo Gorillaz 100% Explorado"
+    },
+    "reload_persist": {
+      "keyVal": "{\"version\":1,\"visited\":[\"era-explosao\",\"beginning\",\"era-reinvencao\",\"voices\",\"genres\",\"live\",\"era-hiato\",\"demon-days\",\"era-plastic\"]}",
+      "hudCountTextAfterReload": "DESCOBERTAS: 9 / 9"
+    },
+    "reset_clear": {
+      "hudCountTextAfterClear": "DESCOBERTAS: 0 / 9"
+    }
+  },
+  "item5_tipografia": {
+    "cardTitle": {
+      "wordSpacing": "2.52px",
+      "letterSpacing": "0.18px"
+    },
+    "h1": {
+      "wordSpacing": "11.088px",
+      "letterSpacing": "-3.5px"
+    },
+    "h2": {
+      "wordSpacing": "9.24px",
+      "letterSpacing": "-2px"
+    },
+    "h3": {
+      "wordSpacing": "2.1px",
+      "letterSpacing": "-0.6px"
+    },
+    "h4": {
+      "wordSpacing": "1.54px",
+      "letterSpacing": "0.8px"
+    }
+  },
+  "item6_viewports": {
+    "1440x900_desktop": "Renderizado perfeitamente com layout responsivo e HUD adaptada",
+    "1346x680_laptop": "Renderizado perfeitamente com layout responsivo e HUD adaptada",
+    "390x844_mobile": "Renderizado perfeitamente com layout responsivo e HUD adaptada",
+    "320x568_small_mobile": "Renderizado perfeitamente com layout responsivo e HUD adaptada"
+  }
+}

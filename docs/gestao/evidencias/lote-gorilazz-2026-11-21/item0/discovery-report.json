@@ -1,0 +1,80 @@
+[
+  {
+    "vw": "1440x900",
+    "discovery": 1,
+    "poster_visible": true,
+    "bg": "linear-gradient(rgba(17, 20, 21, 0.28) 0%, rgba(17",
+    "title": "Duas mentes, um universo"
+  },
+  {
+    "vw": "1440x900",
+    "discovery": 2,
+    "poster_visible": true,
+    "bg": "linear-gradient(rgba(17, 20, 21, 0.28) 0%, rgba(17",
+    "title": "Quatro rostos. Muitas histórias."
+  },
+  {
+    "vw": "1440x900",
+    "discovery": 3,
+    "poster_visible": true,
+    "bg": "linear-gradient(rgba(17, 20, 21, 0.28) 0%, rgba(17",
+    "title": "Um som sem fronteiras"
+  },
+  {
+    "vw": "1440x900",
+    "discovery": 4,
+    "poster_visible": true,
+    "bg": "linear-gradient(rgba(17, 20, 21, 0.28) 0%, rgba(17",
+    "title": "A paisagem de Demon Days"
+  },
+  {
+    "vw": "1440x900",
+    "discovery": 5,
+    "poster_visible": true,
+    "bg": "linear-gradient(rgba(17, 20, 21, 0.28) 0%, rgba(17",
+    "title": "Quando o desenho encontra o palco"
+  },
+  {
+    "vw": "1440x900",
+    "page_errors": []
+  },
+  {
+    "vw": "390x844",
+    "discovery": 1,
+    "poster_visible": true,
+    "bg": "linear-gradient(rgba(17, 20, 21, 0.28) 0%, rgba(17",
+    "title": "Duas mentes, um universo"
+  },
+  {
+    "vw": "390x844",
+    "discovery": 2,
+    "poster_visible": true,
+    "bg": "linear-gradient(rgba(17, 20, 21, 0.28) 0%, rgba(17",
+    "title": "Quatro rostos. Muitas histórias."
+  },
+  {
+    "vw": "390x844",
+    "discovery": 3,
+    "poster_visible": true,
+    "bg": "linear-gradient(rgba(17, 20, 21, 0.28) 0%, rgba(17",
+    "title": "Um som sem fronteiras"
+  },
+  {
+    "vw": "390x844",
+    "discovery": 4,
+    "poster_visible": true,
+    "bg": "linear-gradient(rgba(17, 20, 21, 0.28) 0%, rgba(17",
+    "title": "A paisagem de Demon Days"
+  },
+  {
+    "vw": "390x844",
+    "discovery": 5,
+    "poster_visible": true,
+    "bg": "linear-gradient(rgba(17, 20, 21, 0.28) 0%, rgba(17",
+    "title": "Quando o desenho encontra o palco"
+  },
+  {
+    "vw": "390x844",
+    "page_errors": []
+  }
+]

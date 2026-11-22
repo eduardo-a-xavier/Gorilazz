@@ -1,0 +1,18 @@
+{
+ "secs": 40.0,
+ "frames": 2372,
+ "fps_mean": 59.0,
+ "p50_ms": 16.7,
+ "p95_ms": 17.0,
+ "p99_ms": 17.3,
+ "max_ms": 184.4,
+ "frames_over_33ms": 7,
+ "frames_over_50ms": 4,
+ "amostras_camera": 78,
+ "amostras_camera_atravessando_copa": 0,
+ "erros": [],
+ "tour": {
+  "index": 2,
+  "paused": false
+ }
+}

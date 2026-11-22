@@ -1,0 +1,11 @@
+{
+  "_nota": "Medições reais, Chromium desktop, 12/11/2026. Chamadas e triângulos do motorista = quadro com o motorista visível menos quadro com todas as malhas dele ocultas, na mesma página e câmera fixa 'frente' (perfil alto, ?perf). Quadro normal e quadro de sombra alternam (sombra a cada 2 quadros). O ambiente rodou a 1–3 quadros/s: FPS não foi medido.",
+  "atual": { "triangulos": 2228, "malhas": 11, "materiais": 5, "texturas": 0, "buffers_geometria_bytes": 69752, "arquivo_extra_bytes": 0, "chamadas_extra_quadro_normal": 10, "chamadas_extra_quadro_sombra": 21, "triangulos_extra_normal": 1828, "triangulos_extra_sombra": 4056 },
+  "A": { "triangulos": 2934, "malhas": 12, "materiais": 5, "texturas": 0, "buffers_geometria_bytes": 95268, "arquivo_extra_bytes": 0, "chamadas_extra_quadro_normal": 11, "chamadas_extra_quadro_sombra": 23, "triangulos_extra_normal": 2614, "triangulos_extra_sombra": 5548 },
+  "B_trellis": { "triangulos": 2908, "malhas": 1, "materiais": 1, "texturas": 1, "textura": "512x512 JPEG, 48116 bytes (GPU RGBA8+mips ~1,33 MiB)", "buffers_geometria_bytes": 61328, "arquivo_extra_bytes": 110832, "chamadas_extra_quadro_normal": 1, "chamadas_extra_quadro_sombra": 2, "triangulos_extra_normal": 2908, "triangulos_extra_sombra": 5816 },
+  "quadro_base_sem_motorista_camera_frente": { "normal": [71, 148167], "sombra": [148, 342023], "formato": "[chamadas, triangulos]" },
+  "quadros_com_motorista_camera_frente": { "atual": { "normal": [81, 149995], "sombra": [169, 346079] }, "A": { "normal": [82, 150781], "sombra": [171, 347571] }, "B": { "normal": [72, 151075], "sombra": [150, 347839] } },
+  "camera_natural_sem_override_B_vs_atual": { "atual": { "normal": 141, "sombra": 237 }, "B": { "normal": 131, "sombra": 217 }, "nota": "primeira rodada; a sombra incluía variação de quadros do cenário, valores só indicativos" },
+  "codigo": { "scene_js_bytes_antes": 75013, "scene_js_bytes_depois": 77904, "testes": "50/50 (um novo: tests/driver-trellis.test.mjs)" },
+  "comportamento": { "reacao_da_cabeca": { "atual": true, "A": true, "B": false }, "bracos_acompanham_volante": { "atual": true, "A": true, "B": false }, "paleta_de_5_cores": { "atual": true, "A": true, "B": false } }
+}

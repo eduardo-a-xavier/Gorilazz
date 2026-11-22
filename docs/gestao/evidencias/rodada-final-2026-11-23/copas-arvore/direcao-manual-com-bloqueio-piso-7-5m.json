@@ -1,0 +1,159 @@
+{
+ "modo": "depois",
+ "dist_carro_arvore_nas_travessias_m": [
+  7.2,
+  7.3,
+  7.5,
+  7.9
+ ],
+ "amostras": 576,
+ "amostras_atravessando": 4,
+ "amostras_perto_3_5m": 70,
+ "cenarios": [
+  {
+   "arvore": [
+    0,
+    37
+   ],
+   "amostras": 36,
+   "atravessando": 0,
+   "perto_3_5m": 1
+  },
+  {
+   "arvore": [
+    70.3,
+    -173.6
+   ],
+   "amostras": 36,
+   "atravessando": 0,
+   "perto_3_5m": 0
+  },
+  {
+   "arvore": [
+    116.7,
+    -13.3
+   ],
+   "amostras": 36,
+   "atravessando": 0,
+   "perto_3_5m": 24
+  },
+  {
+   "arvore": [
+    -7.3,
+    -135.6
+   ],
+   "amostras": 36,
+   "atravessando": 0,
+   "perto_3_5m": 0
+  },
+  {
+   "arvore": [
+    -76.3,
+    23.0
+   ],
+   "amostras": 36,
+   "atravessando": 0,
+   "perto_3_5m": 6
+  },
+  {
+   "arvore": [
+    125.9,
+    -101.0
+   ],
+   "amostras": 36,
+   "atravessando": 0,
+   "perto_3_5m": 0
+  },
+  {
+   "arvore": [
+    106.8,
+    -0.5
+   ],
+   "amostras": 36,
+   "atravessando": 4,
+   "perto_3_5m": 15
+  },
+  {
+   "arvore": [
+    121.4,
+    -15.6
+   ],
+   "amostras": 36,
+   "atravessando": 0,
+   "perto_3_5m": 0
+  },
+  {
+   "arvore": [
+    119.5,
+    -172.3
+   ],
+   "amostras": 36,
+   "atravessando": 0,
+   "perto_3_5m": 0
+  },
+  {
+   "arvore": [
+    77.0,
+    37.0
+   ],
+   "amostras": 36,
+   "atravessando": 0,
+   "perto_3_5m": 0
+  },
+  {
+   "arvore": [
+    125.6,
+    34.9
+   ],
+   "amostras": 36,
+   "atravessando": 0,
+   "perto_3_5m": 24
+  },
+  {
+   "arvore": [
+    98.3,
+    -182.0
+   ],
+   "amostras": 36,
+   "atravessando": 0,
+   "perto_3_5m": 0
+  },
+  {
+   "arvore": [
+    -0.9,
+    21.6
+   ],
+   "amostras": 36,
+   "atravessando": 0,
+   "perto_3_5m": 0
+  },
+  {
+   "arvore": [
+    69.6,
+    -186.9
+   ],
+   "amostras": 36,
+   "atravessando": 0,
+   "perto_3_5m": 0
+  },
+  {
+   "arvore": [
+    -30.6,
+    -184.6
+   ],
+   "amostras": 36,
+   "atravessando": 0,
+   "perto_3_5m": 0
+  },
+  {
+   "arvore": [
+    123.5,
+    -140.2
+   ],
+   "amostras": 36,
+   "atravessando": 0,
+   "perto_3_5m": 0
+  }
+ ],
+ "erros": []
+}

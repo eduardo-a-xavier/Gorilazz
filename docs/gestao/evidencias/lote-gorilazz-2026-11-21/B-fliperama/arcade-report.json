@@ -1,0 +1,19 @@
+{
+  "errors": [],
+  "bad_status": [],
+  "desktop_prompt": {
+    "hidden": false,
+    "text": "E / JOGAR FLIPERAMA"
+  },
+  "desktop_score": "00100",
+  "desktop_fechou_esc": true,
+  "desktop_carro_parado_depois": 0,
+  "mobile_prompt": {
+    "hidden": false,
+    "text": "E / JOGAR FLIPERAMA"
+  },
+  "mobile_score": "00100",
+  "mobile_pad_ok": true,
+  "mobile_fechou_esc": true,
+  "mobile_carro_parado_depois": 0
+}

@@ -1,0 +1,70 @@
+{
+  "errors": [],
+  "http": [],
+  "1440x900": {
+    "paginacao_era1": {
+      "prev": true,
+      "next": false,
+      "prevOp": "0.754476",
+      "cursor": "pointer"
+    },
+    "paginacao_era8": {
+      "prev": false,
+      "next": true,
+      "prevOp": "1",
+      "cursor": "not-allowed"
+    },
+    "counter_era8": "08 / 08",
+    "era_2005_botao": "EXPLORAR: A paisagem de Demon Days ↗",
+    "destino_hud_era_2005": "A paisagem de Demon Days",
+    "botao_fixo_visivel_rolado": true,
+    "botao_fixo_leva_ao_3d": {
+      "entered": "true",
+      "top": 20
+    },
+    "marca_scrollY": 0,
+    "clipe_aberto": {
+      "iframe": true,
+      "cls": true,
+      "anim": "landing-spin"
+    },
+    "abrir_youtube_href": "https://www.youtube.com/watch?v=HyHNuVaZJ-k",
+    "faixa_capas_carregadas": 8,
+    "faixa_clique_4": "04 / 08",
+    "overflow_horizontal": 0,
+    "era_menu_colunas": "316.5px 316.5px 316.5px 316.5px"
+  },
+  "390x844": {
+    "paginacao_era1": {
+      "prev": true,
+      "next": false,
+      "prevOp": "0.654369",
+      "cursor": "pointer"
+    },
+    "paginacao_era8": {
+      "prev": false,
+      "next": true,
+      "prevOp": "1",
+      "cursor": "not-allowed"
+    },
+    "counter_era8": "08 / 08",
+    "era_2005_botao": "EXPLORAR: A paisagem de Demon Days ↗",
+    "destino_hud_era_2005": "A paisagem de Demon Days",
+    "botao_fixo_visivel_rolado": true,
+    "botao_fixo_leva_ao_3d": {
+      "entered": "true",
+      "top": 20
+    },
+    "marca_scrollY": 0,
+    "clipe_aberto": {
+      "iframe": true,
+      "cls": true,
+      "anim": "landing-spin"
+    },
+    "abrir_youtube_href": "https://www.youtube.com/watch?v=HyHNuVaZJ-k",
+    "faixa_capas_carregadas": 8,
+    "faixa_clique_4": "04 / 08",
+    "overflow_horizontal": 0,
+    "era_menu_colunas": "170.5px 170.5px"
+  }
+}

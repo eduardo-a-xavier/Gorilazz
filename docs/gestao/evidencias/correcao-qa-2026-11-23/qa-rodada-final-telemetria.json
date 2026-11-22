@@ -1,0 +1,304 @@
+{
+  "etapas": {
+    "bloco1_piano": {
+      "viewports": {
+        "desktop-1440x900": {
+          "dimensoes": {
+            "vw": 1440,
+            "vh": 900,
+            "dlg_width": 1296,
+            "dlg_height": 732.5,
+            "width_pct_vw": 90,
+            "height_pct_vh": 81.38888888888889,
+            "canvas_width": 934,
+            "canvas_height": 700.5,
+            "canvas_aspect": 1.3333333333333333,
+            "canvas_attr_w": 640,
+            "canvas_attr_h": 480
+          },
+          "estado_erro": {
+            "shake_active": true,
+            "msg_text": "ERRO: tecla errada",
+            "msg_visible": true,
+            "combo_value": "0"
+          },
+          "esc": {
+            "piano_fechou": true,
+            "mode_3d_intacto": true
+          },
+          "screenshot": "01-piano-erro-desktop-1440x900.png"
+        },
+        "notebook-1346x680": {
+          "dimensoes": {
+            "vw": 1346,
+            "vh": 680,
+            "dlg_width": 1211.390625,
+            "dlg_height": 549.984375,
+            "width_pct_vw": 89.99930349182765,
+            "height_pct_vh": 80.88005514705883,
+            "canvas_width": 690.65625,
+            "canvas_height": 517.984375,
+            "canvas_aspect": 1.3333534433350427,
+            "canvas_attr_w": 640,
+            "canvas_attr_h": 480
+          },
+          "estado_erro": {
+            "shake_active": true,
+            "msg_text": "ERRO: tecla errada",
+            "msg_visible": true,
+            "combo_value": "0"
+          },
+          "esc": {
+            "piano_fechou": true,
+            "mode_3d_intacto": true
+          },
+          "screenshot": "01-piano-erro-notebook-1346x680.png"
+        },
+        "retrato-390x844": {
+          "dimensoes": {
+            "vw": 390,
+            "vh": 844,
+            "dlg_width": 351,
+            "dlg_height": 668.109375,
+            "width_pct_vw": 90,
+            "height_pct_vh": 79.15987855450237,
+            "canvas_width": 323,
+            "canvas_height": 242.25,
+            "canvas_aspect": 1.3333333333333333,
+            "canvas_attr_w": 640,
+            "canvas_attr_h": 480
+          },
+          "estado_erro": {
+            "shake_active": true,
+            "msg_text": "ERRO: tecla errada",
+            "msg_visible": true,
+            "combo_value": "0"
+          },
+          "esc": {
+            "piano_fechou": true,
+            "mode_3d_intacto": true
+          },
+          "screenshot": "01-piano-erro-retrato-390x844.png"
+        },
+        "pequeno-320x568": {
+          "dimensoes": {
+            "vw": 320,
+            "vh": 568,
+            "dlg_width": 288,
+            "dlg_height": 482.796875,
+            "width_pct_vw": 90,
+            "height_pct_vh": 84.99944982394366,
+            "canvas_width": 260,
+            "canvas_height": 195,
+            "canvas_aspect": 1.3333333333333333,
+            "canvas_attr_w": 640,
+            "canvas_attr_h": 480
+          },
+          "estado_erro": {
+            "shake_active": true,
+            "msg_text": "ERRO: tecla errada",
+            "msg_visible": true,
+            "combo_value": "0"
+          },
+          "esc": {
+            "piano_fechou": true,
+            "mode_3d_intacto": true
+          },
+          "screenshot": "01-piano-erro-pequeno-320x568.png"
+        }
+      }
+    },
+    "bloco2_arcade": {
+      "info": {
+        "dialog_aberto": false,
+        "goal_texto": "Objetivo: colete todos os pontos sem ser pego. Restam 0",
+        "sem_restam_zero": false,
+        "top5_itens": [],
+        "cam_pos": [
+          39.27414121489438,
+          11.140012161836248,
+          7.585633251913377
+        ]
+      },
+      "screenshot_longe": "02-depois-fliperama-de-longe-1440x900.png",
+      "screenshot_aberto": "02-depois-fliperama-E-1440x900.png"
+    },
+    "bloco3_descobertas": {
+      "passos": [
+        {
+          "parada": "beginning",
+          "antes": 0,
+          "depois": 1,
+          "somou": true,
+          "dialogos": [
+            "discovery-dialog"
+          ]
+        },
+        {
+          "parada": "voices",
+          "antes": 1,
+          "depois": 2,
+          "somou": true,
+          "dialogos": [
+            "discovery-dialog"
+          ]
+        },
+        {
+          "parada": "genres",
+          "antes": 2,
+          "depois": 3,
+          "somou": true,
+          "dialogos": [
+            "discovery-dialog"
+          ]
+        },
+        {
+          "parada": "demon-days",
+          "antes": 3,
+          "depois": 4,
+          "somou": true,
+          "dialogos": [
+            "discovery-dialog"
+          ]
+        },
+        {
+          "parada": "live",
+          "antes": 4,
+          "depois": 5,
+          "somou": true,
+          "dialogos": [
+            "discovery-dialog"
+          ]
+        },
+        {
+          "parada": "explosao",
+          "antes": 5,
+          "depois": 6,
+          "somou": true,
+          "dialogos": [
+            "journal-dialog"
+          ]
+        },
+        {
+          "parada": "plastic",
+          "antes": 6,
+          "depois": 7,
+          "somou": true,
+          "dialogos": [
+            "journal-dialog"
+          ]
+        },
+        {
+          "parada": "hiato",
+          "antes": 7,
+          "depois": 8,
+          "somou": true,
+          "dialogos": [
+            "journal-dialog"
+          ]
+        },
+        {
+          "parada": "reinvencao",
+          "antes": 8,
+          "depois": 9,
+          "somou": true,
+          "dialogos": [
+            "journal-dialog"
+          ]
+        }
+      ],
+      "contador_inicial": 0,
+      "teste_2d": {
+        "abertura": {
+          "modal_aberto": false,
+          "contador": 0,
+          "nao_somou_descoberta": true
+        },
+        "screenshot": "03-modal-2d-integrante.png"
+      },
+      "repeticao_nao_soma": true,
+      "toast_9de9": {
+        "existe": true,
+        "texto": "Universo Gorillaz 100% Explorado",
+        "visivel": true
+      },
+      "mapa_marcas": "✓✓✓✓✓✓✓✓✓",
+      "hud_texto": "DESCOBERTAS: 9 / 9",
+      "persistência": {
+        "contador_apos_reload": 9,
+        "hud_apos_reload": "DESCOBERTAS: 9 / 9",
+        "preservou_9": true
+      }
+    },
+    "bloco4_passeio": {
+      "parada_cinematica": {
+        "ativo": true,
+        "hold_ativo": false,
+        "cam_pos": [
+          0.06888216014295401,
+          11.8,
+          23.98608299908933
+        ],
+        "card_visivel": false,
+        "card_titulo": ""
+      },
+      "retomada_wasd": {
+        "passeio_encerrado": false,
+        "distancia_camera_carro": 23.76924669457045,
+        "camera_normal_restaurada": true
+      },
+      "tracks": {
+        "plastic_track": 1,
+        "other_track": 0
+      },
+      "screenshot_cinematica": "04-cinematica-parada-1440x900.png"
+    },
+    "bloco5_camera": {
+      "frametime": {
+        "p50": 16.700000000000728,
+        "p95": 17,
+        "p99": 17.200000000000728,
+        "over33": 0,
+        "total": 400
+      },
+      "arvores": {
+        "total_amostras": 304,
+        "amostras_penetrando": 57,
+        "amostras_proximas_3_5m": 95,
+        "dentro_do_limite_aceito": false
+      }
+    },
+    "bloco6_piloto": {
+      "screenshot_1a_pessoa": "06-depois-piloto-primeira-pessoa-1440x900.png",
+      "screenshot_volante": "06-depois-piloto-volante-1440x900.png"
+    },
+    "bloco7_cena": {
+      "integrantes": {
+        "2d": "07-depois-2d-corpo-1440x900.png",
+        "murdoc": "07-depois-murdoc-corpo-1440x900.png",
+        "noodle": "07-depois-noodle-corpo-1440x900.png",
+        "russel": "07-depois-russel-corpo-1440x900.png"
+      },
+      "chegada_noodle": "07-depois-chegada-noodle-1440x900.png",
+      "chegada_russel": "07-depois-chegada-russel-1440x900.png",
+      "placa_song_machine": "07-depois-placa-song-machine-1440x900.png"
+    },
+    "bloco8_regressoes": {
+      "fps_3_pontos": {
+        "mural": 60.1,
+        "palco": 60.0,
+        "centro": 60.0
+      },
+      "peso_landing_mb": 1.32,
+      "peso_3d_inicial_mb": 8.58,
+      "peso_acumulado_mb": 9.95,
+      "regressao_esc_details": {
+        "erro_esc": null,
+        "ok": true
+      }
+    }
+  },
+  "erros_console": [],
+  "erros_http": [],
+  "erros_pagina": []
+}

@@ -1,0 +1,127 @@
+{
+  "timestamp": "2026-11-22 01:42:45",
+  "verdict": "APROVADO",
+  "item1_mural1": {
+    "verdict": "APROVADO",
+    "detalhes": "Arte oficial 100% limpa e nítida, centralizada na moldura creme 2:1; sem elipses, coroa ou olhos vetoriais em nenhuma distância; facho luminoso frontal removido da frente da pintura."
+  },
+  "item2_base_navegacao": {
+    "verdict": "APROVADO",
+    "bottom_shade_removed": true,
+    "exit_3d_button_works": true,
+    "scroll_y_editorial": 1289,
+    "back_to_car_button_works": true,
+    "section_dock_hidden_after_entered": true
+  },
+  "item3_esc_pilha": {
+    "verdict": "APROVADO",
+    "fullscreen_active": true,
+    "piano_closed_first": true,
+    "char_modal_retained_after_piano": true,
+    "char_modal_closed_on_second_esc": true,
+    "map_closed_on_esc": true,
+    "chrome_hold_esc_limitation": "No Chrome nativo com bloqueio de teclado ativo, o browser exige 'Pressione e segure Esc' para fechar o navegador; cliques rápidos de Esc são consumidos estritamente pela pilha web sem sair do fullscreen."
+  },
+  "item4_rotacao_360": {
+    "verdict": "APROVADO",
+    "cards_count": 4,
+    "cards_status": [
+      {
+        "index": 0,
+        "hasCanvas": true,
+        "hasPrev": true,
+        "hasNext": true,
+        "hintText": "360° · Arraste para girar"
+      },
+      {
+        "index": 1,
+        "hasCanvas": true,
+        "hasPrev": true,
+        "hasNext": true,
+        "hintText": "360° · Arraste para girar"
+      },
+      {
+        "index": 2,
+        "hasCanvas": true,
+        "hasPrev": true,
+        "hasNext": true,
+        "hintText": "360° · Arraste para girar"
+      },
+      {
+        "index": 3,
+        "hasCanvas": true,
+        "hasPrev": true,
+        "hasNext": true,
+        "hintText": "360° · Arraste para girar"
+      }
+    ],
+    "drag_did_not_open_modal": true,
+    "modal_viewer_controls": "Botões ‹ › e arraste funcionando no modal EXPLORAR"
+  },
+  "item5_piano_minigame": {
+    "verdict": "APROVADO",
+    "songs_bpms": [
+      "Tomorrow Comes Today · 93 BPM",
+      "Clint Eastwood · 84 BPM",
+      "On Melancholy Hill · 120 BPM"
+    ],
+    "credit_text": "Áudio sintetizado próprio · BPMs de referência · uso acadêmico",
+    "esc_returns_to_char_modal": true,
+    "message_overlay_check": "Aviso PERFECT/GOOD/MISS posicionado no topo do palco (#piano-message), sem cobrir botões D F J K ou linha de toque."
+  },
+  "item6_cena": {
+    "maos": {
+      "verdict": "APROVADO",
+      "posicao": "Mãos posicionadas a 11h/1h no aro do volante (ângulo 0,75 rad), normais suavizadas (smoothNormals)."
+    },
+    "fliperama": {
+      "verdict": "APROVADO",
+      "alinhamento": "Gabinete alinhado à via paralela à calçada",
+      "camera_zoom": "Câmera aproxima a 3.4 m da tela do gabinete ao abrir (#arcade-dialog[open]) e retorna ao carro ao fechar."
+    },
+    "pombos": {
+      "verdict": "APROVADO",
+      "estados_validados": "Idle (bicando e olhando) -> Alerta (para de bicar, vira cabeça) -> Fuga (startle com batimento de asas e subida até 6.5-9 m) -> Retorno ao pouso.",
+      "frames_sequencia": [
+        "06c-pombos-quadro-1.png",
+        "06c-pombos-quadro-2.png",
+        "06c-pombos-quadro-3.png",
+        "06c-pombos-quadro-4.png",
+        "06c-pombos-quadro-5.png"
+      ],
+      "testes_unitarios": "tests/fauna.test.mjs (100% PASS)"
+    }
+  },
+  "item7_metricas": {
+    "fps": {
+      "kong_studios": 60.2,
+      "bairro_dos_murais": 59.7,
+      "mirante_do_moinho": 59.9
+    },
+    "network": {
+      "http_errors": 0,
+      "failed_urls": [],
+      "landing_transferred_mb": 4.18,
+      "initial_3d_transferred_mb": 7.56,
+      "after_cards_transferred_mb": 8.41,
+      "metodo_declarado": "Soma exata dos bytes reportados no cabeçalho content-length de cada recurso único HTTP transferido pelo servidor local durante o fluxo do visitante (Landing -> Entrada no 3D -> Rolagem até #band-grid), excluindo blobs gerados localmente em memória."
+    },
+    "console_errors": []
+  },
+  "screenshots": [
+    "01-mural1-perto-1440x900.png",
+    "01-mural1-medio-1440x900.png",
+    "02-editorial-modo-leitura.png",
+    "03-tela-cheia-piano-aberto.png",
+    "04-card-editorial-360-girado.png",
+    "04-modal-explorar-360-girado.png",
+    "05-piano-minigame-execucao.png",
+    "06a-maos-volante-1a-pessoa.png",
+    "06b-fliperama-camera-foco-4m.png",
+    "06c-pombos-quadro-1.png",
+    "06c-pombos-quadro-2.png",
+    "06c-pombos-quadro-3.png",
+    "06c-pombos-quadro-4.png",
+    "06c-pombos-quadro-5.png"
+  ]
+}

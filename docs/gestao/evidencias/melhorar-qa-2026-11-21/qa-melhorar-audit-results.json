@@ -1,0 +1,90 @@
+{
+  "timestamp": "2026-11-21 20:04:15",
+  "verdict": "APROVADO",
+  "items": {
+    "item1_ceu_e_ao": {
+      "verdict": "APROVADO",
+      "luminance": {
+        "mean": 60.87,
+        "dark_pct": 0.95,
+        "blown_pct": 0.0
+      },
+      "details": "Gradiente em 3 faixas colado à neblina FogExp2 sem emenda no horizonte; AO falso nas fachadas com 0 pixels estourados."
+    },
+    "item2_glow_halos_cabine": {
+      "verdict": "APROVADO",
+      "details": "Postes com glow aditivo instanciado (1 draw call, 0 PointLights adicionais), halos aditivos nos 4 arcos de ato, clusterHalo/radioHalo/cabinLight ativos na cabine.",
+      "evidence": [
+        "02-cabine-luz-velocimetro-radio.png",
+        "02-postes-glow-e-arcos.png"
+      ]
+    },
+    "item3_escala_e_totem": {
+      "verdict": "APROVADO",
+      "details": "Totem direcional 'MURAIS ←|MOINHO →' a 1,5x posicionado com folga de 2,26 m da pista e 1,66 m do prédio vizinho; bancas, palcos e fliperama a 1,5x fora do asfalto.",
+      "evidence": [
+        "03-totem-direcional-murais-moinho.png",
+        "03-fliperama-e-palcos-1-5x.png"
+      ]
+    },
+    "item4_outdoors_atlas": {
+      "verdict": "APROVADO",
+      "atlas_size": "2048x6528 (17 linhas de 384 px)",
+      "cover_size": "256 px",
+      "coachella_act4": "5º outdoor do Ato 4 = COACHELLA 2023|TURNÊ CRACKER ISLAND · PHASE 7",
+      "credits": "Rodapé com créditos acadêmicos Jamie Hewlett <= 45 chars",
+      "alignment": "Alinhamento 1:1 entre AD_COVERS e ERA_ART em todas as 4 eras"
+    },
+    "item5_particulas_e_dicas": {
+      "verdict": "APROVADO",
+      "particles_system": "InstancedMesh drive-fx-particles em scene.js ativado na desaceleração e proximidades",
+      "proximity_order": "rankByProximity ordena descobertas não encontradas da menor para a maior distância"
+    },
+    "item6_novo_piloto_v2": {
+      "verdict": "APROVADO",
+      "driver_pilot_v2_url": true,
+      "fallback_url": "driver-pilot.glb presente como fallback",
+      "wrists_hands": "Sem fendas nos pulsos, mangas em Sphere005_Retopology004_2 e mãos em Sphere005_Retopology004_3",
+      "steering_interaction": "Mãos no volante ajustadas reativamente ao esterçar (A e D) e em repouso",
+      "smooth_normals": "smoothNormals() elimina facetas e costuras duras"
+    },
+    "item7_regressoes": {
+      "verdict": "APROVADO",
+      "scroll_locked": true,
+      "hud_contained": true,
+      "map_toggle": true,
+      "fps_points": {
+        "kong_studios": 59.9,
+        "bairro_dos_murais": 59.8,
+        "mirante_do_moinho": 59.9
+      }
+    }
+  },
+  "network": {
+    "http_errors": 0,
+    "failed_urls": [],
+    "transferred_bytes": 8917234,
+    "transferred_mb": 8.5,
+    "decoded_bytes": 11587172,
+    "decoded_mb": 11.05
+  },
+  "console_errors": [],
+  "fps": {
+    "kong_studios": 59.9,
+    "bairro_dos_murais": 59.8,
+    "mirante_do_moinho": 59.9
+  },
+  "screenshots": [
+    "01-ceu-horizonte-fachadas-1440x900.png",
+    "02-cabine-luz-velocimetro-radio.png",
+    "02-postes-glow-e-arcos.png",
+    "03-totem-direcional-murais-moinho.png",
+    "03-fliperama-e-palcos-1-5x.png",
+    "04-outdoors-atlas-e-coachella2023.png",
+    "05-particulas-ao-frear.png",
+    "06-piloto-v2-centro.png",
+    "06-piloto-v2-esquerda.png",
+    "06-piloto-v2-direita.png",
+    "07-regressao-mapa-m.png"
+  ]
+}
