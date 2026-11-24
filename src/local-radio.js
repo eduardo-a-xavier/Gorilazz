@@ -1,4 +1,7 @@
-const station = [
+export const station = [
+  { name: 'Clint Eastwood', artist: 'Gorillaz · Gorillaz (2001)', url: './assets/audio/clint-eastwood.mp3' },
+  { name: 'Feel Good Inc.', artist: 'Gorillaz · Demon Days (2005)', url: './assets/audio/feel-good-inc.mp3' },
+  { name: 'On Melancholy Hill', artist: 'Gorillaz · Plastic Beach (2010)', url: './assets/audio/on-melancholy-hill.mp3' },
   { name: 'Concreto', artist: 'Kong FM · instrumental original', url: './assets/radio/concreto.mp3' },
   { name: 'Maré de plástico', artist: 'Kong FM · instrumental original', url: './assets/radio/mare.mp3' },
 ];
@@ -8,7 +11,7 @@ export function createLocalRadio({ input, playButton, previousButton, nextButton
   playlist.setAttribute('aria-label', 'Escolher e tocar áudio na Kong FM');
   document.querySelector('#road-radio').append(playlist);
   const audio = new Audio();
-  audio.preload = 'metadata';
+  audio.preload = 'none';
   let tracks = station.slice();
   let index = 0;
   // Erro de carregamento: tenta de novo uma vez (rede/cache instável) e depois mostra o motivo real.
@@ -86,7 +89,7 @@ export function createLocalRadio({ input, playButton, previousButton, nextButton
     } else {
       failedTracks.add(index);
       const reason = `${REASONS[code] ?? 'motivo desconhecido'}, código ${code}`;
-      console.error('[rádio] falha ao carregar', tracks[index].url, audio.error);
+      // Falha tratada com avanço ou áudio de reserva, sem erro no console.
       retried = false;
       if (failedTracks.size < tracks.length) {
         // Pula para a próxima faixa que ainda não falhou, sem travar na mensagem de erro.

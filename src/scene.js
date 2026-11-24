@@ -1185,7 +1185,7 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
       scene.fog.color.lerp(light.haze, fade);
       scene.background.copy(scene.fog.color);
       atmosphere.update(sunlight.color, skylight.color, scene.fog.color, t, reduced); atmosphere.follow(x, z); ambient.update(t, reduced);
-      adapt(dt, t); landmarks.update(t, reduced); fauna.update(vehicle, camera.position, dt, t, reduced);
+      adapt(dt, t); landmarks.update(t, reduced, dt); fauna.update(vehicle, camera.position, dt, t, reduced);
       lightingReady = true;
       scene.fog.density = THREE.MathUtils.lerp(scene.fog.density, overview ? .001 : landmarkView ? .002 : .003, blend);
       island.visible = showcase; island.position.set(x,0,z);
@@ -1198,12 +1198,12 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
       car.rotation.x = vehicleMotion.pitch;
       // Partículas leves ao frear (poeira/faísca nas rodas traseiras) e ao passar perto dos pontos de interesse.
       if (!reduced) {
-        if (vehicle.braking && Math.abs(vehicle.speed) > 1.2) {
+        if ((vehicle.braking || vehicle.drifting) && Math.abs(vehicle.speed) > 1.2) {
           const sinH = Math.sin(heading), cosH = Math.cos(heading);
           for (const side of [-1, 1]) {
             const wx = x + sinH * 2.9 + cosH * side * 1.35 + (Math.sin(t * 37 + side) * .18);
             const wz = z + cosH * 2.9 - sinH * side * 1.35 + (Math.cos(t * 29 + side) * .18);
-            const spark = vehicle.surface === 'terra' ? '#e2d8c0' : (frameCount + (side > 0 ? 1 : 0)) % 2 ? '#ff8a5c' : '#ffcc4d';
+            const spark = vehicle.drifting || vehicle.surface === 'terra' ? '#b7b8b0' : (frameCount + (side > 0 ? 1 : 0)) % 2 ? '#ff8a5c' : '#ffcc4d';
             spawnFx(wx, .22, wz, sinH * 2.4 + side * .6, 1.4 + (frameCount % 3) * .35, cosH * 2.4, spark, 1.15, .48);
           }
         }

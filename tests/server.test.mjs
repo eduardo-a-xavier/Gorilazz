@@ -75,6 +75,14 @@ test('servidor revalida por ETag, comprime texto e mantém a lista explícita de
     const revisit = await fetch(`${origin}/assets/radio/concreto.mp3`, { headers: { Range: 'bytes=0-', 'If-None-Match': mp3.headers.get('etag') } });
     assert.equal(revisit.status, 206);
     assert.equal((await revisit.arrayBuffer()).byteLength, mp3Size);
+    for (const slug of ['clint-eastwood', 'feel-good-inc', 'on-melancholy-hill']) {
+      const url = `${origin}/assets/audio/${slug}.mp3`;
+      const head = await fetch(url, { method: 'HEAD' });
+      assert.equal(head.status, 200); assert.equal(head.headers.get('content-type'), 'audio/mpeg');
+      const part = await fetch(url, { headers: { Range: 'bytes=0-99' } });
+      assert.equal(part.status, 206); assert.equal((await part.arrayBuffer()).byteLength, 100);
+      assert.equal((await fetch(url, { headers: { 'If-None-Match': head.headers.get('etag') } })).status, 304);
+    }
     for (const path of ['/package.json', '/server.mjs', '/src/../server.mjs', '/assets/environment/noodle-diorama.glb']) assert.equal((await fetch(origin + path)).status, 404);
   } finally { child.kill(); }
 });

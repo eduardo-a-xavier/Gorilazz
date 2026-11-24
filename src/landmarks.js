@@ -12,6 +12,10 @@ import { NON_DISCOVERY_PROP_SCALE } from './discovery-scale.js';
 
 const PLASTIC = ['#ff5f8f', '#38c2b5', '#ffcc4d', '#6aa2ff', '#f4efe2', '#9dff8a'];
 
+export function advanceHelicopterClock(time, delta) {
+  return time + Math.max(0, Math.min(Number.isFinite(delta) ? delta : 0, .05));
+}
+
 export function installLandmarks(scene, material, bake) {
   const solid = (parent, geometry, color, position, { scale = [1, 1, 1], rotation = [0, 0, 0], glow = false, shadow = true } = {}) => {
     const mesh = new THREE.Mesh(geometry, material(color, glow)); mesh.position.set(...position); mesh.scale.set(...scale); mesh.rotation.set(...rotation);
@@ -19,6 +23,7 @@ export function installLandmarks(scene, material, bake) {
   };
   const cube = new THREE.BoxGeometry(1, 1, 1), blob = new THREE.IcosahedronGeometry(1, 1), tube = new THREE.CylinderGeometry(1, 1, 1, 14), cone = new THREE.ConeGeometry(1, 1, 8);
   const animated = [];
+  let helicopterTime = 0;
 
   // ---------------------------------------------------------------- Plastic Beach
   const beach = new THREE.Group(); beach.position.set(198, -5.6, -36); beach.name = 'plastic-beach'; scene.add(beach);
@@ -94,12 +99,12 @@ export function installLandmarks(scene, material, bake) {
     for (const turn of [0, Math.PI / 2]) solid(rotor, cube, '#2a3036', [0, 0, 0], { scale: [7.4, .06, .34], rotation: [0, turn, 0], shadow: false });
     solid(tail, cube, '#2a3036', [0, 0, 0], { scale: [.05, 1.5, .16], shadow: false });
     animated.push((t, reduced) => {
-      const angle = phase + (reduced ? .6 : t * .32), reach = 36 + Math.sin(angle * 2) * 5;
+      const angle = phase + helicopterTime * .32, reach = 36 + Math.sin(angle * 2) * 5;
       copter.position.set(centre.x + Math.cos(angle) * reach, centre.y + Math.sin(angle * 1.7 + phase) * 3, centre.z + Math.sin(angle) * reach);
       // Nariz (−z local) segue a tangente da órbita, com leve inclinação para dentro.
       copter.rotation.set(-.12, Math.PI - angle, reduced ? 0 : .2, 'YXZ');
-      if (!reduced) { rotor.rotation.y = t * 28; tail.rotation.x = t * 34; light.visible = Math.sin(t * 6 + phase) > 0; }
+      rotor.rotation.y = helicopterTime * 28; tail.rotation.x = helicopterTime * 34; light.visible = Math.sin(helicopterTime * 6 + phase) > 0;
     });
   }
-  return { update(t, reduced) { for (const step of animated) step(t, reduced); } };
+  return { update(t, reduced, delta = 0) { helicopterTime = advanceHelicopterClock(helicopterTime, delta); for (const step of animated) step(t, reduced); } };
 }

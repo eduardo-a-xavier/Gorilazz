@@ -4,12 +4,12 @@ import { PIANO_SONGS, PIANO_CREDIT, LANES, JUDGE_MS, POINTS, beatMs, buildChart,
 
 test('BPMs das faixas são os de referência confirmados (4/4), sem valores em double-time', () => {
   const bpm = Object.fromEntries(PIANO_SONGS.map(song => [song.title, song.bpm]));
-  assert.deepEqual(bpm, { 'Tomorrow Comes Today': 93, 'Clint Eastwood': 84, 'On Melancholy Hill': 120 });
+  assert.deepEqual(bpm, { 'Feel Good Inc.': 138, 'Clint Eastwood': 84, 'On Melancholy Hill': 120 });
   for (const wrong of [186, 168, 160]) assert.ok(!PIANO_SONGS.some(song => song.bpm === wrong), `BPM ${wrong} (double-time) não deve ser usado`);
 });
 
 test('o crédito de áudio é o acordado: sintetizado, com referência de BPM e uso acadêmico', () => {
-  assert.equal(PIANO_CREDIT, 'Áudio sintetizado próprio · BPMs de referência · uso acadêmico');
+  assert.equal(PIANO_CREDIT, 'Áudio: gravações originais de Gorillaz (Parlophone/Warner), uso acadêmico/ilustrativo');
 });
 
 test('duração de um tempo segue o BPM', () => {

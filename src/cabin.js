@@ -24,6 +24,10 @@ function display(width, height, w, h) {
   return { mesh, draw };
 }
 
+// Mantém as duas mãos na metade superior do aro; volante gira além deste arco.
+export const HAND_TURN_LIMIT = .3;
+export function handTurn(wheelTurn) { return THREE.MathUtils.clamp(wheelTurn, -HAND_TURN_LIMIT, HAND_TURN_LIMIT); }
+
 export function createCabin() {
   const root = new THREE.Group(), controls = [];
   root.visible = false; root.name = 'cabin';
@@ -57,8 +61,25 @@ export function createCabin() {
   clusterStrip.scale.set(.66,.014,.016); clusterStrip.position.set(0,.125,.002); cluster.add(clusterStrip);
   // Mostrador do velocímetro à frente da moldura de topo: sem isso, a chapa escura cobre o número quando o rádio está ativo.
   const dial = display(256,80,.66,.2); dial.mesh.position.z = .03; cluster.add(dial.mesh);
-  box(radioUnit,1.08,.62,.22,0,0,-.12,'#171f1e','#7fa68a',.16);
-  box(radioUnit,1.02,.56,.05,0,0,-.022,trim,'#9ad4a8',.24);
+  // Escala estática no canvas; apenas o ponteiro gira a cada quadro.
+  const gauge = display(256,256,.25,.25);
+  gauge.draw('scale',ctx => {
+    ctx.fillStyle='#172320'; ctx.beginPath(); ctx.arc(128,128,121,0,Math.PI*2); ctx.fill();
+    ctx.strokeStyle='#dbc58a'; ctx.lineWidth=7; ctx.stroke();
+    ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillStyle='#eee3bf'; ctx.font='bold 18px sans-serif';
+    for (let i=0; i<=6; i++) {
+      const angle = Math.PI*.75 + i*Math.PI*1.5/6;
+      const x=Math.cos(angle), y=Math.sin(angle);
+      ctx.beginPath(); ctx.moveTo(128+x*90,128+y*90); ctx.lineTo(128+x*105,128+y*105); ctx.stroke();
+      ctx.fillText(String(i*20),128+x*73,128+y*73);
+    }
+  });
+  gauge.mesh.position.set(-.21,0,.045); cluster.add(gauge.mesh);
+  const needle = new THREE.Mesh(new THREE.BoxGeometry(.008,.085,.006),new THREE.MeshBasicMaterial({color:'#e35c40',toneMapped:false}));
+  const needlePivot = new THREE.Group(); needle.position.y=.0425; needlePivot.add(needle); needlePivot.position.set(-.21,0,.055); cluster.add(needlePivot);
+  dial.mesh.scale.set(.57,.75,1); dial.mesh.position.x=.13;
+  box(radioUnit,1.08,.62,.22,0,0,-.12,'#a89c7d','#c8b98c',.12);
+  box(radioUnit,1.02,.56,.05,0,0,-.022,'#4b3023','#996b38',.16);
   box(radioUnit,.96,.30,.02,0,.095,-.006,'#0c1413','#c4dc9d',.22);
   box(radioUnit,.5,.7,.16,0,-.6,-.14,panel);
   const radioHalo = new THREE.Mesh(unit, new THREE.MeshBasicMaterial({ color: '#c4dc9d', transparent: true, opacity: .16, blending: THREE.AdditiveBlending, depthWrite: false, toneMapped: false }));
@@ -137,7 +158,7 @@ export function createCabin() {
   }
   // Giro suavizado: A/D viram o volante com inércia leve, sem saltos entre os quadros.
   function poseArms(steer, state) {
-    const dt = state.dt ?? .016, turn = state.turn ?? 0;
+    const dt = state.dt ?? .016, turn = handTurn(state.turn ?? 0);
     reach += ((state.interacting ? 1 : 0) - reach) * Math.min(1,dt * 6); press = Math.max(0,press - dt * 4);
     const ease = reach*reach*(3 - 2*reach);
     for (const arm of arms) {
@@ -172,6 +193,7 @@ export function createCabin() {
   function update(vehicle,radio,state = {}) {
     poseArms(vehicle.steering,state);
     const speed = Math.round(Math.abs(vehicle.speed)*3.6);
+    needlePivot.rotation.z = Math.PI*.75 - Math.min(speed / 120, 1) * Math.PI*1.5;
     const gear = vehicle.speed < -.1 ? 'RÉ' : Math.abs(vehicle.speed) < .1 ? 'PARADO' : 'ESTRADA';
     dial.draw(`${speed}|${gear}`,ctx => {
       ctx.strokeStyle='#c4dc9d44'; ctx.lineWidth=3; ctx.strokeRect(3,3,250,74);
@@ -216,3 +238,4 @@ export function createCabin() {
   pressAt.set(0,-.25,0);
   return {root,wheel,controls,eye,attach,update,renderMirror,pressKey,hands,steering,setBoxArmsVisible};
 }
+

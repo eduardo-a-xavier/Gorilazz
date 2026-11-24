@@ -132,7 +132,17 @@ export function createPilotRig(pilot, animations = []) {
     const bone = pilot.getObjectByName(name);
     if (bone) entries[key] = { bone, base: bone.quaternion.clone() };
   }
-  const list = Object.values(entries), turn = new THREE.Quaternion();
+  // O piloto v5 tem falanges ponderadas: os braços de bloco da cabine não movem esses dedos.
+  const fingers = [];
+  for (const side of ['l', 'r']) {
+    for (const name of ['index', 'middle', 'ring', 'pinky', 'thumb']) {
+      for (const joint of [1, 2, 3]) {
+        const bone = pilot.getObjectByName(`${name}_0${joint}_${side}`);
+        if (bone) fingers.push({ bone, base: bone.quaternion.clone(), thumb: name === 'thumb', joint });
+      }
+    }
+  }
+  const list = [...Object.values(entries), ...fingers], turn = new THREE.Quaternion();
   const hidden = [], jacket = [], trimmedMeshes = [];
   // Acabamento fosco unificado para mangas e luvas do piloto v2 (2.806 tris, pulsos soldados).
   const armMat = (color, emissive, emissiveIntensity = .18, roughness = .78) =>
@@ -209,6 +219,11 @@ export function createPilotRig(pilot, animations = []) {
       }
       add(entries.head, AY, yaw * .5 + .2 * greeting); add(entries.head, AX, .14 * greeting);
       add(entries.spine, AY, yaw * .12);
+      // Flexão discreta e estável no espaço local das falanges, sem torcer o punho.
+      if (inside) for (const finger of fingers) {
+        const angle = finger.thumb ? (finger.joint === 1 ? .18 : .16) : (finger.joint === 1 ? .14 : .28);
+        add(finger, AX, angle);
+      }
       if (!inside) { add(entries.armL, AZ, -steering * .25); add(entries.armR, AZ, -steering * .25); }
     },
     /**

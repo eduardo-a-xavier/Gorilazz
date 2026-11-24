@@ -1,12 +1,12 @@
 // Minigame rítmico de piano do 2-D: lógica pura (sem DOM nem áudio), testada em Node.
 // BPMs de referência confirmados pela Pesquisa Gorilazz (docs/gestao/minigame-piano-bpm.md, compasso 4/4).
-// O áudio é sintetizado (Web Audio) no BPM indicado: não há trecho nem melodia das faixas.
+// As gravações locais podem ser usadas; sintetizador é a alternativa em caso de falha.
 export const PIANO_SONGS = [
-  { id: 'tomorrow', title: 'Tomorrow Comes Today', bpm: 93 },
-  { id: 'clint', title: 'Clint Eastwood', bpm: 84 },
-  { id: 'omh', title: 'On Melancholy Hill', bpm: 120 },
+  { id: 'feel-good', title: 'Feel Good Inc.', bpm: 138, url: './assets/audio/feel-good-inc.mp3' },
+  { id: 'clint', title: 'Clint Eastwood', bpm: 84, url: './assets/audio/clint-eastwood.mp3' },
+  { id: 'omh', title: 'On Melancholy Hill', bpm: 120, url: './assets/audio/on-melancholy-hill.mp3' },
 ];
-export const PIANO_CREDIT = 'Áudio sintetizado próprio · BPMs de referência · uso acadêmico';
+export const PIANO_CREDIT = 'Áudio: gravações originais de Gorillaz (Parlophone/Warner), uso acadêmico/ilustrativo';
 export const LANES = ['D', 'F', 'J', 'K'];
 export const JUDGE_MS = { perfect: 50, good: 120 }; // janelas de acerto (ms, a partir do instante da nota)
 export const POINTS = { perfect: 300, good: 100 };

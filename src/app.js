@@ -145,7 +145,7 @@ let world = null, destination = null, touring = false, previousFocus = null, nea
 let lastTime, accumulator = 0, currentRegion = -1, currentDistrict = -1, tourIndex = 0;
 const tourButton = document.querySelector('#tour-toggle');
 const bandToggle = document.querySelector('#band-toggle');
-const input = createInput({ enabled: () => entered && worldVisible, onManual() {
+const input = createInput({ enabled: () => entered && worldVisible, driftEnabled: () => !touring, onManual() {
   endGuided(); // assumir o volante: o passeio sai sem tranco; o progresso continua salvo
   enterWorld(); destination = null; setTour(false); setShowcase(false);
   if (overview || landmarkView) { overview = false; landmarkView = false; firstPerson = false; world?.setFirstPerson(false); world?.setOverview(false); syncCameraModes(); }
@@ -509,7 +509,7 @@ controlsToggle.addEventListener('click', () => toggleControls());
 journeyPanel.prepend(quickView);
 const helpButton = document.createElement('button'); helpButton.type = 'button'; helpButton.id = 'open-help'; helpButton.textContent = 'Ajuda de teclas (B / F1)';
 journeyPanel.append(helpButton); helpButton.addEventListener('click', () => openOnboarding());
-const hornHint = document.createElement('p'); hornHint.textContent = 'G · Buzina'; journeyPanel.append(hornHint);
+const hornHint = document.createElement('p'); hornHint.textContent = 'G · Buzina · Espaço · Drift'; journeyPanel.append(hornHint);
 const discoveriesButton = document.createElement('button'); discoveriesButton.type = 'button'; discoveriesButton.id = 'open-discoveries'; discoveriesButton.textContent = 'Central de Descobertas';
 journeyPanel.append(discoveriesButton); discoveriesButton.addEventListener('click', () => openDiscoveries());
 const soundButton = document.createElement('button'); soundButton.type = 'button'; soundButton.id = 'discovery-sound-toggle';

@@ -1,5 +1,5 @@
 // Tela do minigame rítmico de piano (2-D): diálogo acessível, canvas com notas caindo, teclado e toque.
-// Áudio sintetizado com Web Audio no BPM da faixa escolhida (sem trechos de música). Regras em piano-game.js.
+// MP3 local sincronizado ao relógio de mídia; sintetizador em caso de falha.
 import { PIANO_SONGS, PIANO_CREDIT, LANES, BEATS_PER_RUN, buildChart, createRun, feedbackFor, MESSAGES, SHAKE_MS } from './piano-game.js';
 
 const KEYS = { d: 0, f: 1, j: 2, k: 3 };
@@ -18,6 +18,8 @@ export function createPianoScreen({ dialog, onClose, onStart, onEnd }) {
   const songsEl = dialog.querySelector('#piano-songs');
   const startButton = dialog.querySelector('#piano-start');
   let song = PIANO_SONGS[0], run = null, chart = null, raf = 0, audio = null, audioStart = 0, startPerf = 0, nodes = [];
+  const recording = new Audio(); recording.preload = 'none';
+  let useRecording = false, pending = false, session = 0, fallbackTimer = 0;
   let flashes = []; // colunas acesas: { lane, color, until } em performance.now()
 
   creditEl.textContent = PIANO_CREDIT;
@@ -25,7 +27,7 @@ export function createPianoScreen({ dialog, onClose, onStart, onEnd }) {
     const button = document.createElement('button');
     button.type = 'button'; button.dataset.song = item.id; button.textContent = `${item.title} · ${item.bpm} BPM`;
     button.setAttribute('aria-pressed', String(item === song));
-    button.addEventListener('click', () => { if (!run || run.finished(now())) selectSong(item); });
+    button.addEventListener('click', () => { if (!pending && (!run || run.finished(now()))) selectSong(item); });
     songsEl.append(button);
   }
   function selectSong(next) {
@@ -46,7 +48,7 @@ export function createPianoScreen({ dialog, onClose, onStart, onEnd }) {
   }
   // Tempo da partida em ms pelo relógio do navegador: é ele que julga os toques. Os sons são agendados no
   // relógio de áudio com a mesma folga (LEAD_S), então a diferença é a latência de saída (dezenas de ms, dentro das janelas).
-  function now() { return run ? performance.now() - startPerf : 0; }
+  function now() { return run ? (useRecording ? recording.currentTime * 1000 : performance.now() - startPerf) : 0; }
   // Sons: uma nota curta por coluna (timbre de piano simples) e a batida do compasso (bumbo e chimbal).
   function schedule(chartData, t0) {
     const at = time => t0 + time / 1000;
@@ -138,16 +140,28 @@ export function createPianoScreen({ dialog, onClose, onStart, onEnd }) {
     draw(time);
   }
   function begin() {
-    if (run && !run.finished(now())) return;
+    if (pending || run && !run.finished(now())) return;
     stopAudio(); flashes = []; onStart?.();
-    chart = buildChart(song.bpm); run = createRun(chart);
+    chart = buildChart(song.bpm); run = null; pending = true; useRecording = false;
+    const token = ++session;
     const a = ensureAudio();
-    startPerf = performance.now();
-    if (a) { audioStart = a.currentTime + LEAD_S; schedule(chart, audioStart); }
-    message(''); cancelAnimationFrame(raf); raf = requestAnimationFrame(frame);
+    message('Carregando áudio…');
+    function launch(withRecording) {
+      if (token !== session || !pending) return;
+      clearTimeout(fallbackTimer); pending = false; useRecording = withRecording;
+      if (!withRecording) { recording.pause(); recording.removeAttribute('src'); recording.load(); }
+      run = createRun(chart); startPerf = performance.now();
+      if (!withRecording && a) { audioStart = a.currentTime + LEAD_S; schedule(chart, audioStart); startPerf += LEAD_S * 1000; }
+      message(''); cancelAnimationFrame(raf); raf = requestAnimationFrame(frame);
+    }
+    recording.onplaying = () => launch(true);
+    recording.onerror = () => launch(false);
+    recording.src = song.url;
+    fallbackTimer = setTimeout(() => launch(false), 2500);
+    recording.play().catch(() => launch(false));
   }
   function finish() {
-    cancelAnimationFrame(raf); raf = 0; stopAudio(); draw(chart.durationMs);
+    cancelAnimationFrame(raf); raf = 0; stopAudio(); recording.pause(); useRecording = false; draw(chart.durationMs);
     // As colunas acesas no último toque continuam por alguns frames depois do fim.
     setTimeout(() => { if (!raf && run) draw(chart.durationMs); }, 320);
     const c = run.counts;
@@ -159,7 +173,7 @@ export function createPianoScreen({ dialog, onClose, onStart, onEnd }) {
     run.hit(lane, now());
     processEvents();
   }
-  function stop() { cancelAnimationFrame(raf); raf = 0; stopAudio(); }
+  function stop() { session++; pending = false; clearTimeout(fallbackTimer); recording.pause(); recording.removeAttribute('src'); recording.load(); useRecording = false; cancelAnimationFrame(raf); raf = 0; stopAudio(); }
 
   function open() {
     stop(); run = null; chart = null; message('');

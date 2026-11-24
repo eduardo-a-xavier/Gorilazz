@@ -4,7 +4,7 @@ export function numericShortcutIndex(key, total) {
   return index < total ? index : -1;
 }
 
-export function createInput({ onManual, onInteract, enabled = () => true }) {
+export function createInput({ onManual, onInteract, enabled = () => true, driftEnabled = () => true }) {
   const held = new Set(), pointers = new Map();
   let wheelSteer = 0;
   const keys = { w: 'throttle', ArrowUp: 'throttle', s: 'brake', ArrowDown: 'brake', a: 'left', ArrowLeft: 'left', d: 'right', ArrowRight: 'right' };
@@ -17,6 +17,13 @@ export function createInput({ onManual, onInteract, enabled = () => true }) {
     return active;
   }
   function clear() { held.clear(); pointers.clear(); wheelSteer = 0; refresh(); }
+  // Espaço no mundo não deve ativar o botão com foco; diálogos e campos mantêm seus atalhos.
+  window.addEventListener('keydown', event => {
+    if (event.code !== 'Space' || !enabled() || modal() || document.querySelector('[role=dialog]:not([hidden])') || event.target.closest?.('input, textarea, select, [contenteditable]')) return;
+    event.preventDefault(); event.stopImmediatePropagation();
+    if (driftEnabled()) { held.add('drift'); refresh(); }
+  }, true);
+  window.addEventListener('keyup', event => { if (event.code === 'Space') { held.delete('drift'); refresh(); } }, true);
   window.addEventListener('keydown', event => {
     if (!enabled() || modal() || interactive(event.target) || event.ctrlKey || event.metaKey || event.altKey) return;
     const key = event.key.length === 1 ? event.key.toLowerCase() : event.key;
@@ -41,5 +48,5 @@ export function createInput({ onManual, onInteract, enabled = () => true }) {
     button.addEventListener('keyup', event => { if ([' ', 'Enter'].includes(event.key)) { event.preventDefault(); pointers.delete(button); refresh(); } });
     button.addEventListener('blur', () => { pointers.delete(button); refresh(); });
   }
-  return { clear, setWheelSteer(value) { wheelSteer = Math.max(-1, Math.min(1, value)); if (wheelSteer) onManual(); }, read() { const active = refresh(); return { throttle: active.has('throttle'), brake: active.has('brake'), steer: active.has('left') || active.has('right') ? Number(active.has('left')) - Number(active.has('right')) : wheelSteer, active: active.size > 0 || Math.abs(wheelSteer) > .05 }; } };
+  return { clear, setWheelSteer(value) { wheelSteer = Math.max(-1, Math.min(1, value)); if (wheelSteer) onManual(); }, read() { const active = refresh(); return { throttle: active.has('throttle'), brake: active.has('brake'), drift: active.has('drift') && driftEnabled(), steer: active.has('left') || active.has('right') ? Number(active.has('left')) - Number(active.has('right')) : wheelSteer, active: [...active].some(key => key !== 'drift') || Math.abs(wheelSteer) > .05 }; } };
 }
