@@ -21,6 +21,8 @@ import { loadModelSafely, repairMaterials } from './model-safety.js';
 import { DISCOVERY_PROP_SCALE, NON_DISCOVERY_PROP_SCALE, ROAD_SIGN_SCALE } from './discovery-scale.js';
 import { shouldLoadArt } from './art-panels.js';
 import { eraBillboardCredits } from './content.js';
+import { createVehicleMotion, updateVehicleMotion } from './vehicle-motion.js';
+import { clampFrameDelta } from './frame-timing.js';
 
 const SHADOW_SPAN = 90;
 // Funde as malhas estáticas de um grupo por material: uma chamada de desenho por material.
@@ -707,6 +709,7 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
   }));
   const groundColors = ['#34433f','#423b4f','#365b57','#5b4940','#443d57','#44586a','#3b5b50','#50414c'].map(color => new THREE.Color(color));
   const cabin = createCabin();
+  const vehicleMotion = createVehicleMotion();
   let steeringPivot = null, steeringSign = 1; const steeringRest = new THREE.Quaternion(), steeringTurn = new THREE.Quaternion(), cabinFrame = new THREE.Quaternion(), cabinEuler = new THREE.Euler();
   const car = new THREE.Group(); scene.add(car);
   box(car, [3.5, .95, 6.8], [0, 1.15, 0], '#e2d8c0');
@@ -1159,7 +1162,7 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
     frameSpot({ x, z, dirX = 1, dirZ = 0, distance = 4, height = 2, target = 2 }) { poseView = { eye: new THREE.Vector3(x + dirX * distance, height, z + dirZ * distance), target: new THREE.Vector3(x, target, z) }; },
     // Mãos de um integrante em coordenadas de mundo (depuração de pose).
     handsOf(index) { const rig = people[index]?.rig; if (!rig) return null; rig.visual.updateMatrixWorld(true); return rig.hands().map(hand => rig.visual.localToWorld(hand)); },
-    debug: { renderer, scene, camera, setSize(width, height) { renderer.setSize(width, height, false); camera.aspect = width / height; camera.updateProjectionMatrix(); } },
+    debug: { renderer, scene, camera, vehicleMotion, cabin, get steeringPivot() { return steeringPivot; }, get pilotRig() { return pilotRig; }, setSize(width, height) { renderer.setSize(width, height, false); camera.aspect = width / height; camera.updateProjectionMatrix(); } },
     setOverview(value) { overview = value; landmarkView = false; firstPerson = false; travelCamera.resync(); },
     // Abertura: câmera mais baixa e deslocada, para o Geep e a banda ficarem no terço direito e o título respirar.
     setIntro(value) { intro = value; },
@@ -1172,8 +1175,8 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
     resetCamera() { firstPerson = false; dragAngle = 0; dragElevation = 0; zoom = 1; overview = false; landmarkView = false; travelCamera.resync(); },
     update(vehicle, time, orbit, reduced, showcase, known, nearby) {
       live.vehicle = vehicle; live.showcase = showcase; live.nearby = nearby; live.reduced=reduced;
-      const {x,z,heading} = vehicle; const t = time / 1000; const moving = Math.abs(vehicle.speed) > .1;
-      const dt = previousTime === null ? .016 : Math.max(0, Math.min((time - previousTime) / 1000, .1)); previousTime = time;
+      const {x,z,heading} = vehicle; const t = time / 1000;
+      const dt = previousTime === null ? .016 : clampFrameDelta((time - previousTime) / 1000); previousTime = time;
       const blend = reduced ? 1 : 1 - Math.exp(-dt * 4);
       const light = districtLights[eraAt(vehicle)];
       const fade = lightingReady ? 1 - Math.exp(-dt * 1.6) : 1;
@@ -1188,12 +1191,11 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
       island.visible = showcase; island.position.set(x,0,z);
       dust.position.set(x, 0, z);
       if (!reduced) { rotor.rotation.z = -t * .3; windmill.position.y = 15 + Math.sin(t * .65) * .5; dust.rotation.y = Math.sin(t * .025) * .15; satellites.rotation.y = Math.sin(t * .1) * .12; portal.rotation.z = Math.sin(t * .07) * .04; }
-      const speedScale = Math.min(1, Math.abs(vehicle.speed) / 8);
-      const bobTarget = moving && !reduced ? Math.sin(t * (vehicle.surface === 'terra' ? 14 : 11)) * (vehicle.surface === 'terra' ? .026 : .014) * speedScale : 0;
-      car.position.set(x, reduced ? 0 : THREE.MathUtils.lerp(car.position.y, bobTarget, blend), z);
+      updateVehicleMotion(vehicleMotion, vehicle, dt, reduced);
+      car.position.set(x, vehicleMotion.height, z);
       car.rotation.y = heading;
-      car.rotation.z = reduced ? 0 : THREE.MathUtils.lerp(car.rotation.z, -vehicle.steering * vehicle.speed * .008, blend);
-      car.rotation.x = reduced ? 0 : THREE.MathUtils.lerp(car.rotation.x, THREE.MathUtils.clamp(vehicle.acceleration * -.006,-.06,.06), blend);
+      car.rotation.z = vehicleMotion.roll;
+      car.rotation.x = vehicleMotion.pitch;
       // Partículas leves ao frear (poeira/faísca nas rodas traseiras) e ao passar perto dos pontos de interesse.
       if (!reduced) {
         if (vehicle.braking && Math.abs(vehicle.speed) > 1.2) {
@@ -1253,7 +1255,7 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
       // (pilot-rig.js) levadas ao volante por IK; os braços de bloco do protótipo só servem de reserva.
       cabin.root.visible = firstPerson; driver.visible = pilotRig ? true : !firstPerson;
       if (pilotRig) { pilotRig.setFirstPerson(firstPerson); cabin.setBoxArmsVisible(!firstPerson); }
-      if (steeringPivot) steeringPivot.quaternion.copy(steeringRest).multiply(steeringTurn.setFromAxisAngle(upAxis, THREE.MathUtils.clamp(vehicle.steering * 1.9, -1.05, 1.05) * steeringSign));
+      if (steeringPivot) steeringPivot.quaternion.copy(steeringRest).multiply(steeringTurn.setFromAxisAngle(upAxis, vehicleMotion.wheel * steeringSign));
       if (firstPerson) {
         car.updateMatrixWorld(true);
         desiredCamera.copy(cabin.eye).applyMatrix4(car.matrixWorld);
@@ -1261,7 +1263,7 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
         smoothYaw = THREE.MathUtils.lerp(smoothYaw,interacting ? -.63 : yaw,blend);
         smoothPitch = THREE.MathUtils.lerp(smoothPitch,interacting ? -.54 : pitch-.33,blend);
         look.set(-Math.sin(smoothYaw)*Math.cos(smoothPitch), Math.sin(smoothPitch), -Math.cos(smoothYaw)*Math.cos(smoothPitch)).applyQuaternion(cabinFrame).add(desiredCamera);
-        cabin.update(vehicle,radio.read(),{interacting,dt,t,reduced});
+        cabin.update(vehicle,radio.read(),{interacting,dt,t,reduced,turn:vehicleMotion.wheel});
         if (pilotRig) pilotRig.reach(cabin.hands, car);
       }
       const targetFov = firstPerson ? (camera.aspect < 1 ? 88 : 75) : overview || landmarkView ? 46 : TRAVEL_FOV;

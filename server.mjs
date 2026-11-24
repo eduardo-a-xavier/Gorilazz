@@ -19,6 +19,7 @@ const routes = new Map([
   ['/src/discovery-scale.js', ['src/discovery-scale.js', 'text/javascript; charset=utf-8']],
   ['/src/art-panels.js', ['src/art-panels.js', 'text/javascript; charset=utf-8']],
   ['/src/street-props.js', ['src/street-props.js', 'text/javascript; charset=utf-8']],
+  ['/src/vehicle-motion.js', ['src/vehicle-motion.js', 'text/javascript; charset=utf-8']],
   ['/src/easter-eggs.js', ['src/easter-eggs.js', 'text/javascript; charset=utf-8']],
   ['/src/street-props-plan.js', ['src/street-props-plan.js', 'text/javascript; charset=utf-8']],
   ['/src/escape-stack.js', ['src/escape-stack.js', 'text/javascript; charset=utf-8']],

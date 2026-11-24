@@ -96,6 +96,7 @@ export function createCabin() {
   // Braços: dois ossos de comprimento fixo resolvidos por cinemática inversa, cotovelo para baixo e para fora.
   const sleeve = new THREE.MeshStandardMaterial({color:'#e2d8c0',roughness:.9}), cuff = new THREE.MeshStandardMaterial({color:'#f2559c',roughness:.8}), skin = new THREE.MeshStandardMaterial({color:'#d9a37c',roughness:.75});
   const forward = new THREE.Vector3(0,0,1), span = new THREE.Vector3(), pole = new THREE.Vector3(), tip = new THREE.Vector3(), from = new THREE.Vector3();
+  const cuffAt = new THREE.Vector3(), wristAt = new THREE.Vector3(), knuckle = new THREE.Vector3(), thumbAt = new THREE.Vector3();
   const UPPER = .6, FORE = .58;
   function limb(material, thickness) { const part = new THREE.Mesh(unit,material); part.userData.thickness = thickness; root.add(part); return part; }
   function stretch(part, a, b) {
@@ -135,10 +136,8 @@ export function createCabin() {
     eye.set(centre.x,Math.max(centre.y + .82,(seatTop ?? 0) + .34),centre.z + .82); fit();
   }
   // Giro suavizado: A/D viram o volante com inércia leve, sem saltos entre os quadros.
-  let smoothTurn = 0;
   function poseArms(steer, state) {
-    const dt = state.dt || .016, target = THREE.MathUtils.clamp(steer * 1.15,-.68,.68);
-    smoothTurn += (target - smoothTurn) * Math.min(1, dt * 7); const turn = smoothTurn;
+    const dt = state.dt ?? .016, turn = state.turn ?? 0;
     reach += ((state.interacting ? 1 : 0) - reach) * Math.min(1,dt * 6); press = Math.max(0,press - dt * 4);
     const ease = reach*reach*(3 - 2*reach);
     for (const arm of arms) {
@@ -160,13 +159,13 @@ export function createCabin() {
       arm.elbow.copy(arm.shoulder).addScaledVector(span,along).addScaledVector(pole,bend);
       stretch(arm.upper,arm.shoulder,arm.elbow);
       span.subVectors(arm.hand,arm.elbow).normalize();
-      const cuffAt = from.copy(arm.hand).addScaledVector(span,-.2).clone(), wristAt = from.copy(arm.hand).addScaledVector(span,-.1).clone();
+      cuffAt.copy(arm.hand).addScaledVector(span,-.2); wristAt.copy(arm.hand).addScaledVector(span,-.1);
       stretch(arm.fore,arm.elbow,cuffAt); stretch(arm.wrist,cuffAt,wristAt);
       stretch(arm.palm,wristAt,tip.copy(arm.hand).addScaledVector(span,.04));
       // Dedos: fechados sobre o aro ao dirigir, estendidos ao apontar para o rádio.
-      const curl = arm.side > 0 ? 1 - ease : 1, knuckle = arm.hand.clone().addScaledVector(span,.04);
+      const curl = arm.side > 0 ? 1 - ease : 1; knuckle.copy(arm.hand).addScaledVector(span,.04);
       stretch(arm.fingers,knuckle,tip.copy(knuckle).addScaledVector(span,.1*(1 - curl) + .02).addScaledVector(steering.normal,-.1*curl));
-      const thumbAt = wristAt.clone().addScaledVector(across,-arm.side*.07); stretch(arm.thumb,thumbAt,tip.copy(thumbAt).addScaledVector(span,.09).addScaledVector(across,-arm.side*.02));
+      thumbAt.copy(wristAt).addScaledVector(across,-arm.side*.07); stretch(arm.thumb,thumbAt,tip.copy(thumbAt).addScaledVector(span,.09).addScaledVector(across,-arm.side*.02));
     }
     lastSteer = steer;
   }
@@ -215,5 +214,5 @@ export function createCabin() {
   /** Toque curto da mão direita na tecla acionada. */
   function pressKey(action) { const key = controls.find(item => item.userData.action === action); if (key) { pressAt.copy(key.position); pressAt.y -= .09; press = 1; } }
   pressAt.set(0,-.25,0);
-  return {root,wheel,controls,eye,attach,update,renderMirror,pressKey,hands,setBoxArmsVisible};
+  return {root,wheel,controls,eye,attach,update,renderMirror,pressKey,hands,steering,setBoxArmsVisible};
 }

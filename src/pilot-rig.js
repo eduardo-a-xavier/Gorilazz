@@ -91,7 +91,7 @@ const PALM = .015; // distância pulso → aro do volante (m, escala do carro)
 /** Gira `bone` para que o vetor `from` (mundo) passe a apontar para `to` (mundo), mantendo o resto da hierarquia. */
 function aim(bone, from, to) {
   if (from.lengthSq() < 1e-10 || to.lengthSq() < 1e-10) return;
-  qDelta.setFromUnitVectors(from.clone().normalize(), to.clone().normalize());
+  qDelta.setFromUnitVectors(from.normalize(), to.normalize());
   bone.getWorldQuaternion(qWorld).premultiply(qDelta);
   bone.parent.getWorldQuaternion(qParent);
   bone.quaternion.copy(qParent.invert().multiply(qWorld));
@@ -167,6 +167,11 @@ export function createPilotRig(pilot, animations = []) {
     if (!entry || !angle) return;
     entry.bone.quaternion.multiply(turn.setFromAxisAngle(axis, angle));
   }
+  function reachSide(side, upper, fore, hand, target, car) {
+    dirV.copy(target); car.localToWorld(dirV);
+    fore.bone.getWorldPosition(ePos); wrist.copy(dirV).sub(ePos).normalize().multiplyScalar(-PALM).add(dirV);
+    solveArm(upper.bone, fore.bone, hand.bone, wrist, side, qCar);
+  }
   return {
     mixer, entries, clip, hidden, jacket,
     /** Primeira pessoa: some o corpo/cabeça e ficam apenas os dois braços completos (mangas, punhos e luvas) com alto contraste. */
@@ -220,12 +225,8 @@ export function createPilotRig(pilot, animations = []) {
       }
       pilot.updateMatrixWorld(true);
       car.getWorldQuaternion(qCar);
-      for (const [side, upper, fore, hand, target] of [[-1, armL, foreL, handL, hands.left], [1, armR, foreR, handR, hands.right]]) {
-        dirV.copy(target); car.localToWorld(dirV);
-        // O alvo é o centro da palma; o pulso (osso `hand`) fica a PALM antes dele, na direção do antebraço.
-        fore.bone.getWorldPosition(ePos); wrist.copy(dirV).sub(ePos).normalize().multiplyScalar(-PALM).add(dirV);
-        solveArm(upper.bone, fore.bone, hand.bone, wrist, side, qCar);
-      }
+      reachSide(-1, armL, foreL, handL, hands.left, car);
+      reachSide(1, armR, foreR, handR, hands.right, car);
       return true;
     },
   };
