@@ -3,7 +3,14 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { ERA_GATES, ROADS, CITY_LOTS, TREE_LOCATIONS } from '../src/world-data.js';
 import * as THREE from '../src/vendor/three.module.min.js';
-import { createCameraBlockers, clearReach, createTravelCamera, CAMERA_TUNING } from '../src/scene.js';
+import { createCameraBlockers, clearReach, createTravelCamera, CAMERA_TUNING, TRAVEL_FOV, TRAVEL_LOOK_HEIGHT } from '../src/scene.js';
+
+test('câmera de viagem usa enquadramento moderado', () => {
+  const result = createTravelCamera().compute({ x: 0, z: 0, heading: 0, speed: 0 }, { reduced: true });
+  assert.equal(TRAVEL_FOV, 60);
+  assert.equal(TRAVEL_LOOK_HEIGHT, 7);
+  assert.equal(result.look.y, TRAVEL_LOOK_HEIGHT);
+});
 
 // Percorre uma rua a velocidade constante e devolve, por quadro, a câmera final (compute + follow).
 function drive(road, { speed = 28, offset = 0, reverse = false, dt = 1 / 60 } = {}) {

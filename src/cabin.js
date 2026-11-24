@@ -144,7 +144,7 @@ export function createCabin() {
     for (const arm of arms) {
       // Mãos em 11h e 1h no aro (mais altas e firmes que 10h/2h), acompanhando o giro; a mão fica presa ao aro.
       const angle = (arm.side < 0 ? Math.PI - .75 : .75) + turn;
-      arm.grip.copy(steering.centre).addScaledVector(across,Math.cos(angle)*steering.radius*.96).addScaledVector(upward,Math.sin(angle)*steering.radius*.96).addScaledVector(steering.normal,.02);
+      arm.grip.copy(steering.centre).addScaledVector(across,Math.cos(angle)*steering.radius*.96).addScaledVector(upward,Math.sin(angle)*steering.radius*.96).addScaledVector(steering.normal,.06); // mãos ~4 cm mais à frente (antes .02): os dedos encaixam no aro
       arm.hand.copy(arm.grip);
       if (arm.side > 0 && ease > .001) {
         // Rádio em foco: a mão direita repousa diante das teclas e só avança quando uma tecla é acionada.

@@ -2,7 +2,7 @@
 // Um InstancedMesh por parte (tronco, copa, assento, poste, luminária): poucos draw calls e sem PointLight.
 // Posições vêm de street-props-plan.js (folga >= 0,90 m da pista, fora de prédios e histórias).
 import * as THREE from './vendor/three.module.min.js';
-import { planStreetProps } from './street-props-plan.js';
+import { planStreetProps, excludeTreesNear } from './street-props-plan.js';
 
 const COLOR = { trunk: '#5b4a3a', crown: '#4f7a4a', wood: '#8a6a4a', concrete: '#b9b3a2', shrub: '#5d8a52', pole: '#3c4744', head: '#ffd27a' };
 
@@ -25,8 +25,8 @@ function place(geometry, material, items, group) {
 // Geometria simples, nomeada pela parte: uma caixa ou cilindro transladado na altura certa.
 function box(w, h, d, x = 0, y = 0, z = 0) { const g = new THREE.BoxGeometry(w, h, d); g.translate(x, y, z); return g; }
 
-export function installStreetProps(scene, seed = 2026) {
-  const plan = planStreetProps(seed);
+export function installStreetProps(scene, seed = 2026, reserved = []) {
+  const plan = excludeTreesNear(planStreetProps(seed), reserved);
   const by = kind => plan.filter(item => item.kind === kind);
   const group = new THREE.Group(); group.name = 'street-props';
   scene.add(group);

@@ -177,3 +177,97 @@ html.mode-3d #jogo { height:100vh; min-height:100vh; height:100dvh; min-height:1
    ("Aexplosão", "Areinvenção"). word-spacing só afeta os espaços e mantém o aspecto condensado das letras. */
 h1, h2, h3, h4 { word-spacing: .14em; }
 #jogo .guided-card h3 { letter-spacing: .01em; word-spacing: .14em; }
+
+/* Boneco duplo nos cards da banda: "display:block" de .band-portrait img vencia o atributo hidden;
+   quando o GLB 3D carrega, a imagem de fallback sai de vez (só sobra um modelo por card). */
+.band-portrait img[hidden] { display:none !important; }
+
+/* ---- HUD minimalista (patch pré-push) ---- */
+/* Sem faixa cinza borrada: o blur do rodapé e dos cartões da HUD sai; o fundo sólido continua. */
+#jogo #road-radio, #jogo #drive-hud, #jogo .cabin-tools, #jogo .controls, #jogo .section-dock, .section-dock {
+  -webkit-backdrop-filter:none !important; backdrop-filter:none !important;
+}
+/* Botão pequeno que abre o painel de controles (recolhido por padrão). */
+#jogo .controls-toggle { position:absolute; z-index:7; top:var(--top); left:14px; min-height:34px; padding:0 12px; border-radius:999px; border:1px solid #c4dc9d88; background:#101b1ce0; color:#e9e4d4; font:700 11px/1 'Courier New',monospace; letter-spacing:.5px; cursor:pointer; }
+#jogo .controls-toggle[aria-expanded=true] { background:#c4dc9d; color:#111415; }
+#jogo .journey[hidden] { display:none; }
+/* Pílula do passeio logo abaixo de DESCOBERTAS, sempre numa linha e sem cortar. */
+#jogo .guided-bar { top:calc(var(--top) + 104px); bottom:auto; transform:translateX(-50%); flex-wrap:nowrap; max-width:min(560px,94vw); }
+#jogo .guided-bar #guided-text { min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+@media(max-width:700px) { #jogo .guided-bar { font-size:11px; gap:6px; padding:6px 8px; } #jogo .guided-bar button { padding:0 8px; min-height:32px; } }
+/* Telas estreitas: a pílula quebra em duas linhas (nunca cortada) e o contador fica numa linha só. */
+@media(max-width:420px) {
+  #jogo .guided-bar { top:calc(var(--top) + 100px); max-width:94vw; flex-wrap:wrap; justify-content:center; text-align:center; }
+  #jogo .guided-bar #guided-text { white-space:normal; overflow:visible; text-overflow:clip; }
+  #jogo .stops-counter { white-space:nowrap; width:auto; min-width:170px; font-size:10px; }
+}
+
+/* ---- HUD minimalista (rodada HUD/FPS): no desktop ficam no máximo 4 itens discretos + velocímetro ----
+   [H] Controles · DESCOBERTAS + botão do passeio · minimapa · Kong FM. O resto vai para o menu de controles. */
+/* O menu de controles: atalhos (1ª pessoa, mapa, tela cheia, história) e ajuda, em coluna, sem posição absoluta. */
+#jogo .journey .quick-view { position:static; transform:none; left:auto; top:auto; display:flex; flex-wrap:wrap; gap:6px; margin:0 0 10px; }
+#jogo .journey .quick-view button { min-height:34px; font-size:11px; }
+#jogo .journey #open-help { margin-top:10px; min-height:36px; width:100%; border-radius:999px; border:1px solid #c4dc9d88; background:transparent; color:#e9e4d4; font:700 11px/1 'Courier New',monospace; cursor:pointer; }
+/* Painel de controles abaixo do botão [H], não por cima dele. */
+#jogo .journey { top:calc(var(--top) + 44px); }
+@media (min-width:701px) and (any-pointer:fine) {
+  #jogo .controls { display:none; }                        /* faixa de instruções do rodapé: sai do desktop (está na ajuda) */
+  #jogo .quick-view { display:none; }                      /* o topo não tem mais botões: ficam no menu [H] */
+  #jogo #road-radio { bottom:16px; }                       /* Kong FM inteiro, encostado na base */
+  #jogo .stops-counter { top:var(--top); left:calc(50% - 6px); transform:translateX(-100%); width:auto; min-width:0; padding:5px 10px; }
+  #jogo .guided-bar { top:var(--top); left:calc(50% + 6px); bottom:auto; transform:none; max-width:none; padding:5px 8px; }
+  #jogo .guided-bar #guided-text { display:none; }         /* sem faixa de texto grande: só o botão do passeio */
+  #jogo .journey .quick-view { display:flex; }             /* dentro do menu aberto, os atalhos aparecem */
+}
+/* Dica de uso: canto inferior esquerdo, acima do rádio, e some sozinha (2,5 s). Não fica no centro. */
+.onboarding-tip { top:auto; bottom:96px; left:var(--left, 16px); transform:none; max-width:min(340px, calc(100vw - 32px)); }
+@media (max-width:700px) { .onboarding-tip { top:calc(50% - 120px); left:50%; transform:translateX(-50%); bottom:auto; } }
+/* Celular/toque: contador e botão do passeio empilhados no centro, sem texto grande e sem encostar no minimapa. */
+@media (max-width:700px) {
+  #jogo .stops-counter { top:calc(var(--top) + 52px); left:50%; transform:translateX(-50%); width:auto; min-width:150px; }
+  #jogo .guided-bar { top:calc(var(--top) + 96px); left:50%; transform:translateX(-50%); bottom:auto; max-width:94vw; }
+  #jogo .guided-bar #guided-text { display:none; }
+}
+
+/* ---- Central de Descobertas (drawer) ---- */
+#jogo .stops-counter { pointer-events:auto; cursor:pointer; }
+#jogo .stops-counter:focus-visible { outline:3px solid #ffcc4d; outline-offset:3px; }
+.discoveries-drawer { width:min(640px,94vw); max-height:86vh; overflow:auto; padding:22px 24px; border:2px solid #c4dc9d88; border-radius:16px; background:#101d1ef5; color:#e9e4d4; box-shadow:6px 6px 0 #090b0c; }
+.discoveries-drawer::backdrop { background:#05090acc; }
+.discoveries-drawer h2 { margin:0 0 8px; font:400 30px/1.05 Anton, Impact, 'Arial Narrow', sans-serif; text-transform:uppercase; letter-spacing:.02em;  word-spacing:.14em; }
+.discoveries-drawer .eyebrow { color:#c4dc9d; font:700 11px/1.3 'Courier New', monospace; letter-spacing:1px; margin:0 0 4px; }
+.discoveries-count { margin:0 0 12px; font:700 12px/1.3 'Courier New', monospace; color:#c4dc9d; }
+.discoveries-search { display:block; margin:0 0 10px; }
+.discoveries-search span { display:block; font:600 11px/1.3 system-ui,sans-serif; margin:0 0 4px; color:#a9bdb2; }
+.discoveries-search input { width:100%; min-height:42px; padding:0 12px; border-radius:10px; border:1px solid #c4dc9d66; background:#0b1214; color:#e9e4d4; font:14px system-ui,sans-serif; }
+.discoveries-filters { display:flex; flex-wrap:wrap; gap:6px; margin:0 0 12px; }
+.discoveries-filters button { min-height:34px; padding:0 12px; border-radius:999px; border:1px solid #c4dc9d88; background:transparent; color:#e9e4d4; font:600 12px/1 system-ui,sans-serif; cursor:pointer; }
+.discoveries-filters button[aria-pressed=true] { background:#c4dc9d; color:#111415; }
+.discoveries-list { list-style:none; margin:0; padding:0; display:grid; gap:10px; }
+.discovery-card { padding:12px 14px; border-radius:12px; border:1px solid #c4dc9d44; background:#0b1214aa; }
+.discovery-card.is-locked { opacity:.85; border-style:dashed; }
+.discovery-card h3 { margin:0 0 4px; font:400 20px/1.1 Anton, Impact, 'Arial Narrow', sans-serif; text-transform:uppercase;  letter-spacing:.02em; word-spacing:.14em; }
+.discovery-status { margin:0 0 6px; font:700 11px/1.3 'Courier New', monospace; color:#c4dc9d; }
+.discovery-card.is-locked .discovery-status { color:#ffcc4d; }
+.discovery-period { margin:0 0 6px; font:600 12px/1.3 'Courier New', monospace; color:#a9bdb2; }
+.discovery-text { margin:0 0 8px; font:13px/1.55 system-ui,sans-serif; }
+.discovery-fiction { display:inline-block; margin:0 0 8px; padding:3px 8px; border-radius:999px; background:#f5a9c633; color:#f5a9c6; font:700 10px/1 'Courier New', monospace; }
+.discovery-source { margin:0; font:11px/1.4 'Courier New', monospace; color:#a9bdb2; }
+.discovery-source a { color:#c4dc9d; }
+.discovery-hint { margin:0 0 8px; font:13px/1.5 system-ui,sans-serif; color:#a9bdb2; }
+.discovery-go { min-height:38px; padding:0 14px; border-radius:999px; border:1px solid #ffcc4d; background:#ffcc4d; color:#111415; font:700 12px/1 system-ui,sans-serif; cursor:pointer; }
+.discoveries-empty { font:13px/1.5 system-ui,sans-serif; color:#a9bdb2; }
+#journey #open-discoveries, #full-map-destinations .map-discoveries { display:block; width:100%; min-height:36px; margin:8px 0 0; border-radius:999px; border:1px solid #c4dc9d88; background:transparent; color:#e9e4d4; font:700 11px/1 'Courier New',monospace; cursor:pointer; }
+
+/* ---- Minimapa: moldura metálica, radar nas bordas e marcadores vivos ---- */
+#jogo .mini-map { border:2px solid #8a9596; box-shadow:0 0 0 1px #0b1111, inset 0 0 0 1px #3a4446, inset 0 0 22px #000c, 0 6px 18px #0008; }
+#jogo .map-art { image-rendering:auto; }
+.poi-check { opacity:0; }
+.poi-found + .poi-check { opacity:1; }
+.poi-found { filter:drop-shadow(0 0 3px #7fe9d0aa); }
+.poi-pending { animation:poi-pulse 1.8s ease-in-out infinite; }
+@keyframes poi-pulse { 0%,100% { opacity:.55; } 50% { opacity:1; } }
+@media (prefers-reduced-motion:reduce) { .poi-pending { animation:none; } }
+
+/* Títulos das fichas e do cabeçalho: a regra global de h1-h3 (letter-spacing -2px) colava as letras. */
+.discovery-card h3, .discoveries-drawer h2 { letter-spacing:.02em; word-spacing:.14em; }

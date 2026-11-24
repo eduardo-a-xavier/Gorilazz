@@ -153,3 +153,50 @@ test('o player local da Kong FM acompanha o passeio: era plástico toca Maré de
   for (const stop of stops.filter(stop => stop.id !== 'era-plastic')) assert.equal(localTrackFor(stop), 0, stop.id);
   assert.equal(localTrackFor(undefined), 0);
 });
+
+import { clampFrameDelta, MAX_FRAME_DELTA_S } from '../src/frame-timing.js';
+test('delta do quadro é limitado a 50 ms: uma pausa do navegador não vira salto de física', () => {
+  assert.equal(MAX_FRAME_DELTA_S, .05);
+  assert.equal(clampFrameDelta(1 / 60), 1 / 60, 'quadro normal passa inteiro');
+  assert.equal(clampFrameDelta(2.4), .05, 'pausa longa vira 50 ms');
+  assert.equal(clampFrameDelta(-1), 0, 'tempo negativo vira 0');
+  assert.equal(clampFrameDelta(NaN), 0, 'valor inválido vira 0');
+});
+
+import { TOAST_MS } from '../src/guided-tour.js';
+test('toasts e dicas somem em 2,5 s (sem ficar na tela por 4 ou 6 s)', () => {
+  assert.equal(TOAST_MS, 2500);
+});
+
+import { createRadioDuck } from '../src/radio-duck.js';
+function fakeRadio(playing) {
+  const calls = [];
+  return { calls, isPlaying: () => playing, pause() { calls.push('pause'); playing = false; }, play() { calls.push('play'); playing = true; } };
+}
+test('Teclado do 2-D: pausa o rádio ao começar e devolve o som ao sair, uma única vez', () => {
+  const radio = fakeRadio(true); const duck = createRadioDuck(radio);
+  assert.equal(duck.begin(), true); assert.deepEqual(radio.calls, ['pause']);
+  assert.equal(duck.begin(), false, 'começar de novo não pausa de novo');
+  assert.equal(duck.end(), true); assert.deepEqual(radio.calls, ['pause', 'play']);
+  assert.equal(duck.end(), false, 'sair de novo não religa de novo');
+});
+test('rádio já pausado pelo usuário não é religado ao sair do minigame', () => {
+  const radio = fakeRadio(false); const duck = createRadioDuck(radio);
+  assert.equal(duck.begin(), false); assert.equal(duck.end(), false);
+  assert.deepEqual(radio.calls, [], 'nenhuma chamada no rádio');
+});
+
+import { PLATE_STYLE, isClosedSign, CLOSED_SIGN_NEON } from '../src/sign-style.js';
+test('placas: moldura metálica escura, Anton em alto contraste e anisotropia 8', () => {
+  assert.ok(PLATE_STYLE.font.startsWith('"Anton"'), 'tipografia Anton');
+  assert.equal(PLATE_STYLE.anisotropy, 8);
+  assert.notEqual(PLATE_STYLE.frame, PLATE_STYLE.panel, 'moldura se distingue do painel');
+  const lum = hex => { const v = [1, 3, 5].map(i => parseInt(hex.slice(i, i + 2), 16) / 255); return .2126 * v[0] + .7152 * v[1] + .0722 * v[2]; };
+  assert.ok(lum(PLATE_STYLE.ink) - lum(PLATE_STYLE.panel) > .6, 'alto contraste: texto claro sobre painel escuro');
+});
+test('letreiros SEM SINAL e FECHADO recebem o brilho extra; os demais não', () => {
+  assert.equal(isClosedSign('SEM SINAL'), true);
+  assert.equal(isClosedSign('FECHADO'), true);
+  assert.equal(isClosedSign('Rua Song Machine'), false);
+  assert.match(CLOSED_SIGN_NEON, /^#/);
+});

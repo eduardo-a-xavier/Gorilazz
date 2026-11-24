@@ -1,3 +1,4 @@
+import { PLATE_STYLE } from './sign-style.js';
 import * as THREE from './vendor/three.module.min.js';
 import { ROADS, NODES } from './world-data.js';
 
@@ -195,10 +196,14 @@ export function buildRoads(group, surfaces, material) {
   const stencil = atlas(ROADS.map(item => item.short), 96, (context, text, y, height) => {
     context.fillStyle = '#f1ecdc'; context.font = 'bold 74px "Arial Narrow", "Arial Black", Arial, sans-serif'; context.fillText(text, 256, y + height / 2 + 4, 490);
   });
+  // Placa padrão: moldura metálica escura, painel escuro e Anton em alto contraste (sign-style.js).
   const plates = atlas(ROADS.map(item => item.name), 96, (context, text, y, height) => {
-    context.fillStyle = '#1d5b46'; context.fillRect(0, y, 512, height);
-    context.strokeStyle = '#f1ecdc'; context.lineWidth = 6; context.strokeRect(7, y + 7, 498, height - 14);
-    context.fillStyle = '#f1ecdc'; context.font = 'bold 46px Arial, sans-serif'; context.fillText(text.toUpperCase(), 256, y + height / 2 + 2, 470);
+    context.fillStyle = PLATE_STYLE.frame; context.fillRect(0, y, 512, height);
+    context.fillStyle = PLATE_STYLE.panel; context.fillRect(8, y + 8, 496, height - 16);
+    context.strokeStyle = PLATE_STYLE.frame; context.lineWidth = 3; context.strokeRect(12, y + 12, 488, height - 24);
+    context.fillStyle = PLATE_STYLE.frame; for (const [rx, ry] of [[22, 22], [490, 22], [22, height - 22], [490, height - 22]]) { context.beginPath(); context.arc(rx, y + ry, 4, 0, Math.PI * 2); context.fill(); }
+    context.font = `50px ${PLATE_STYLE.font}`; context.fillStyle = PLATE_STYLE.shadow; context.fillText(text.toUpperCase(), 258, y + height / 2 + 4, 462);
+    context.fillStyle = PLATE_STYLE.ink; context.fillText(text.toUpperCase(), 256, y + height / 2 + 2, 462);
   });
   const stencilMaterial = new THREE.MeshStandardMaterial({ map: stencil, alphaTest: .35, roughness: .8, side: THREE.DoubleSide, polygonOffset: true, polygonOffsetFactor: -3, polygonOffsetUnits: -3 });
   const plateMaterial = new THREE.MeshStandardMaterial({ map: plates, emissiveMap: plates, emissive: '#ffffff', emissiveIntensity: .25, roughness: .6 });

@@ -1,7 +1,8 @@
 import * as THREE from './vendor/three.module.min.js';
 
-// Cadeia de carregamento: v4 (malha suavizada, pontas dos dedos sem espetar em repouso) -> v2 -> original.
-export const PILOT_MODEL_URL = './assets/models/driver-pilot-v4.glb';
+// Cadeia de carregamento: v5 (mão fechada e lisa) -> v4 (malha suavizada) -> v2 -> original.
+export const PILOT_MODEL_URL = './assets/models/driver-pilot-v5.glb';
+export const PILOT_V4_URL = './assets/models/driver-pilot-v4.glb';
 export const PILOT_V2_URL = './assets/models/driver-pilot-v2.glb';
 export const PILOT_FALLBACK_URL = './assets/models/driver-pilot.glb';
 

@@ -113,6 +113,7 @@ export function createLocalRadio({ input, playButton, previousButton, nextButton
   rebuildList(); select(0, false);
   return {
     actions, playlist, select,
+    isPlaying: () => !audio.paused, pause: () => { if (!audio.paused) audio.pause(); }, play: () => { if (audio.paused) play(); },
     read: () => ({ ...tracks[index], index, total: tracks.length, playing: !audio.paused, seconds: Math.floor(audio.currentTime), volume: Math.round(audio.volume * 100) }),
   };
 }

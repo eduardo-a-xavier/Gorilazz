@@ -5,7 +5,7 @@ import { createHash } from 'node:crypto';
 import * as THREE from '../src/vendor/three.module.min.js';
 import { GLTFLoader } from '../src/vendor/GLTFLoader.js';
 import { createDriver, createDriverReaction } from '../src/scene.js';
-import { createPilotRig, PILOT_MODEL_URL, PILOT_V2_URL, PILOT_FALLBACK_URL } from '../src/pilot-rig.js';
+import { createPilotRig, PILOT_MODEL_URL, PILOT_V4_URL, PILOT_V2_URL, PILOT_FALLBACK_URL } from '../src/pilot-rig.js';
 
 test('motorista procedural preserva encaixes, orçamento e materiais sem texturas', () => {
   const palette = new Map();
@@ -170,10 +170,16 @@ test('1ª pessoa usa jaqueta e luvas do driver-pilot.glb no volante via IK e ocu
 });
 
 test('driver-pilot-v2.glb: modelo com mãos menos facetadas (2.806 tris, pulsos soldados) carrega com fallback ao v1 e encaixa no volante', async () => {
-  // Cadeia: v4 (atual) -> v2 -> original. O v4 é verificado abaixo; o v2 segue íntegro como fallback.
-  assert.equal(PILOT_MODEL_URL, './assets/models/driver-pilot-v4.glb');
+  // Cadeia: v5 (atual) -> v4 -> v2 -> original. v5, v4 e v2 ficam íntegros no repositório.
+  assert.equal(PILOT_MODEL_URL, './assets/models/driver-pilot-v5.glb');
+  assert.equal(PILOT_V4_URL, './assets/models/driver-pilot-v4.glb');
   assert.equal(PILOT_V2_URL, './assets/models/driver-pilot-v2.glb');
   assert.equal(PILOT_FALLBACK_URL, './assets/models/driver-pilot.glb');
+  const v5 = await readFile(new URL('../assets/models/driver-pilot-v5.glb', import.meta.url));
+  assert.equal(v5.length, 247016);
+  assert.equal(createHash('sha256').update(v5).digest('hex'), '906e439d5a6c4b6bcd66535ec4e984fbe0c56aa2c2ae9f4d4ad2b1479a09a2bc');
+  const v5json = JSON.parse(v5.toString('utf8', 20, 20 + v5.readUInt32LE(12)).trim());
+  assert.equal(v5json.meshes.length, 6); assert.equal(v5json.skins[0].joints.length, 65); assert.ok(v5json.animations.some(a => a.name === 'Driving_Loop'));
   const v4 = await readFile(new URL('../assets/models/driver-pilot-v4.glb', import.meta.url));
   assert.equal(v4.length, 250440);
   assert.equal(createHash('sha256').update(v4).digest('hex'), '044f53931cbd9436f636723a67672412ad21b279e2dd5feee33c76a551a79169');
@@ -203,4 +209,13 @@ test('driver-pilot-v2.glb: modelo com mãos menos facetadas (2.806 tris, pulsos 
   const handR = pilot.getObjectByName('hand_r').getWorldPosition(new THREE.Vector3());
   assert.ok(handL.distanceTo(handsStraight.left) < .2);
   assert.ok(handR.distanceTo(handsStraight.right) < .2);
+});
+
+test('cadeia do piloto: v5 -> v4 -> v2 -> original (cada elo existe no repositório e no servidor)', async () => {
+  const { readFile: rf } = await import('node:fs/promises');
+  for (const url of [PILOT_MODEL_URL, PILOT_V4_URL, PILOT_V2_URL, PILOT_FALLBACK_URL]) {
+    const file = new URL(`../${url.replace('./', '')}`, import.meta.url);
+    const bytes = await rf(file);
+    assert.ok(bytes.length > 1000, `${url} existe`);
+  }
 });

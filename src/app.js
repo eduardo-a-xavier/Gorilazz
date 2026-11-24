@@ -13,7 +13,14 @@ import { createArcadeScreen } from './arcade-screen.js';
 import { handleEscape } from './escape-stack.js';
 import { createPianoScreen } from './piano-screen.js';
 import { createMemberViewer, attachCardSpinners } from './member-viewer.js';
-import { buildStops, orderTour, createStopProgress, speedCap, takeOver, stopIdFor, localTrackFor, ARRIVE_M, STOP_HOLD_MS } from './guided-tour.js';
+import { clampFrameDelta } from './frame-timing.js';
+import { createRadioDuck } from './radio-duck.js';
+import { DISCOVERY_LORE } from './discoveries-lore.js';
+import { MINIMAP_RECT, minimapCanvasSize, paintMinimapArt } from './minimap-art.js';
+import { isWorldVisible, realignAfterFullscreen } from './world-cycle.js';
+import { readSoundOn, saveSoundOn, playDiscovery, hornAllowed, playHorn } from './discovery-sound.js';
+import { createDiscoveriesDrawer } from './discoveries-drawer.js';
+import { buildStops, orderTour, createStopProgress, speedCap, takeOver, stopIdFor, localTrackFor, ARRIVE_M, STOP_HOLD_MS, TOAST_MS } from './guided-tour.js';
 import { discoveryIndexForEra, eraNavState } from './era-places.js';
 import { createWorldLoader } from './world-loader.js';
 import { artForDiscovery, creditLine } from './art-panels.js';
@@ -65,8 +72,8 @@ document.addEventListener('keydown', event => {
 });
 function hideTip() { tipId = null; onboardingTip.hidden = true; }
 function showTip(id) {
-  tipId = id; tipUntil = performance.now() + 4000;
-  setTimeout(() => { if (tipId === id) { hideTip(); tipCooldown = performance.now() + 8000; } }, 4000);
+  tipId = id; tipUntil = performance.now() + TOAST_MS;
+  setTimeout(() => { if (tipId === id) { hideTip(); tipCooldown = performance.now() + 8000; } }, TOAST_MS);
   onboardingTip.textContent = TIPS.find(item => item.id === id).text; onboardingTip.hidden = false;
   onboarding.noteTipShown(id);
 }
@@ -97,7 +104,9 @@ const memberView = createMemberViewer({
 document.querySelector('#view-prev').addEventListener('click', () => memberView.rotate(-1));
 document.querySelector('#view-next').addEventListener('click', () => memberView.rotate(1));
 // Minigame de piano do 2-D: abre do modal do 2-D; ao sair, o foco volta ao botão e o modal fica aberto.
-const pianoScreen = createPianoScreen({ dialog: document.querySelector('#piano-dialog'), onClose: () => document.querySelector('#character-piano')?.focus() });
+const pianoScreen = createPianoScreen({ dialog: document.querySelector('#piano-dialog'), onClose: () => document.querySelector('#character-piano')?.focus(), onStart: () => radioDuck.begin(), onEnd: () => radioDuck.end() });
+// Rádio Kong FM: silenciado enquanto o Teclado do 2-D toca e devolvido ao sair (só se estava tocando).
+const radioDuck = createRadioDuck({ isPlaying: () => localRadio.isPlaying(), pause: () => localRadio.pause(), play: () => localRadio.play() });
 document.querySelector('#character-piano').addEventListener('click', () => pianoScreen.open());
 const arcadeNear = () => entered && Math.hypot(vehicle.x - ARCADE_SPOT.x, vehicle.z - ARCADE_SPOT.z) < ARCADE_RADIUS && Math.abs(vehicle.speed) < 2;
 function openArcade() {
@@ -116,8 +125,11 @@ const sceneSection = document.querySelector('#jogo');
 const sectionDock = document.querySelector('#section-dock');
 function persistJourney() { saveWorldJourney(storage, vehicle, discovered); }
 window.addEventListener('pagehide', persistJourney);
+// Visibilidade do mundo: o IntersectionObserver só avisa ao cruzar o limiar (não quando a tela cheia ou o scroll mudam o
+// layout), então também é recalculada na hora, pelo retângulo do #jogo contra a janela.
+function refreshWorldVisibility() { return isWorldVisible(sceneSection.getBoundingClientRect(), { width: innerWidth, height: innerHeight }); }
 if ('IntersectionObserver' in window) new IntersectionObserver(entries => {
-  worldVisible = entries[0].isIntersecting;
+  worldVisible = refreshWorldVisibility(); // o aviso assíncrono do observer não sobrescreve o valor atual
   // Depois de entrar no mundo, a leitura usa o botão "Voltar ao Carro 3D" (mesmo canto): a barra de seções não aparece junto.
   if (sectionDock) sectionDock.dataset.visible = String(!worldVisible && !entered);
   // Fora da tela o laço já pausa; só freia o carro e mantém a rota (destino e passeio) para retomar ao voltar.
@@ -178,12 +190,13 @@ function showGuidedCard(stop) {
   document.querySelector('#guided-card').hidden = false;
 }
 function hideGuidedCard() { document.querySelector('#guided-card').hidden = true; }
-function showStopsToast() { const toast = document.querySelector('#stops-toast'); toast.hidden = false; setTimeout(() => { toast.hidden = true; }, 6000); }
+function showStopsToast() { const toast = document.querySelector('#stops-toast'); toast.hidden = false; setTimeout(() => { toast.hidden = true; }, TOAST_MS); }
 function renderTourMapStops() {
   const container = document.querySelector('#full-map-destinations'); if (!container) return;
   container.querySelector('.tour-stops')?.remove();
   const section = document.createElement('div'); section.className = 'full-map-group tour-stops';
   const heading = document.createElement('h3'); heading.textContent = `Paradas do passeio (${stopProgress.count} / ${stopProgress.total})`; section.append(heading);
+  const central = document.createElement('button'); central.type = 'button'; central.className = 'map-discoveries'; central.textContent = 'Central de Descobertas'; central.addEventListener('click', () => openDiscoveries()); section.append(central);
   for (const stop of tourStops) {
     const button = document.createElement('button'); button.type = 'button';
     const done = stopProgress.has(stop.id);
@@ -198,9 +211,9 @@ function syncGuidedHud() {
   document.querySelector('#stops-count').textContent = `DESCOBERTAS: ${count} / ${total}`;
   document.querySelector('#stops-bar-fill').style.width = `${count / total * 100}%`;
   const text = document.querySelector('#guided-text'), toggle = document.querySelector('#guided-toggle');
-  if (guided && !guided.paused) { text.textContent = 'Modo Passeio Guiado · Pressione WASD para assumir o volante'; toggle.textContent = '⏸ Pausar passeio'; }
-  else if (guided) { text.textContent = 'Passeio guiado pausado'; toggle.textContent = '▶ Retomar passeio'; }
-  else { text.textContent = count >= total ? 'Universo explorado: refazer o passeio guiado' : `Passeio guiado pelas ${total} paradas · ${total - count} para descobrir`; toggle.textContent = '▶ Fazer passeio guiado'; }
+  if (guided && !guided.paused) { text.textContent = 'Modo Passeio Guiado · Pressione WASD para assumir o volante'; toggle.textContent = '⏸ Pausar'; }
+  else if (guided) { text.textContent = 'Passeio guiado pausado'; toggle.textContent = '▶ Retomar'; }
+  else { text.textContent = count >= total ? 'Universo explorado: refazer o passeio guiado' : `Passeio guiado pelas ${total} paradas · ${total - count} para descobrir`; toggle.textContent = '▶ Passeio Guiado'; }
   renderTourMapStops();
 }
 function legTo(index) {
@@ -217,8 +230,14 @@ function legTo(index) {
   setTour(true); syncGuidedHud();
 }
 // Conta uma parada (passeio ou tecla E). Só a primeira visita soma; HUD e mapa são atualizados na hora.
+let discoverySoundOn = readSoundOn(storage), audioCtx = null, lastHorn = -Infinity;
+function playDiscoverySound() {
+  if (!discoverySoundOn) return;
+  try { audioCtx ??= new (window.AudioContext || window.webkitAudioContext)(); audioCtx.resume?.(); playDiscovery(audioCtx, { radioPlaying: Boolean(localRadio?.isPlaying?.()) }); } catch { /* sem WebAudio: segue sem som */ }
+}
 function recordStop(id) {
   const fresh = stopProgress.visit(id);
+  if (fresh) playDiscoverySound();
   if (fresh) { if (stopProgress.complete) showStopsToast(); syncGuidedHud(); }
   return fresh;
 }
@@ -340,7 +359,7 @@ exit3dButton.textContent = '↓ Ler História & Eras'; exit3dButton.title = 'Par
 // Volta ao carro 3D a partir da leitura: aparece só depois de já ter entrado no mundo e com o modo 3D desligado.
 const backToCar = document.createElement('button'); backToCar.type = 'button'; backToCar.id = 'back-to-car'; backToCar.hidden = true;
 backToCar.textContent = '↑ Voltar ao Carro 3D'; backToCar.title = 'Voltar à pilotagem 3D';
-backToCar.addEventListener('click', () => document.querySelector('#enter-world').click());
+backToCar.addEventListener('click', () => { closeOpenDialogs(); document.querySelector('#enter-world').click(); worldVisible = refreshWorldVisibility(); focusWorld(); });
 document.body.append(backToCar);
 quickView.append(quickFirstPerson, quickMap, quickFullscreen, exit3dButton); document.querySelector('.world-shell').append(quickView);
 function lockScroll(on) {
@@ -352,9 +371,12 @@ function lockScroll(on) {
   }
   root.classList.toggle('mode-3d', on); exit3dButton.hidden = !on; backToCar.hidden = on || !entered;
 }
+// Sair do 3D fecha qualquer diálogo aberto (fliperama, piano, ficha, diário): senão o modal ficaria por cima da página
+// e, ao voltar, pausaria o laço e bloquearia os controles. Cada close já devolve o rádio e o foco.
+function closeOpenDialogs() { for (const d of [...document.querySelectorAll('dialog[open]')]) d.close(); }
 function exit3d(target) {
   if (!document.documentElement.classList.contains('mode-3d')) return;
-  lockScroll(false); stop(); hideTip();
+  closeOpenDialogs(); lockScroll(false); stop(); hideTip();
   if (target && target.length > 1) document.querySelector(target)?.scrollIntoView({ behavior: reducedMotion.matches ? 'auto' : 'smooth' });
 }
 exit3dButton.addEventListener('click', () => exit3d('#eras'));
@@ -371,7 +393,7 @@ const escapeLayers = {
       modal: Boolean(top) && !MINIGAME_DIALOGS.has(top.id),
       minigame: Boolean(top) && MINIGAME_DIALOGS.has(top.id),
       map: Boolean(fullMapOverlay && !fullMapOverlay.hidden),
-      panel: radioFocused || hudMenus.some(([, menu]) => !menu.hidden),
+      panel: radioFocused || hudMenus.some(([, menu]) => !menu.hidden) || !journeyPanel.hidden,
       game: document.documentElement.classList.contains('mode-3d'),
     };
   },
@@ -379,7 +401,7 @@ const escapeLayers = {
     modal: () => { const top = topDialog(); if (top && !MINIGAME_DIALOGS.has(top.id)) top.close(); },
     minigame: () => { const top = topDialog(); if (top && MINIGAME_DIALOGS.has(top.id)) top.close(); },
     map: () => toggleFullMap(false),
-    panel: () => { const menu = hudMenus.find(([, item]) => !item.hidden); if (radioFocused) focusRadio(false); toggleHudMenu(null); menu?.[0].focus(); focusWorld(); },
+    panel: () => { if (!journeyPanel.hidden && !radioFocused && !hudMenus.some(([, item]) => !item.hidden)) { toggleControls(false); focusWorld(); return; } const menu = hudMenus.find(([, item]) => !item.hidden); if (radioFocused) focusRadio(false); toggleHudMenu(null); menu?.[0].focus(); focusWorld(); },
     game: () => exit3d('#eras'),
   },
 };
@@ -402,7 +424,9 @@ document.addEventListener('click', event => {
 }, true);
 quickFirstPerson.addEventListener('click', () => document.querySelector('#first-person').click());
 quickFullscreen.addEventListener('click', () => fullscreenButton.click());
-document.addEventListener('fullscreenchange', () => { quickFullscreen.textContent = document.fullscreenElement === sceneSection ? '× Sair da tela cheia · F' : '⛶ Tela cheia · F'; });
+document.addEventListener('fullscreenchange', () => { // ao sair da tela cheia, o navegador restaura a rolagem antiga: o mundo volta ao topo se ainda estiver em modo 3D
+  if (realignAfterFullscreen({ fullscreen: Boolean(document.fullscreenElement), mode3d: document.documentElement.classList.contains('mode-3d') })) sceneSection.scrollIntoView({ block: 'start', behavior: 'instant' });
+  worldVisible = refreshWorldVisibility(); quickFullscreen.textContent = document.fullscreenElement === sceneSection ? '× Sair da tela cheia · F' : '⛶ Tela cheia · F'; });
 const cockpit = document.querySelector('#cockpit');
 let radioFocused = false;
 const consoleFocus = document.querySelector('#console-focus');
@@ -448,14 +472,50 @@ document.addEventListener('keydown', event => {
   if (event.target.closest('input,select,textarea,[contenteditable]')) return;
   if (key === 'm') { event.preventDefault(); toggleFullMap(); return; }
   if (!entered) return;
+  if (key === 'g') {
+    const now = performance.now();
+    if (hornAllowed({ entered, visible: worldVisible && document.documentElement.classList.contains('mode-3d'), blocked: modalOpen() || !fullMapOverlay.hidden || !journeyPanel.hidden || hudMenus.some(([, menu]) => !menu.hidden), soundOn: discoverySoundOn, now, lastPlayed: lastHorn })) {
+      try { audioCtx ??= new (window.AudioContext || window.webkitAudioContext)(); audioCtx.resume?.(); playHorn(audioCtx, { radioPlaying: Boolean(localRadio?.isPlaying?.()) }); lastHorn = now; } catch { /* sem WebAudio */ }
+    }
+    return;
+  }
   if (key === '[') { event.preventDefault(); localRadio.actions.prev(); announce(`Kong FM: ${localRadio.read().name}`); return; }
   if (key === ']') { event.preventDefault(); localRadio.actions.next(); announce(`Kong FM: ${localRadio.read().name}`); return; }
   if (!worldAvailable) return;
   if (key === 'v') document.querySelector('#first-person').click();
   if (key === 'f') fullscreenButton.click();
+  if (key === 'h' && !modalOpen() && !(fullMapOverlay && !fullMapOverlay.hidden)) toggleControls(); // H não abre sobre o mapa completo
   if (firstPerson && key === 'r') consoleFocus.click();
   if (firstPerson && key === 'c') { focusRadio(false); world.recenter(); }
 });
+// Central de Descobertas: abre pelo contador DESCOBERTAS X / 9, pelo menu [H] Controles e pelo botão do mapa (M).
+// "Ir até lá" define o destino do passeio pelo ponto da ficha.
+const discoveriesDrawer = createDiscoveriesDrawer({
+  lore: DISCOVERY_LORE,
+  visited: () => new Set(stopProgress.ids()),
+  goTo(stopId) { const stop = tourStops.find(item => item.id === stopId); if (!stop) return; enterWorld(); startNavigation(roadPointOf(stop)); focusWorld(); },
+  onClose: () => focusWorld(),
+});
+function openDiscoveries() { if (modalOpen()) return; toggleFullMap(false); discoveriesDrawer.open(); }
+const stopsCounter = document.querySelector('#stops-counter');
+stopsCounter.tabIndex = 0; stopsCounter.setAttribute('role', 'button'); stopsCounter.setAttribute('aria-haspopup', 'dialog'); stopsCounter.title = 'Abrir a Central de Descobertas';
+stopsCounter.addEventListener('click', openDiscoveries);
+stopsCounter.addEventListener('keydown', event => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); openDiscoveries(); } });
+// Painel grande de controles recolhido por padrão: o botão [J] Controles abre e fecha (não usa H, que já abre a ajuda).
+const journeyPanel = document.querySelector('#journey'), controlsToggle = document.querySelector('#controls-toggle');
+function toggleControls(open = journeyPanel.hidden) { journeyPanel.hidden = !open; controlsToggle.setAttribute('aria-expanded', String(open)); }
+controlsToggle.addEventListener('click', () => toggleControls());
+// Dentro do menu [H] Controles: atalhos do topo (1ª pessoa, mapa, tela cheia, história) e a ajuda de teclas (B / F1).
+journeyPanel.prepend(quickView);
+const helpButton = document.createElement('button'); helpButton.type = 'button'; helpButton.id = 'open-help'; helpButton.textContent = 'Ajuda de teclas (B / F1)';
+journeyPanel.append(helpButton); helpButton.addEventListener('click', () => openOnboarding());
+const hornHint = document.createElement('p'); hornHint.textContent = 'G · Buzina'; journeyPanel.append(hornHint);
+const discoveriesButton = document.createElement('button'); discoveriesButton.type = 'button'; discoveriesButton.id = 'open-discoveries'; discoveriesButton.textContent = 'Central de Descobertas';
+journeyPanel.append(discoveriesButton); discoveriesButton.addEventListener('click', () => openDiscoveries());
+const soundButton = document.createElement('button'); soundButton.type = 'button'; soundButton.id = 'discovery-sound-toggle';
+const paintSoundButton = () => { soundButton.textContent = `Som de descoberta: ${discoverySoundOn ? 'ligado' : 'desligado'}`; soundButton.setAttribute('aria-pressed', String(discoverySoundOn)); };
+soundButton.addEventListener('click', () => { discoverySoundOn = !discoverySoundOn; saveSoundOn(storage, discoverySoundOn); paintSoundButton(); });
+paintSoundButton(); journeyPanel.append(soundButton);
 document.querySelector('#zoom-in').addEventListener('click', () => world?.zoomBy(-.15));
 document.querySelector('#zoom-out').addEventListener('click', () => world?.zoomBy(.15));
 document.querySelector('#reset-camera').addEventListener('click', () => { world?.resetCamera(); resetViewControls(); });
@@ -595,16 +655,20 @@ document.querySelector('#reset-journal').addEventListener('click', event => {
   journal.reset(); resetArmed = false; event.currentTarget.textContent = 'Reiniciar diário'; updateJournal(); announce('Diário reiniciado.');
 });
 const map = document.querySelector('#world-map');
-const buildMapSvgContent = (carId, detailed = false) =>
+// Fundo pré-renderizado do minimapa (uma vez, em canvas) e cópia vetorial só no mapa completo.
+const minimapArt = (() => { const c = document.createElement('canvas'); const { width, height } = minimapCanvasSize(); c.width = width; c.height = height;
+  paintMinimapArt(c.getContext('2d'), { lots: CITY_LOTS, roads: ROADS, eraColor: lot => CITY_ERAS[lot.era].color }); return c.toDataURL('image/webp', .9); })();
+const buildMapSvgContent = (carId, detailed = false, art = null) =>
   `<rect x="-140" y="-200" width="280" height="250" rx="22" fill="#182723" stroke="#c4dc9d33" stroke-width="1.5"/>` +
-  CITY_LOTS.map(l => `<rect x="${-l.w/2}" y="${-l.d/2}" width="${l.w}" height="${l.d}" fill="${CITY_ERAS[l.era].color}" fill-opacity="${detailed ? '.55' : '.48'}" transform="translate(${l.x.toFixed(1)} ${l.z.toFixed(1)}) rotate(${(-l.rotation*180/Math.PI).toFixed(1)})"/>`).join('') +
-  ROADS.map(r => `<polyline points="${r.samples.map(p => `${p.x},${p.z}`).join(' ')}" fill="none" stroke="#111817" stroke-width="${r.width*.56}" stroke-linecap="round"/><polyline points="${r.samples.map(p => `${p.x},${p.z}`).join(' ')}" fill="none" stroke="#e9e4d480" stroke-width="${r.width*.42}" stroke-linecap="round"/>`).join('') +
+  (art ? `<image class="map-art" href="${art}" x="${MINIMAP_RECT.x}" y="${MINIMAP_RECT.y}" width="${MINIMAP_RECT.w}" height="${MINIMAP_RECT.h}" preserveAspectRatio="none"/>` : '') +
+  (art ? '' : CITY_LOTS.map(l => `<rect x="${-l.w/2}" y="${-l.d/2}" width="${l.w}" height="${l.d}" fill="${CITY_ERAS[l.era].color}" fill-opacity="${detailed ? '.55' : '.48'}" transform="translate(${l.x.toFixed(1)} ${l.z.toFixed(1)}) rotate(${(-l.rotation*180/Math.PI).toFixed(1)})"/>`).join('')) +
+  (art ? '' : ROADS.map(r => `<polyline points="${r.samples.map(p => `${p.x},${p.z}`).join(' ')}" fill="none" stroke="#111817" stroke-width="${r.width*.56}" stroke-linecap="round"/><polyline points="${r.samples.map(p => `${p.x},${p.z}`).join(' ')}" fill="none" stroke="#e9e4d480" stroke-width="${r.width*.42}" stroke-linecap="round"/>`).join('')) +
   ERA_GATES.map(g => `<g class="map-gate"><circle cx="${g.x.toFixed(1)}" cy="${g.z.toFixed(1)}" r="${detailed ? 5.2 : 4.2}" fill="#111415" stroke="${CITY_ERAS[g.era].color}" stroke-width="1.4"/><text x="${g.x.toFixed(1)}" y="${(g.z+2.1).toFixed(1)}" text-anchor="middle" fill="${CITY_ERAS[g.era].color}" font-size="${detailed ? 5.8 : 5.2}" font-weight="bold">${CITY_ERAS[g.era].act}</text></g>`).join('') +
   REGIONS.map((r, i) => { const [lx, ly] = [[0, 26], [-102, -164], [88, -164]][i] || [r.x, r.z]; return `<text class="map-region-label" x="${lx}" y="${ly}" text-anchor="middle" fill="${r.color}" stroke="#0b1314" stroke-width="${detailed ? 3.2 : 2.6}" stroke-linejoin="round" paint-order="stroke" font-size="${detailed ? 8.5 : 7.5}" font-weight="bold">${['KONG STUDIOS', 'BAIRRO DOS MURAIS', 'MIRANTE DO MOINHO'][i].split(' ')[0]}</text>`; }).join('') +
-  DISCOVERIES.map((d, i) => `<g data-map-poi="${d.id}"><title>${d.title}</title><circle cx="${d.x}" cy="${d.z}" r="${detailed ? 5.6 : 4.6}" fill="#f5a9c6" stroke="#111415" stroke-width="1.3"/>${detailed ? `<text x="${d.x}" y="${d.z + 2}" text-anchor="middle" fill="#111415" font-size="5.2" font-weight="bold">${i + 1}</text>` : ''}</g>`).join('') +
+  DISCOVERIES.map((d, i) => `<g data-map-poi="${d.id}"><title>${d.title}</title><circle cx="${d.x}" cy="${d.z}" r="${detailed ? 5.6 : 4.6}" fill="#f5a9c6" stroke="#111415" stroke-width="1.3"/><path class="poi-check" d="M-2.4 .1 -.7 1.9 2.6 -1.7" transform="translate(${d.x} ${d.z})" fill="none" stroke="#0b1314" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"/>${detailed ? `<text x="${d.x}" y="${d.z + 2}" text-anchor="middle" fill="#111415" font-size="5.2" font-weight="bold">${i + 1}</text>` : ''}</g>`).join('') +
   MEMBER_LOCATIONS.map((m, i) => `<g data-map-member="${i}"><title>${['2-D','Murdoc','Noodle','Russel'][i]}</title><rect x="${m.x-3.5}" y="${m.z-3.5}" width="7" height="7" rx="1.4" transform="rotate(45 ${m.x} ${m.z})" fill="${MEMBER_ACCENTS[i]}" stroke="#111415" stroke-width="1.2"/></g>`).join('') +
-  `<g id="${carId}"><circle r="10.5" fill="#d2e2a82e" stroke="#d2e2a888" stroke-width=".9"/><path d="M0 -8 5.8 5.8 0 3.2 -5.8 5.8Z" fill="#d2e2a8" stroke="#111415" stroke-width="1.4"/></g>`;
-map.innerHTML = buildMapSvgContent('map-car', false);
+  `<g id="${carId}"><path class="car-cone" d="M0 0 L-17 -36 A38 38 0 0 1 17 -36 Z" fill="#d2e2a8" fill-opacity=".16"/><circle r="10.5" fill="#d2e2a82e" stroke="#d2e2a888" stroke-width=".9"/><path d="M0 -8 5.8 5.8 0 3.2 -5.8 5.8Z" fill="#d2e2a8" stroke="#111415" stroke-width="1.4"/></g>`;
+map.innerHTML = buildMapSvgContent('map-car', false, minimapArt);
 const fullWorldMap = document.querySelector('#full-world-map');
 if (fullWorldMap) fullWorldMap.innerHTML = buildMapSvgContent('full-map-car', true);
 const fullMapDestContainer = document.querySelector('#full-map-destinations');
@@ -661,7 +725,7 @@ const worldLoader = createWorldLoader({
     });
     worldAvailable = true; world.setIntro(!entered);
     // ?perf expõe a cena para medições (scripts/ e console); não altera a experiência.
-    if (new URLSearchParams(location.search).has('perf')) window.__gorilazz = { world, vehicle, trees: TREE_LOCATIONS, known: journal.known, arcade: arcadeScreen, piano: pianoScreen, openMember, memberView, guided: () => guided, stopProgress, tourStops, startGuided, takeOver };
+    if (new URLSearchParams(location.search).has('perf')) window.__gorilazz = { ui: () => ({ entered, worldVisible, touring, modal: modalOpen(), fullscreen: Boolean(document.fullscreenElement), mode3d: document.documentElement.classList.contains('mode-3d') }), world, vehicle, radio: localRadio, trees: TREE_LOCATIONS, known: journal.known, arcade: arcadeScreen, piano: pianoScreen, openMember, memberView, guided: () => guided, stopProgress, tourStops, startGuided, takeOver };
     document.querySelector('.world-shell').classList.add('has-3d');
     document.querySelector('#render-status').textContent = 'MUNDO ABERTO / 3D EM TEMPO REAL';
     return world;
@@ -699,9 +763,21 @@ function frame(time) {
   requestAnimationFrame(frame);
   try { updateFrame(time); } catch (error) { console.error('Quadro ignorado:', error); }
 }
+// Carro no minimapa: posição a cada quadro e rotação do cone suavizada (não salta a cada atualização da HUD).
+let mapHeading = null;
+function updateMapCar(dt) {
+  if (mapHeading === null) mapHeading = vehicle.heading;
+  const diff = Math.atan2(Math.sin(vehicle.heading - mapHeading), Math.cos(vehicle.heading - mapHeading));
+  mapHeading += diff * (1 - Math.exp(-dt * 12));
+  const transform = `translate(${vehicle.x.toFixed(2)},${vehicle.z.toFixed(2)}) rotate(${(-mapHeading * 180 / Math.PI).toFixed(1)})`;
+  document.querySelector('#map-car')?.setAttribute('transform', transform);
+  document.querySelector('#full-map-car')?.setAttribute('transform', transform);
+}
 function updateFrame(time) {
-  const delta = lastTime === undefined ? 0 : Math.min((time - lastTime) / 1000, .1); lastTime = time;
+  const delta = lastTime === undefined ? 0 : clampFrameDelta((time - lastTime) / 1000); lastTime = time;
+  worldVisible = refreshWorldVisibility(); // a cada quadro: o observer não acompanha mudanças de tela cheia e scroll
   const paused = modalOpen() || document.hidden || !worldVisible;
+  if (entered && !paused) updateMapCar(delta);
   if (entered && !paused) {
     accumulator = Math.min(accumulator + delta, .1);
     while (accumulator >= 1 / 120) {
@@ -747,16 +823,13 @@ function updateFrame(time) {
   document.querySelector('#speed-fill').style.width = `${Math.min(speed / 110 * 100, 100)}%`;
   document.querySelector('#gear').textContent = vehicle.speed < -.1 ? 'RÉ' : vehicle.braking ? 'FREIO' : Math.abs(vehicle.speed) < .1 ? 'PARADO' : vehicle.surface.toUpperCase();
   const hud = document.querySelector('#drive-hud'); hud.classList.toggle('is-braking', vehicle.braking && Math.abs(vehicle.speed) > .1); hud.dataset.x = vehicle.x.toFixed(2); hud.dataset.z = vehicle.z.toFixed(2); hud.dataset.speed = vehicle.speed.toFixed(3); hud.dataset.heading = vehicle.heading.toFixed(3);
-  const carTransform = `translate(${vehicle.x},${vehicle.z}) rotate(${-vehicle.heading * 180 / Math.PI})`;
-  document.querySelector('#map-car').setAttribute('transform', carTransform);
-  document.querySelector('#full-map-car')?.setAttribute('transform', carTransform);
   for (const svg of [map, fullWorldMap].filter(Boolean)) {
     for (const point of DISCOVERIES) {
       const marker = svg.querySelector(`[data-map-poi="${point.id}"]`);
       if (!marker) continue;
       const found = journal.known.has(point.id);
       marker.style.opacity = svg === fullWorldMap || destination?.target === point || found ? '1' : distance(vehicle, point) < 75 ? '.9' : '.68';
-      marker.querySelector('circle').setAttribute('fill', found ? '#d2e2a8' : '#f5a9c6');
+      const dot = marker.querySelector('circle'); dot.setAttribute('fill', found ? '#7fe9d0' : '#ffb547'); dot.classList.toggle('poi-found', found); dot.classList.toggle('poi-pending', !found);
     }
   }
   const moving = Math.abs(vehicle.speed) > .1;

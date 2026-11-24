@@ -4,7 +4,8 @@ import * as THREE from './vendor/three.module.min.js';
 import { GLTFLoader } from './vendor/GLTFLoader.js';
 import { loadModelSafely, repairMaterials } from './model-safety.js';
 
-const MODEL = './assets/models/gorillaz-phase7-web-v2.glb';
+const MODEL = './assets/models/gorillaz-phase7-web-v3.glb';
+const MODEL_V2 = './assets/models/gorillaz-phase7-web-v2.glb';
 const FALLBACK_MODEL = './assets/models/gorillaz-phase7-web.glb';
 const STEP = Math.PI / 4; // botões ‹ › giram 45°
 
@@ -17,7 +18,7 @@ export function createMemberViewer({ canvas, onReady, onFail }) {
     if (source) return source;
     loading ??= (async () => {
       const loader = new GLTFLoader();
-      const gltf = await loadModelSafely(loader, MODEL).catch(() => loadModelSafely(loader, FALLBACK_MODEL));
+      const gltf = await loadModelSafely(loader, MODEL).catch(() => loadModelSafely(loader, MODEL_V2)).catch(() => loadModelSafely(loader, FALLBACK_MODEL));
       repairMaterials(gltf.scene);
       source = gltf.scene;
       return source;
@@ -101,7 +102,7 @@ function spinEnsureScene() {
   spinRenderer.setPixelRatio(1); spinRenderer.setSize(240, 320, false);
   spinScene = new THREE.Scene();
   spinCamera = new THREE.PerspectiveCamera(30, 240 / 320, .1, 100);
-  spinCamera.position.set(0, 2.1, 9.4); spinCamera.lookAt(0, 1.9, 0);
+  spinCamera.position.set(0, 1.6, 6.9); spinCamera.lookAt(0, 1.6, 0); // modelo normalizado em 3,2 m (pés em y=0): enquadra o corpo inteiro no card
   spinScene.add(new THREE.HemisphereLight('#f4efe2', '#2a3036', 1.6));
   const key = new THREE.DirectionalLight('#ffffff', 2.2); key.position.set(3, 6, 5); spinScene.add(key);
   spinPivot = new THREE.Group(); spinScene.add(spinPivot);
@@ -110,7 +111,7 @@ function spinLoad() {
   if (spinSource) return Promise.resolve(spinSource);
   spinLoading ??= (async () => {
     const loader = new GLTFLoader();
-    const gltf = await loadModelSafely(loader, MODEL).catch(() => loadModelSafely(loader, FALLBACK_MODEL));
+    const gltf = await loadModelSafely(loader, MODEL).catch(() => loadModelSafely(loader, MODEL_V2)).catch(() => loadModelSafely(loader, FALLBACK_MODEL));
     repairMaterials(gltf.scene); spinSource = gltf.scene; return spinSource;
   })();
   return spinLoading;
@@ -156,8 +157,10 @@ export function attachCardSpinners(hosts) {
       if (Math.abs(spin.target - spin.yaw) > .001) spin.raf = requestAnimationFrame(draw);
     };
     const request = () => { if (!spin.raf) spin.raf = requestAnimationFrame(draw); };
-    const start = () => { host.querySelector('img')?.setAttribute('hidden', ''); wrap.hidden = false; request(); };
-    const fail = () => { wrap.hidden = true; host.querySelector('img')?.removeAttribute('hidden'); };
+    // A imagem de fallback sai por completo quando o 3D entra (hidden + display:none), para não sobrar um segundo boneco atrás.
+    const setFallback = hidden => { const img = host.querySelector('img'); if (!img) return; img.hidden = hidden; img.style.display = hidden ? 'none' : ''; };
+    const start = () => { setFallback(true); wrap.hidden = false; request(); };
+    const fail = () => { wrap.hidden = true; setFallback(false); };
     canvas.addEventListener('pointerdown', event => { spin.drag = { x: event.clientX, base: spin.target }; spin.moved = false; canvas.setPointerCapture(event.pointerId); canvas.classList.add('dragging'); });
     canvas.addEventListener('pointermove', event => { if (!spin.drag) return; const dx = event.clientX - spin.drag.x; if (Math.abs(dx) > 4) spin.moved = true; spin.target = spin.drag.base + dx * .012; request(); });
     for (const type of ['pointerup', 'pointercancel']) canvas.addEventListener(type, () => { spin.drag = null; canvas.classList.remove('dragging'); });

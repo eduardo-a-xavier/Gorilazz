@@ -1,3 +1,4 @@
+import { isClosedSign, CLOSED_SIGN_NEON } from './sign-style.js';
 import * as THREE from './vendor/three.module.min.js';
 import { mergeGeometries } from './vendor/BufferGeometryUtils.js';
 import { CITY_LOTS, CITY_ERAS, ERA_GATES } from './world-data.js';
@@ -195,7 +196,7 @@ const SHOP_ROWS = ERA_SHOPS.flat();
 function signTexture() {
   const [c, ctx] = canvas(512, 64 * SHOP_ROWS.length);
   SHOP_ROWS.forEach((name, i) => {
-    const y = i * 64, era = Math.floor(i / 6), neon = era === 2 ? '#c9c2b4' : NEON[i % NEON.length];
+    const y = i * 64, era = Math.floor(i / 6), neon = isClosedSign(name) ? CLOSED_SIGN_NEON : era === 2 ? '#c9c2b4' : NEON[i % NEON.length];
     const pulse = .78 + ((i * 37) % 23) / 100;
     ctx.fillStyle = era === 2 ? '#3a3a37' : era === 1 ? '#f4efe2' : shade('#1b1f24', ((i % 3) - 1) * .04); ctx.fillRect(0, y, 512, 64);
     ctx.globalAlpha = pulse;

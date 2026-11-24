@@ -291,7 +291,7 @@ html.mode-3d .trip-meter { display:none !important; }
 #jogo .controls { bottom:var(--bottom); left:50%; right:auto; transform:translateX(-50%); pointer-events:none; }
 #jogo .controls p { font:10px/1.4 Arial; text-align:center; }
 #jogo .drive-buttons { pointer-events:auto; }
-@media (min-width:701px) and (hover:hover) and (pointer:fine) and (not (any-pointer:coarse)) { #jogo .drive-buttons { display:none; } }
+@media (not (any-pointer:coarse)) { #jogo .drive-buttons { display:none; } }
 @media (any-pointer:coarse),(max-width:700px) {
  #jogo { --instrument-bottom:calc(var(--bottom) + 68px); }
  #jogo .controls { left:var(--left); right:var(--right); transform:none; }

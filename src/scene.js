@@ -7,12 +7,14 @@ import { createSurfaceLibrary, letteringTexture } from './materials.js';
 import { installEnvironment } from './environment.js';
 import { installCity, updateEraArt } from './city.js';
 import { installStreetProps } from './street-props.js';
+import { installEasterEggs, EASTER_EGG_POSITIONS, isMurdocHead, LUNAR_MURDOC, followLunarCamera, configureLunarMaterial } from './easter-eggs.js';
+import { createAmbientParticles } from './ambient-particles.js';
 import { createAtmosphere } from './atmosphere.js';
 import { createPostFX } from './postfx.js';
 import { buildRoads } from './roads.js';
 import { installLandmarks } from './landmarks.js';
 import { rigBand } from './band-pose.js';
-import { createPilotRig, PILOT_MODEL_URL, PILOT_V2_URL, PILOT_FALLBACK_URL } from './pilot-rig.js';
+import { createPilotRig, PILOT_MODEL_URL, PILOT_V4_URL, PILOT_V2_URL, PILOT_FALLBACK_URL } from './pilot-rig.js';
 import { installFauna } from './fauna.js';
 import { installArcadeCabinet } from './arcade-cabinet.js';
 import { loadModelSafely, repairMaterials } from './model-safety.js';
@@ -161,6 +163,8 @@ export function createCameraBlockers() {
 const DEFAULT_BLOCKERS = createCameraBlockers();
 
 // Constantes da câmera: aproxima rápido (parede à frente), recua devagar, nunca oscila.
+export const TRAVEL_FOV = 60;
+export const TRAVEL_LOOK_HEIGHT = 7;
 export const CAMERA_TUNING = Object.freeze({
   pivotY: 2.4,          // altura do ponto que a câmera mira no carro
   minArm: 7.5,          // distância mínima pivô→câmera: o carro (6,8 m) e o piloto nunca ficam atrás dela
@@ -271,8 +275,8 @@ export function createTravelCamera(blockers = DEFAULT_BLOCKERS) {
     desiredCamera.set(x + Math.sin(smoothViewAngle) * smoothReach, effectiveHeight, z + Math.cos(smoothViewAngle) * smoothReach);
     const ahead = showcase ? 1 : 7 + Math.min(Math.abs(speed) * .27, 7);
     const courtyardOffset = showcase ? (mobile ? -2 : -8) : 0;
-    look.set(x + courtyardOffset * Math.cos(heading) - Math.sin(travelHeading) * ahead, mobile && showcase ? 3 : 2, z - courtyardOffset * Math.sin(heading) - Math.cos(travelHeading) * ahead);
-    if (opening) look.set(x - Math.cos(smoothViewAngle) * 7.5, 3.2, z + Math.sin(smoothViewAngle) * 7.5);
+    look.set(x + courtyardOffset * Math.cos(heading) - Math.sin(travelHeading) * ahead, TRAVEL_LOOK_HEIGHT, z - courtyardOffset * Math.sin(heading) - Math.cos(travelHeading) * ahead);
+    if (opening) { desiredCamera.z -= 10; look.set(x - Math.cos(smoothViewAngle) * 7.5, TRAVEL_LOOK_HEIGHT, z + Math.sin(smoothViewAngle) * 7.5 + 15); }
     if (landmarkView) { desiredCamera.set(125 * zoom, 38 + dragElevation, -98); look.set(84, 16, -152); }
     if (overview) { desiredCamera.set(0, 290 * zoom, -74); look.set(0, 0, -75); }
     return { desiredCamera, look, reach, smoothReach, viewAngle, smoothViewAngle, effectiveHeight, radius };
@@ -318,7 +322,8 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
   const compact = (container.clientWidth || innerWidth) < 700;
   const light = requested === 'leve' || (requested !== 'alta' && compact);
   const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false, powerPreference: 'high-performance' });
-  const maxRatio = Math.min(devicePixelRatio, light ? 1.5 : 1.75), minRatio = Math.min(maxRatio, .7);
+  // Teto do renderer: 1,5 em qualquer tela (dpr alto não melhora o quadro e custa fill rate); o modo leve segue o mesmo teto.
+  const maxRatio = Math.min(devicePixelRatio, 1.5), minRatio = Math.min(maxRatio, .7);
   let pixelRatio = maxRatio;
   renderer.setPixelRatio(pixelRatio);
   renderer.shadowMap.enabled = true;
@@ -338,6 +343,7 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
   scene.fog = new THREE.FogExp2('#202631', .007);
   scene.environmentIntensity = .5; // IBL mais baixo: sombras e relevo aparecem nas fachadas e na pista
   const atmosphere = createAtmosphere(scene, renderer);
+  const ambient = createAmbientParticles(THREE, scene); // poeira, esporos e faíscas (micro-efeitos leves)
   let postfx = light ? null : createPostFX(renderer);
   renderer.domElement.dataset.quality = light ? 'leve' : postfx ? 'alta' : 'padrao';
   const camera = new THREE.PerspectiveCamera(46, 1, .1, 650);
@@ -567,7 +573,8 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
   const cardTint = new THREE.Color();
   installEnvironment(scene, renderer, surfaces, heavyCaster);
   installCity(scene, surfaces);
-  installStreetProps(scene); // árvores, bancos, canteiros e postes nas calçadas e nos palcos (instanciados, folga >= 0,90 m)
+  installStreetProps(scene, 2026, EASTER_EGG_POSITIONS.filter(p => p.id === 'save'));
+  installEasterEggs(scene);
   const landmarks = installLandmarks(scene, material, bake);
   const fauna = installFauna(scene);
   installArcadeCabinet(scene);
@@ -726,12 +733,13 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
   // Motorista: boneco autoral nas cores do site, sentado no banco esquerdo. Fora do carro vê-se
   // o corpo inteiro; em primeira pessoa ele some e ficam só os braços da cabine (cabin.js).
   let {driver,driverHead,upperArmL,upperArmR} = createDriver(material);
-  // Motorista autoral em GLB (driver-pilot-v4.glb; fallback driver-pilot-v2.glb e depois driver-pilot.glb).
+  // Motorista autoral em GLB (driver-pilot-v5.glb; fallback v4, v2 e depois driver-pilot.glb).
   // O GLB tem esqueleto (65 ossos) e o clipe Driving_Loop: o mixer anima o corpo e as rotações
   // reativas de direção/aceno são somadas nos ossos reais (src/pilot-rig.js) depois dele.
   let pilotRig = null;
   const pilotLoader = new GLTFLoader();
   loadModelSafely(pilotLoader, PILOT_MODEL_URL)
+    .catch(() => loadModelSafely(pilotLoader, PILOT_V4_URL))
     .catch(() => loadModelSafely(pilotLoader, PILOT_V2_URL))
     .catch(() => loadModelSafely(pilotLoader, PILOT_FALLBACK_URL))
     .then(gltf => {
@@ -899,12 +907,14 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
   const storyMarkers = DISCOVERIES.map((point, i) => valueMarker(i === 0 ? { x: point.x - 5.5, z: point.z } : behind(point, 3), `HISTÓRIA ${i + 1} · ${point.kind}`, '#f5a9c6'));
   const memberMarkers = MEMBER_LOCATIONS.map((at, i) => valueMarker(at, ['2-D', 'MURDOC', 'NOODLE', 'RUSSEL'][i], MEMBER_ACCENTS[i]));
   const bandStatus = document.querySelector('#band-status');
+  let lunarMurdoc = null;
   async function loadBand() {
     try {
     // Versão para a cena: texturas WebP de 1024 px e malha simplificada. O GLB original segue disponível para download.
     const bandLoader = new GLTFLoader();
-    // Ordem: v2 (poses novas da Plataforma B) → original da mesma versão → v2 completo → original completo.
-    const gltf = await loadModelSafely(bandLoader, './assets/models/gorillaz-phase7-web-v2.glb')
+    // Ordem: v3 (A-pose relaxada, mãos suavizadas) → v2 → web → phase7 v2 → phase7 original.
+    const gltf = await loadModelSafely(bandLoader, './assets/models/gorillaz-phase7-web-v3.glb')
+      .catch(() => loadModelSafely(bandLoader, './assets/models/gorillaz-phase7-web-v2.glb'))
       .catch(() => loadModelSafely(bandLoader, './assets/models/gorillaz-phase7-web.glb'))
       .catch(() => loadModelSafely(bandLoader, './assets/models/gorillaz-phase7-v2.glb'))
       .catch(() => loadModelSafely(bandLoader, './assets/models/gorillaz-phase7.glb'));
@@ -915,6 +925,52 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
     gltf.scene.updateWorldMatrix(true, true);
     const bounds = roots.map(root => new THREE.Box3().setFromObject(root));
     const scale = 6.2 / Math.max(...bounds.map(box => box.max.y - box.min.y));
+    {
+      const giant = roots[1].clone(true);
+      const discard = [];
+      giant.traverse(object => { if (object.isMesh && /(?:Body|Pants|Shoes)/i.test(object.name)) discard.push(object); });
+      discard.forEach(object => object.removeFromParent());
+      giant.traverse(object => {
+        if (!object.isMesh) return;
+        object.geometry = object.geometry.clone();
+        object.material = object.material.clone();
+        object.material.color.multiplyScalar(.35);
+        configureLunarMaterial(object.material);
+        object.material.onBeforeCompile = shader => {
+          shader.vertexShader = shader.vertexShader.replace('#include <common>', '#include <common>\nvarying vec3 lunarNormal;')
+            .replace('#include <beginnormal_vertex>', '#include <beginnormal_vertex>\nlunarNormal = normalize(normalMatrix * objectNormal);');
+          shader.fragmentShader = shader.fragmentShader.replace('#include <common>', '#include <common>\nvarying vec3 lunarNormal;')
+            .replace('#include <color_fragment>', '#include <color_fragment>\ndiffuseColor.rgb += vec3(.16, .07, .23) * pow(1.0 - abs(normalize(lunarNormal).z), 3.0);');
+        };
+        object.material.transparent = false; object.renderOrder = -.5;
+        object.castShadow = object.receiveShadow = false;
+        object.frustumCulled = true;
+      });
+      let head; giant.traverse(object => { if (isMurdocHead(object)) head = object; });
+      if (head) {
+        const headBox = new THREE.Box3().setFromObject(head), size = headBox.getSize(new THREE.Vector3());
+        const eyeMaterial = configureLunarMaterial(new THREE.MeshBasicMaterial({ color: '#d87746' }));
+        for (const side of [-1, 1]) {
+          const eye = new THREE.Mesh(new THREE.SphereGeometry(size.x * .025, 6, 4), eyeMaterial);
+          eye.name = 'murdoc-colossal-eye';
+          eye.renderOrder = -.49;
+          eye.position.set((headBox.min.x + headBox.max.x) / 2 + side * size.x * .13, headBox.min.y + size.y * .70, headBox.max.z + size.z * .01);
+          giant.add(eye);
+        }
+      }
+      const bustBounds = new THREE.Box3().setFromObject(giant), center = bustBounds.getCenter(new THREE.Vector3());
+      const centered = new THREE.Group(); centered.add(giant); centered.position.set(-center.x, -center.y, -center.z);
+      const bust = new THREE.Group(); bust.add(centered); bust.scale.setScalar(LUNAR_MURDOC.height / (bustBounds.max.y - bustBounds.min.y));
+      bust.position.set(LUNAR_MURDOC.x, LUNAR_MURDOC.y, LUNAR_MURDOC.z);
+      bust.rotation.y = Math.atan2(-LUNAR_MURDOC.x, -LUNAR_MURDOC.z);
+      const haloMaterial = new THREE.ShaderMaterial({ depthWrite: false, depthTest: false, fog: false,
+        uniforms: {}, vertexShader: 'varying vec2 vUv; void main(){vUv=uv;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}',
+        fragmentShader: 'varying vec2 vUv; void main(){float d=length(vUv-vec2(.5))*2.;if(d>1.)discard;vec3 c=mix(vec3(.055,.05,.075),vec3(.22,.16,.26),smoothstep(.7,1.,d));gl_FragColor=vec4(c,1.);}' });
+      const halo = new THREE.Mesh(new THREE.PlaneGeometry(LUNAR_MURDOC.disk, LUNAR_MURDOC.disk), haloMaterial); halo.name = 'murdoc-lunar-halo'; halo.renderOrder = -.6;
+      halo.position.set(LUNAR_MURDOC.x * 1.01, LUNAR_MURDOC.y * 1.01, LUNAR_MURDOC.z * 1.01);
+      halo.lookAt(0, 0, 0);
+      lunarMurdoc = new THREE.Group(); lunarMurdoc.name = 'murdoc-lunar'; lunarMurdoc.add(bust, halo); scene.add(lunarMurdoc);
+    }
     roots.forEach((model, index) => {
       const center = bounds[index].getCenter(new THREE.Vector3());
       const centered = new THREE.Group(); centered.add(model); centered.position.set(-center.x, -bounds[index].min.y, -center.z);
@@ -945,7 +1001,7 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
   // Noodle: guitarra e alça em GLB (v2) e props de palco (amplificador e pedaleira). Se a guitarra v2 não carregar, a procedural segue visível.
   function loadNoodleExtras(rig, loader) {
     const prepare = gltf => { gltf.scene.traverse(object => { if (object.isMesh) { object.castShadow = true; object.receiveShadow = true; } }); repairMaterials(gltf.scene); };
-    loadModelSafely(loader, './assets/models/noodle-guitar-v2.glb').then(gltf => {
+    loadModelSafely(loader, './assets/models/noodle-guitar-v3.glb').catch(() => loadModelSafely(loader, './assets/models/noodle-guitar-v2.glb')).then(gltf => {
       prepare(gltf); if (rig.guitar) rig.guitar.visible = false; rig.kit.add(gltf.scene);
     }).catch(error => console.warn('Guitarra v2 da Noodle indisponível; mantendo a procedural:', error.message));
     loadModelSafely(loader, './assets/models/noodle-stage-props-v2.glb').then(gltf => {
@@ -1125,7 +1181,7 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
       skylight.color.lerp(light.sky, fade);
       scene.fog.color.lerp(light.haze, fade);
       scene.background.copy(scene.fog.color);
-      atmosphere.update(sunlight.color, skylight.color, scene.fog.color, t, reduced); atmosphere.follow(x, z);
+      atmosphere.update(sunlight.color, skylight.color, scene.fog.color, t, reduced); atmosphere.follow(x, z); ambient.update(t, reduced);
       adapt(dt, t); landmarks.update(t, reduced); fauna.update(vehicle, camera.position, dt, t, reduced);
       lightingReady = true;
       scene.fog.density = THREE.MathUtils.lerp(scene.fog.density, overview ? .001 : landmarkView ? .002 : .003, blend);
@@ -1208,7 +1264,7 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
         cabin.update(vehicle,radio.read(),{interacting,dt,t,reduced});
         if (pilotRig) pilotRig.reach(cabin.hands, car);
       }
-      const targetFov = firstPerson ? (camera.aspect < 1 ? 88 : 75) : reduced ? 46 : 46 + Math.abs(vehicle.speed) * .15;
+      const targetFov = firstPerson ? (camera.aspect < 1 ? 88 : 75) : overview || landmarkView ? 46 : TRAVEL_FOV;
       camera.near = firstPerson ? .1 : overview ? Math.max(.5, Math.min(20, (camera.position.y - 50) * .1)) : .5;
       camera.fov = THREE.MathUtils.lerp(camera.fov,targetFov,blend); camera.updateProjectionMatrix();
       // Outdoors de era: arte WebP entra quando o carro chega a ~80 m da era (carga lazy).
@@ -1259,6 +1315,7 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
       if (poseView) { camera.position.copy(poseView.eye); camera.lookAt(poseView.target); }
       // Tranco de câmera no impacto: curto, proporcional à velocidade, sem acumular no estado da câmera.
       if (impact > .01) { camera.rotateZ(Math.sin(t * 58) * impact * .022); camera.rotateX(Math.sin(t * 47) * impact * .012); impact *= Math.exp(-5 * dt); }
+      if (lunarMurdoc) followLunarCamera(lunarMurdoc, camera);
       // Perfil leve na vista aérea: a sombra cobre só 90 m ao redor do jipe, então atualiza a cada 4 quadros.
       if (frameCount++ % (lightProfile && overview ? 4 : 2) === 0) aimSun(x, z);
       cardTint.copy(sunlight.color).lerp(skylight.color, .45);

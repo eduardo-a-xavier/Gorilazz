@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { createOnboarding, CONTROLS, TIPS, isHelpKey } from '../src/onboarding.js';
+import { createOnboarding, CONTROLS, TIPS, isHelpKey, isControlsKey } from '../src/onboarding.js';
 
 function memoryStorage(initial = {}) {
   const data = new Map(Object.entries(initial));
@@ -57,14 +57,18 @@ test('armazenamento corrompido ou ausente não derruba o onboarding', () => {
 });
 
 test('H e F1 reabrem a ajuda; outras teclas não', () => {
-  assert.equal(isHelpKey('h'), true);
-  assert.equal(isHelpKey('H'), true);
+  assert.equal(isHelpKey('h'), false, 'H não abre a ajuda: abre o menu de controles');
+  assert.equal(isHelpKey('b'), true);
+  assert.equal(isHelpKey('B'), true);
   assert.equal(isHelpKey('F1'), true);
+  assert.equal(isControlsKey('h'), true, 'H abre e fecha o menu de controles');
+  assert.equal(isControlsKey('H'), true);
+  assert.equal(isControlsKey('b'), false);
   assert.equal(isHelpKey('m'), false);
   assert.equal(isHelpKey('Escape'), false);
 });
 
 test('ajuda lista os atalhos principais: dirigir, E, V, M, rádio e faixas', () => {
   const keys = CONTROLS.map(item => item.keys).join(' | ');
-  for (const expected of ['W / S', 'A / D', 'E', 'V', 'M', 'R / C', '[  ]', 'H ou F1']) assert.ok(keys.includes(expected), `falta ${expected}`);
+  for (const expected of ['W / S', 'A / D', 'E', 'V', 'M', 'R / C', '[  ]', 'H', 'B ou F1']) assert.ok(keys.includes(expected), `falta ${expected}`);
 });

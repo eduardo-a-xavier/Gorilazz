@@ -9,7 +9,8 @@ export const CONTROLS = [
   { keys: 'M', text: 'abrir ou fechar o mapa completo' },
   { keys: 'R / C', text: 'focar o rádio e centralizar a visão (na cabine)' },
   { keys: '[  ]', text: 'trocar de faixa do rádio' },
-  { keys: 'H ou F1', text: 'reabrir esta ajuda' },
+  { keys: 'H', text: 'abrir ou fechar o menu de controles (com a ajuda)' },
+  { keys: 'B ou F1', text: 'reabrir esta ajuda' },
 ];
 
 // Cada dica some depois de usada; `max` limita quantas vezes ela aparece sem uso.
@@ -19,8 +20,11 @@ export const TIPS = [
   { id: 'map', text: 'Aperte M para ver o mapa completo e escolher um destino.', max: 2 },
 ];
 
-export const HELP_KEYS = ['h', 'f1'];
+// Ajuda de teclas: B ou F1. H é o interruptor do menu de controles (que contém a ajuda), não a ajuda.
+export const HELP_KEYS = ['b', 'f1'];
 export const isHelpKey = key => HELP_KEYS.includes(String(key).toLowerCase());
+export const CONTROLS_KEY = 'h';
+export const isControlsKey = key => String(key).toLowerCase() === CONTROLS_KEY;
 
 export function createOnboarding(storage, storageKey = 'gorilazz-onboarding') {
   const read = () => {

@@ -8,7 +8,7 @@ const FALL_PX_PER_MS = .42;      // velocidade de queda
 const HIT_Y = 400;               // linha de toque no canvas (480 px de altura)
 const LEAD_S = .25;              // folga antes da primeira nota (s)
 
-export function createPianoScreen({ dialog, onClose }) {
+export function createPianoScreen({ dialog, onClose, onStart, onEnd }) {
   const canvas = dialog.querySelector('#piano-canvas');
   const ctx2d = canvas.getContext('2d');
   const scoreEl = dialog.querySelector('#piano-score');
@@ -139,7 +139,7 @@ export function createPianoScreen({ dialog, onClose }) {
   }
   function begin() {
     if (run && !run.finished(now())) return;
-    stopAudio(); flashes = [];
+    stopAudio(); flashes = []; onStart?.();
     chart = buildChart(song.bpm); run = createRun(chart);
     const a = ensureAudio();
     startPerf = performance.now();
@@ -167,7 +167,7 @@ export function createPianoScreen({ dialog, onClose }) {
     dialog.showModal();
     startButton.focus();
   }
-  dialog.addEventListener('close', () => { stop(); onClose?.(); });
+  dialog.addEventListener('close', () => { stop(); onEnd?.(); onClose?.(); });
   startButton.addEventListener('click', begin);
   dialog.querySelector('#piano-exit').addEventListener('click', () => dialog.close());
   dialog.addEventListener('keydown', event => {
