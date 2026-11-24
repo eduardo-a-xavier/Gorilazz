@@ -17,3 +17,9 @@ test('flexão das falanges do piloto é estável e limitada à primeira pessoa',
  assert.equal(handTurn(-2),-HAND_TURN_LIMIT); assert.equal(handTurn(2),HAND_TURN_LIMIT);
  for (let wheel=-1.05;wheel<1.05;wheel+=Math.PI/240) assert.ok(Math.abs(handTurn(wheel+Math.PI/240)-handTurn(wheel))<=Math.PI/240+1e-12);
  });
+
+test('piloto pré-posado mantém pose original das falanges', () => {
+ const pilot=new THREE.Group(), bone=new THREE.Bone(); bone.name='index_02_l'; pilot.add(bone);
+ const rig=createPilotRig(pilot,[],{preposed:true}); const base=bone.quaternion.clone();
+ rig.setFirstPerson(true); rig.update(1/60); assert.ok(base.angleTo(bone.quaternion)<1e-7);
+});

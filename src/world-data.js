@@ -79,7 +79,6 @@ export const BUILDINGS = [
   { x: -112, z: -48, radius: 8, height: 17 }, { x: -112, z: -119, radius: 8, height: 22 },
   { x: -65, z: -36, radius: 7, height: 13 }, { x: -43, z: -81, radius: 7, height: 11 },
   { x: 46, z: -48, radius: 8, height: 16 }, { x: 112, z: -54, radius: 7, height: 19 },
-  { x: 8, z: -126, radius: 7, height: 9 },
 ];
 export const VISUAL_LANDMARKS = {
   sculpture: { x: -18, y: .9, z: -6, radius: 2.7 },
@@ -148,7 +147,10 @@ function lotsOverlap(a, b, gap) {
   }
   return true;
 }
+// Área do antigo lote isolado: mantém a reserva paisagística sem colisor de prédio.
+export const REMOVED_ISOLATED_LOT = Object.freeze({ x: 8, z: -126, radius: 9.85 });
 const CITY_KEEP_OPEN = [
+  REMOVED_ISOLATED_LOT,
   ...REGIONS.map(r => ({ x: r.x, z: r.z, radius: r.id === 'windmill' ? 50 : 21 })),
   ...DISCOVERIES.map(d => ({ x: d.x, z: d.z, radius: 15 })),
   ...MEMBER_LOCATIONS.map(m => ({ x: m.x, z: m.z, radius: 11 })),

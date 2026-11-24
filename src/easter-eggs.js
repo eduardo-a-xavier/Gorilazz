@@ -11,7 +11,7 @@ export const EASTER_EGG_POSITIONS = [
 ];
 
 export const isMurdocHead = object => object.isMesh && /^murdocmurdochead(?:smd)?$/i.test(object.name.replace(/[^a-z0-9]/gi, ''));
-export const LUNAR_MURDOC = Object.freeze({ x: -177, y: 30, z: 64, height: 59, disk: 70 });
+export const LUNAR_MURDOC = Object.freeze({ x: 90, y: 44, z: -165, height: 59, disk: 70 });
 export function followLunarCamera(anchor, camera) { anchor.position.copy(camera.position); }
 export function configureLunarMaterial(material) { material.fog = false; material.depthTest = false; material.depthWrite = false; return material; }
 

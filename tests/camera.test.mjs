@@ -8,7 +8,9 @@ import { createCameraBlockers, clearReach, createTravelCamera, CAMERA_TUNING, TR
 test('câmera de viagem usa enquadramento moderado', () => {
   const result = createTravelCamera().compute({ x: 0, z: 0, heading: 0, speed: 0 }, { reduced: true });
   assert.equal(TRAVEL_FOV, 60);
-  assert.equal(TRAVEL_LOOK_HEIGHT, 7);
+  assert.equal(TRAVEL_LOOK_HEIGHT, 3);
+  assert.equal(result.radius, 6.5);
+  assert.equal(result.effectiveHeight, 2.6);
   assert.equal(result.look.y, TRAVEL_LOOK_HEIGHT);
 });
 
@@ -69,7 +71,7 @@ test('braço da câmera aproxima rápido e recua devagar, com teto de velocidade
   let maxIn = 0, maxOut = 0;
   for (let n = 1; n < reaches.length; n++) { const d = reaches[n] - reaches[n - 1]; if (d < 0) maxIn = Math.max(maxIn, -d); else maxOut = Math.max(maxOut, d); }
   assert.ok(maxIn <= CAMERA_TUNING.reachInMax * dt + 1e-6 && maxOut <= CAMERA_TUNING.reachOutMax * dt + 1e-6, `in=${maxIn} out=${maxOut}`);
-  assert.ok(reaches.every(r => r >= 9.5));
+  assert.ok(reaches.every(r => r >= CAMERA_TUNING.minArm));
 });
 
 test('follow(): perto de prédios, em 3 deslocamentos laterais e 2 velocidades, a câmera nunca entra no prédio nem salta', () => {
@@ -151,8 +153,8 @@ test('contornar quarteirões e obstáculos suaviza smoothReach e escala effectiv
     const a = road.samples[i], b = road.samples[i + 1];
     const heading = Math.atan2(-(b.x - a.x), -(b.z - a.z));
     const state = cam.compute({ x: a.x, z: a.z, heading, speed: 10 }, { dt: 1 / 30, t: i / 30 });
-    assert.ok(state.smoothReach >= 9.5 && state.smoothReach <= state.radius + 1e-6);
-    assert.ok(state.effectiveHeight >= 5.8 && state.effectiveHeight <= 12.5);
+    assert.ok(state.smoothReach >= CAMERA_TUNING.minArm && state.smoothReach <= state.radius + 1e-6);
+    assert.ok(state.effectiveHeight >= 2.5 && state.effectiveHeight <= 12.5);
     if (prev) {
       const stepDist = state.desiredCamera.distanceTo(prev);
       assert.ok(stepDist < 12, `transição de câmera saltou ${stepDist.toFixed(2)}m ao contornar quarteirão`);

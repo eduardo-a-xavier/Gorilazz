@@ -1,5 +1,6 @@
 import * as THREE from './vendor/three.module.min.js';
 import { GLTFLoader } from './vendor/GLTFLoader.js';
+import { mergeGeometries } from './vendor/BufferGeometryUtils.js';
 import { nearestRoad, TREE_LOCATIONS, VISUAL_LANDMARKS } from './world-data.js';
 import { letteringTexture } from './materials.js';
 import { NON_DISCOVERY_PROP_SCALE } from './discovery-scale.js';
@@ -143,11 +144,22 @@ export function installEnvironment(scene, renderer, surfaces, onModel = () => {}
     gltf.scene.updateMatrixWorld(true);
     gltf.scene.traverse(part=>{
       if(!part.isMesh)return;
-      const instances=new THREE.InstancedMesh(part.geometry,part.material,TREE_LOCATIONS.length);instances.castShadow=instances.receiveShadow=true;
+      const foliage = /foliage/i.test(part.name);
+      let geometry = part.geometry;
+      if (foliage) {
+        geometry.computeBoundingBox(); const bounds=geometry.boundingBox, width=bounds.max.x-bounds.min.x, height=bounds.max.y-bounds.min.y;
+        // Copas secundárias fundidas à geometria original: mantém uma draw call por material.
+        const left=geometry.clone(), right=geometry.clone();
+        left.scale(.58,.58,.58); left.translate(-width*.25,height*.2,0);
+        right.scale(.52,.52,.52); right.translate(width*.25,height*.27,0);
+        geometry=mergeGeometries([geometry,left,right]) || part.geometry;
+      }
+      const instances=new THREE.InstancedMesh(geometry,/wood/i.test(part.name) ? surfaces.get('wood',2) : part.material,TREE_LOCATIONS.length);instances.castShadow=instances.receiveShadow=true;
       const placement=new THREE.Matrix4();const position=new THREE.Vector3();const rotation=new THREE.Quaternion();const scale=new THREE.Vector3();
       TREE_LOCATIONS.forEach((point,i)=>{
         position.set(point.x,-.3,point.z);rotation.setFromAxisAngle(new THREE.Vector3(0,1,0),i*2.39);
         const factor=.8+(i%5)*.13;scale.set(factor*(.86+i%3*.12),factor*(.83+i%4*.13),factor);placement.compose(position,rotation,scale);placement.multiply(part.matrixWorld);instances.setMatrixAt(i,placement);
+        if (foliage) instances.setColorAt(i,new THREE.Color().setHSL(.28+(i%5)*.012,.35+(i%3)*.04,.74+(i%4)*.035));
       });
       instances.computeBoundingSphere();scene.add(instances);
     });report('trees','ready');

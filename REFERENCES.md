@@ -244,3 +244,5 @@ Arquivos fornecidos por Eduardo a partir de seu computador para o projeto; grava
 - `assets/audio/clint-eastwood.mp3` — SHA-256 `af7c77f224dfa952e445e9905707777314b84e4df690e5fd88b75f14b41ef426`.
 - `assets/audio/feel-good-inc.mp3` — SHA-256 `700a20a214e06b152f02a36e4b5ed4c4b004590d6557535c7d74860aad4484cf`.
 - `assets/audio/on-melancholy-hill.mp3` — SHA-256 `851763d0432256439478913d67c84639b7ebbeca7bddd54af8c316056b3ab338`.
+
+Piloto v6: arquivo GLB fornecido pelo Desenvolvedor Plataforma B, SHA-256 `1d7efd3cc1a02741cb16697c9202149e37fe16bd4051611956c4fde2ed47986f`; mantém-se a cadeia de fallback documentada. Inspeção visual em andamento.

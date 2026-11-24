@@ -18,7 +18,7 @@ import { createRadioDuck } from './radio-duck.js';
 import { DISCOVERY_LORE } from './discoveries-lore.js';
 import { MINIMAP_RECT, minimapCanvasSize, paintMinimapArt } from './minimap-art.js';
 import { isWorldVisible, realignAfterFullscreen } from './world-cycle.js';
-import { readSoundOn, saveSoundOn, playDiscovery, hornAllowed, playHorn } from './discovery-sound.js';
+import { readSoundOn, saveSoundOn, playDiscovery, hornAllowed, playHorn, createEngineSound } from './discovery-sound.js';
 import { createDiscoveriesDrawer } from './discoveries-drawer.js';
 import { buildStops, orderTour, createStopProgress, speedCap, takeOver, stopIdFor, localTrackFor, ARRIVE_M, STOP_HOLD_MS, TOAST_MS } from './guided-tour.js';
 import { discoveryIndexForEra, eraNavState } from './era-places.js';
@@ -231,6 +231,16 @@ function legTo(index) {
 }
 // Conta uma parada (passeio ou tecla E). Só a primeira visita soma; HUD e mapa são atualizados na hora.
 let discoverySoundOn = readSoundOn(storage), audioCtx = null, lastHorn = -Infinity;
+let engine = null, engineOn = true;
+try { engineOn = storage?.getItem('gorilazz.engine.v1') !== 'off'; } catch { /* valor padrão */ }
+function startEngineAfterGesture(event) {
+  if (!event.isTrusted || !entered || engine) return;
+  try { audioCtx ??= new (window.AudioContext || window.webkitAudioContext)(); audioCtx.resume(); engine = createEngineSound(audioCtx); } catch { /* navegador sem Web Audio */ }
+}
+document.addEventListener('click', startEngineAfterGesture);
+document.addEventListener('keydown', startEngineAfterGesture);
+document.addEventListener('visibilitychange', () => { if (document.hidden) engine?.update(0, false); });
+
 function playDiscoverySound() {
   if (!discoverySoundOn) return;
   try { audioCtx ??= new (window.AudioContext || window.webkitAudioContext)(); audioCtx.resume?.(); playDiscovery(audioCtx, { radioPlaying: Boolean(localRadio?.isPlaying?.()) }); } catch { /* sem WebAudio: segue sem som */ }
@@ -321,6 +331,7 @@ fullscreenButton.addEventListener('click', async () => {
 });
 document.addEventListener('fullscreenchange', () => {
   const active = document.fullscreenElement === sceneSection;
+  if (active) navigator.keyboard?.lock?.(['Escape'])?.catch?.(() => {}); else navigator.keyboard?.unlock?.();
   fullscreenButton.setAttribute('aria-pressed', String(active));
   fullscreenButton.setAttribute('aria-label', active ? 'Sair da tela cheia' : 'Abrir tela cheia');
   fullscreenButton.textContent = active ? '×' : '⛶';
@@ -415,8 +426,7 @@ new MutationObserver(records => {
     if (!target.open && at >= 0) dialogStack.splice(at, 1);
   }
   const any = dialogStack.length > 0;
-  if (any && document.fullscreenElement) navigator.keyboard?.lock?.(['Escape']).catch(() => {});
-  else if (!any) navigator.keyboard?.unlock?.();
+  // O bloqueio permanece durante toda a tela cheia; fechar um diálogo não o libera.
 }).observe(document.body, { attributes: true, attributeFilter: ['open'], subtree: true });
 document.addEventListener('click', event => {
   const link = event.target.closest?.('a[href^="#"]');
@@ -438,20 +448,24 @@ function focusRadio(value) {
 }
 consoleFocus.onclick = () => { focusRadio(!radioFocused); focusWorld(); };
 document.querySelector('#cabin-recenter')?.addEventListener('click', () => { focusRadio(false); world?.recenter(); focusWorld(); });
+let mapCameraSnapshot = null;
 const fullMapOverlay = document.querySelector('#full-map-overlay');
 const mapOpenBtn = document.querySelector('#map-open');
 function toggleFullMap(force) {
   if (!fullMapOverlay) return;
   const open = typeof force === 'boolean' ? force : fullMapOverlay.hidden;
   if (open) onboarding.markUsed('map');
-  if (open) { enterWorld(); stop(); toggleHudMenu(null); }
+  if (open && fullMapOverlay.hidden) { mapCameraSnapshot = { view: world?.captureView(), firstPerson, overview, landmarkView, orbital, showcase }; enterWorld(); stop(); toggleHudMenu(null); }
   fullMapOverlay.hidden = !open;
   sceneSection.classList.toggle('full-map-open', open);
   mapOpenBtn?.setAttribute('aria-expanded', String(open));
   quickMap.setAttribute('aria-expanded', String(open));
   quickMap.setAttribute('aria-pressed', String(open));
   if (open) document.querySelector('#full-map-close')?.focus({ preventScroll: true });
-  else focusWorld();
+  else {
+    if (mapCameraSnapshot) { ({ firstPerson, overview, landmarkView, orbital, showcase } = mapCameraSnapshot); world?.restoreView(mapCameraSnapshot.view); mapCameraSnapshot = null; syncCameraModes(); }
+    focusWorld();
+  }
 }
 mapOpenBtn?.addEventListener('click', () => toggleFullMap());
 quickMap.addEventListener('click', () => toggleFullMap());
@@ -466,6 +480,12 @@ document.querySelector('#first-person').addEventListener('click', () => {
   setShowcase(false); world.setFirstPerson(firstPerson); syncCameraModes(); focusWorld();
   if (!reducedMotion.matches) document.querySelector('#world canvas')?.animate([{opacity:.45},{opacity:1}],{duration:220});
 });
+document.addEventListener('keydown', event => {
+  if (event.key.toLowerCase() !== 'l' || !entered || !worldVisible || modalOpen() || !fullMapOverlay.hidden || event.target.closest?.('input,select,textarea,[contenteditable]')) return;
+  event.preventDefault(); world?.setSkyLook(true);
+});
+document.addEventListener('keyup', event => { if (event.key.toLowerCase() === 'l') world?.setSkyLook(false); });
+window.addEventListener('blur', () => world?.setSkyLook(false));
 document.addEventListener('keydown', event => {
   if (!worldVisible || modalOpen() || event.repeat || event.ctrlKey || event.metaKey || event.altKey) return;
   const key = event.key.toLowerCase();
@@ -509,7 +529,13 @@ controlsToggle.addEventListener('click', () => toggleControls());
 journeyPanel.prepend(quickView);
 const helpButton = document.createElement('button'); helpButton.type = 'button'; helpButton.id = 'open-help'; helpButton.textContent = 'Ajuda de teclas (B / F1)';
 journeyPanel.append(helpButton); helpButton.addEventListener('click', () => openOnboarding());
-const hornHint = document.createElement('p'); hornHint.textContent = 'G · Buzina · Espaço · Drift'; journeyPanel.append(hornHint);
+const qualityLabel = document.createElement('label'); qualityLabel.textContent = 'Qualidade/FPS: ';
+const qualitySelect = document.createElement('select'); qualitySelect.setAttribute('aria-label', 'Qualidade/FPS');
+for (const [value, label] of [['auto','Auto'], ['performance','Desempenho (PC fraco)'], ['ultra','Ultra']]) qualitySelect.add(new Option(label, value));
+try { qualitySelect.value = storage?.getItem('gorilazz.quality.v1') || 'auto'; } catch { qualitySelect.value = 'auto'; }
+qualityLabel.append(qualitySelect); journeyPanel.append(qualityLabel);
+qualitySelect.addEventListener('change', () => { try { storage?.setItem('gorilazz.quality.v1', qualitySelect.value); } catch { /* vale nesta visita */ } world?.setQuality(qualitySelect.value); });
+const hornHint = document.createElement('p'); hornHint.textContent = 'G · Buzina · Espaço · Drift · Segure L · Olhar para o céu'; journeyPanel.append(hornHint);
 const discoveriesButton = document.createElement('button'); discoveriesButton.type = 'button'; discoveriesButton.id = 'open-discoveries'; discoveriesButton.textContent = 'Central de Descobertas';
 journeyPanel.append(discoveriesButton); discoveriesButton.addEventListener('click', () => openDiscoveries());
 const soundButton = document.createElement('button'); soundButton.type = 'button'; soundButton.id = 'discovery-sound-toggle';
@@ -725,7 +751,8 @@ const worldLoader = createWorldLoader({
     });
     worldAvailable = true; world.setIntro(!entered);
     // ?perf expõe a cena para medições (scripts/ e console); não altera a experiência.
-    if (new URLSearchParams(location.search).has('perf')) window.__gorilazz = { ui: () => ({ entered, worldVisible, touring, modal: modalOpen(), fullscreen: Boolean(document.fullscreenElement), mode3d: document.documentElement.classList.contains('mode-3d') }), world, vehicle, radio: localRadio, trees: TREE_LOCATIONS, known: journal.known, arcade: arcadeScreen, piano: pianoScreen, openMember, memberView, guided: () => guided, stopProgress, tourStops, startGuided, takeOver };
+    world.setQuality(qualitySelect.value);
+      if (new URLSearchParams(location.search).has('perf')) window.__gorilazz = { ui: () => ({ entered, worldVisible, touring, modal: modalOpen(), fullscreen: Boolean(document.fullscreenElement), mode3d: document.documentElement.classList.contains('mode-3d') }), world, vehicle, radio: localRadio, trees: TREE_LOCATIONS, known: journal.known, arcade: arcadeScreen, piano: pianoScreen, openMember, memberView, guided: () => guided, stopProgress, tourStops, startGuided, takeOver };
     document.querySelector('.world-shell').classList.add('has-3d');
     document.querySelector('#render-status').textContent = 'MUNDO ABERTO / 3D EM TEMPO REAL';
     return world;
@@ -777,6 +804,8 @@ function updateFrame(time) {
   const delta = lastTime === undefined ? 0 : clampFrameDelta((time - lastTime) / 1000); lastTime = time;
   worldVisible = refreshWorldVisibility(); // a cada quadro: o observer não acompanha mudanças de tela cheia e scroll
   const paused = modalOpen() || document.hidden || !worldVisible;
+  if (paused) world?.setSkyLook(false);
+  engine?.update(vehicle.speed, engineOn && entered && !paused && document.documentElement.classList.contains('mode-3d') && !(guided && guided.paused));
   if (entered && !paused) updateMapCar(delta);
   if (entered && !paused) {
     accumulator = Math.min(accumulator + delta, .1);
@@ -1133,6 +1162,11 @@ const radioMenu = document.createElement('div');
 radioMenu.id = 'hud-radio-menu';
 document.querySelector('.radio-import').addEventListener('click', () => document.querySelector('#radio-files').click());
 document.querySelector('#road-radio').append(radioMenu);
+const engineButton = document.createElement('button'); engineButton.type = 'button';
+function paintEngineButton() { engineButton.textContent = `Motor: ${engineOn ? 'ligado' : 'silenciado'}`; engineButton.setAttribute('aria-pressed', String(engineOn)); }
+engineButton.addEventListener('click', () => { engineOn = !engineOn; try { storage?.setItem('gorilazz.engine.v1', engineOn ? 'on' : 'off'); } catch { /* sem armazenamento */ } paintEngineButton(); });
+paintEngineButton(); radioMenu.append(engineButton);
+
 for (const selector of ['#kong-fm-help','.radio-import','#road-radio-listen','#road-radio select','.radio-volume']) {
   radioMenu.append(document.querySelector(selector));
 }

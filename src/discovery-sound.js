@@ -50,3 +50,20 @@ export function playHorn(audioContext, { radioPlaying = false } = {}) {
   osc.connect(gain); gain.connect(audioContext.destination);
   osc.start(start); osc.stop(start + .25);
 }
+
+// Motor procedural: um oscilador filtrado, ganho baixo e rampas para evitar estalos.
+export function createEngineSound(context) {
+  const oscillator = context.createOscillator(), filter = context.createBiquadFilter(), gain = context.createGain();
+  oscillator.type = 'sawtooth'; filter.type = 'lowpass'; filter.frequency.value = 260;
+  gain.gain.value = 0; oscillator.connect(filter); filter.connect(gain); gain.connect(context.destination); oscillator.start();
+  let previousActive = null;
+  return {
+    update(speed, active) {
+      const t = context.currentTime, kph = Math.min(Math.abs(Number(speed) || 0) * 3.6, 110);
+      oscillator.frequency.setTargetAtTime(47 + kph * 1.05, t, .13);
+      filter.frequency.setTargetAtTime(180 + kph * 5, t, .18);
+      if (Boolean(active) !== previousActive) { previousActive = Boolean(active); gain.gain.setTargetAtTime(active ? .025 : 0, t, .08); }
+    },
+    dispose() { oscillator.stop(); oscillator.disconnect(); filter.disconnect(); gain.disconnect(); },
+  };
+}

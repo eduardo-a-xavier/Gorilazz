@@ -29,8 +29,8 @@ test('Murdoc lunar acompanha a câmera sem mudar direção nem alocar posição'
   }
   const elevation = Math.atan2(LUNAR_MURDOC.y, Math.hypot(LUNAR_MURDOC.x, LUNAR_MURDOC.z)) * 180 / Math.PI;
   const angularSize = 2 * Math.atan2(LUNAR_MURDOC.disk / 2, Math.hypot(LUNAR_MURDOC.x, LUNAR_MURDOC.y, LUNAR_MURDOC.z)) * 180 / Math.PI;
-  assert.ok(elevation >= 8 && elevation <= 10);
-  assert.ok(angularSize >= 18 && angularSize <= 25);
+  assert.ok(elevation >= 10 && elevation <= 16);
+  assert.ok(angularSize >= 18 && angularSize <= 22);
 });
 
 test('identifica a cabeça do GLB e sua forma normalizada pelo carregador', () => {

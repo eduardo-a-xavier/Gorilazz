@@ -136,6 +136,7 @@ const routes = new Map([
   ['/assets/portraits/phase7-russel.png', ['assets/portraits/phase7-russel.png', 'image/png']],
   ['/assets/models/gorillaz-geep.glb', ['assets/models/gorillaz-geep.glb', 'model/gltf-binary']],
   ['/assets/models/GEEP-CREDITS.txt', ['assets/models/GEEP-CREDITS.txt', 'text/plain; charset=utf-8']],
+  ['/assets/models/driver-pilot-v6.glb', ['assets/models/driver-pilot-v6.glb', 'model/gltf-binary']],
   ['/assets/models/driver-pilot-v5.glb', ['assets/models/driver-pilot-v5.glb', 'model/gltf-binary']],
   ['/assets/models/driver-pilot-v4.glb', ['assets/models/driver-pilot-v4.glb', 'model/gltf-binary']],
   ['/assets/models/driver-pilot-v2.glb', ['assets/models/driver-pilot-v2.glb', 'model/gltf-binary']],

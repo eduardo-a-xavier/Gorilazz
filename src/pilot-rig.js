@@ -1,7 +1,8 @@
 import * as THREE from './vendor/three.module.min.js';
 
 // Cadeia de carregamento: v5 (mão fechada e lisa) -> v4 (malha suavizada) -> v2 -> original.
-export const PILOT_MODEL_URL = './assets/models/driver-pilot-v5.glb';
+export const PILOT_MODEL_URL = './assets/models/driver-pilot-v6.glb';
+export const PILOT_V5_URL = './assets/models/driver-pilot-v5.glb';
 export const PILOT_V4_URL = './assets/models/driver-pilot-v4.glb';
 export const PILOT_V2_URL = './assets/models/driver-pilot-v2.glb';
 export const PILOT_FALLBACK_URL = './assets/models/driver-pilot.glb';
@@ -110,7 +111,7 @@ export function solveArm(upper, fore, hand, target, outward, carQuaternion) {
   dirV.normalize();
   goal.copy(sPos).addScaledVector(dirV, d);
   const along = (l1 * l1 - l2 * l2 + d * d) / (2 * d), bend = Math.sqrt(Math.max(0, l1 * l1 - along * along));
-  hint.set(outward * .55, -1, .25).applyQuaternion(carQuaternion);
+  hint.set(outward * .55, -.7, .25).applyQuaternion(carQuaternion);
   hint.addScaledVector(dirV, -hint.dot(dirV)).normalize();
   toE.copy(sPos).addScaledVector(dirV, along).addScaledVector(hint, bend);
   // Braço: aponta para o cotovelo calculado. Antebraço: do cotovelo (já movido) para o pulso-alvo.
@@ -119,7 +120,7 @@ export function solveArm(upper, fore, hand, target, outward, carQuaternion) {
   aim(fore, aimFrom.subVectors(wPos, ePos), aimTo.subVectors(goal, ePos));
 }
 
-export function createPilotRig(pilot, animations = []) {
+export function createPilotRig(pilot, animations = [], { preposed = false } = {}) {
   const clip = THREE.AnimationClip.findByName(animations ?? [], 'Driving_Loop');
   const mixer = clip ? new THREE.AnimationMixer(pilot) : null;
   if (mixer) {
@@ -220,7 +221,7 @@ export function createPilotRig(pilot, animations = []) {
       add(entries.head, AY, yaw * .5 + .2 * greeting); add(entries.head, AX, .14 * greeting);
       add(entries.spine, AY, yaw * .12);
       // Flexão discreta e estável no espaço local das falanges, sem torcer o punho.
-      if (inside) for (const finger of fingers) {
+      if (inside && !preposed) for (const finger of fingers) {
         const angle = finger.thumb ? (finger.joint === 1 ? .18 : .16) : (finger.joint === 1 ? .14 : .28);
         add(finger, AX, angle);
       }

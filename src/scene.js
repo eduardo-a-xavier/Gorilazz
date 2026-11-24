@@ -6,7 +6,7 @@ import { mergeGeometries } from './vendor/BufferGeometryUtils.js';
 import { createSurfaceLibrary, letteringTexture } from './materials.js';
 import { installEnvironment } from './environment.js';
 import { installCity, updateEraArt } from './city.js';
-import { installStreetProps } from './street-props.js';
+import { installStreetProps, limitStreetProps } from './street-props.js';
 import { installEasterEggs, EASTER_EGG_POSITIONS, isMurdocHead, LUNAR_MURDOC, followLunarCamera, configureLunarMaterial } from './easter-eggs.js';
 import { createAmbientParticles } from './ambient-particles.js';
 import { createAtmosphere } from './atmosphere.js';
@@ -14,7 +14,7 @@ import { createPostFX } from './postfx.js';
 import { buildRoads } from './roads.js';
 import { installLandmarks } from './landmarks.js';
 import { rigBand } from './band-pose.js';
-import { createPilotRig, PILOT_MODEL_URL, PILOT_V4_URL, PILOT_V2_URL, PILOT_FALLBACK_URL } from './pilot-rig.js';
+import { createPilotRig, PILOT_MODEL_URL, PILOT_V5_URL, PILOT_V4_URL, PILOT_V2_URL, PILOT_FALLBACK_URL } from './pilot-rig.js';
 import { installFauna } from './fauna.js';
 import { installArcadeCabinet } from './arcade-cabinet.js';
 import { loadModelSafely, repairMaterials } from './model-safety.js';
@@ -165,11 +165,27 @@ export function createCameraBlockers() {
 const DEFAULT_BLOCKERS = createCameraBlockers();
 
 // Constantes da câmera: aproxima rápido (parede à frente), recua devagar, nunca oscila.
+export function qualitySettings(mode, deviceRatio, birds, particles) {
+  const name = ['auto','performance','ultra'].includes(mode) ? mode : 'auto';
+  const performance = name === 'performance';
+  return { name, pixelRatio: Math.min(deviceRatio, performance ? 1 : 1.5), shadows: !performance, far: performance ? 450 : 650,
+    birds: performance ? Math.ceil(birds / 2) : birds, particles: performance ? Math.min(12, particles) : particles, dust: !performance };
+}
+
+// Inclinação progressiva do olhar ao parar ou segurar L (sem mexer no FOV).
+export function advanceSkyLook(state, dt, speed, held, enabled = true) {
+  const step = clampFrameDelta(dt);
+  state.stopped = enabled && Math.abs(speed) < .12 ? state.stopped + step : 0;
+  const target = enabled && (held || state.stopped >= 1.5) ? 1 : 0;
+  state.amount += THREE.MathUtils.clamp(target - state.amount, -step, step);
+  return state.amount * state.amount * (3 - 2 * state.amount);
+}
+
 export const TRAVEL_FOV = 60;
-export const TRAVEL_LOOK_HEIGHT = 7;
+export const TRAVEL_LOOK_HEIGHT = 3;
 export const CAMERA_TUNING = Object.freeze({
   pivotY: 2.4,          // altura do ponto que a câmera mira no carro
-  minArm: 7.5,          // distância mínima pivô→câmera: o carro (6,8 m) e o piloto nunca ficam atrás dela
+  minArm: 5,          // distância mínima pivô→câmera: o carro (6,8 m) e o piloto nunca ficam atrás dela
   probe: .9,            // raio da sonda além da parede real
   reachIn: 6, reachOut: 1.1,       // taxas (1/s) do braço ao encurtar / ao esticar
   reachInMax: 11, reachOutMax: 3,  // limites de velocidade (m/s) do braço
@@ -193,11 +209,11 @@ export function clearReach(x, z, angle, radius, height, blockers = DEFAULT_BLOCK
     }
     return false;
   };
-  for (let reach = 9.5; reach <= radius; reach += .25) {
+  for (let reach = 5; reach <= radius; reach += .25) {
     if (!blocked(reach)) continue;
     let free = reach - .25, hit = reach;
     for (let i = 0; i < 5; i++) { const mid = (free + hit) / 2; if (blocked(mid)) hit = mid; else free = mid; }
-    return Math.max(9.5, free);
+    return Math.max(5, free);
   }
   return radius;
 }
@@ -239,11 +255,11 @@ export function createTravelCamera(blockers = DEFAULT_BLOCKERS) {
   function resync() { smoothReach = null; smoothViewAngle = null; showcaseTurn = 0; rawReady = false; pull = 0; }
   function compute(vehicle, { dt = .016, t = 0, zoom = 1, dragAngle = 0, dragElevation = 0, orbit = false, reduced = false, showcase = false, mobile = false, intro = false, overview = false, landmarkView = false, desiredCamera = new THREE.Vector3(), look = new THREE.Vector3() } = {}) {
     const { x, z, heading, speed = 0 } = vehicle;
-    const radius = (mobile ? (showcase ? 46 : 29) : (showcase ? 40 : 24)) * zoom + (reduced ? 0 : Math.abs(speed) * .12);
+    const radius = (mobile ? (showcase ? 46 : 7.5) : (showcase ? 40 : 6.5)) * zoom + (reduced ? 0 : Math.abs(speed) * .06);
     const travelHeading = heading;
     const angle = (orbit && !reduced ? t * .16 : showcase ? .48 : .16) + dragAngle;
     const opening = intro && showcase && !mobile && !overview && !landmarkView;
-    const cameraAngle = angle + travelHeading, cameraHeight = (opening ? 8.5 : showcase ? 12 : 11.8) + dragElevation;
+    const cameraAngle = angle + travelHeading, cameraHeight = (opening ? 8.5 : showcase ? 12 : 2.6) + dragElevation;
     // Dirigindo, a câmera só se aproxima; com a banda reunida, procura um ângulo livre com histerese de >= 4 m.
     let reach = clearReach(x, z, cameraAngle, radius, cameraHeight, blockers), viewAngle = cameraAngle;
     // Antecipação: o corredor também é medido onde o carro estará em ~.45 s; o braço encurta antes da parede, sem arrancos.
@@ -273,9 +289,9 @@ export function createTravelCamera(blockers = DEFAULT_BLOCKERS) {
       smoothReach = Math.min(smoothReach, radius);
     }
     // Piso de altura perto do carro: 7,5 m (antes 5,8 m) deixa a linha de visada passar acima da copa das árvores (topo ~6,1 m).
-    const effectiveHeight = THREE.MathUtils.lerp(Math.min(7.5, cameraHeight), cameraHeight, THREE.MathUtils.clamp((smoothReach - 9.5) / Math.max(1, radius - 9.5), 0, 1));
+    const effectiveHeight = showcase ? THREE.MathUtils.lerp(Math.min(7.5, cameraHeight), cameraHeight, THREE.MathUtils.clamp((smoothReach - 5) / Math.max(1, radius - 5), 0, 1)) : cameraHeight;
     desiredCamera.set(x + Math.sin(smoothViewAngle) * smoothReach, effectiveHeight, z + Math.cos(smoothViewAngle) * smoothReach);
-    const ahead = showcase ? 1 : 7 + Math.min(Math.abs(speed) * .27, 7);
+    const ahead = showcase ? 1 : 2 + Math.min(Math.abs(speed) * .1, 3);
     const courtyardOffset = showcase ? (mobile ? -2 : -8) : 0;
     look.set(x + courtyardOffset * Math.cos(heading) - Math.sin(travelHeading) * ahead, TRAVEL_LOOK_HEIGHT, z - courtyardOffset * Math.sin(heading) - Math.cos(travelHeading) * ahead);
     if (opening) { desiredCamera.z -= 10; look.set(x - Math.cos(smoothViewAngle) * 7.5, TRAVEL_LOOK_HEIGHT, z + Math.sin(smoothViewAngle) * 7.5 + 15); }
@@ -326,7 +342,7 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
   const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false, powerPreference: 'high-performance' });
   // Teto do renderer: 1,5 em qualquer tela (dpr alto não melhora o quadro e custa fill rate); o modo leve segue o mesmo teto.
   const maxRatio = Math.min(devicePixelRatio, 1.5), minRatio = Math.min(maxRatio, .7);
-  let pixelRatio = maxRatio;
+  let pixelRatio = maxRatio, qualityMode = 'auto';
   renderer.setPixelRatio(pixelRatio);
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
@@ -395,7 +411,7 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
   // Tudo o que é estático entra em `city` e é fundido por material mais abaixo.
   const city = new THREE.Group(); scene.add(city);
   for (const region of REGIONS) {
-    const plaza = cylinder(city, 17, 17, .06, [region.x, -.20, region.z], region.id === 'murals' ? '#454253' : '#495448', 48); plaza.material = surfaces.get('earth',8); plaza.castShadow = false; plaza.receiveShadow = true;
+    const plaza = cylinder(city, 17, 17, .06, [region.x, -.20, region.z], region.id === 'murals' ? '#454253' : '#495448', 48); plaza.material = surfaces.get('grass',8); plaza.castShadow = false; plaza.receiveShadow = true;
   }
   buildRoads(city, surfaces, material);
 
@@ -412,7 +428,7 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
   for (let i = 0; i < 32; i++) {
     const x = i < 16 ? -134 + i * 17.8 : (i % 2 ? -134 : 134);
     const z = i < 16 ? (i % 2 ? -194 : 44) : -185 + (i - 16) * 14;
-    const rock = new THREE.Mesh(new THREE.DodecahedronGeometry(3, 0), material('#52635d')); rock.position.set(x, -.4, z); rock.scale.y = .55; city.add(rock);
+    const rock = new THREE.Mesh(new THREE.DodecahedronGeometry(3, 0), surfaces.get('earth',2)); rock.position.set(x, -.4, z); rock.scale.y = .55; city.add(rock);
   }
   function sign(text, at, color = '#f2559c') {
     const signGroup = new THREE.Group(); signGroup.position.set(at.x, 0, at.z); signGroup.rotation.y = at.heading || 0;
@@ -575,7 +591,8 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
   const cardTint = new THREE.Color();
   installEnvironment(scene, renderer, surfaces, heavyCaster);
   installCity(scene, surfaces);
-  installStreetProps(scene, 2026, EASTER_EGG_POSITIONS.filter(p => p.id === 'save'));
+  const streetProps = installStreetProps(scene, 2026, EASTER_EGG_POSITIONS.filter(p => p.id === 'save'));
+  let lastPropsCull = -Infinity;
   installEasterEggs(scene);
   const landmarks = installLandmarks(scene, material, bake);
   const fauna = installFauna(scene);
@@ -595,7 +612,7 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
   fetch('./assets/art/manifest.json').then(r => r.json()).then(manifest => { for (const point of DISCOVERIES) { const entry = manifest.discoveryMurals?.[point.id]; if (entry) artPaths[point.id] = entry.primary; } }).catch(() => {});
   const discoveryObjects = DISCOVERIES.map((point, i) => {
     const group = new THREE.Group(); group.position.set(point.x,0,point.z); group.rotation.y = point.facing; scene.add(group);
-    const paving = cylinder(group,4.5,4.7,.14,[0,-.11,0],'#687463',40);paving.material=surfaces.get('earth',3);
+    const paving = cylinder(group,4.5,4.7,.14,[0,-.11,0],'#687463',40);paving.material=surfaces.get('asphalt',3);
     const glow = new THREE.Mesh(new THREE.TorusGeometry(3.9,.035,6,40),material('#f5a9c6',true));glow.rotation.x=Math.PI/2;glow.position.y=.01;group.add(glow);
     if(i===0) {
       const wall=box(group,[9.4,4.8,.35],[0,2.2,-3],'#d5c6a6');wall.material=surfaces.get('plaster',3,2);
@@ -736,12 +753,13 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
   // Motorista: boneco autoral nas cores do site, sentado no banco esquerdo. Fora do carro vê-se
   // o corpo inteiro; em primeira pessoa ele some e ficam só os braços da cabine (cabin.js).
   let {driver,driverHead,upperArmL,upperArmR} = createDriver(material);
-  // Motorista autoral em GLB (driver-pilot-v5.glb; fallback v4, v2 e depois driver-pilot.glb).
+  // Motorista autoral em GLB v6; fallback v5, v4, v2 e original.
   // O GLB tem esqueleto (65 ossos) e o clipe Driving_Loop: o mixer anima o corpo e as rotações
   // reativas de direção/aceno são somadas nos ossos reais (src/pilot-rig.js) depois dele.
   let pilotRig = null;
-  const pilotLoader = new GLTFLoader();
+  const pilotLoader = new GLTFLoader(); let pilotPreposed = true;
   loadModelSafely(pilotLoader, PILOT_MODEL_URL)
+    .catch(() => { pilotPreposed = false; return loadModelSafely(pilotLoader, PILOT_V5_URL); })
     .catch(() => loadModelSafely(pilotLoader, PILOT_V4_URL))
     .catch(() => loadModelSafely(pilotLoader, PILOT_V2_URL))
     .catch(() => loadModelSafely(pilotLoader, PILOT_FALLBACK_URL))
@@ -756,7 +774,7 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
       pilot.traverse(object => { if (object.isMesh) { object.frustumCulled = false; object.castShadow = true; object.receiveShadow = true; } });
       // Encaixe calibrado no Geep (driver_fit.json): banco esquerdo, olhando para a frente (−Z).
       pilot.position.set(-0.6213, 0.208, 0.4471); pilot.scale.setScalar(1.22); pilot.rotation.y = 0; pilot.name = 'driver';
-      pilotRig = createPilotRig(pilot, gltf.animations);
+      pilotRig = createPilotRig(pilot, gltf.animations, { preposed: pilotPreposed });
       pilot.visible = !firstPerson;
       car.remove(driver); car.add(pilot); pilot.updateWorldMatrix(true, true);
       driver = pilot; driverHead = head; upperArmL = armL; upperArmR = armR;
@@ -1117,31 +1135,47 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
   const desiredCamera = new THREE.Vector3();
   let poseView = null; // depuração de pose: null no uso normal
   let previousTime = null; let initialized = false;
+  const skyLook = { stopped: 0, amount: 0 }; let skyLookHeld = false;
   let impact = 0, intro = false; const tumbleYaw = new THREE.Quaternion(), upAxis = new THREE.Vector3(0, 1, 0);
   const travelCamera = createTravelCamera(DEFAULT_BLOCKERS);
   // Resolução adaptativa: mede o intervalo real entre quadros e ajusta a densidade de pixels.
   // A aplicação não chama update com a aba oculta, então todo intervalo recebido é desempenho real.
-  let pace = 0, paceCheck = null, raiseAfter = 0, raiseBackoff = 4, lastRaise = -Infinity, slowAtFloor = 0;
+  let pace = 0, paceCheck = null, raiseAfter = 0, raiseBackoff = 4, lastRaise = -Infinity, slowAtFloor = 0, slowWindows = 0, fastWindows = 0;
   function adapt(dt, t) {
+    if (qualityMode !== 'auto') return;
     if (dt <= 0) return;
     // Os primeiros segundos têm travadas de carga (modelos, texturas, shaders) que não representam o ritmo normal.
     if (paceCheck === null) paceCheck = t + 4;
     if (t < paceCheck) return;
     const budget = compact ? 1 / 30 : 1 / 60;
     pace = pace ? pace + (dt - pace) * .06 : dt;
-    if (t - paceCheck < 1) return; paceCheck = t;
+    if (t - paceCheck < 3) return; paceCheck = t;
+    slowWindows = pace > budget * 1.3 ? slowWindows + 1 : 0;
+    fastWindows = pace < budget * 1.08 ? fastWindows + 1 : 0;
     let next = pixelRatio;
-    if (pace > budget * 1.3) {
+    if (slowWindows >= 2) {
+      slowWindows = 0;
       next = Math.max(minRatio, pixelRatio * .85);
       if (t - lastRaise < 4) raiseBackoff = Math.min(60, raiseBackoff * 2);
       raiseAfter = t + raiseBackoff;
       // Três segundos no piso de resolução e ainda lento: o bloom é o próximo a sair.
       slowAtFloor = next === pixelRatio ? slowAtFloor + 1 : 0;
       if (slowAtFloor >= 3 && postfx) { postfx.dispose(); postfx = null; renderer.domElement.dataset.quality = 'padrao'; }
-    } else if (pace < budget * 1.08 && pixelRatio < maxRatio && t > raiseAfter) { next = Math.min(maxRatio, pixelRatio * 1.1); lastRaise = t; slowAtFloor = 0; }
+    } else if (fastWindows >= 3 && pixelRatio < maxRatio && t > raiseAfter) { next = Math.min(maxRatio, pixelRatio * 1.1); lastRaise = t; slowAtFloor = 0; fastWindows = 0; }
     if (next !== pixelRatio) { pixelRatio = next; renderer.setPixelRatio(pixelRatio); pace = 0; renderer.domElement.dataset.pixelRatio = pixelRatio.toFixed(2); }
   }
   return {
+    setQuality(mode) {
+      const config = qualitySettings(mode, devicePixelRatio, fauna.flock.length, FX_COUNT);
+      qualityMode = config.name; pixelRatio = config.pixelRatio;
+      limitStreetProps(streetProps.group, live.vehicle?.x ?? 0, live.vehicle?.z ?? 0, qualityMode === 'performance' ? 85 : Infinity); lastPropsCull = -Infinity;
+      renderer.setPixelRatio(pixelRatio);
+      renderer.shadowMap.enabled = config.shadows;
+      fxMesh.count = config.particles; fauna.bodies.count = fauna.wings.count = config.birds; dust.visible = config.dust;
+      camera.far = config.far; camera.updateProjectionMatrix();
+      renderer.domElement.dataset.pixelRatio = pixelRatio.toFixed(2);
+      pace = 0; paceCheck = null; slowWindows = fastWindows = 0;
+    },
     // Usado por ?perf e pelos scripts de medição.
     // Depuração de pose: enquadra um integrante de perto (front = -1 usa a frente do modelo). clearPose volta à câmera normal.
     framePerson(index, { front = -1, distance = 3.2, height = 1.3, target = 1.05, angle = 0 } = {}) {
@@ -1166,6 +1200,14 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
     setOverview(value) { overview = value; landmarkView = false; firstPerson = false; travelCamera.resync(); },
     // Abertura: câmera mais baixa e deslocada, para o Geep e a banda ficarem no terço direito e o título respirar.
     setIntro(value) { intro = value; },
+    captureView() { return { firstPerson, overview, landmarkView, yaw, pitch, smoothYaw, smoothPitch, dragAngle, dragElevation, zoom, skyStopped: skyLook.stopped, skyAmount: skyLook.amount }; },
+    restoreView(view) {
+      if (!view) return;
+      ({ firstPerson, overview, landmarkView, yaw, pitch, smoothYaw, smoothPitch, dragAngle, dragElevation, zoom } = view);
+      skyLook.stopped = view.skyStopped ?? 0; skyLook.amount = view.skyAmount ?? 0; skyLookHeld = false;
+      interacting = false; highlight(null); release(); initialized = false; travelCamera.resync();
+    },
+    setSkyLook(value) { skyLookHeld = Boolean(value); },
     setInteraction(value) { interacting = firstPerson && value; highlight(null); release(); },
     recenter() { yaw = pitch = 0; },
     configureLook(gain, intensity) { sensitivity = gain; motion = intensity; },
@@ -1185,7 +1227,9 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
       scene.fog.color.lerp(light.haze, fade);
       scene.background.copy(scene.fog.color);
       atmosphere.update(sunlight.color, skylight.color, scene.fog.color, t, reduced); atmosphere.follow(x, z); ambient.update(t, reduced);
-      adapt(dt, t); landmarks.update(t, reduced, dt); fauna.update(vehicle, camera.position, dt, t, reduced);
+      adapt(dt, t);
+      if (qualityMode === 'performance' && t-lastPropsCull >= 1) { limitStreetProps(streetProps.group, x, z, 85); lastPropsCull = t; }
+      landmarks.update(t, reduced, dt); fauna.update(vehicle, camera.position, dt, t, reduced);
       lightingReady = true;
       scene.fog.density = THREE.MathUtils.lerp(scene.fog.density, overview ? .001 : landmarkView ? .002 : .003, blend);
       island.visible = showcase; island.position.set(x,0,z);
@@ -1249,6 +1293,8 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
       }
       const mobile = container.clientWidth < 700;
       travelCamera.compute(vehicle, { dt, t, zoom, dragAngle, dragElevation, orbit, reduced, showcase, mobile, intro, overview, landmarkView, desiredCamera, look });
+      const skyAmount = advanceSkyLook(skyLook, dt, vehicle.speed, skyLookHeld, !firstPerson && !overview && !landmarkView && !showcase && !intro);
+      if (skyAmount > 0) look.y += Math.hypot(look.x-desiredCamera.x, look.z-desiredCamera.z) * Math.tan(10*Math.PI/180) * skyAmount;
       // Primeira pessoa: o mesmo Geep continua visível; some apenas o boneco, e os olhos ficam
       // no banco do motorista. Não há segundo modelo de cabine para divergir do carro de fora.
       // Com o piloto GLB, ele continua na cena em primeira pessoa: some o rosto/corpo base e ficam jaqueta e luvas
@@ -1415,3 +1461,4 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
     },
   };
 }
+

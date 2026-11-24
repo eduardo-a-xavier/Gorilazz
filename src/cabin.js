@@ -162,8 +162,8 @@ export function createCabin() {
     reach += ((state.interacting ? 1 : 0) - reach) * Math.min(1,dt * 6); press = Math.max(0,press - dt * 4);
     const ease = reach*reach*(3 - 2*reach);
     for (const arm of arms) {
-      // Mãos em 11h e 1h no aro (mais altas e firmes que 10h/2h), acompanhando o giro; a mão fica presa ao aro.
-      const angle = (arm.side < 0 ? Math.PI - .75 : .75) + turn;
+      // Alvos em 10h e 2h, no plano do aro, com arco limitado ao esterçar.
+      const angle = (arm.side < 0 ? Math.PI - .52 : .52) + turn;
       arm.grip.copy(steering.centre).addScaledVector(across,Math.cos(angle)*steering.radius*.96).addScaledVector(upward,Math.sin(angle)*steering.radius*.96).addScaledVector(steering.normal,.06); // mãos ~4 cm mais à frente (antes .02): os dedos encaixam no aro
       arm.hand.copy(arm.grip);
       if (arm.side > 0 && ease > .001) {

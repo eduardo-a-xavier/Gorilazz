@@ -14,7 +14,7 @@ test('cadeias dos modelos novos: v3 primeiro, depois o anterior (banda, cards, g
   for (const name of bandOrder) { const i = scene.indexOf(name, at + 1); assert.ok(i > at, `banda: ${name} fora de ordem ou ausente`); at = i; }
   assert.ok(cards.indexOf('gorillaz-phase7-web-v3') < cards.indexOf('gorillaz-phase7-web-v2'), 'cards: v3 antes de v2');
   assert.ok(scene.indexOf('noodle-guitar-v3') < scene.indexOf('noodle-guitar-v2'), 'guitarra: v3 antes de v2');
-  assert.match(pilot, /PILOT_MODEL_URL = '\.\/assets\/models\/driver-pilot-v5\.glb'/);
+  assert.match(pilot, /PILOT_MODEL_URL = '\.\/assets\/models\/driver-pilot-v6\.glb'/);
   assert.match(pilot, /PILOT_V4_URL = '\.\/assets\/models\/driver-pilot-v4\.glb'/);
 });
 

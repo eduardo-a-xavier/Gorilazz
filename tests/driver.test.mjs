@@ -5,7 +5,7 @@ import { createHash } from 'node:crypto';
 import * as THREE from '../src/vendor/three.module.min.js';
 import { GLTFLoader } from '../src/vendor/GLTFLoader.js';
 import { createDriver, createDriverReaction } from '../src/scene.js';
-import { createPilotRig, PILOT_MODEL_URL, PILOT_V4_URL, PILOT_V2_URL, PILOT_FALLBACK_URL } from '../src/pilot-rig.js';
+import { createPilotRig, PILOT_MODEL_URL, PILOT_V5_URL, PILOT_V4_URL, PILOT_V2_URL, PILOT_FALLBACK_URL } from '../src/pilot-rig.js';
 
 test('motorista procedural preserva encaixes, orçamento e materiais sem texturas', () => {
   const palette = new Map();
@@ -171,7 +171,8 @@ test('1ª pessoa usa jaqueta e luvas do driver-pilot.glb no volante via IK e ocu
 
 test('driver-pilot-v2.glb: modelo com mãos menos facetadas (2.806 tris, pulsos soldados) carrega com fallback ao v1 e encaixa no volante', async () => {
   // Cadeia: v5 (atual) -> v4 -> v2 -> original. v5, v4 e v2 ficam íntegros no repositório.
-  assert.equal(PILOT_MODEL_URL, './assets/models/driver-pilot-v5.glb');
+  assert.equal(PILOT_MODEL_URL, './assets/models/driver-pilot-v6.glb');
+  assert.equal(PILOT_V5_URL, './assets/models/driver-pilot-v5.glb');
   assert.equal(PILOT_V4_URL, './assets/models/driver-pilot-v4.glb');
   assert.equal(PILOT_V2_URL, './assets/models/driver-pilot-v2.glb');
   assert.equal(PILOT_FALLBACK_URL, './assets/models/driver-pilot.glb');
@@ -213,9 +214,18 @@ test('driver-pilot-v2.glb: modelo com mãos menos facetadas (2.806 tris, pulsos 
 
 test('cadeia do piloto: v5 -> v4 -> v2 -> original (cada elo existe no repositório e no servidor)', async () => {
   const { readFile: rf } = await import('node:fs/promises');
-  for (const url of [PILOT_MODEL_URL, PILOT_V4_URL, PILOT_V2_URL, PILOT_FALLBACK_URL]) {
+  for (const url of [PILOT_MODEL_URL, PILOT_V5_URL, PILOT_V4_URL, PILOT_V2_URL, PILOT_FALLBACK_URL]) {
     const file = new URL(`../${url.replace('./', '')}`, import.meta.url);
     const bytes = await rf(file);
     assert.ok(bytes.length > 1000, `${url} existe`);
   }
+});
+
+test('piloto v6 preserva arquivo, esqueleto e Driving_Loop', async () => {
+  const bytes = await readFile(new URL('../assets/models/driver-pilot-v6.glb', import.meta.url));
+  assert.equal(bytes.length, 258776);
+  assert.equal(createHash('sha256').update(bytes).digest('hex'), '1d7efd3cc1a02741cb16697c9202149e37fe16bd4051611956c4fde2ed47986f');
+  const gltf = JSON.parse(bytes.toString('utf8',20,20+bytes.readUInt32LE(12)).trim());
+  assert.equal(gltf.skins[0].joints.length,65);
+  assert.ok(gltf.animations.some(a=>a.name==='Driving_Loop'));
 });

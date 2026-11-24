@@ -222,13 +222,14 @@ function createBirdGeometries() {
   torso.translate(0, .18, .02);
   const head = new THREE.IcosahedronGeometry(.095, 1);
   head.translate(0, .30, -.16);
+  const neck = new THREE.CylinderGeometry(.075,.105,.16,7); neck.translate(0,.235,-.105);
   const beak = new THREE.ConeGeometry(.032, .11, 5);
   beak.rotateX(-Math.PI / 2);
   beak.translate(0, .29, -.27);
   const tail = new THREE.BoxGeometry(.14, .025, .18);
   tail.rotateX(.24);
   tail.translate(0, .14, .25);
-  const bodyGeometry = mergeGeometries([torso, head, beak, tail].map(g => g.index ? g.toNonIndexed() : g));
+  const bodyGeometry = mergeGeometries([torso, neck, head, beak, tail].map(g => g.index ? g.toNonIndexed() : g));
 
   // Par de asas simétricas com pivô no dorso: escalar/inclinar anima o bater de asas no voo.
   const wingL = new THREE.BoxGeometry(.32, .022, .18).toNonIndexed();

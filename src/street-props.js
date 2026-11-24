@@ -17,10 +17,25 @@ function place(geometry, material, items, group) {
     mesh.setMatrixAt(i, dummy.matrix);
   });
   mesh.instanceMatrix.needsUpdate = true;
+  mesh.userData.fullMatrices = mesh.instanceMatrix.array.slice();
   mesh.computeBoundingSphere();
   mesh.castShadow = false; mesh.receiveShadow = true;
   group.add(mesh);
   return mesh;
+}
+// Compacta instâncias próximas sem alterar os planos de colocação nem colidíveis.
+export function limitStreetProps(group, x, z, radius = Infinity) {
+  const r2 = radius * radius;
+  for (const mesh of group.children) {
+    const source = mesh.userData.fullMatrices;
+    if (!source) continue;
+    const target = mesh.instanceMatrix.array; let count = 0;
+    for (let offset=0; offset<source.length; offset+=16) {
+      const dx=source[offset+12]-x, dz=source[offset+14]-z;
+      if (dx*dx+dz*dz <= r2) { target.set(source.subarray(offset,offset+16),count*16); count++; }
+    }
+    mesh.count=count; mesh.instanceMatrix.needsUpdate=true;
+  }
 }
 // Geometria simples, nomeada pela parte: uma caixa ou cilindro transladado na altura certa.
 function box(w, h, d, x = 0, y = 0, z = 0) { const g = new THREE.BoxGeometry(w, h, d); g.translate(x, y, z); return g; }
@@ -63,7 +78,7 @@ export function installStreetProps(scene, seed = 2026, reserved = []) {
     place(pole, part(COLOR.pole), lamps, group).name = 'street-lamp-poles';
     place(box(.34, .12, .34, 0, 4.2, 0), part(COLOR.head, { emissive: COLOR.head, emissiveIntensity: .9 }), lamps, group).name = 'street-lamp-heads';
   }
-  return { count: plan.length, counts: { tree: trees.length, bench: benches.length, planter: planters.length, lamp: lamps.length } };
+  return { group, count: plan.length, counts: { tree: trees.length, bench: benches.length, planter: planters.length, lamp: lamps.length } };
 }
 
 // Une caixas num só BufferGeometry (todas já transladadas).
@@ -82,3 +97,4 @@ function mergeBoxes(geometries) {
   merged.setIndex(indices);
   return merged;
 }
+
