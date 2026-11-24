@@ -1,0 +1,4335 @@
+{
+  "method": "Simulação determinística; posição e velocidade fixadas por quadro. Não substitui condução no navegador.",
+  "steeringDifferenceMax": 0,
+  "steeringPeakDegrees": 23.082147606603062,
+  "driftPeakDegrees": 14.031459442992816,
+  "driftEndDegrees": 0.034780510636124196,
+  "helicopterClock10s": 10.000000000000076,
+  "helicopterOrbitDegrees": 183.34649444186485,
+  "left": [
+    {
+      "t": 0.008333333333333333,
+      "steering": 0.01583333333333333,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.016666666666666666,
+      "steering": 0.03166666666666666,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.025,
+      "steering": 0.047499999999999994,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.03333333333333333,
+      "steering": 0.06333333333333332,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.041666666666666664,
+      "steering": 0.07916666666666666,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.05,
+      "steering": 0.095,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.058333333333333334,
+      "steering": 0.11083333333333334,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.06666666666666667,
+      "steering": 0.12666666666666668,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.075,
+      "steering": 0.14250000000000002,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.08333333333333333,
+      "steering": 0.15833333333333335,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.09166666666666666,
+      "steering": 0.1741666666666667,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.1,
+      "steering": 0.19000000000000003,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.10833333333333334,
+      "steering": 0.20583333333333337,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.11666666666666667,
+      "steering": 0.2216666666666667,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.125,
+      "steering": 0.23750000000000004,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.13333333333333333,
+      "steering": 0.25333333333333335,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.14166666666666666,
+      "steering": 0.26916666666666667,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.15,
+      "steering": 0.285,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.15833333333333333,
+      "steering": 0.3008333333333333,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.16666666666666666,
+      "steering": 0.3166666666666666,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.175,
+      "steering": 0.3324999999999999,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.18333333333333332,
+      "steering": 0.3483333333333332,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.19166666666666668,
+      "steering": 0.3641666666666665,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.2,
+      "steering": 0.37999999999999984,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.20833333333333334,
+      "steering": 0.39583333333333315,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.21666666666666667,
+      "steering": 0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.225,
+      "steering": 0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.23333333333333334,
+      "steering": 0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.24166666666666667,
+      "steering": 0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.25,
+      "steering": 0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.25833333333333336,
+      "steering": 0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.26666666666666666,
+      "steering": 0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.275,
+      "steering": 0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.2833333333333333,
+      "steering": 0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.2916666666666667,
+      "steering": 0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.3,
+      "steering": 0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.30833333333333335,
+      "steering": 0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.31666666666666665,
+      "steering": 0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.325,
+      "steering": 0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.3333333333333333,
+      "steering": 0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.3416666666666667,
+      "steering": 0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.35,
+      "steering": 0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.35833333333333334,
+      "steering": 0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.36666666666666664,
+      "steering": 0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.375,
+      "steering": 0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.38333333333333336,
+      "steering": 0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.39166666666666666,
+      "steering": 0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.4,
+      "steering": 0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.4083333333333333,
+      "steering": 0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.4166666666666667,
+      "steering": 0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.425,
+      "steering": 0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.43333333333333335,
+      "steering": 0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.44166666666666665,
+      "steering": 0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.45,
+      "steering": 0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.4583333333333333,
+      "steering": 0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.4666666666666667,
+      "steering": 0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.475,
+      "steering": 0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.48333333333333334,
+      "steering": 0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.49166666666666664,
+      "steering": 0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.5,
+      "steering": 0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.5083333333333333,
+      "steering": 0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.5166666666666667,
+      "steering": 0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.525,
+      "steering": 0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.5333333333333333,
+      "steering": 0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.5416666666666666,
+      "steering": 0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.55,
+      "steering": 0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.5583333333333333,
+      "steering": 0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.5666666666666667,
+      "steering": 0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.575,
+      "steering": 0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.5833333333333334,
+      "steering": 0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.5916666666666667,
+      "steering": 0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.6,
+      "steering": 0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.6083333333333333,
+      "steering": 0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.6166666666666667,
+      "steering": 0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.625,
+      "steering": 0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.6333333333333333,
+      "steering": 0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.6416666666666667,
+      "steering": 0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.65,
+      "steering": 0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.6583333333333333,
+      "steering": 0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.6666666666666666,
+      "steering": 0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.675,
+      "steering": 0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.6833333333333333,
+      "steering": 0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.6916666666666667,
+      "steering": 0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.7,
+      "steering": 0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.7083333333333334,
+      "steering": 0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.7166666666666667,
+      "steering": 0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.725,
+      "steering": 0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.7333333333333333,
+      "steering": 0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.7416666666666667,
+      "steering": 0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.75,
+      "steering": 0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.7583333333333333,
+      "steering": 0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.7666666666666667,
+      "steering": 0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.775,
+      "steering": 0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.7833333333333333,
+      "steering": 0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.7916666666666666,
+      "steering": 0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.8,
+      "steering": 0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.8083333333333333,
+      "steering": 0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.8166666666666667,
+      "steering": 0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.825,
+      "steering": 0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.8333333333333334,
+      "steering": 0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.8416666666666667,
+      "steering": 0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.85,
+      "steering": 0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.8583333333333333,
+      "steering": 0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.8666666666666667,
+      "steering": 0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.875,
+      "steering": 0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.8833333333333333,
+      "steering": 0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.8916666666666667,
+      "steering": 0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.9,
+      "steering": 0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.9083333333333333,
+      "steering": 0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.9166666666666666,
+      "steering": 0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.925,
+      "steering": 0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.9333333333333333,
+      "steering": 0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.9416666666666667,
+      "steering": 0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.95,
+      "steering": 0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.9583333333333334,
+      "steering": 0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.9666666666666667,
+      "steering": 0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.975,
+      "steering": 0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.9833333333333333,
+      "steering": 0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.9916666666666667,
+      "steering": 0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1,
+      "steering": 0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.0083333333333333,
+      "steering": 0.38035947416655225,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.0166666666666666,
+      "steering": 0.3578594741665522,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.025,
+      "steering": 0.3353594741665522,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.0333333333333334,
+      "steering": 0.3128594741665522,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.0416666666666667,
+      "steering": 0.29035947416655217,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.05,
+      "steering": 0.26785947416655215,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.0583333333333333,
+      "steering": 0.24535947416655216,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.0666666666666667,
+      "steering": 0.22285947416655216,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.075,
+      "steering": 0.20035947416655217,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.0833333333333333,
+      "steering": 0.17785947416655218,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.0916666666666666,
+      "steering": 0.15535947416655219,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.1,
+      "steering": 0.1328594741665522,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.1083333333333334,
+      "steering": 0.11035947416655219,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.1166666666666667,
+      "steering": 0.08785947416655218,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.125,
+      "steering": 0.06535947416655218,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.1333333333333333,
+      "steering": 0.04285947416655217,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.1416666666666666,
+      "steering": 0.020359474166552167,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.15,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.1583333333333334,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.1666666666666667,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.175,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.1833333333333333,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.1916666666666667,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.2,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.2083333333333333,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.2166666666666666,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.225,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.2333333333333334,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.2416666666666667,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.25,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.2583333333333333,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.2666666666666666,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.275,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.2833333333333334,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.2916666666666667,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.3,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.3083333333333333,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.3166666666666667,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.325,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.3333333333333333,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.3416666666666666,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.35,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.3583333333333334,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.3666666666666667,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.375,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.3833333333333333,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.3916666666666666,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.4,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.4083333333333334,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.4166666666666667,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.425,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.4333333333333333,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.4416666666666667,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.45,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.4583333333333333,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.4666666666666666,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.475,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.4833333333333334,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.4916666666666667,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.5,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.5083333333333333,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.5166666666666666,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.525,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.5333333333333334,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.5416666666666667,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.55,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.5583333333333333,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.5666666666666667,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.575,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.5833333333333333,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.5916666666666666,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.6,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.6083333333333334,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.6166666666666667,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.625,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.6333333333333333,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.6416666666666666,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.65,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.6583333333333334,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.6666666666666667,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.675,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.6833333333333333,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.6916666666666667,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.7,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.7083333333333333,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.7166666666666666,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.725,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.7333333333333334,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.7416666666666667,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.75,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.7583333333333333,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.7666666666666666,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.775,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.7833333333333334,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.7916666666666667,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.8,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.8083333333333333,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.8166666666666667,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.825,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.8333333333333333,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.8416666666666666,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.85,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.8583333333333334,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.8666666666666667,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.875,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.8833333333333333,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.8916666666666666,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.9,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.9083333333333334,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.9166666666666667,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.925,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.9333333333333333,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.9416666666666667,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.95,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.9583333333333333,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.9666666666666666,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.975,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.9833333333333334,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.9916666666666667,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 2,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    }
+  ],
+  "right": [
+    {
+      "t": 0.008333333333333333,
+      "steering": -0.01583333333333333,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.016666666666666666,
+      "steering": -0.03166666666666666,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.025,
+      "steering": -0.047499999999999994,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.03333333333333333,
+      "steering": -0.06333333333333332,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.041666666666666664,
+      "steering": -0.07916666666666666,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.05,
+      "steering": -0.095,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.058333333333333334,
+      "steering": -0.11083333333333334,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.06666666666666667,
+      "steering": -0.12666666666666668,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.075,
+      "steering": -0.14250000000000002,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.08333333333333333,
+      "steering": -0.15833333333333335,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.09166666666666666,
+      "steering": -0.1741666666666667,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.1,
+      "steering": -0.19000000000000003,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.10833333333333334,
+      "steering": -0.20583333333333337,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.11666666666666667,
+      "steering": -0.2216666666666667,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.125,
+      "steering": -0.23750000000000004,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.13333333333333333,
+      "steering": -0.25333333333333335,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.14166666666666666,
+      "steering": -0.26916666666666667,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.15,
+      "steering": -0.285,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.15833333333333333,
+      "steering": -0.3008333333333333,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.16666666666666666,
+      "steering": -0.3166666666666666,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.175,
+      "steering": -0.3324999999999999,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.18333333333333332,
+      "steering": -0.3483333333333332,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.19166666666666668,
+      "steering": -0.3641666666666665,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.2,
+      "steering": -0.37999999999999984,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.20833333333333334,
+      "steering": -0.39583333333333315,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.21666666666666667,
+      "steering": -0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.225,
+      "steering": -0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.23333333333333334,
+      "steering": -0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.24166666666666667,
+      "steering": -0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.25,
+      "steering": -0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.25833333333333336,
+      "steering": -0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.26666666666666666,
+      "steering": -0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.275,
+      "steering": -0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.2833333333333333,
+      "steering": -0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.2916666666666667,
+      "steering": -0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.3,
+      "steering": -0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.30833333333333335,
+      "steering": -0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.31666666666666665,
+      "steering": -0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.325,
+      "steering": -0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.3333333333333333,
+      "steering": -0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.3416666666666667,
+      "steering": -0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.35,
+      "steering": -0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.35833333333333334,
+      "steering": -0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.36666666666666664,
+      "steering": -0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.375,
+      "steering": -0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.38333333333333336,
+      "steering": -0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.39166666666666666,
+      "steering": -0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.4,
+      "steering": -0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.4083333333333333,
+      "steering": -0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.4166666666666667,
+      "steering": -0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.425,
+      "steering": -0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.43333333333333335,
+      "steering": -0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.44166666666666665,
+      "steering": -0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.45,
+      "steering": -0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.4583333333333333,
+      "steering": -0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.4666666666666667,
+      "steering": -0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.475,
+      "steering": -0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.48333333333333334,
+      "steering": -0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.49166666666666664,
+      "steering": -0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.5,
+      "steering": -0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.5083333333333333,
+      "steering": -0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.5166666666666667,
+      "steering": -0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.525,
+      "steering": -0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.5333333333333333,
+      "steering": -0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.5416666666666666,
+      "steering": -0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.55,
+      "steering": -0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.5583333333333333,
+      "steering": -0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.5666666666666667,
+      "steering": -0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.575,
+      "steering": -0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.5833333333333334,
+      "steering": -0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.5916666666666667,
+      "steering": -0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.6,
+      "steering": -0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.6083333333333333,
+      "steering": -0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.6166666666666667,
+      "steering": -0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.625,
+      "steering": -0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.6333333333333333,
+      "steering": -0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.6416666666666667,
+      "steering": -0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.65,
+      "steering": -0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.6583333333333333,
+      "steering": -0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.6666666666666666,
+      "steering": -0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.675,
+      "steering": -0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.6833333333333333,
+      "steering": -0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.6916666666666667,
+      "steering": -0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.7,
+      "steering": -0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.7083333333333334,
+      "steering": -0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.7166666666666667,
+      "steering": -0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.725,
+      "steering": -0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.7333333333333333,
+      "steering": -0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.7416666666666667,
+      "steering": -0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.75,
+      "steering": -0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.7583333333333333,
+      "steering": -0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.7666666666666667,
+      "steering": -0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.775,
+      "steering": -0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.7833333333333333,
+      "steering": -0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.7916666666666666,
+      "steering": -0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.8,
+      "steering": -0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.8083333333333333,
+      "steering": -0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.8166666666666667,
+      "steering": -0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.825,
+      "steering": -0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.8333333333333334,
+      "steering": -0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.8416666666666667,
+      "steering": -0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.85,
+      "steering": -0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.8583333333333333,
+      "steering": -0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.8666666666666667,
+      "steering": -0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.875,
+      "steering": -0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.8833333333333333,
+      "steering": -0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.8916666666666667,
+      "steering": -0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.9,
+      "steering": -0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.9083333333333333,
+      "steering": -0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.9166666666666666,
+      "steering": -0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.925,
+      "steering": -0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.9333333333333333,
+      "steering": -0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.9416666666666667,
+      "steering": -0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.95,
+      "steering": -0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.9583333333333334,
+      "steering": -0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.9666666666666667,
+      "steering": -0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.975,
+      "steering": -0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.9833333333333333,
+      "steering": -0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.9916666666666667,
+      "steering": -0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1,
+      "steering": -0.40285947416655227,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.0083333333333333,
+      "steering": -0.38035947416655225,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.0166666666666666,
+      "steering": -0.3578594741665522,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.025,
+      "steering": -0.3353594741665522,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.0333333333333334,
+      "steering": -0.3128594741665522,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.0416666666666667,
+      "steering": -0.29035947416655217,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.05,
+      "steering": -0.26785947416655215,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.0583333333333333,
+      "steering": -0.24535947416655216,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.0666666666666667,
+      "steering": -0.22285947416655216,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.075,
+      "steering": -0.20035947416655217,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.0833333333333333,
+      "steering": -0.17785947416655218,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.0916666666666666,
+      "steering": -0.15535947416655219,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.1,
+      "steering": -0.1328594741665522,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.1083333333333334,
+      "steering": -0.11035947416655219,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.1166666666666667,
+      "steering": -0.08785947416655218,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.125,
+      "steering": -0.06535947416655218,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.1333333333333333,
+      "steering": -0.04285947416655217,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.1416666666666666,
+      "steering": -0.020359474166552167,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.15,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.1583333333333334,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.1666666666666667,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.175,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.1833333333333333,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.1916666666666667,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.2,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.2083333333333333,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.2166666666666666,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.225,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.2333333333333334,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.2416666666666667,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.25,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.2583333333333333,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.2666666666666666,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.275,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.2833333333333334,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.2916666666666667,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.3,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.3083333333333333,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.3166666666666667,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.325,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.3333333333333333,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.3416666666666666,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.35,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.3583333333333334,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.3666666666666667,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.375,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.3833333333333333,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.3916666666666666,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.4,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.4083333333333334,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.4166666666666667,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.425,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.4333333333333333,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.4416666666666667,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.45,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.4583333333333333,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.4666666666666666,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.475,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.4833333333333334,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.4916666666666667,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.5,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.5083333333333333,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.5166666666666666,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.525,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.5333333333333334,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.5416666666666667,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.55,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.5583333333333333,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.5666666666666667,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.575,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.5833333333333333,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.5916666666666666,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.6,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.6083333333333334,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.6166666666666667,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.625,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.6333333333333333,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.6416666666666666,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.65,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.6583333333333334,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.6666666666666667,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.675,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.6833333333333333,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.6916666666666667,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.7,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.7083333333333333,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.7166666666666666,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.725,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.7333333333333334,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.7416666666666667,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.75,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.7583333333333333,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.7666666666666666,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.775,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.7833333333333334,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.7916666666666667,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.8,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.8083333333333333,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.8166666666666667,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.825,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.8333333333333333,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.8416666666666666,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.85,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.8583333333333334,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.8666666666666667,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.875,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.8833333333333333,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.8916666666666666,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.9,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.9083333333333334,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.9166666666666667,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.925,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.9333333333333333,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.9416666666666667,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.95,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.9583333333333333,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.9666666666666666,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.975,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.9833333333333334,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 1.9916666666666667,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 2,
+      "steering": 0,
+      "slip": 0,
+      "drifting": false
+    }
+  ],
+  "drift": [
+    {
+      "t": 0.008333333333333333,
+      "steering": 0.01583333333333333,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.016666666666666666,
+      "steering": 0.03166666666666666,
+      "slip": 0,
+      "drifting": false
+    },
+    {
+      "t": 0.025,
+      "steering": 0.047499999999999994,
+      "slip": 0.0009382233429233606,
+      "drifting": true
+    },
+    {
+      "t": 0.03333333333333333,
+      "steering": 0.06333333333333332,
+      "slip": 0.0021660229832806584,
+      "drifting": true
+    },
+    {
+      "t": 0.041666666666666664,
+      "steering": 0.07916666666666666,
+      "slip": 0.00367624925681374,
+      "drifting": true
+    },
+    {
+      "t": 0.05,
+      "steering": 0.095,
+      "slip": 0.0054619290251039536,
+      "drifting": true
+    },
+    {
+      "t": 0.058333333333333334,
+      "steering": 0.11083333333333334,
+      "slip": 0.007516261317133642,
+      "drifting": true
+    },
+    {
+      "t": 0.06666666666666667,
+      "steering": 0.12666666666666668,
+      "slip": 0.009832613078457867,
+      "drifting": true
+    },
+    {
+      "t": 0.075,
+      "steering": 0.14250000000000002,
+      "slip": 0.012404515025329459,
+      "drifting": true
+    },
+    {
+      "t": 0.08333333333333333,
+      "steering": 0.15833333333333335,
+      "slip": 0.015225657601186073,
+      "drifting": true
+    },
+    {
+      "t": 0.09166666666666666,
+      "steering": 0.1741666666666667,
+      "slip": 0.01828988703297196,
+      "drifting": true
+    },
+    {
+      "t": 0.1,
+      "steering": 0.19000000000000003,
+      "slip": 0.021591201484829466,
+      "drifting": true
+    },
+    {
+      "t": 0.10833333333333334,
+      "steering": 0.20583333333333337,
+      "slip": 0.02512374730675626,
+      "drifting": true
+    },
+    {
+      "t": 0.11666666666666667,
+      "steering": 0.2216666666666667,
+      "slip": 0.028881815375883524,
+      "drifting": true
+    },
+    {
+      "t": 0.125,
+      "steering": 0.23750000000000004,
+      "slip": 0.03285983752808831,
+      "drifting": true
+    },
+    {
+      "t": 0.13333333333333333,
+      "steering": 0.25333333333333335,
+      "slip": 0.03705238307770971,
+      "drifting": true
+    },
+    {
+      "t": 0.14166666666666666,
+      "steering": 0.26916666666666667,
+      "slip": 0.041454155423193514,
+      "drifting": true
+    },
+    {
+      "t": 0.15,
+      "steering": 0.285,
+      "slip": 0.04605998873654386,
+      "drifting": true
+    },
+    {
+      "t": 0.15833333333333333,
+      "steering": 0.3008333333333333,
+      "slip": 0.050864844734512527,
+      "drifting": true
+    },
+    {
+      "t": 0.16666666666666666,
+      "steering": 0.3166666666666666,
+      "slip": 0.055863809529507945,
+      "drifting": true
+    },
+    {
+      "t": 0.175,
+      "steering": 0.3324999999999999,
+      "slip": 0.06094837707348159,
+      "drifting": true
+    },
+    {
+      "t": 0.18333333333333332,
+      "steering": 0.3483333333333332,
+      "slip": 0.06590740619749663,
+      "drifting": true
+    },
+    {
+      "t": 0.19166666666666668,
+      "steering": 0.3641666666666665,
+      "slip": 0.07074399645618569,
+      "drifting": true
+    },
+    {
+      "t": 0.2,
+      "steering": 0.37999999999999984,
+      "slip": 0.0754611708759048,
+      "drifting": true
+    },
+    {
+      "t": 0.20833333333333334,
+      "steering": 0.39583333333333315,
+      "slip": 0.08006187784422335,
+      "drifting": true
+    },
+    {
+      "t": 0.21666666666666667,
+      "steering": 0.40285947416655227,
+      "slip": 0.08454899295276225,
+      "drifting": true
+    },
+    {
+      "t": 0.225,
+      "steering": 0.40285947416655227,
+      "slip": 0.08892532079453233,
+      "drifting": true
+    },
+    {
+      "t": 0.23333333333333334,
+      "steering": 0.40285947416655227,
+      "slip": 0.09319359671689625,
+      "drifting": true
+    },
+    {
+      "t": 0.24166666666666667,
+      "steering": 0.40285947416655227,
+      "slip": 0.09735648853124966,
+      "drifting": true
+    },
+    {
+      "t": 0.25,
+      "steering": 0.40285947416655227,
+      "slip": 0.10141659818049015,
+      "drifting": true
+    },
+    {
+      "t": 0.25833333333333336,
+      "steering": 0.40285947416655227,
+      "slip": 0.10537646336531627,
+      "drifting": true
+    },
+    {
+      "t": 0.26666666666666666,
+      "steering": 0.40285947416655227,
+      "slip": 0.10923855913037309,
+      "drifting": true
+    },
+    {
+      "t": 0.275,
+      "steering": 0.40285947416655227,
+      "slip": 0.11300529941123565,
+      "drifting": true
+    },
+    {
+      "t": 0.2833333333333333,
+      "steering": 0.40285947416655227,
+      "slip": 0.11667903854319729,
+      "drifting": true
+    },
+    {
+      "t": 0.2916666666666667,
+      "steering": 0.40285947416655227,
+      "slip": 0.12026207273280584,
+      "drifting": true
+    },
+    {
+      "t": 0.3,
+      "steering": 0.40285947416655227,
+      "slip": 0.12375664149306746,
+      "drifting": true
+    },
+    {
+      "t": 0.30833333333333335,
+      "steering": 0.40285947416655227,
+      "slip": 0.1271649290432152,
+      "drifting": true
+    },
+    {
+      "t": 0.31666666666666665,
+      "steering": 0.40285947416655227,
+      "slip": 0.13048906567391702,
+      "drifting": true
+    },
+    {
+      "t": 0.325,
+      "steering": 0.40285947416655227,
+      "slip": 0.133731129078777,
+      "drifting": true
+    },
+    {
+      "t": 0.3333333333333333,
+      "steering": 0.40285947416655227,
+      "slip": 0.13689314565296123,
+      "drifting": true
+    },
+    {
+      "t": 0.3416666666666667,
+      "steering": 0.40285947416655227,
+      "slip": 0.139977091759761,
+      "drifting": true
+    },
+    {
+      "t": 0.35,
+      "steering": 0.40285947416655227,
+      "slip": 0.142984894965884,
+      "drifting": true
+    },
+    {
+      "t": 0.35833333333333334,
+      "steering": 0.40285947416655227,
+      "slip": 0.14591843524624637,
+      "drifting": true
+    },
+    {
+      "t": 0.36666666666666664,
+      "steering": 0.40285947416655227,
+      "slip": 0.14877954615901817,
+      "drifting": true
+    },
+    {
+      "t": 0.375,
+      "steering": 0.40285947416655227,
+      "slip": 0.15157001599165693,
+      "drifting": true
+    },
+    {
+      "t": 0.38333333333333336,
+      "steering": 0.40285947416655227,
+      "slip": 0.15429158887864555,
+      "drifting": true
+    },
+    {
+      "t": 0.39166666666666666,
+      "steering": 0.40285947416655227,
+      "slip": 0.15694596589163312,
+      "drifting": true
+    },
+    {
+      "t": 0.4,
+      "steering": 0.40285947416655227,
+      "slip": 0.15953480610266005,
+      "drifting": true
+    },
+    {
+      "t": 0.4083333333333333,
+      "steering": 0.40285947416655227,
+      "slip": 0.16205972762113213,
+      "drifting": true
+    },
+    {
+      "t": 0.4166666666666667,
+      "steering": 0.40285947416655227,
+      "slip": 0.1645223086051916,
+      "drifting": true
+    },
+    {
+      "t": 0.425,
+      "steering": 0.40285947416655227,
+      "slip": 0.16692408824811727,
+      "drifting": true
+    },
+    {
+      "t": 0.43333333333333335,
+      "steering": 0.40285947416655227,
+      "slip": 0.16926656774037055,
+      "drifting": true
+    },
+    {
+      "t": 0.44166666666666665,
+      "steering": 0.40285947416655227,
+      "slip": 0.17155121120788827,
+      "drifting": true
+    },
+    {
+      "t": 0.45,
+      "steering": 0.40285947416655227,
+      "slip": 0.1737794466272091,
+      "drifting": true
+    },
+    {
+      "t": 0.4583333333333333,
+      "steering": 0.40285947416655227,
+      "slip": 0.1759526667180053,
+      "drifting": true
+    },
+    {
+      "t": 0.4666666666666667,
+      "steering": 0.40285947416655227,
+      "slip": 0.17807222981357795,
+      "drifting": true
+    },
+    {
+      "t": 0.475,
+      "steering": 0.40285947416655227,
+      "slip": 0.1801394607098594,
+      "drifting": true
+    },
+    {
+      "t": 0.48333333333333334,
+      "steering": 0.40285947416655227,
+      "slip": 0.18215565149345392,
+      "drifting": true
+    },
+    {
+      "t": 0.49166666666666664,
+      "steering": 0.40285947416655227,
+      "slip": 0.1841220623492338,
+      "drifting": true
+    },
+    {
+      "t": 0.5,
+      "steering": 0.40285947416655227,
+      "slip": 0.18603992234799607,
+      "drifting": true
+    },
+    {
+      "t": 0.5083333333333333,
+      "steering": 0.40285947416655227,
+      "slip": 0.18791043021467155,
+      "drifting": true
+    },
+    {
+      "t": 0.5166666666666667,
+      "steering": 0.40285947416655227,
+      "slip": 0.1897347550775671,
+      "drifting": true
+    },
+    {
+      "t": 0.525,
+      "steering": 0.40285947416655227,
+      "slip": 0.19151403719910887,
+      "drifting": true
+    },
+    {
+      "t": 0.5333333333333333,
+      "steering": 0.40285947416655227,
+      "slip": 0.19324938868854336,
+      "drifting": true
+    },
+    {
+      "t": 0.5416666666666666,
+      "steering": 0.40285947416655227,
+      "slip": 0.19494189419704194,
+      "drifting": true
+    },
+    {
+      "t": 0.55,
+      "steering": 0.40285947416655227,
+      "slip": 0.19659261159564317,
+      "drifting": true
+    },
+    {
+      "t": 0.5583333333333333,
+      "steering": 0.40285947416655227,
+      "slip": 0.19820257263645658,
+      "drifting": true
+    },
+    {
+      "t": 0.5666666666666667,
+      "steering": 0.40285947416655227,
+      "slip": 0.19977278359754133,
+      "drifting": true
+    },
+    {
+      "t": 0.575,
+      "steering": 0.40285947416655227,
+      "slip": 0.20130422591186284,
+      "drifting": true
+    },
+    {
+      "t": 0.5833333333333334,
+      "steering": 0.40285947416655227,
+      "slip": 0.2027978567807202,
+      "drifting": true
+    },
+    {
+      "t": 0.5916666666666667,
+      "steering": 0.40285947416655227,
+      "slip": 0.20425460977202828,
+      "drifting": true
+    },
+    {
+      "t": 0.6,
+      "steering": 0.40285947416655227,
+      "slip": 0.20567539540382798,
+      "drifting": true
+    },
+    {
+      "t": 0.6083333333333333,
+      "steering": 0.40285947416655227,
+      "slip": 0.20706110171338965,
+      "drifting": true
+    },
+    {
+      "t": 0.6166666666666667,
+      "steering": 0.40285947416655227,
+      "slip": 0.20841259481226534,
+      "drifting": true
+    },
+    {
+      "t": 0.625,
+      "steering": 0.40285947416655227,
+      "slip": 0.2097307194276367,
+      "drifting": true
+    },
+    {
+      "t": 0.6333333333333333,
+      "steering": 0.40285947416655227,
+      "slip": 0.21101629943029693,
+      "drifting": true
+    },
+    {
+      "t": 0.6416666666666667,
+      "steering": 0.40285947416655227,
+      "slip": 0.21227013834959685,
+      "drifting": true
+    },
+    {
+      "t": 0.65,
+      "steering": 0.40285947416655227,
+      "slip": 0.21349301987567695,
+      "drifting": true
+    },
+    {
+      "t": 0.6583333333333333,
+      "steering": 0.40285947416655227,
+      "slip": 0.21468570834929923,
+      "drifting": true
+    },
+    {
+      "t": 0.6666666666666666,
+      "steering": 0.40285947416655227,
+      "slip": 0.21584894923958498,
+      "drifting": true
+    },
+    {
+      "t": 0.675,
+      "steering": 0.40285947416655227,
+      "slip": 0.21698346960995732,
+      "drifting": true
+    },
+    {
+      "t": 0.6833333333333333,
+      "steering": 0.40285947416655227,
+      "slip": 0.21808997857257953,
+      "drifting": true
+    },
+    {
+      "t": 0.6916666666666667,
+      "steering": 0.40285947416655227,
+      "slip": 0.21916916773157316,
+      "drifting": true
+    },
+    {
+      "t": 0.7,
+      "steering": 0.40285947416655227,
+      "slip": 0.22022171161529316,
+      "drifting": true
+    },
+    {
+      "t": 0.7083333333333334,
+      "steering": 0.40285947416655227,
+      "slip": 0.22124826809793008,
+      "drifting": true
+    },
+    {
+      "t": 0.7166666666666667,
+      "steering": 0.40285947416655227,
+      "slip": 0.2222494788107028,
+      "drifting": true
+    },
+    {
+      "t": 0.725,
+      "steering": 0.40285947416655227,
+      "slip": 0.223225969542899,
+      "drifting": true
+    },
+    {
+      "t": 0.7333333333333333,
+      "steering": 0.40285947416655227,
+      "slip": 0.22417835063301375,
+      "drifting": true
+    },
+    {
+      "t": 0.7416666666666667,
+      "steering": 0.40285947416655227,
+      "slip": 0.225107217350231,
+      "drifting": true
+    },
+    {
+      "t": 0.75,
+      "steering": 0.40285947416655227,
+      "slip": 0.22601315026648622,
+      "drifting": true
+    },
+    {
+      "t": 0.7583333333333333,
+      "steering": 0.40285947416655227,
+      "slip": 0.22689671561934266,
+      "drifting": true
+    },
+    {
+      "t": 0.7666666666666667,
+      "steering": 0.40285947416655227,
+      "slip": 0.22775846566590835,
+      "drifting": true
+    },
+    {
+      "t": 0.775,
+      "steering": 0.40285947416655227,
+      "slip": 0.22859893902801476,
+      "drifting": true
+    },
+    {
+      "t": 0.7833333333333333,
+      "steering": 0.40285947416655227,
+      "slip": 0.2294186610288729,
+      "drifting": true
+    },
+    {
+      "t": 0.7916666666666666,
+      "steering": 0.40285947416655227,
+      "slip": 0.23021814402141755,
+      "drifting": true
+    },
+    {
+      "t": 0.8,
+      "steering": 0.40285947416655227,
+      "slip": 0.23099788770854443,
+      "drifting": true
+    },
+    {
+      "t": 0.8083333333333333,
+      "steering": 0.40285947416655227,
+      "slip": 0.23175837945544078,
+      "drifting": true
+    },
+    {
+      "t": 0.8166666666666667,
+      "steering": 0.40285947416655227,
+      "slip": 0.23250009459420454,
+      "drifting": true
+    },
+    {
+      "t": 0.825,
+      "steering": 0.40285947416655227,
+      "slip": 0.2332234967209423,
+      "drifting": true
+    },
+    {
+      "t": 0.8333333333333334,
+      "steering": 0.40285947416655227,
+      "slip": 0.23392903798553202,
+      "drifting": true
+    },
+    {
+      "t": 0.8416666666666667,
+      "steering": 0.40285947416655227,
+      "slip": 0.2346171593742314,
+      "drifting": true
+    },
+    {
+      "t": 0.85,
+      "steering": 0.40285947416655227,
+      "slip": 0.23528829098530857,
+      "drifting": true
+    },
+    {
+      "t": 0.8583333333333333,
+      "steering": 0.40285947416655227,
+      "slip": 0.23594285229786768,
+      "drifting": true
+    },
+    {
+      "t": 0.8666666666666667,
+      "steering": 0.40285947416655227,
+      "slip": 0.23658125243403688,
+      "drifting": true
+    },
+    {
+      "t": 0.875,
+      "steering": 0.40285947416655227,
+      "slip": 0.23720389041468293,
+      "drifting": true
+    },
+    {
+      "t": 0.8833333333333333,
+      "steering": 0.40285947416655227,
+      "slip": 0.2378111554088123,
+      "drifting": true
+    },
+    {
+      "t": 0.8916666666666667,
+      "steering": 0.40285947416655227,
+      "slip": 0.23840342697681455,
+      "drifting": true
+    },
+    {
+      "t": 0.9,
+      "steering": 0.40285947416655227,
+      "slip": 0.2389810753076997,
+      "drifting": true
+    },
+    {
+      "t": 0.9083333333333333,
+      "steering": 0.40285947416655227,
+      "slip": 0.23954446145047859,
+      "drifting": true
+    },
+    {
+      "t": 0.9166666666666666,
+      "steering": 0.40285947416655227,
+      "slip": 0.24009393753983024,
+      "drifting": true
+    },
+    {
+      "t": 0.925,
+      "steering": 0.40285947416655227,
+      "slip": 0.2406298470161975,
+      "drifting": true
+    },
+    {
+      "t": 0.9333333333333333,
+      "steering": 0.40285947416655227,
+      "slip": 0.24115252484044838,
+      "drifting": true
+    },
+    {
+      "t": 0.9416666666666667,
+      "steering": 0.40285947416655227,
+      "slip": 0.24166229770323766,
+      "drifting": true
+    },
+    {
+      "t": 0.95,
+      "steering": 0.40285947416655227,
+      "slip": 0.2421594842291991,
+      "drifting": true
+    },
+    {
+      "t": 0.9583333333333334,
+      "steering": 0.40285947416655227,
+      "slip": 0.24264439517609626,
+      "drifting": true
+    },
+    {
+      "t": 0.9666666666666667,
+      "steering": 0.40285947416655227,
+      "slip": 0.24311733362905608,
+      "drifting": true
+    },
+    {
+      "t": 0.975,
+      "steering": 0.40285947416655227,
+      "slip": 0.24357859519000713,
+      "drifting": true
+    },
+    {
+      "t": 0.9833333333333333,
+      "steering": 0.40285947416655227,
+      "slip": 0.24402846816244037,
+      "drifting": true
+    },
+    {
+      "t": 0.9916666666666667,
+      "steering": 0.40285947416655227,
+      "slip": 0.24446723373160814,
+      "drifting": true
+    },
+    {
+      "t": 1,
+      "steering": 0.40285947416655227,
+      "slip": 0.24489516614027423,
+      "drifting": true
+    },
+    {
+      "t": 1.0083333333333333,
+      "steering": 0.38035947416655225,
+      "slip": 0.23295148795061982,
+      "drifting": false
+    },
+    {
+      "t": 1.0166666666666666,
+      "steering": 0.3578594741665522,
+      "slip": 0.22159030981985312,
+      "drifting": false
+    },
+    {
+      "t": 1.025,
+      "steering": 0.3353594741665522,
+      "slip": 0.2107832228848738,
+      "drifting": false
+    },
+    {
+      "t": 1.0333333333333334,
+      "steering": 0.3128594741665522,
+      "slip": 0.20050320379918424,
+      "drifting": false
+    },
+    {
+      "t": 1.0416666666666667,
+      "steering": 0.29035947416655217,
+      "slip": 0.1907245471604474,
+      "drifting": false
+    },
+    {
+      "t": 1.05,
+      "steering": 0.26785947416655215,
+      "slip": 0.18142280123359167,
+      "drifting": false
+    },
+    {
+      "t": 1.0583333333333333,
+      "steering": 0.24535947416655216,
+      "slip": 0.17257470680873682,
+      "drifting": false
+    },
+    {
+      "t": 1.0666666666666667,
+      "steering": 0.22285947416655216,
+      "slip": 0.16415813904105417,
+      "drifting": false
+    },
+    {
+      "t": 1.075,
+      "steering": 0.20035947416655217,
+      "slip": 0.15615205212713015,
+      "drifting": false
+    },
+    {
+      "t": 1.0833333333333333,
+      "steering": 0.17785947416655218,
+      "slip": 0.14853642667949551,
+      "drifting": false
+    },
+    {
+      "t": 1.0916666666666666,
+      "steering": 0.15535947416655219,
+      "slip": 0.14129221966772904,
+      "drifting": false
+    },
+    {
+      "t": 1.1,
+      "steering": 0.1328594741665522,
+      "slip": 0.13440131680096234,
+      "drifting": false
+    },
+    {
+      "t": 1.1083333333333334,
+      "steering": 0.11035947416655219,
+      "slip": 0.12784648723271755,
+      "drifting": false
+    },
+    {
+      "t": 1.1166666666666667,
+      "steering": 0.08785947416655218,
+      "slip": 0.1216113404748158,
+      "drifting": false
+    },
+    {
+      "t": 1.125,
+      "steering": 0.06535947416655218,
+      "slip": 0.11568028541261942,
+      "drifting": false
+    },
+    {
+      "t": 1.1333333333333333,
+      "steering": 0.04285947416655217,
+      "slip": 0.11003849131912431,
+      "drifting": false
+    },
+    {
+      "t": 1.1416666666666666,
+      "steering": 0.020359474166552167,
+      "slip": 0.10467185077041744,
+      "drifting": false
+    },
+    {
+      "t": 1.15,
+      "steering": 0,
+      "slip": 0.09956694436976879,
+      "drifting": false
+    },
+    {
+      "t": 1.1583333333333334,
+      "steering": 0,
+      "slip": 0.09471100719214977,
+      "drifting": false
+    },
+    {
+      "t": 1.1666666666666667,
+      "steering": 0,
+      "slip": 0.09009189686527161,
+      "drifting": false
+    },
+    {
+      "t": 1.175,
+      "steering": 0,
+      "slip": 0.08569806320732999,
+      "drifting": false
+    },
+    {
+      "t": 1.1833333333333333,
+      "steering": 0,
+      "slip": 0.08151851934553432,
+      "drifting": false
+    },
+    {
+      "t": 1.1916666666666667,
+      "steering": 0,
+      "slip": 0.07754281424320293,
+      "drifting": false
+    },
+    {
+      "t": 1.2,
+      "steering": 0,
+      "slip": 0.0737610065667277,
+      "drifting": false
+    },
+    {
+      "t": 1.2083333333333333,
+      "steering": 0,
+      "slip": 0.07016363982706178,
+      "drifting": false
+    },
+    {
+      "t": 1.2166666666666666,
+      "steering": 0,
+      "slip": 0.06674171873357135,
+      "drifting": false
+    },
+    {
+      "t": 1.225,
+      "steering": 0,
+      "slip": 0.06348668670112359,
+      "drifting": false
+    },
+    {
+      "t": 1.2333333333333334,
+      "steering": 0,
+      "slip": 0.06039040445416693,
+      "drifting": false
+    },
+    {
+      "t": 1.2416666666666667,
+      "steering": 0,
+      "slip": 0.05744512967430256,
+      "drifting": false
+    },
+    {
+      "t": 1.25,
+      "steering": 0,
+      "slip": 0.054643497640455715,
+      "drifting": false
+    },
+    {
+      "t": 1.2583333333333333,
+      "steering": 0,
+      "slip": 0.051978502813236814,
+      "drifting": false
+    },
+    {
+      "t": 1.2666666666666666,
+      "steering": 0,
+      "slip": 0.049443481317444,
+      "drifting": false
+    },
+    {
+      "t": 1.275,
+      "steering": 0,
+      "slip": 0.04703209427890406,
+      "drifting": false
+    },
+    {
+      "t": 1.2833333333333334,
+      "steering": 0,
+      "slip": 0.044738311973985236,
+      "drifting": false
+    },
+    {
+      "t": 1.2916666666666667,
+      "steering": 0,
+      "slip": 0.04255639875214738,
+      "drifting": false
+    },
+    {
+      "t": 1.3,
+      "steering": 0,
+      "slip": 0.04048089869382806,
+      "drifting": false
+    },
+    {
+      "t": 1.3083333333333333,
+      "steering": 0,
+      "slip": 0.03850662196780177,
+      "drifting": false
+    },
+    {
+      "t": 1.3166666666666667,
+      "steering": 0,
+      "slip": 0.03662863185389863,
+      "drifting": false
+    },
+    {
+      "t": 1.325,
+      "steering": 0,
+      "slip": 0.03484223239863251,
+      "drifting": false
+    },
+    {
+      "t": 1.3333333333333333,
+      "steering": 0,
+      "slip": 0.033142956672871336,
+      "drifting": false
+    },
+    {
+      "t": 1.3416666666666666,
+      "steering": 0,
+      "slip": 0.0315265556021875,
+      "drifting": false
+    },
+    {
+      "t": 1.35,
+      "steering": 0,
+      "slip": 0.029988987341958578,
+      "drifting": false
+    },
+    {
+      "t": 1.3583333333333334,
+      "steering": 0,
+      "slip": 0.028526407170650456,
+      "drifting": false
+    },
+    {
+      "t": 1.3666666666666667,
+      "steering": 0,
+      "slip": 0.027135157876010875,
+      "drifting": false
+    },
+    {
+      "t": 1.375,
+      "steering": 0,
+      "slip": 0.025811760610133842,
+      "drifting": false
+    },
+    {
+      "t": 1.3833333333333333,
+      "steering": 0,
+      "slip": 0.024552906190527815,
+      "drifting": false
+    },
+    {
+      "t": 1.3916666666666666,
+      "steering": 0,
+      "slip": 0.02335544682543579,
+      "drifting": false
+    },
+    {
+      "t": 1.4,
+      "steering": 0,
+      "slip": 0.022216388242716316,
+      "drifting": false
+    },
+    {
+      "t": 1.4083333333333334,
+      "steering": 0,
+      "slip": 0.02113288220260347,
+      "drifting": false
+    },
+    {
+      "t": 1.4166666666666667,
+      "steering": 0,
+      "slip": 0.02010221937562388,
+      "drifting": false
+    },
+    {
+      "t": 1.425,
+      "steering": 0,
+      "slip": 0.019121822567861806,
+      "drifting": false
+    },
+    {
+      "t": 1.4333333333333333,
+      "steering": 0,
+      "slip": 0.018189240276631952,
+      "drifting": false
+    },
+    {
+      "t": 1.4416666666666667,
+      "steering": 0,
+      "slip": 0.01730214056044582,
+      "drifting": false
+    },
+    {
+      "t": 1.45,
+      "steering": 0,
+      "slip": 0.01645830520794334,
+      "drifting": false
+    },
+    {
+      "t": 1.4583333333333333,
+      "steering": 0,
+      "slip": 0.01565562419120905,
+      "drifting": false
+    },
+    {
+      "t": 1.4666666666666666,
+      "steering": 0,
+      "slip": 0.014892090389603239,
+      "drifting": false
+    },
+    {
+      "t": 1.475,
+      "steering": 0,
+      "slip": 0.014165794570914903,
+      "drifting": false
+    },
+    {
+      "t": 1.4833333333333334,
+      "steering": 0,
+      "slip": 0.013474920617286721,
+      "drifting": false
+    },
+    {
+      "t": 1.4916666666666667,
+      "steering": 0,
+      "slip": 0.012817740983974453,
+      "drifting": false
+    },
+    {
+      "t": 1.5,
+      "steering": 0,
+      "slip": 0.012192612379585235,
+      "drifting": false
+    },
+    {
+      "t": 1.5083333333333333,
+      "steering": 0,
+      "slip": 0.011597971656993144,
+      "drifting": false
+    },
+    {
+      "t": 1.5166666666666666,
+      "steering": 0,
+      "slip": 0.011032331904657182,
+      "drifting": false
+    },
+    {
+      "t": 1.525,
+      "steering": 0,
+      "slip": 0.010494278728567917,
+      "drifting": false
+    },
+    {
+      "t": 1.5333333333333334,
+      "steering": 0,
+      "slip": 0.009982466715525745,
+      "drifting": false
+    },
+    {
+      "t": 1.5416666666666667,
+      "steering": 0,
+      "slip": 0.009495616068907087,
+      "drifting": false
+    },
+    {
+      "t": 1.55,
+      "steering": 0,
+      "slip": 0.009032509408506221,
+      "drifting": false
+    },
+    {
+      "t": 1.5583333333333333,
+      "steering": 0,
+      "slip": 0.008591988726450658,
+      "drifting": false
+    },
+    {
+      "t": 1.5666666666666667,
+      "steering": 0,
+      "slip": 0.008172952491578282,
+      "drifting": false
+    },
+    {
+      "t": 1.575,
+      "steering": 0,
+      "slip": 0.007774352895035686,
+      "drifting": false
+    },
+    {
+      "t": 1.5833333333333333,
+      "steering": 0,
+      "slip": 0.007395193230210256,
+      "drifting": false
+    },
+    {
+      "t": 1.5916666666666666,
+      "steering": 0,
+      "slip": 0.007034525400444478,
+      "drifting": false
+    },
+    {
+      "t": 1.6,
+      "steering": 0,
+      "slip": 0.006691447548300455,
+      "drifting": false
+    },
+    {
+      "t": 1.6083333333333334,
+      "steering": 0,
+      "slip": 0.006365101800446556,
+      "drifting": false
+    },
+    {
+      "t": 1.6166666666666667,
+      "steering": 0,
+      "slip": 0.006054672122527236,
+      "drifting": false
+    },
+    {
+      "t": 1.625,
+      "steering": 0,
+      "slip": 0.005759382278652099,
+      "drifting": false
+    },
+    {
+      "t": 1.6333333333333333,
+      "steering": 0,
+      "slip": 0.005478493890401847,
+      "drifting": false
+    },
+    {
+      "t": 1.6416666666666666,
+      "steering": 0,
+      "slip": 0.005211304590497626,
+      "drifting": false
+    },
+    {
+      "t": 1.65,
+      "steering": 0,
+      "slip": 0.004957146266516986,
+      "drifting": false
+    },
+    {
+      "t": 1.6583333333333334,
+      "steering": 0,
+      "slip": 0.004715383390264816,
+      "drifting": false
+    },
+    {
+      "t": 1.6666666666666667,
+      "steering": 0,
+      "slip": 0.004485411428621827,
+      "drifting": false
+    },
+    {
+      "t": 1.675,
+      "steering": 0,
+      "slip": 0.004266655331896866,
+      "drifting": false
+    },
+    {
+      "t": 1.6833333333333333,
+      "steering": 0,
+      "slip": 0.004058568095903159,
+      "drifting": false
+    },
+    {
+      "t": 1.6916666666666667,
+      "steering": 0,
+      "slip": 0.0038606293941629206,
+      "drifting": false
+    },
+    {
+      "t": 1.7,
+      "steering": 0,
+      "slip": 0.003672344276820135,
+      "drifting": false
+    },
+    {
+      "t": 1.7083333333333333,
+      "steering": 0,
+      "slip": 0.003493241933008108,
+      "drifting": false
+    },
+    {
+      "t": 1.7166666666666666,
+      "steering": 0,
+      "slip": 0.0033228745135770645,
+      "drifting": false
+    },
+    {
+      "t": 1.725,
+      "steering": 0,
+      "slip": 0.0031608160112380013,
+      "drifting": false
+    },
+    {
+      "t": 1.7333333333333334,
+      "steering": 0,
+      "slip": 0.003006661195322566,
+      "drifting": false
+    },
+    {
+      "t": 1.7416666666666667,
+      "steering": 0,
+      "slip": 0.0028600245984953133,
+      "drifting": false
+    },
+    {
+      "t": 1.75,
+      "steering": 0,
+      "slip": 0.0027205395528845824,
+      "drifting": false
+    },
+    {
+      "t": 1.7583333333333333,
+      "steering": 0,
+      "slip": 0.0025878572732218313,
+      "drifting": false
+    },
+    {
+      "t": 1.7666666666666666,
+      "steering": 0,
+      "slip": 0.0024616459846967895,
+      "drifting": false
+    },
+    {
+      "t": 1.775,
+      "steering": 0,
+      "slip": 0.0023415900933476206,
+      "drifting": false
+    },
+    {
+      "t": 1.7833333333333334,
+      "steering": 0,
+      "slip": 0.0022273893969116305,
+      "drifting": false
+    },
+    {
+      "t": 1.7916666666666667,
+      "steering": 0,
+      "slip": 0.0021187583341632427,
+      "drifting": false
+    },
+    {
+      "t": 1.8,
+      "steering": 0,
+      "slip": 0.002015425270862193,
+      "drifting": false
+    },
+    {
+      "t": 1.8083333333333333,
+      "steering": 0,
+      "slip": 0.0019171318205264394,
+      "drifting": false
+    },
+    {
+      "t": 1.8166666666666667,
+      "steering": 0,
+      "slip": 0.001823632198331371,
+      "drifting": false
+    },
+    {
+      "t": 1.825,
+      "steering": 0,
+      "slip": 0.001734692606519722,
+      "drifting": false
+    },
+    {
+      "t": 1.8333333333333333,
+      "steering": 0,
+      "slip": 0.0016500906497853986,
+      "drifting": false
+    },
+    {
+      "t": 1.8416666666666666,
+      "steering": 0,
+      "slip": 0.001569614779169374,
+      "drifting": false
+    },
+    {
+      "t": 1.85,
+      "steering": 0,
+      "slip": 0.0014930637630770989,
+      "drifting": false
+    },
+    {
+      "t": 1.8583333333333334,
+      "steering": 0,
+      "slip": 0.0014202461840946991,
+      "drifting": false
+    },
+    {
+      "t": 1.8666666666666667,
+      "steering": 0,
+      "slip": 0.0013509799603457359,
+      "drifting": false
+    },
+    {
+      "t": 1.875,
+      "steering": 0,
+      "slip": 0.0012850918901916718,
+      "drifting": false
+    },
+    {
+      "t": 1.8833333333333333,
+      "steering": 0,
+      "slip": 0.0012224172191375587,
+      "drifting": false
+    },
+    {
+      "t": 1.8916666666666666,
+      "steering": 0,
+      "slip": 0.0011627992278599832,
+      "drifting": false
+    },
+    {
+      "t": 1.9,
+      "steering": 0,
+      "slip": 0.0011060888403271265,
+      "drifting": false
+    },
+    {
+      "t": 1.9083333333333334,
+      "steering": 0,
+      "slip": 0.0010521442510310348,
+      "drifting": false
+    },
+    {
+      "t": 1.9166666666666667,
+      "steering": 0,
+      "slip": 0.001000830570399986,
+      "drifting": false
+    },
+    {
+      "t": 1.925,
+      "steering": 0,
+      "slip": 0.0009520194875043001,
+      "drifting": false
+    },
+    {
+      "t": 1.9333333333333333,
+      "steering": 0,
+      "slip": 0.00090558894921218,
+      "drifting": false
+    },
+    {
+      "t": 1.9416666666666667,
+      "steering": 0,
+      "slip": 0.0008614228549933083,
+      "drifting": false
+    },
+    {
+      "t": 1.95,
+      "steering": 0,
+      "slip": 0.0008194107666070466,
+      "drifting": false
+    },
+    {
+      "t": 1.9583333333333333,
+      "steering": 0,
+      "slip": 0.0007794476319493099,
+      "drifting": false
+    },
+    {
+      "t": 1.9666666666666666,
+      "steering": 0,
+      "slip": 0.0007414335223675864,
+      "drifting": false
+    },
+    {
+      "t": 1.975,
+      "steering": 0,
+      "slip": 0.0007052733827872565,
+      "drifting": false
+    },
+    {
+      "t": 1.9833333333333334,
+      "steering": 0,
+      "slip": 0.0006708767940243938,
+      "drifting": false
+    },
+    {
+      "t": 1.9916666666666667,
+      "steering": 0,
+      "slip": 0.0006381577466907082,
+      "drifting": false
+    },
+    {
+      "t": 2,
+      "steering": 0,
+      "slip": 0.0006070344261252747,
+      "drifting": false
+    }
+  ]
+}

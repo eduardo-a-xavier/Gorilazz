@@ -1,0 +1,7 @@
+import { createVehicle, stepVehicle } from '../../../../src/driving.js';
+import { advanceHelicopterClock } from '../../../../src/landmarks.js';
+import { writeFileSync } from 'node:fs';
+function run(steer, drift) { const v=createVehicle(), frames=[]; for(let i=0;i<240;i++){v.x=0;v.z=0;v.speed=14;stepVehicle(v,{steer:i<120?steer:0,drift:drift&&i<120},1/120);frames.push({t:(i+1)/120,steering:v.steering,slip:v.slip,drifting:v.drifting});} return frames; }
+const left=run(1,false),right=run(-1,false),drift=run(1,true);let time=0;for(let i=0;i<600;i++) time=advanceHelicopterClock(time,1/60);
+const result={method:'Simulação determinística; posição e velocidade fixadas por quadro. Não substitui condução no navegador.',steeringDifferenceMax:Math.max(...left.map((v,i)=>Math.abs(v.steering+right[i].steering))),steeringPeakDegrees:Math.max(...left.map(v=>Math.abs(v.steering)))*180/Math.PI,driftPeakDegrees:Math.max(...drift.map(v=>Math.abs(v.slip)))*180/Math.PI,driftEndDegrees:Math.abs(drift.at(-1).slip)*180/Math.PI,helicopterClock10s:time,helicopterOrbitDegrees:time*.32*180/Math.PI,left,right,drift};
+writeFileSync(new URL('./simetria-drift-helicoptero.json',import.meta.url),JSON.stringify(result,null,2)); console.log(JSON.stringify({steeringDifferenceMax:result.steeringDifferenceMax,steeringPeakDegrees:result.steeringPeakDegrees,driftPeakDegrees:result.driftPeakDegrees,driftEndDegrees:result.driftEndDegrees,helicopterOrbitDegrees:result.helicopterOrbitDegrees}));

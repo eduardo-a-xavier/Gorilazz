@@ -1,0 +1,24 @@
+{
+  "timestamp": "2026-11-24 18:27:29",
+  "bloqueio_mp3": {
+    "urls_bloqueadas": [
+      "http://127.0.0.1:27547/Gorilazz/assets/audio/feel-good-inc.mp3"
+    ],
+    "fallback_operacional": true,
+    "score": "00000",
+    "feedback": "ERRO: tecla errada",
+    "erros_aplicacao": 0,
+    "erros_rede_esperados": [
+      "net::ERR_BLOCKED_BY_CLIENT (esperado devido ao abort intencional de rota)"
+    ],
+    "aprovado": true
+  },
+  "latencia_relogio": {
+    "latencyMs": 16.6,
+    "target": "< 80 ms",
+    "metodo": "Timestamp em HTMLMediaElement.onplaying até o primeiro frame de requestAnimationFrame com renderização de notas (now())",
+    "aprovado": true
+  },
+  "analise_acustica": "A medição (<80 ms) afere o INÍCIO DO RELÓGIO DE SOFTWARE (o intervalo entre o evento DOM 'playing' e o callback do requestAnimationFrame que inicia o cálculo visual e temporal das notas). Ela NÃO mede o som físico emitido pelas caixas acústicas (latência acústica de hardware), que envolve os buffers do driver do SO (WASAPI/DirectSound, tipicamente 15 a 45 ms), inatingível via JS puro.",
+  "aprovado": true
+}

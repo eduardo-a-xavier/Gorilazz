@@ -1,0 +1,75 @@
+{
+  "timestamp": "2026-11-24 18:14:00",
+  "viewport": "1440x900",
+  "cockpit_v5": {
+    "cockpit_ativo": true,
+    "has_needle_analogo": true,
+    "angulo_ponteiro_repouso_rad": 2.3562,
+    "angulo_ponteiro_velocidade_rad": -0.3142,
+    "deflexao_ponteiro_graus": 153.0,
+    "ponteiro_respondeu": true,
+    "velocidade_kmh_medida": 68,
+    "gear_detectada": "ESTRADA",
+    "maos_articuladas_v5": true,
+    "radio_retro_amadeirado": true,
+    "aprovado": true
+  },
+  "radio": {
+    "widget_botao_texto": "LISTA",
+    "texto_e_lista": true,
+    "faixa_atual": "Concreto",
+    "album_atual": "01/02 · Kong FM · instrumental original",
+    "menu_lista_abriu": true,
+    "radio_3d_tecla_playlist": true,
+    "aprovado": true
+  },
+  "drift": {
+    "conducao_drift_ativo": true,
+    "velocidade_entrada_ms": 21.82,
+    "slip_maximo_rad": 0.2004,
+    "slip_maximo_graus": 11.48,
+    "desativa_em_terra": true,
+    "modal_aberto_drift_bloqueado": true,
+    "arcade_minigame_drift_bloqueado": true,
+    "passeio_guiado_drift_bloqueado": true,
+    "aprovado": true
+  },
+  "helicopteros": {
+    "modo_normal_10s": {
+      "distancia_c0_m": 117.2,
+      "distancia_c1_m": 117.21,
+      "inclinacao_rotZ": 0.2,
+      "centro_orbita": { "x": 80, "y": 31, "z": -163 },
+      "pos_inicial_c0": { "x": 112.861, "y": 28.721, "z": -170.756 },
+      "pos_final_c0": { "x": 46.214, "y": 30.942, "z": -157.082 },
+      "pos_inicial_c1": { "x": 47.139, "y": 30.761, "z": -155.244 },
+      "pos_final_c1": { "x": 113.786, "y": 28.608, "z": -168.918 }
+    },
+    "modo_reduzido_10s": {
+      "distancia_c0_m": 119.32,
+      "distancia_c1_m": 119.27,
+      "inclinacao_rotZ": 0.0,
+      "reduced_motion_tilt_zerado": true,
+      "pos_inicial_c0": { "x": 111.154, "y": 33.796, "z": -136.443 },
+      "pos_final_c0": { "x": 51.649, "y": 32.25, "z": -192.611 },
+      "pos_inicial_c1": { "x": 48.846, "y": 30.236, "z": -189.557 },
+      "pos_final_c1": { "x": 108.351, "y": 32.472, "z": -133.389 }
+    },
+    "ambos_moveram_em_10s": true,
+    "aprovado": true
+  },
+  "desempenho": {
+    "fps_praca": 59.9,
+    "fps_cockpit": 60.2,
+    "payload_mb": 8.95,
+    "erros_console": 0,
+    "erros_http": 0,
+    "aprovado": true
+  },
+  "itens_nao_testados": [
+    "Upload de arquivos de áudio customizados pelo usuário no input de rádio (#radio-files)",
+    "Volta completa de 360° da órbita do helicóptero até o fechamento (T = 2*pi / 0.32 ~ 19.6s; medidos 10.0s conforme especificado)",
+    "Dispositivos móveis com acelerômetro físico para drift tátil"
+  ],
+  "status_geral": "APROVADO"
+}

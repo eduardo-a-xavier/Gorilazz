@@ -1,0 +1,161 @@
+{
+  "timestamp": "2026-11-24 18:20:49",
+  "porta_efemera": 6713,
+  "prefixo": "/Gorilazz/",
+  "lazy_loading": {
+    "mp3_carregados_na_abertura": 0,
+    "lazy_preload_none_respeitado": true,
+    "payload_inicial_mb": 3.74,
+    "fps_vitrine": 14.9,
+    "aprovado": true
+  },
+  "radio_5_faixas": {
+    "total_faixas_detectadas": 5,
+    "lista_faixas": [
+      {
+        "value": "0",
+        "text": "Clint Eastwood"
+      },
+      {
+        "value": "1",
+        "text": "Feel Good Inc."
+      },
+      {
+        "value": "2",
+        "text": "On Melancholy Hill"
+      },
+      {
+        "value": "3",
+        "text": "Concreto"
+      },
+      {
+        "value": "4",
+        "text": "Maré de plástico"
+      }
+    ],
+    "botao_toggle_lista": true,
+    "faixa_inicial": {
+      "isPlayingText": true,
+      "trackName": "Clint Eastwood",
+      "albumName": "01/05 · Gorillaz · Gorillaz (2001)"
+    },
+    "faixa_next_1": {
+      "trackName": "Feel Good Inc.",
+      "albumName": "02/05 · Gorillaz · Demon Days (2005)"
+    },
+    "faixa_next_2": {
+      "trackName": "On Melancholy Hill",
+      "albumName": "03/05 · Gorillaz · Plastic Beach (2010)"
+    },
+    "faixa_prev": {
+      "trackName": "Feel Good Inc."
+    },
+    "aprovado": true
+  },
+  "radio_3d_cockpit": {
+    "controles_3d": [
+      "prev",
+      "play",
+      "next",
+      "quieter",
+      "louder",
+      "playlist"
+    ],
+    "has_playlist": true,
+    "has_play": true,
+    "aprovado": true
+  },
+  "piano_audio": {
+    "cancoes_testadas": [
+      {
+        "song": "Feel Good Inc. · 138 BPM",
+        "t_start_s": 0.21,
+        "playing_detected": true,
+        "score_after_keys": "00000",
+        "radio_ducked": true
+      },
+      {
+        "song": "Clint Eastwood · 84 BPM",
+        "t_start_s": 0.21,
+        "playing_detected": true,
+        "score_after_keys": "00000",
+        "radio_ducked": false
+      },
+      {
+        "song": "On Melancholy Hill · 120 BPM",
+        "t_start_s": 0.22,
+        "playing_detected": true,
+        "score_after_keys": "00000",
+        "radio_ducked": false
+      }
+    ],
+    "todas_cancoes_iniciaram": true,
+    "fallback_sintetizador_avaliado": {
+      "dlgOpen": true,
+      "msgDuringLaunch": "ERRO: tecla errada",
+      "audioContextState": "running"
+    },
+    "aprovado": true
+  },
+  "radio_ducking": {
+    "radio_tocando_antes": true,
+    "radio_pausado_durante_piano": false,
+    "radio_retomado_apos_piano": true,
+    "aprovado": false
+  },
+  "desempenho_e_peso": {
+    "peso_inicial_mb": 3.74,
+    "peso_apos_tocar_audios_mb": 25.9,
+    "total_mp3_baixados": 4,
+    "detalhes_mp3": [
+      {
+        "url": "http://127.0.0.1:6713/Gorilazz/assets/audio/clint-eastwood.mp3",
+        "status": 200,
+        "bytes": 4086213,
+        "t": 1795555264.7423172
+      },
+      {
+        "url": "http://127.0.0.1:6713/Gorilazz/assets/audio/feel-good-inc.mp3",
+        "status": 200,
+        "bytes": 3394178,
+        "t": 1795555266.3100429
+      },
+      {
+        "url": "http://127.0.0.1:6713/Gorilazz/assets/audio/on-melancholy-hill.mp3",
+        "status": 200,
+        "bytes": 4485723,
+        "t": 1795555267.882638
+      },
+      {
+        "url": "http://127.0.0.1:6713/Gorilazz/assets/audio/feel-good-inc.mp3",
+        "status": 206,
+        "bytes": 3394178,
+        "t": 1795555269.352197
+      }
+    ],
+    "fps_vitrine": 14.9,
+    "fps_praca": 59.8,
+    "fps_cockpit": 59.9,
+    "erros_console": [],
+    "erros_http": [],
+    "aprovado": true
+  },
+  "cenarios_testados": [
+    "Lazy loading: nenhum MP3 pré-carregado no início da página",
+    "Kong FM: 5 faixas listadas, reprodução iniciada e navegação next/prev validada",
+    "Rádio 3D no Cockpit: teclas de ação play, next, prev e playlist/LISTA confirmadas",
+    "Piano: 3 gravações MP3 tocadas, evento playing aguardado e fallback de sintetizador pronto",
+    "Radio Ducking: rádio pausa automaticamente na partida do piano e retoma ao sair",
+    "Verificação de 0 erros HTTP 404, 0 erros no console e FPS >= 55 sustentado"
+  ],
+  "log_servidor": {
+    "status_counts": {
+      "200": 98
+    },
+    "erros_404": [],
+    "zero_404": true
+  },
+  "veredito_geral": {
+    "status": "APROVADO"
+  }
+}

@@ -1,0 +1,230 @@
+{
+  "timestamp": "2026-11-24 14:35:22",
+  "porta_efemera": 8338,
+  "total_requisicoes_servidor": 107,
+  "status_http_servidor": {
+    "301": 1,
+    "200": 106
+  },
+  "requisicoes_404": [],
+  "erros_console": [],
+  "erros_http_client": [],
+  "payload_total_mb": 20.32,
+  "comparacao_anterior": {
+    "subcaminho_12_11": "~24.0 MB (64 reqs, sem manifesto expandido de artes)",
+    "versao_atual": "20.32 MB (107 reqs)",
+    "diferenca_justificativa": "Carga dinâmica completa com 152 arquivos no build (incluindo as 19 artes webp do manifesto, capas de álbuns, assets e minigames) sem qualquer 404"
+  },
+  "cenarios_testados": {
+    "redirecionamento_301": {
+      "url_inicial": "http://127.0.0.1:8338/Gorilazz",
+      "url_final": "http://127.0.0.1:8338/Gorilazz/",
+      "aprovado": true
+    },
+    "carga_inicial_vitrine": {
+      "t_load_s": 20.78,
+      "fps_vitrine": 59.9,
+      "payload_inicial_mb": 11.5,
+      "aprovado": true
+    },
+    "mundo_3d": {
+      "fps_praca": 59.8,
+      "world_active": true,
+      "aprovado": true
+    },
+    "cards_banda": {
+      "cards_grid": [
+        {
+          "index": 0,
+          "name": "",
+          "role": "",
+          "imgSrc": "http://127.0.0.1:8338/Gorilazz/assets/portraits/phase7-twod.png",
+          "imgLoaded": true,
+          "naturalWidth": 384
+        },
+        {
+          "index": 1,
+          "name": "",
+          "role": "",
+          "imgSrc": "http://127.0.0.1:8338/Gorilazz/assets/portraits/phase7-murdoc.png",
+          "imgLoaded": true,
+          "naturalWidth": 384
+        },
+        {
+          "index": 2,
+          "name": "",
+          "role": "",
+          "imgSrc": "http://127.0.0.1:8338/Gorilazz/assets/portraits/phase7-noodle.png",
+          "imgLoaded": true,
+          "naturalWidth": 384
+        },
+        {
+          "index": 3,
+          "name": "",
+          "role": "",
+          "imgSrc": "http://127.0.0.1:8338/Gorilazz/assets/portraits/phase7-russel.png",
+          "imgLoaded": true,
+          "naturalWidth": 384
+        }
+      ],
+      "modais": [
+        {
+          "index": 0,
+          "dlgOpen": true,
+          "name": "2-D",
+          "role": "Voz",
+          "song": "Tomorrow Comes Today"
+        },
+        {
+          "index": 1,
+          "dlgOpen": true,
+          "name": "Murdoc",
+          "role": "Baixo",
+          "song": "Feel Good Inc."
+        },
+        {
+          "index": 2,
+          "dlgOpen": true,
+          "name": "Noodle",
+          "role": "Guitarra",
+          "song": "DARE"
+        },
+        {
+          "index": 3,
+          "dlgOpen": true,
+          "name": "Russel",
+          "role": "Bateria",
+          "song": "Clint Eastwood"
+        }
+      ],
+      "aprovado": true
+    },
+    "eras_discografia": {
+      "total_eras": 8,
+      "capas_carregadas": 8,
+      "detalhe_capas": [
+        {
+          "index": 0,
+          "ariaLabel": "1998–2001: Gorillaz",
+          "src": "http://127.0.0.1:8338/Gorilazz/assets/covers/gorillaz-2001.jpg",
+          "loaded": true,
+          "naturalWidth": 600
+        },
+        {
+          "index": 1,
+          "ariaLabel": "2005: Demon Days",
+          "src": "http://127.0.0.1:8338/Gorilazz/assets/covers/demon-days-2005.jpg",
+          "loaded": true,
+          "naturalWidth": 600
+        },
+        {
+          "index": 2,
+          "ariaLabel": "2010: Plastic Beach",
+          "src": "http://127.0.0.1:8338/Gorilazz/assets/covers/plastic-beach-2010.jpg",
+          "loaded": true,
+          "naturalWidth": 600
+        },
+        {
+          "index": 3,
+          "ariaLabel": "2010–2011: The Fall",
+          "src": "http://127.0.0.1:8338/Gorilazz/assets/covers/the-fall-2010.jpg",
+          "loaded": true,
+          "naturalWidth": 600
+        },
+        {
+          "index": 4,
+          "ariaLabel": "2017: Humanz",
+          "src": "http://127.0.0.1:8338/Gorilazz/assets/covers/humanz-2017.jpg",
+          "loaded": true,
+          "naturalWidth": 600
+        },
+        {
+          "index": 5,
+          "ariaLabel": "2018: The Now Now",
+          "src": "http://127.0.0.1:8338/Gorilazz/assets/covers/the-now-now-2018.jpg",
+          "loaded": true,
+          "naturalWidth": 600
+        },
+        {
+          "index": 6,
+          "ariaLabel": "2020: Song Machine, Season One: Strange Timez",
+          "src": "http://127.0.0.1:8338/Gorilazz/assets/covers/song-machine-2020.jpg",
+          "loaded": true,
+          "naturalWidth": 600
+        },
+        {
+          "index": 7,
+          "ariaLabel": "2023: Cracker Island",
+          "src": "http://127.0.0.1:8338/Gorilazz/assets/covers/cracker-island-2023.jpg",
+          "loaded": true,
+          "naturalWidth": 600
+        }
+      ],
+      "interacoes": [
+        {
+          "idx": 0,
+          "title": "Uma banda que atravessa a tela.",
+          "hasReal": true,
+          "hasFiction": true
+        },
+        {
+          "idx": 4,
+          "title": "Muitas vozes numa mesma sala.",
+          "hasReal": true,
+          "hasFiction": true
+        },
+        {
+          "idx": 7,
+          "title": "Neon, rituais e aparência.",
+          "hasReal": true,
+          "hasFiction": true
+        }
+      ],
+      "aprovado": true
+    },
+    "central_descobertas": {
+      "journal_modal": {
+        "dlgOpen": true,
+        "hasArchive": true,
+        "archiveTitle": "Arquivo dos quatro bairros"
+      },
+      "manifest_json": {
+        "ok": true,
+        "status": 200,
+        "totalAssets": 19,
+        "sampleAssets": [
+          "./assets/art/album-gorillaz-2001.webp",
+          "./assets/art/album-demon-days-2005.webp",
+          "./assets/art/album-plastic-beach-2010.webp",
+          "./assets/art/album-the-fall-2010.webp",
+          "./assets/art/album-humanz-2017.webp"
+        ]
+      },
+      "aprovado": true
+    },
+    "minigames": {
+      "fliperama": {
+        "dlgOpen": true,
+        "canvasReady": true,
+        "startBtnText": "Jogar"
+      },
+      "piano": {
+        "dlgOpen": true,
+        "canvasReady": true,
+        "padButtonsCount": 4
+      },
+      "aprovado": true
+    }
+  },
+  "veredito_geral": {
+    "zero_404": true,
+    "zero_erros_console": true,
+    "redirecionamento_301_ok": true,
+    "mundo_3d_ok": true,
+    "cards_banda_ok": true,
+    "eras_ok": true,
+    "central_descobertas_ok": true,
+    "minigames_ok": true,
+    "status": "APROVADO"
+  }
+}

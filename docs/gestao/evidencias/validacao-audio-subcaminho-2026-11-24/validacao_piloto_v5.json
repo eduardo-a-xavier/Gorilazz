@@ -1,0 +1,17 @@
+{
+  "timestamp": "2026-11-24 18:27:29",
+  "vistas_capturadas": [
+    "09_piloto_v5_volante_reto.png",
+    "10_piloto_v5_volante_esquerda.png",
+    "11_piloto_v5_volante_direita.png",
+    "12_piloto_v5_closeup_maos_aro.png"
+  ],
+  "analise_dedos_punhos": {
+    "envolvimento_do_aro": "Os dedos e polegares do modelo piloto-v5.glb possuem curvatura pré-moldada e flexão angular estável local em AX, mantendo as luvas e falanges encaixadas no diâmetro do aro.",
+    "frestas_ou_aberturas": "Nenhuma abertura ou fresta visível observada entre a luva e o aro no cockpit.",
+    "torcao_de_punho": "Sem torção extrema de punhos. A cinemática inversa (solveArm) calcula os alvos dos pulsos mantendo os cotovelos direcionados para fora e para baixo sem torção do antebraço.",
+    "suavizacao_de_normais": "smoothNormals() ativo soldando normais de vértices idênticos, eliminando arestas duras nas luvas.",
+    "aprovado": true
+  },
+  "aprovado": true
+}

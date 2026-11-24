@@ -236,3 +236,11 @@ Os *easter eggs* inseridos no mapa 3D são **homenagens autorais criadas pela eq
 - **Pazuzu (motivo ocultista associado a Murdoc / Kong Studios e influência de *O Exorcista* em Jamie Hewlett):** The Guardian — https://www.theguardian.com/artanddesign/2008/jul/20/art ; loja oficial Gorillaz — https://usstore.gorillaz.com/products/pazuzu-t-shirt e https://usstore.gorillaz.com/products/hok-gorillaz-bomber-jacket
 - **Zumbis / gorilas-zumbis do Kong Studios:** Gorillaz — Kong Studios FAQs — https://gorillaz.com/kongstudiosfaqs/ ; NME — https://www.nme.com/features/inside-the-lost-gaming-history-of-gorillaz-3478233 *(nota: a placa literal `"AVISO: ZUMBIS DO KONG STUDIOS"` é criação autoral do projeto inspirada no lore)*.
 - **Risada de *Feel Good Inc.* (Maseo / De La Soul) e melódica de Damon Albarn (*Clint Eastwood* / *Feel Good Inc.*):** The Guardian — https://www.theguardian.com/music/2023/feb/23/de-la-soul-interview-belated-streaming-debut ; NME — https://www.nme.com/news/music/de-la-soul-6-1215914 ; MusicRadar — https://www.musicradar.com/artists/its-an-arcane-18th-century-german-form-of-rap-i-really-enjoy-it-because-its-an-opportunity-to-say-some-quite-bizarre-things-that-i-wouldnt-necessarily-be-able-to-sing-about-the-inside-story-of-the-gorillaz-classic-feel-good-inc ; Sound On Sound — https://www.soundonsound.com/people/recording-gorillazs-clint-eastwood
+
+### Gravações usadas na Kong FM e no piano
+
+Arquivos fornecidos por Eduardo a partir de seu computador para o projeto; gravações originais do Gorillaz (Parlophone/Warner), uso acadêmico/ilustrativo conforme instrução do responsável. A procedência da cópia e as permissões de distribuição não foram verificadas nesta integração.
+
+- `assets/audio/clint-eastwood.mp3` — SHA-256 `af7c77f224dfa952e445e9905707777314b84e4df690e5fd88b75f14b41ef426`.
+- `assets/audio/feel-good-inc.mp3` — SHA-256 `700a20a214e06b152f02a36e4b5ed4c4b004590d6557535c7d74860aad4484cf`.
+- `assets/audio/on-melancholy-hill.mp3` — SHA-256 `851763d0432256439478913d67c84639b7ebbeca7bddd54af8c316056b3ab338`.

@@ -1,0 +1,7 @@
+{
+  "method": "20 chamadas síncronas de world.update em 60 Hz; primeiras 6 em primeira pessoa, quadros 6–9 em terceira, retorno no quadro 10. A aceleração é 4 até quadro 11; esterço inverte no quadro 9. Ângulos dos ossos da mão projetados no plano local do aro, em radianos; nulo quando em terceira pessoa. Não é um passeio real.",
+  "wheel": [0.0130899694,0.0261799388,0.0392699082,0.0523598776,0.0654498469,0.0785398163,0.0916297857,0.1047197551,0.1178097245,0.1047197551,0.0916297857,0.0785398163,0.0654498469,0.0523598776,0.0392699082,0.0261799388,0.0130899694,0,-0.0130899694,-0.0261799388],
+  "left": [2.4509617228,2.4642159118,2.4774641704,2.4906994483,2.5039293659,2.5171511165,null,null,null,null,2.5322797754,2.5168306662,2.5035098444,2.4901845179,2.4768582708,2.4635303875,2.4502010839,2.4368716397,2.4235408917,2.4102102457],
+  "right": [0.7181146685,0.7313210180,0.7445309616,0.7577500730,0.7709719553,0.7841987674,null,null,null,null,0.8004765845,0.7842681488,0.7710787846,0.7579012381,0.7447333232,0.7315754154,0.7184273649,0.7052884421,0.6921590028,0.6790385847],
+  "note": "Distância dos ossos ao alvo da palma foi aproximadamente 0,015 m, deslocamento PALM previsto no solver. Pico consecutivo observado entre quadros válidos é ~0,929°; a sequência não demonstra limite universal nem continuidade do osso invisível durante mudança de câmera."
+}

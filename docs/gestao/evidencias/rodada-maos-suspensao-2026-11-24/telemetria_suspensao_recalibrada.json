@@ -1,0 +1,78 @@
+{
+  "data_hora": "2026-11-24 14:25:42",
+  "total_quadros": 1666,
+  "fps": {
+    "vitrine_carga_fria": 0.7,
+    "vitrine_estabilizada": 60.4,
+    "praca": 59.9,
+    "cockpit": 60.1
+  },
+  "vitrine_diagnostico": {
+    "hasCanvas": true,
+    "showcaseActive": true,
+    "domInteractive": 23,
+    "domComplete": 1057
+  },
+  "payload_mb": 8.96,
+  "console_errors": [],
+  "http_errors": [],
+  "maos": {
+    "max_salto_volante_deg": 0.75,
+    "max_salto_mao_l_deg": 0.0034,
+    "max_salto_mao_r_deg": 0.0034,
+    "media_salto_volante_deg": 0.295,
+    "defasagem_max_deg": 60.333,
+    "distancia_media_aro_m": 96.1111
+  },
+  "suspensao": {
+    "max_pitch_deg": 2.7502,
+    "max_roll_deg": 3.9483,
+    "rms_vertical_m": 0.007598,
+    "altura_min_m": 0,
+    "altura_max_m": 0.02876,
+    "afundamento_min_m": 0,
+    "oscilacoes_estabilizacao": 0
+  },
+  "criterios_avaliacao": {
+    "roll_2_a_4_deg": {
+      "valor_obtido": 3.9483,
+      "esperado": "2.0 a 4.0 deg",
+      "aprovado": true
+    },
+    "pitch_ate_3_deg": {
+      "valor_obtido": 2.7502,
+      "esperado": "<= 3.0 deg",
+      "aprovado": true
+    },
+    "rms_vertical_gt_0_le_003": {
+      "valor_obtido": 0.007598,
+      "esperado": "> 0 e <= 0.03 m",
+      "aprovado": true
+    },
+    "oscilacoes_max_1": {
+      "valor_obtido": 0,
+      "esperado": "<= 1 oscilacao",
+      "aprovado": true
+    },
+    "sem_afundar_solo": {
+      "valor_obtido": 0,
+      "esperado": ">= 0.0 m",
+      "aprovado": true
+    },
+    "maos_estaveis_step_le_1_deg": {
+      "valor_obtido": 0.75,
+      "esperado": "<= 1.0 deg por quadro",
+      "aprovado": true
+    },
+    "fps_ge_55": {
+      "valor_obtido": 60.1,
+      "esperado": ">= 55 FPS",
+      "aprovado": true
+    },
+    "zero_erros_console_rede": {
+      "erros_console": 0,
+      "erros_http": 0,
+      "aprovado": true
+    }
+  }
+}

@@ -1,0 +1,156 @@
+{
+  "timestamp": "2026-11-24 14:15:28",
+  "atual": {
+    "label": "ATUAL",
+    "total_quadros": 1515,
+    "fps": {
+      "vitrine": 18.0,
+      "praca": 60.0,
+      "cockpit": 59.9
+    },
+    "payload_mb": 8.96,
+    "console_errors": [],
+    "http_errors": [],
+    "maos": {
+      "max_salto_volante_deg": 0.75,
+      "max_salto_mao_l_deg": 0.145,
+      "max_salto_mao_r_deg": 0.1908,
+      "media_salto_volante_deg": 0.2851,
+      "defasagem_max_deg": 60.3118,
+      "distancia_media_aro_m": 96.44
+    },
+    "suspensao": {
+      "max_pitch_deg": 2.7502,
+      "max_roll_deg": 0.393,
+      "rms_vertical_m": 0.0,
+      "afundamento_min_m": 0,
+      "oscilacoes_estabilizacao": 2
+    },
+    "tour": {
+      "samples": 475,
+      "offTrack": 0,
+      "collisions": 0,
+      "stopsVisited": [
+        {
+          "count": 1,
+          "time": 4
+        },
+        {
+          "count": 2,
+          "time": 17
+        },
+        {
+          "count": 3,
+          "time": 39
+        }
+      ],
+      "totalStops": 3,
+      "complete": false
+    }
+  },
+  "anterior": {
+    "label": "ANTERIOR",
+    "total_quadros": 1513,
+    "fps": {
+      "vitrine": 19.9,
+      "praca": 59.9,
+      "cockpit": 59.9
+    },
+    "payload_mb": 8.96,
+    "console_errors": [],
+    "http_errors": [],
+    "maos": {
+      "max_salto_volante_deg": 5.1709,
+      "max_salto_mao_l_deg": 0.1473,
+      "max_salto_mao_r_deg": 0.1484,
+      "media_salto_volante_deg": 0.7638,
+      "defasagem_max_deg": 60.262,
+      "distancia_media_aro_m": 96.3182
+    },
+    "suspensao": {
+      "max_pitch_deg": 0.0,
+      "max_roll_deg": 0.0,
+      "rms_vertical_m": 2.4,
+      "afundamento_min_m": 2.4,
+      "oscilacoes_estabilizacao": 0
+    }
+  },
+  "comparacao_numerica": {
+    "max_salto_volante_deg": {
+      "anterior": "5.1709°",
+      "atual": "0.75°",
+      "critério": "<= 1.0°",
+      "status": "APROVADO"
+    },
+    "max_salto_mao_deg": {
+      "anterior": "0.1484°",
+      "atual": "0.1908°",
+      "critério": "<= 1.0°",
+      "status": "APROVADO"
+    },
+    "defasagem_mao_volante": {
+      "anterior": "60.262°",
+      "atual": "60.3118°",
+      "critério": "~0° (sem descolamento)",
+      "status": "PARCIAL"
+    },
+    "max_pitch_deg": {
+      "anterior": "0.0°",
+      "atual": "2.7502°",
+      "critério": "3.0° a 5.0°",
+      "status": "APROVADO"
+    },
+    "max_roll_deg": {
+      "anterior": "0.0°",
+      "atual": "0.393°",
+      "critério": "3.0° a 5.0°",
+      "status": "PARCIAL"
+    },
+    "rms_vertical_m": {
+      "anterior": "2.4 m",
+      "atual": "0.0 m",
+      "critério": "Ruído reduzido/estável",
+      "status": "APROVADO"
+    },
+    "afundamento_asfalto": {
+      "anterior": "2.4 m",
+      "atual": "0 m",
+      "critério": "Sem penetração negativa no solo",
+      "status": "APROVADO"
+    },
+    "oscilacoes_estabilizacao": {
+      "anterior": 0,
+      "atual": 2,
+      "critério": "< 2 oscilações",
+      "status": "REPROVADO"
+    }
+  },
+  "criterios_gerais": {
+    "fps_minimo": {
+      "medido": {
+        "vitrine": 18.0,
+        "praca": 60.0,
+        "cockpit": 59.9
+      },
+      "critério": ">= 55 FPS",
+      "status": "PARCIAL"
+    },
+    "erros_console_http": {
+      "console": 0,
+      "http": 0,
+      "critério": "0 erros",
+      "status": "APROVADO"
+    },
+    "peso_inicial_mb": {
+      "medido": 8.96,
+      "critério": "<= 9.3 MB",
+      "status": "APROVADO"
+    },
+    "passeio_9_paradas": {
+      "stops": 3,
+      "colisoes": 0,
+      "critério": "9/9 paradas sem colisões",
+      "status": "PARCIAL"
+    }
+  }
+}
