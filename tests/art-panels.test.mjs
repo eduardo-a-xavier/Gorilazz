@@ -10,7 +10,7 @@ test('toda descoberta tem arte e crédito no manifesto', () => {
   for (const point of DISCOVERIES) {
     const art = artForDiscovery(manifest, point.id);
     assert.ok(art, `${point.id} sem arte`);
-    assert.match(art.path, /^\/assets\/art\/.+\.webp$/);
+    assert.match(art.path, /^\.\/assets\/art\/.+\.webp$/);
     assert.ok(art.credit && art.credit.length > 10, `${point.id} sem crédito`);
   }
 });
@@ -18,7 +18,7 @@ test('toda descoberta tem arte e crédito no manifesto', () => {
 test('os arquivos das artes existem, são WebP e cabem no limite de 150 KB', async () => {
   for (const point of DISCOVERIES) {
     const { path } = artForDiscovery(manifest, point.id);
-    const file = new URL(`..${path}`, import.meta.url);
+    const file = new URL(`../${path.slice(2)}`, import.meta.url);
     const { size } = await stat(file);
     assert.ok(size <= 150 * 1024, `${path} tem ${size} bytes`);
     const head = (await readFile(file)).subarray(8, 12).toString('ascii');

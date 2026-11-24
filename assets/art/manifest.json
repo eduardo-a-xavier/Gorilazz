@@ -1,55 +1,55 @@
 {
   "note": "Manifesto de artes otimizadas (.webp, <=1024x1024, <150 KB) para murais, palcos e outdoors 3D. Uso exclusivamente academico e sem fins comerciais; fontes, creditos e SHA-256 em REFERENCES.md.",
   "assets": [
-    "/assets/art/album-gorillaz-2001.webp",
-    "/assets/art/album-demon-days-2005.webp",
-    "/assets/art/album-plastic-beach-2010.webp",
-    "/assets/art/album-the-fall-2010.webp",
-    "/assets/art/album-humanz-2017.webp",
-    "/assets/art/album-the-now-now-2018.webp",
-    "/assets/art/album-song-machine-2020.webp",
-    "/assets/art/album-cracker-island-2023.webp",
-    "/assets/art/art-feel-good-inc-2005.webp",
-    "/assets/art/art-dare-2005.webp",
-    "/assets/art/art-stylo-2010.webp",
-    "/assets/art/art-sleeping-powder-2017.webp",
-    "/assets/art/member-2d.webp",
-    "/assets/art/member-murdoc.webp",
-    "/assets/art/member-noodle.webp",
-    "/assets/art/member-russel.webp",
-    "/assets/art/press-creators-band.webp",
-    "/assets/art/press-band-phase7.webp",
-    "/assets/art/press-gorillaz-live.webp"
+    "./assets/art/album-gorillaz-2001.webp",
+    "./assets/art/album-demon-days-2005.webp",
+    "./assets/art/album-plastic-beach-2010.webp",
+    "./assets/art/album-the-fall-2010.webp",
+    "./assets/art/album-humanz-2017.webp",
+    "./assets/art/album-the-now-now-2018.webp",
+    "./assets/art/album-song-machine-2020.webp",
+    "./assets/art/album-cracker-island-2023.webp",
+    "./assets/art/art-feel-good-inc-2005.webp",
+    "./assets/art/art-dare-2005.webp",
+    "./assets/art/art-stylo-2010.webp",
+    "./assets/art/art-sleeping-powder-2017.webp",
+    "./assets/art/member-2d.webp",
+    "./assets/art/member-murdoc.webp",
+    "./assets/art/member-noodle.webp",
+    "./assets/art/member-russel.webp",
+    "./assets/art/press-creators-band.webp",
+    "./assets/art/press-band-phase7.webp",
+    "./assets/art/press-gorillaz-live.webp"
   ],
   "discoveryMurals": {
     "beginning": {
       "title": "1998 — Duas mentes, um universo",
-      "primary": "/assets/art/press-creators-band.webp",
-      "secondary": "/assets/art/album-gorillaz-2001.webp",
+      "primary": "./assets/art/press-creators-band.webp",
+      "secondary": "./assets/art/album-gorillaz-2001.webp",
       "credit": "Damon Albarn, Jamie Hewlett e Gorillaz · Foto oficial de imprensa (Nasty Little Man) / capa Gorillaz (2001)"
     },
     "voices": {
       "title": "Quatro rostos. Muitas histórias.",
-      "primary": "/assets/art/press-band-phase7.webp",
-      "secondary": "/assets/art/album-demon-days-2005.webp",
+      "primary": "./assets/art/press-band-phase7.webp",
+      "secondary": "./assets/art/album-demon-days-2005.webp",
       "credit": "Gorillaz (Phase 7) · Arte oficial de imprensa: Jamie Hewlett / Gorillaz (Nasty Little Man)"
     },
     "genres": {
       "title": "Um som sem fronteiras",
-      "primary": "/assets/art/album-humanz-2017.webp",
-      "secondary": "/assets/art/art-dare-2005.webp",
+      "primary": "./assets/art/album-humanz-2017.webp",
+      "secondary": "./assets/art/art-dare-2005.webp",
       "credit": "Humanz (2017) · Arte: Jamie Hewlett · Parlophone Records / uso acadêmico"
     },
     "demon-days": {
       "title": "A paisagem de Demon Days",
-      "primary": "/assets/art/art-feel-good-inc-2005.webp",
-      "secondary": "/assets/art/album-demon-days-2005.webp",
+      "primary": "./assets/art/art-feel-good-inc-2005.webp",
+      "secondary": "./assets/art/album-demon-days-2005.webp",
       "credit": "Feel Good Inc. EP / Demon Days (2005) · Arte: Jamie Hewlett · Parlophone Records / uso acadêmico"
     },
     "live": {
       "title": "Quando o desenho encontra o palco",
-      "primary": "/assets/art/press-gorillaz-live.webp",
-      "secondary": "/assets/art/album-the-now-now-2018.webp",
+      "primary": "./assets/art/press-gorillaz-live.webp",
+      "secondary": "./assets/art/album-the-now-now-2018.webp",
       "credit": "Gorillaz ao vivo · Foto oficial de imprensa de turnê (Nasty Little Man)"
     }
   },
@@ -59,57 +59,57 @@
       "name": "2-D",
       "role": "Voz",
       "accent": "#7fa6ff",
-      "image": "/assets/art/member-2d.webp",
-      "backdrop": "/assets/art/album-the-now-now-2018.webp"
+      "image": "./assets/art/member-2d.webp",
+      "backdrop": "./assets/art/album-the-now-now-2018.webp"
     },
     {
       "id": "murdoc",
       "name": "Murdoc",
       "role": "Baixo",
       "accent": "#9dd66b",
-      "image": "/assets/art/member-murdoc.webp",
-      "backdrop": "/assets/art/album-gorillaz-2001.webp"
+      "image": "./assets/art/member-murdoc.webp",
+      "backdrop": "./assets/art/album-gorillaz-2001.webp"
     },
     {
       "id": "noodle",
       "name": "Noodle",
       "role": "Guitarra",
       "accent": "#f5a9c6",
-      "image": "/assets/art/member-noodle.webp",
-      "backdrop": "/assets/art/art-dare-2005.webp"
+      "image": "./assets/art/member-noodle.webp",
+      "backdrop": "./assets/art/art-dare-2005.webp"
     },
     {
       "id": "russel",
       "name": "Russel",
       "role": "Bateria",
       "accent": "#ffcc4d",
-      "image": "/assets/art/member-russel.webp",
-      "backdrop": "/assets/art/album-demon-days-2005.webp"
+      "image": "./assets/art/member-russel.webp",
+      "backdrop": "./assets/art/album-demon-days-2005.webp"
     }
   ],
   "eraBillboards": {
     "explosao": [
-      "/assets/art/album-gorillaz-2001.webp",
-      "/assets/art/album-demon-days-2005.webp",
-      "/assets/art/art-feel-good-inc-2005.webp",
-      "/assets/art/art-dare-2005.webp"
+      "./assets/art/album-gorillaz-2001.webp",
+      "./assets/art/album-demon-days-2005.webp",
+      "./assets/art/art-feel-good-inc-2005.webp",
+      "./assets/art/art-dare-2005.webp"
     ],
     "plastic": [
-      "/assets/art/album-plastic-beach-2010.webp",
-      "/assets/art/art-stylo-2010.webp",
-      "/assets/art/album-the-fall-2010.webp"
+      "./assets/art/album-plastic-beach-2010.webp",
+      "./assets/art/art-stylo-2010.webp",
+      "./assets/art/album-the-fall-2010.webp"
     ],
     "hiato": [
-      "/assets/art/press-creators-band.webp",
-      "/assets/art/album-the-fall-2010.webp"
+      "./assets/art/press-creators-band.webp",
+      "./assets/art/album-the-fall-2010.webp"
     ],
     "reinvencao": [
-      "/assets/art/album-humanz-2017.webp",
-      "/assets/art/art-sleeping-powder-2017.webp",
-      "/assets/art/album-the-now-now-2018.webp",
-      "/assets/art/album-song-machine-2020.webp",
-      "/assets/art/album-cracker-island-2023.webp",
-      "/assets/art/press-band-phase7.webp"
+      "./assets/art/album-humanz-2017.webp",
+      "./assets/art/art-sleeping-powder-2017.webp",
+      "./assets/art/album-the-now-now-2018.webp",
+      "./assets/art/album-song-machine-2020.webp",
+      "./assets/art/album-cracker-island-2023.webp",
+      "./assets/art/press-band-phase7.webp"
     ]
   }
 }
