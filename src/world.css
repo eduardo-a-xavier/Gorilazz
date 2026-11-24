@@ -8,6 +8,7 @@
   linear-gradient(transparent 49.8%,#d2e2a81f 50%,transparent 50.2%); background-size:72px 72px; }
 .world-shell { height:calc(100svh - 92px); min-height:640px; }
 .chapter-card, .chapter-dock, .scene-corner { display:none !important; }
+#jogo[data-entered=true] .exploration-hud { display:none !important; }
 #world canvas { touch-action:none; }
 .scene-shade { pointer-events:none; background:linear-gradient(180deg,#11141599,transparent 40%); } /* sem faixa escura na base: a cena vai até a barra */
 .game-top { top:52px; bottom:auto; right:auto; }

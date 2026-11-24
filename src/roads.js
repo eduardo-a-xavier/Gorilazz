@@ -1,6 +1,6 @@
 import { PLATE_STYLE } from './sign-style.js';
 import * as THREE from './vendor/three.module.min.js';
-import { ROADS, NODES } from './world-data.js';
+import { ROADS, NODES, CITY_LOTS } from './world-data.js';
 
 // Malha viária desenhada como rua de verdade: asfalto, rotatórias limpas nos cruzamentos de grau >= 3,
 // emendas contínuas nos nós de grau 2, calçada elevada com meio-fio, tampas e saia até abaixo do chão,
@@ -229,10 +229,15 @@ export function buildRoads(group, surfaces, material) {
         break;
       }
     }
-    // Placa de rua em cada ponta, na calçada da direita de quem entra na rua.
+    // Placa de rua em cada ponta, na calçada da direita de quem entra na rua, afastada de fachadas de lojas.
     for (const [order, direction] of [[list, 1], [list.slice().reverse(), -1]]) {
       const node = direction > 0 ? item.from : item.to;
-      const frame = order.find(entry => Math.hypot(entry.x - NODES[node].x, entry.z - NODES[node].z) > radius[node] + 7); if (!frame) continue;
+      const frame = order.find(entry => {
+        if (Math.hypot(entry.x - NODES[node].x, entry.z - NODES[node].z) <= radius[node] + 7) return false;
+        const px = entry.x - entry.nx * direction * (half + walk - .5), pz = entry.z - entry.nz * direction * (half + walk - .5);
+        return !CITY_LOTS.some(l => l.shop && Math.hypot(px - l.x, pz - l.z) < Math.hypot(l.w, l.d) / 2 + 2.8);
+      }) || order.find(entry => Math.hypot(entry.x - NODES[node].x, entry.z - NODES[node].z) > radius[node] + 7);
+      if (!frame) continue;
       const x = frame.x - frame.nx * direction * (half + walk - .5), z = frame.z - frame.nz * direction * (half + walk - .5);
       if (inJunction(x, z) || onAsphalt(x, z, null, .3)) continue;
       prop([.14, 4.2, .14], [x, 2.1, z], pole);

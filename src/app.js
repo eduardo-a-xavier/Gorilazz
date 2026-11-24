@@ -291,7 +291,7 @@ function guidedControls() {
   return nav;
 }
 function startGuided() {
-  enterWorld(); setShowcase(false); overview = false; landmarkView = false; firstPerson = false; world?.setFirstPerson(false); world?.setOverview(false); syncCameraModes();
+  enterWorld(); setShowcase(false); if (overview || landmarkView) { overview = false; landmarkView = false; world?.setOverview(false); } syncCameraModes();
   toggleHudMenu(null);
   if (!guided) guided = { order: orderTour(tourStops, vehicle), index: 0, holdUntil: 0, paused: false };
   guided.paused = false; legTo(guided.index);
@@ -301,7 +301,7 @@ function startGuided() {
 document.querySelector('#guided-toggle').addEventListener('click', () => { if (guided && !guided.paused) stop(); else startGuided(); });
 syncGuidedHud(); // mostra o progresso salvo logo na carga (sem esperar a primeira visita)
 function startNavigation(point) {
-  endGuided(); stop(); enterWorld(); setShowcase(false); overview = false; landmarkView = false; firstPerson = false; world?.setFirstPerson(false); world?.setOverview(false); syncCameraModes();
+  endGuided(); stop(); enterWorld(); setShowcase(false); if (overview || landmarkView) { overview = false; landmarkView = false; world?.setOverview(false); } syncCameraModes();
   toggleHudMenu(null);
   destination = planPath(vehicle, point); setTour(true); announce(`Passeio até ${point.title}. Você pode assumir a direção a qualquer momento.`);
   focusWorld();
@@ -340,8 +340,7 @@ cameraMenuToggle.addEventListener('click', () => setCameraMenu(cameraTools.datas
 document.addEventListener('pointerdown', event => { if (!cameraTools.contains(event.target)) setCameraMenu(false); });
 document.addEventListener('keydown', event => { if (event.key === 'Escape') setCameraMenu(false); });
 function resetViewControls() {
-  overview = false; landmarkView = false; orbital = false; firstPerson = false;
-  world?.setFirstPerson(false); cockpit.hidden = true; input.setWheelSteer(0); document.querySelector('#first-person').setAttribute('aria-pressed','false');
+  overview = false; landmarkView = false; orbital = false;
   const button = document.querySelector('#camera-toggle'); button.setAttribute('aria-pressed','false'); button.textContent = '↻ CÂMERA ORBITAL'; syncCameraModes();
 }
 function syncCameraModes() {
@@ -1238,8 +1237,8 @@ function scrollToWorld() {
   sceneSection.scrollIntoView({ behavior: reducedMotion.matches ? 'instant' : 'smooth' });
 }
 document.querySelector('#garage-action-drive')?.addEventListener('click', () => {
-  enterWorld(); setShowcase(false); overview = false; landmarkView = false; firstPerson = false;
-  world?.setFirstPerson(false); world?.setOverview(false); syncCameraModes(); scrollToWorld(); focusWorld();
+  enterWorld(); setShowcase(false); if (overview || landmarkView) { overview = false; landmarkView = false; world?.setOverview(false); }
+  syncCameraModes(); scrollToWorld(); focusWorld();
 });
 document.querySelector('#garage-action-cockpit')?.addEventListener('click', () => {
   scrollToWorld();

@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import * as THREE from '../src/vendor/three.module.min.js';
-import { ROADS, NODES } from '../src/world-data.js';
+import { ROADS, NODES, CITY_LOTS, ERA_GATES } from '../src/world-data.js';
 import { buildRoads, LEVEL, NODE_DEGREE, NODE_RADIUS, gap, inJunction, onAsphalt } from '../src/roads.js';
 
 function createRoadGroup() {
@@ -105,4 +105,48 @@ test('nós de grau 2 não recebem pintura amarela de rotatória e estêncis fica
     assert.ok(ROADS.some(road => gap(road, x, z) <= road.width / 2), `canto de estêncil (${x.toFixed(2)}, ${z.toFixed(2)}) fora do asfalto`);
   }
   assert.equal(NODE_RADIUS.length, NODES.length);
+});
+
+test('detector de placas e letreiros: zero sobreposição entre placas de rua, fachadas de lojas, portais de era e andaimes', () => {
+  const group = createRoadGroup();
+  const streetSigns = [];
+  group.traverse(obj => {
+    if (obj.isMesh && obj.geometry?.type === 'PlaneGeometry') {
+      const p = obj.geometry.parameters;
+      if (p && Math.abs(p.height - .62) < 1e-4 && Math.abs(obj.position.y - 3.85) < 1e-3) {
+        if (!streetSigns.some(s => Math.hypot(s.x - obj.position.x, s.z - obj.position.z) < .2)) {
+          streetSigns.push({ x: obj.position.x, z: obj.position.z });
+        }
+      }
+    }
+  });
+  assert.ok(streetSigns.length >= 10, 'placas de rua devem ser geradas');
+  // 1) Nenhuma placa de rua encavala com outra placa de rua
+  for (let i = 0; i < streetSigns.length; i++) {
+    for (let j = i + 1; j < streetSigns.length; j++) {
+      const d = Math.hypot(streetSigns[i].x - streetSigns[j].x, streetSigns[i].z - streetSigns[j].z);
+      assert.ok(d > 1.5, `placas de rua sobrepostas a ${d.toFixed(2)} m`);
+    }
+  }
+  // 2) Nenhuma placa de rua colide com letreiro de loja (shop)
+  for (const s of streetSigns) {
+    for (const l of CITY_LOTS) {
+      if (!l.shop) continue;
+      const d = Math.hypot(s.x - l.x, s.z - l.z);
+      assert.ok(d >= Math.hypot(l.w, l.d) / 2 + 2.5, `placa de rua colide com fachada de loja em (${l.x}, ${l.z})`);
+    }
+  }
+  // 3) Nenhum prédio com andaime/painel (scaffold) encosta nos postes de portal de era (ERA_GATES)
+  const gatePoles = ERA_GATES.flatMap(g => [-1, 1].map(s => ({
+    x: g.x + Math.cos(g.heading) * s * (g.width / 2 + 3),
+    z: g.z - Math.sin(g.heading) * s * (g.width / 2 + 3),
+  })));
+  for (const l of CITY_LOTS) {
+    if (!l.scaffold) continue;
+    for (const p of gatePoles) {
+      const dx = Math.max(0, Math.abs(p.x - l.x) - l.w / 2);
+      const dz = Math.max(0, Math.abs(p.z - l.z) - l.d / 2);
+      assert.ok(Math.hypot(dx, dz) >= 2.0, `andaime/painel em (${l.x}, ${l.z}) sobreposto ao portal de era`);
+    }
+  }
 });

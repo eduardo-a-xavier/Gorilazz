@@ -807,7 +807,7 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
     car.clear(); car.add(vehicle); car.updateWorldMatrix(true, true); modelWheels = [];
     const wheelGroups = wheelMeshes.map(mesh => {
       const box = new THREE.Box3().setFromObject(mesh); const center = box.getCenter(new THREE.Vector3());
-      const pivot = new THREE.Group(); pivot.position.copy(car.worldToLocal(center));
+      const pivot = new THREE.Group(); pivot.position.copy(car.worldToLocal(center)); pivot.userData.baseY = pivot.position.y;
       const rolling = new THREE.Group(); pivot.add(rolling); pivot.userData.rolling = rolling;
       pivot.userData.radius = Math.max(.2, box.getSize(new THREE.Vector3()).y / 2);
       car.add(pivot); pivot.updateWorldMatrix(true, false);
@@ -1214,7 +1214,7 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
     setFirstPerson(value) { interacting = false; yaw = pitch = smoothYaw = smoothPitch = 0; highlight(null); release(); firstPerson = value; overview = false; landmarkView = false; initialized = false; travelCamera.resync(); },
     focusWindmill(value) { landmarkView = value; overview = false; travelCamera.resync(); },
     zoomBy(amount) { zoom = THREE.MathUtils.clamp(zoom + amount, .7, 1.6); },
-    resetCamera() { firstPerson = false; dragAngle = 0; dragElevation = 0; zoom = 1; overview = false; landmarkView = false; travelCamera.resync(); },
+    resetCamera() { dragAngle = 0; dragElevation = 0; zoom = 1; overview = false; landmarkView = false; travelCamera.resync(); },
     update(vehicle, time, orbit, reduced, showcase, known, nearby) {
       live.vehicle = vehicle; live.showcase = showcase; live.nearby = nearby; live.reduced=reduced;
       const {x,z,heading} = vehicle; const t = time / 1000;
@@ -1279,7 +1279,12 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
         if (fxDirty) fxMesh.instanceMatrix.needsUpdate = true;
       }
       const travelled = vehicle.distanceTravelled - previousDistance;
-      modelWheels.forEach(wheel => { wheel.userData.rolling.rotation.x -= travelled / wheel.userData.radius; wheel.rotation.y = wheel.position.z < 0 ? vehicle.steering : 0; });
+      // Suspensão independente por roda: compensa roll e pitch da carroceria para os pneus apoiarem no asfalto sem afundar nem flutuar.
+      modelWheels.forEach(wheel => {
+        wheel.userData.rolling.rotation.x -= travelled / wheel.userData.radius;
+        wheel.rotation.y = wheel.position.z < 0 ? vehicle.steering : 0;
+        wheel.position.y = wheel.userData.baseY - (vehicleMotion.height + wheel.position.x * vehicleMotion.roll - wheel.position.z * vehicleMotion.pitch);
+      });
       if (!modelWheels.length) wheels.forEach(wheel => { wheel.rotation.x -= travelled / .75; });
       previousDistance = vehicle.distanceTravelled;
       // O motorista gira os braços com o volante e olha para dentro da curva.

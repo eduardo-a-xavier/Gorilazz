@@ -18,8 +18,14 @@ test('flexão das falanges do piloto é estável e limitada à primeira pessoa',
  for (let wheel=-1.05;wheel<1.05;wheel+=Math.PI/240) assert.ok(Math.abs(handTurn(wheel+Math.PI/240)-handTurn(wheel))<=Math.PI/240+1e-12);
  });
 
-test('piloto pré-posado mantém pose original das falanges', () => {
- const pilot=new THREE.Group(), bone=new THREE.Bone(); bone.name='index_02_l'; pilot.add(bone);
- const rig=createPilotRig(pilot,[],{preposed:true}); const base=bone.quaternion.clone();
- rig.setFirstPerson(true); rig.update(1/60); assert.ok(base.angleTo(bone.quaternion)<1e-7);
+test('piloto pré-posado soma flexão envelopante estável nas falanges e punho em 1ª pessoa', () => {
+ const pilot=new THREE.Group(), bone=new THREE.Bone(), hand=new THREE.Bone();
+ bone.name='index_02_l'; hand.name='hand_r'; pilot.add(bone, hand);
+ const rig=createPilotRig(pilot,[],{preposed:true}); const base=bone.quaternion.clone(), hBase=hand.quaternion.clone();
+ rig.setFirstPerson(true); rig.update(1/60);
+ const grip=bone.quaternion.clone(), hGrip=hand.quaternion.clone();
+ assert.ok(base.angleTo(grip)>.25 && base.angleTo(grip)<.27);
+ assert.ok(hBase.angleTo(hGrip)>.05 && hBase.angleTo(hGrip)<.07);
+ rig.update(1/60); assert.ok(grip.angleTo(bone.quaternion)<1e-7);
+ rig.setFirstPerson(false); rig.update(1/60); assert.ok(base.angleTo(bone.quaternion)<1e-7);
 });

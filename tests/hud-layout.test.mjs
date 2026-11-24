@@ -43,3 +43,8 @@ test('títulos das fichas e do cabeçalho do drawer não colam as letras (letter
   const css = await read('src/landing-fixes.css');
   assert.match(css, /\.discovery-card h3, \.discoveries-drawer h2 \{ letter-spacing:\.02em; word-spacing:\.14em; \}/);
 });
+
+test('exploration-hud fica oculto quando #jogo está com data-entered=true (evita cartão duplicado no canto superior esquerdo)', async () => {
+  const css = await read('src/world.css');
+  assert.match(css, /#jogo\[data-entered=true\] \.exploration-hud \{ display:none !important; \}/);
+});

@@ -221,9 +221,18 @@ export function createPilotRig(pilot, animations = [], { preposed = false } = {}
       add(entries.head, AY, yaw * .5 + .2 * greeting); add(entries.head, AX, .14 * greeting);
       add(entries.spine, AY, yaw * .12);
       // Flexão discreta e estável no espaço local das falanges, sem torcer o punho.
-      if (inside && !preposed) for (const finger of fingers) {
-        const angle = finger.thumb ? (finger.joint === 1 ? .18 : .16) : (finger.joint === 1 ? .14 : .28);
-        add(finger, AX, angle);
+      // No piloto pré-posado (v6), soma flexão envelopante e pitch simétrico do punho para o aro ficar dentro da palma e dedos nas 3 poses.
+      if (inside) {
+        if (preposed) {
+          add(entries.handL, AX, .06); add(entries.handR, AX, .06);
+          const fAngles = [.18, .26, .22], tAngles = [.12, .15, .12];
+          for (const finger of fingers) add(finger, AX, (finger.thumb ? tAngles : fAngles)[finger.joint - 1]);
+        } else {
+          for (const finger of fingers) {
+            const angle = finger.thumb ? (finger.joint === 1 ? .18 : .16) : (finger.joint === 1 ? .14 : .28);
+            add(finger, AX, angle);
+          }
+        }
       }
       if (!inside) { add(entries.armL, AZ, -steering * .25); add(entries.armR, AZ, -steering * .25); }
     },

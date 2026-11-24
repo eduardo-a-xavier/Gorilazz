@@ -310,6 +310,7 @@ export const ERA_GATES = CITY_ERAS.map((era, index) => {
   return best;
 }).filter(Boolean);
 const gatePoles = ERA_GATES.flatMap(g => [-1, 1].map(s => ({ x: g.x + Math.cos(g.heading) * s * (g.width / 2 + 3), z: g.z - Math.sin(g.heading) * s * (g.width / 2 + 3), radius: .3 })));
+for (const lot of CITY_LOTS) if (lot.scaffold && gatePoles.some(pole => distanceToLot(pole, lot) < 2)) lot.scaffold = false;
 function lotObstacles(lot) {
   const along = lot.w >= lot.d; const long = Math.max(lot.w, lot.d), short = Math.min(lot.w, lot.d);
   const n = Math.max(1, Math.ceil(long / short * 1.6));
