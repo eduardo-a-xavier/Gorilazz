@@ -1,0 +1,240 @@
+{
+  "duration_seconds": 213.1,
+  "duration_formatted": "3m 33s",
+  "events": [
+    {
+      "time_s": 0.0,
+      "desc": "Acessando http://localhost:3000/?perf...",
+      "ok": true,
+      "extra": ""
+    },
+    {
+      "time_s": 6.6,
+      "desc": "Vitrine do topo exibida com Murdoc lunar no céu",
+      "ok": true,
+      "extra": "Projeção tela: 883x278"
+    },
+    {
+      "time_s": 13.1,
+      "desc": "Clicando em #enter-world para entrar no 3D",
+      "ok": true,
+      "extra": ""
+    },
+    {
+      "time_s": 14.3,
+      "desc": "Fechando diálogo de onboarding (#onboarding-start)",
+      "ok": true,
+      "extra": ""
+    },
+    {
+      "time_s": 15.3,
+      "desc": "Asserção APROVADA: classe 'mode-3d' ativa",
+      "ok": true,
+      "extra": ""
+    },
+    {
+      "time_s": 15.3,
+      "desc": "Conduzindo pela Av. Clint Eastwood com teclas WASD",
+      "ok": true,
+      "extra": ""
+    },
+    {
+      "time_s": 29.4,
+      "desc": "Av. Clint Eastwood: Murdoc lunar no céu",
+      "ok": true,
+      "extra": "Projeção tela: 386x182"
+    },
+    {
+      "time_s": 33.6,
+      "desc": "Virando para a direita (KeyD)",
+      "ok": true,
+      "extra": ""
+    },
+    {
+      "time_s": 37.6,
+      "desc": "Murdoc lunar saiu do quadro com a rotação",
+      "ok": false,
+      "extra": "InView: True"
+    },
+    {
+      "time_s": 40.2,
+      "desc": "Virando à esquerda para reentrar a lua (KeyA)",
+      "ok": true,
+      "extra": ""
+    },
+    {
+      "time_s": 50.7,
+      "desc": "Conduzindo até a Av. Saturnz Barz",
+      "ok": true,
+      "extra": ""
+    },
+    {
+      "time_s": 65.8,
+      "desc": "Av. Saturnz Barz: Murdoc lunar sobre os edifícios",
+      "ok": true,
+      "extra": "Projeção tela: 971x190"
+    },
+    {
+      "time_s": 86.1,
+      "desc": "Conduzindo rumo à Rua Song Machine",
+      "ok": true,
+      "extra": ""
+    },
+    {
+      "time_s": 95.2,
+      "desc": "Rua Song Machine: Murdoc lunar no céu",
+      "ok": true,
+      "extra": "Projeção tela: 436x211"
+    },
+    {
+      "time_s": 99.7,
+      "desc": "Conduzindo até a placa dos Zumbis (-5, -85)",
+      "ok": true,
+      "extra": ""
+    },
+    {
+      "time_s": 107.1,
+      "desc": "Parada em frente à placa dos Zumbis a 3.8 m",
+      "ok": true,
+      "extra": ""
+    },
+    {
+      "time_s": 107.1,
+      "desc": "Conduzindo até o Alce Geométrico",
+      "ok": true,
+      "extra": ""
+    },
+    {
+      "time_s": 115.0,
+      "desc": "Parada em frente ao Alce Geométrico a 4.5 m",
+      "ok": true,
+      "extra": ""
+    },
+    {
+      "time_s": 115.0,
+      "desc": "Conduzindo até o cartaz SAVE US FROM HIM (106, -110)",
+      "ok": true,
+      "extra": ""
+    },
+    {
+      "time_s": 122.9,
+      "desc": "Parada em frente ao Pôster Save desobstruído a 3.2 m",
+      "ok": true,
+      "extra": ""
+    },
+    {
+      "time_s": 122.9,
+      "desc": "Conduzindo até a garagem/subsolo em (-77, -41)",
+      "ok": true,
+      "extra": ""
+    },
+    {
+      "time_s": 131.8,
+      "desc": "Parada em frente ao Trailer Winnebago a 4.2 m",
+      "ok": true,
+      "extra": ""
+    },
+    {
+      "time_s": 131.8,
+      "desc": "Conduzindo até o mural de Reject False Icons (-101, -110)",
+      "ok": true,
+      "extra": ""
+    },
+    {
+      "time_s": 139.7,
+      "desc": "Parada em frente ao Pôster REJECT FALSE ICONS a 3.0 m",
+      "ok": true,
+      "extra": ""
+    },
+    {
+      "time_s": 139.7,
+      "desc": "Avançando até o cartaz de Pazuzu (-98, -122)",
+      "ok": true,
+      "extra": ""
+    },
+    {
+      "time_s": 146.2,
+      "desc": "Parada em frente ao Pôster PAZUZU a 3.0 m",
+      "ok": true,
+      "extra": ""
+    },
+    {
+      "time_s": 146.2,
+      "desc": "Pressionando tecla G (Buzina) - 1º toque",
+      "ok": true,
+      "extra": ""
+    },
+    {
+      "time_s": 147.3,
+      "desc": "Pressionando tecla G (Buzina) - 2º toque",
+      "ok": true,
+      "extra": ""
+    },
+    {
+      "time_s": 148.3,
+      "desc": "Pressionando tecla G (Buzina) - 3º toque",
+      "ok": true,
+      "extra": ""
+    },
+    {
+      "time_s": 149.5,
+      "desc": "Pressionando tecla H para abrir menu de controles",
+      "ok": true,
+      "extra": ""
+    },
+    {
+      "time_s": 153.6,
+      "desc": "Fechando menu [H] com Escape",
+      "ok": true,
+      "extra": ""
+    },
+    {
+      "time_s": 155.1,
+      "desc": "Pressionando tecla V para ativar câmera de 1ª pessoa",
+      "ok": true,
+      "extra": ""
+    },
+    {
+      "time_s": 158.8,
+      "desc": "Conduzindo em 1ª pessoa acelerando com W e esterçando com A",
+      "ok": true,
+      "extra": ""
+    },
+    {
+      "time_s": 186.9,
+      "desc": "Murdoc lunar visível através do vidro frontal e cockpit",
+      "ok": true,
+      "extra": ""
+    },
+    {
+      "time_s": 186.9,
+      "desc": "Retornando para a 3ª pessoa com tecla V",
+      "ok": true,
+      "extra": ""
+    },
+    {
+      "time_s": 188.9,
+      "desc": "Conduzindo de volta à praça central",
+      "ok": true,
+      "extra": ""
+    },
+    {
+      "time_s": 205.0,
+      "desc": "Praça Central (Clint 2): Murdoc lunar majestoso no céu",
+      "ok": true,
+      "extra": "Projeção tela: 439x281"
+    },
+    {
+      "time_s": 209.6,
+      "desc": "Sessão contínua concluída com sucesso",
+      "ok": true,
+      "extra": ""
+    },
+    {
+      "time_s": 213.1,
+      "desc": "Gravação finalizada. Duração total: 213.1 s (3.55 min)",
+      "ok": true,
+      "extra": ""
+    }
+  ]
+}

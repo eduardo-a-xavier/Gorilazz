@@ -1,0 +1,162 @@
+{
+  "item1": {
+    "cards": [
+      {
+        "index": 0,
+        "img_hidden": true,
+        "img_display": "none",
+        "canvas_visible": true,
+        "canvas_box": {
+          "w": 267,
+          "h": 228
+        }
+      },
+      {
+        "index": 1,
+        "img_hidden": true,
+        "img_display": "none",
+        "canvas_visible": true,
+        "canvas_box": {
+          "w": 267,
+          "h": 228
+        }
+      },
+      {
+        "index": 2,
+        "img_hidden": true,
+        "img_display": "none",
+        "canvas_visible": true,
+        "canvas_box": {
+          "w": 267,
+          "h": 228
+        }
+      },
+      {
+        "index": 3,
+        "img_hidden": true,
+        "img_display": "none",
+        "canvas_visible": true,
+        "canvas_box": {
+          "w": 267,
+          "h": 228
+        }
+      }
+    ],
+    "exactly_one_visible": true,
+    "drag_360": true,
+    "fallback_works": true
+  },
+  "item2": {
+    "frametime_manual": {
+      "p50": 16.700000000000728,
+      "p95": 17,
+      "p99": 17.19999999999891,
+      "maxDt": 17.30000000000109,
+      "samples": 179
+    },
+    "lateral_slip": {
+      "maxLateralSlip": 1.3877787807814457e-17,
+      "lateralGripStrict": true
+    },
+    "off_road_samples": 0,
+    "total_telemetry_samples": 58,
+    "stops_reached_in_run": 2
+  },
+  "item3": {
+    "hud_blur": {
+      "dock_blur": "none",
+      "toolbar_blur": "none"
+    },
+    "controls_j_open": true,
+    "controls_j_close": true,
+    "help_h": true,
+    "help_esc": true,
+    "toast_duration_ms": 5010.5,
+    "viewports_overlap": {
+      "1440x900": {
+        "pill_box": {
+          "top": 371.703125,
+          "bottom": 528.296875,
+          "left": 1111.203125,
+          "right": 1411.203125
+        },
+        "counter_box": {
+          "top": 86.796875,
+          "bottom": 98.796875,
+          "left": 600,
+          "right": 727.828125
+        },
+        "overlap": false
+      },
+      "1346x680": {
+        "pill_box": {
+          "top": 261.703125,
+          "bottom": 418.296875,
+          "left": 1019.09375,
+          "right": 1319.09375
+        },
+        "counter_box": {
+          "top": 84.90625,
+          "bottom": 96.90625,
+          "left": 553,
+          "right": 680.828125
+        },
+        "overlap": false
+      },
+      "390x844": {
+        "pill_box": {
+          "top": 483.40625,
+          "bottom": 640,
+          "left": 105,
+          "right": 378
+        },
+        "counter_box": {
+          "top": 56,
+          "bottom": 67,
+          "left": 120,
+          "right": 237.03125
+        },
+        "overlap": false
+      },
+      "320x568": {
+        "pill_box": {
+          "top": 207.40625,
+          "bottom": 364,
+          "left": 84,
+          "right": 308
+        },
+        "counter_box": {
+          "top": 56,
+          "bottom": 67,
+          "left": 85,
+          "right": 202.03125
+        },
+        "overlap": false
+      }
+    }
+  },
+  "item4": {
+    "cockpit_active": true,
+    "radio_sync": {
+      "current_track": "Concreto"
+    },
+    "radio_switch": {
+      "track_after_switch": "Maré de plástico"
+    },
+    "piano_ducking_available": true
+  },
+  "item6": {
+    "fps_points": {
+      "Mural 1 (Kong Studios)": 59.8,
+      "Palco dos Integrantes": 59.9,
+      "Centro da Pista": 59.9
+    },
+    "console_errors_count": 0,
+    "console_errors": [],
+    "http_errors_count": 0,
+    "http_errors": [],
+    "payload_mb": 10.8,
+    "map_regression": true,
+    "pilot_regression": true
+  }
+}

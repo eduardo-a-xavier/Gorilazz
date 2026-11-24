@@ -1,0 +1,25 @@
+{
+  "samples": 569,
+  "offTrack": 0,
+  "collisions": 0,
+  "stopsVisited": [
+    {
+      "count": 1,
+      "time": 4
+    },
+    {
+      "count": 2,
+      "time": 17
+    },
+    {
+      "count": 3,
+      "time": 39
+    },
+    {
+      "count": 4,
+      "time": 55
+    }
+  ],
+  "totalStops": 4,
+  "complete": false
+}

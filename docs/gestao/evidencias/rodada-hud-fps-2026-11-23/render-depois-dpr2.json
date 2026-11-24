@@ -1,0 +1,15 @@
+{
+ "secs": 30.0,
+ "dpr": 2.0,
+ "erros": [],
+ "frames": 1800,
+ "fps_medio": 59.2,
+ "p50_ms": 16.7,
+ "p95_ms": 16.9,
+ "p99_ms": 17.1,
+ "max_ms": 250.9,
+ "frames_over_33ms": 4,
+ "draw_calls_medio": 240,
+ "draw_calls_max": 361,
+ "pixel_ratio_medio": 1.318
+}

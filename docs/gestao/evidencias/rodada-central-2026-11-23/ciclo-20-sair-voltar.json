@@ -1,0 +1,435 @@
+{
+ "ciclos": [
+  {
+   "i": 0,
+   "cenario": "normal",
+   "carro_responde": true,
+   "velocidade_pico": 7.35,
+   "ui": {
+    "entered": true,
+    "worldVisible": true,
+    "touring": false,
+    "modal": false,
+    "fullscreen": false,
+    "mode3d": true
+   },
+   "camera_move": 43.94,
+   "mode3d": true,
+   "dialogs": [],
+   "fps": 60.5,
+   "geometrias": 404,
+   "texturas": 137,
+   "programas": 50
+  },
+  {
+   "i": 1,
+   "cenario": "modal_integrante",
+   "carro_responde": true,
+   "velocidade_pico": 7.22,
+   "ui": {
+    "entered": true,
+    "worldVisible": true,
+    "touring": false,
+    "modal": false,
+    "fullscreen": false,
+    "mode3d": true
+   },
+   "camera_move": 2.88,
+   "mode3d": true,
+   "dialogs": [],
+   "fps": 55,
+   "geometrias": 407,
+   "texturas": 137,
+   "programas": 50
+  },
+  {
+   "i": 2,
+   "cenario": "fliperama",
+   "carro_responde": true,
+   "velocidade_pico": 7.22,
+   "ui": {
+    "entered": true,
+    "worldVisible": true,
+    "touring": false,
+    "modal": false,
+    "fullscreen": false,
+    "mode3d": true
+   },
+   "camera_move": 2.91,
+   "mode3d": true,
+   "dialogs": [],
+   "fps": 60.5,
+   "geometrias": 407,
+   "texturas": 137,
+   "programas": 50
+  },
+  {
+   "i": 3,
+   "cenario": "piano",
+   "carro_responde": true,
+   "velocidade_pico": 7.22,
+   "ui": {
+    "entered": true,
+    "worldVisible": true,
+    "touring": false,
+    "modal": false,
+    "fullscreen": false,
+    "mode3d": true
+   },
+   "camera_move": 2.91,
+   "mode3d": true,
+   "dialogs": [],
+   "fps": 60.5,
+   "geometrias": 407,
+   "texturas": 137,
+   "programas": 50
+  },
+  {
+   "i": 4,
+   "cenario": "passeio_guiado",
+   "carro_responde": true,
+   "velocidade_pico": 7.35,
+   "ui": {
+    "entered": true,
+    "worldVisible": true,
+    "touring": false,
+    "modal": false,
+    "fullscreen": false,
+    "mode3d": true
+   },
+   "camera_move": 3.29,
+   "mode3d": true,
+   "dialogs": [],
+   "fps": 60,
+   "geometrias": 429,
+   "texturas": 141,
+   "programas": 50
+  },
+  {
+   "i": 5,
+   "cenario": "tela_cheia",
+   "carro_responde": true,
+   "velocidade_pico": 7.67,
+   "ui": {
+    "entered": true,
+    "worldVisible": true,
+    "touring": false,
+    "modal": false,
+    "fullscreen": false,
+    "mode3d": true
+   },
+   "camera_move": 3.33,
+   "mode3d": true,
+   "dialogs": [],
+   "fps": 60.5,
+   "geometrias": 429,
+   "texturas": 141,
+   "programas": 50
+  },
+  {
+   "i": 6,
+   "cenario": "normal",
+   "carro_responde": true,
+   "velocidade_pico": 7.35,
+   "ui": {
+    "entered": true,
+    "worldVisible": true,
+    "touring": false,
+    "modal": false,
+    "fullscreen": false,
+    "mode3d": true
+   },
+   "camera_move": 2.99,
+   "mode3d": true,
+   "dialogs": [],
+   "fps": 60,
+   "geometrias": 429,
+   "texturas": 141,
+   "programas": 50
+  },
+  {
+   "i": 7,
+   "cenario": "modal_integrante",
+   "carro_responde": true,
+   "velocidade_pico": 7.35,
+   "ui": {
+    "entered": true,
+    "worldVisible": true,
+    "touring": false,
+    "modal": false,
+    "fullscreen": false,
+    "mode3d": true
+   },
+   "camera_move": 2.92,
+   "mode3d": true,
+   "dialogs": [],
+   "fps": 60,
+   "geometrias": 429,
+   "texturas": 141,
+   "programas": 50
+  },
+  {
+   "i": 8,
+   "cenario": "fliperama",
+   "carro_responde": true,
+   "velocidade_pico": 7.35,
+   "ui": {
+    "entered": true,
+    "worldVisible": true,
+    "touring": false,
+    "modal": false,
+    "fullscreen": false,
+    "mode3d": true
+   },
+   "camera_move": 2.92,
+   "mode3d": true,
+   "dialogs": [],
+   "fps": 60.5,
+   "geometrias": 429,
+   "texturas": 141,
+   "programas": 50
+  },
+  {
+   "i": 9,
+   "cenario": "piano",
+   "carro_responde": true,
+   "velocidade_pico": 7.35,
+   "ui": {
+    "entered": true,
+    "worldVisible": true,
+    "touring": false,
+    "modal": false,
+    "fullscreen": false,
+    "mode3d": true
+   },
+   "camera_move": 2.92,
+   "mode3d": true,
+   "dialogs": [],
+   "fps": 60,
+   "geometrias": 429,
+   "texturas": 141,
+   "programas": 50
+  },
+  {
+   "i": 10,
+   "cenario": "passeio_guiado",
+   "carro_responde": true,
+   "velocidade_pico": 7.22,
+   "ui": {
+    "entered": true,
+    "worldVisible": true,
+    "touring": false,
+    "modal": false,
+    "fullscreen": false,
+    "mode3d": true
+   },
+   "camera_move": 3.24,
+   "mode3d": true,
+   "dialogs": [],
+   "fps": 60.5,
+   "geometrias": 429,
+   "texturas": 141,
+   "programas": 50
+  },
+  {
+   "i": 11,
+   "cenario": "tela_cheia",
+   "carro_responde": true,
+   "velocidade_pico": 7.41,
+   "ui": {
+    "entered": true,
+    "worldVisible": true,
+    "touring": false,
+    "modal": false,
+    "fullscreen": false,
+    "mode3d": true
+   },
+   "camera_move": 3.14,
+   "mode3d": true,
+   "dialogs": [],
+   "fps": 60.5,
+   "geometrias": 429,
+   "texturas": 141,
+   "programas": 50
+  },
+  {
+   "i": 12,
+   "cenario": "normal",
+   "carro_responde": true,
+   "velocidade_pico": 7.22,
+   "ui": {
+    "entered": true,
+    "worldVisible": true,
+    "touring": false,
+    "modal": false,
+    "fullscreen": false,
+    "mode3d": true
+   },
+   "camera_move": 2.97,
+   "mode3d": true,
+   "dialogs": [],
+   "fps": 60.5,
+   "geometrias": 429,
+   "texturas": 141,
+   "programas": 50
+  },
+  {
+   "i": 13,
+   "cenario": "modal_integrante",
+   "carro_responde": true,
+   "velocidade_pico": 7.35,
+   "ui": {
+    "entered": true,
+    "worldVisible": true,
+    "touring": false,
+    "modal": false,
+    "fullscreen": false,
+    "mode3d": true
+   },
+   "camera_move": 3.01,
+   "mode3d": true,
+   "dialogs": [],
+   "fps": 60.5,
+   "geometrias": 429,
+   "texturas": 141,
+   "programas": 50
+  },
+  {
+   "i": 14,
+   "cenario": "fliperama",
+   "carro_responde": true,
+   "velocidade_pico": 7.48,
+   "ui": {
+    "entered": true,
+    "worldVisible": true,
+    "touring": false,
+    "modal": false,
+    "fullscreen": false,
+    "mode3d": true
+   },
+   "camera_move": 3.02,
+   "mode3d": true,
+   "dialogs": [],
+   "fps": 60,
+   "geometrias": 429,
+   "texturas": 141,
+   "programas": 50
+  },
+  {
+   "i": 15,
+   "cenario": "piano",
+   "carro_responde": true,
+   "velocidade_pico": 7.35,
+   "ui": {
+    "entered": true,
+    "worldVisible": true,
+    "touring": false,
+    "modal": false,
+    "fullscreen": false,
+    "mode3d": true
+   },
+   "camera_move": 2.92,
+   "mode3d": true,
+   "dialogs": [],
+   "fps": 60,
+   "geometrias": 429,
+   "texturas": 141,
+   "programas": 50
+  },
+  {
+   "i": 16,
+   "cenario": "passeio_guiado",
+   "carro_responde": true,
+   "velocidade_pico": 7.22,
+   "ui": {
+    "entered": true,
+    "worldVisible": true,
+    "touring": false,
+    "modal": false,
+    "fullscreen": false,
+    "mode3d": true
+   },
+   "camera_move": 3.24,
+   "mode3d": true,
+   "dialogs": [],
+   "fps": 60.5,
+   "geometrias": 429,
+   "texturas": 141,
+   "programas": 50
+  },
+  {
+   "i": 17,
+   "cenario": "tela_cheia",
+   "carro_responde": true,
+   "velocidade_pico": 7.41,
+   "ui": {
+    "entered": true,
+    "worldVisible": true,
+    "touring": false,
+    "modal": false,
+    "fullscreen": false,
+    "mode3d": true
+   },
+   "camera_move": 3.04,
+   "mode3d": true,
+   "dialogs": [],
+   "fps": 60,
+   "geometrias": 429,
+   "texturas": 141,
+   "programas": 50
+  },
+  {
+   "i": 18,
+   "cenario": "normal",
+   "carro_responde": true,
+   "velocidade_pico": 7.22,
+   "ui": {
+    "entered": true,
+    "worldVisible": true,
+    "touring": false,
+    "modal": false,
+    "fullscreen": false,
+    "mode3d": true
+   },
+   "camera_move": 2.97,
+   "mode3d": true,
+   "dialogs": [],
+   "fps": 60.5,
+   "geometrias": 429,
+   "texturas": 141,
+   "programas": 50
+  },
+  {
+   "i": 19,
+   "cenario": "modal_integrante",
+   "carro_responde": true,
+   "velocidade_pico": 7.22,
+   "ui": {
+    "entered": true,
+    "worldVisible": true,
+    "touring": false,
+    "modal": false,
+    "fullscreen": false,
+    "mode3d": true
+   },
+   "camera_move": 2.91,
+   "mode3d": true,
+   "dialogs": [],
+   "fps": 60.5,
+   "geometrias": 429,
+   "texturas": 141,
+   "programas": 50
+  }
+ ],
+ "erros": [],
+ "todos_respondem": true,
+ "fps_min": 55,
+ "geometrias_inicio_fim": [
+  404,
+  429
+ ],
+ "texturas_inicio_fim": [
+  137,
+  141
+ ]
+}

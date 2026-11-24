@@ -1,0 +1,400 @@
+{
+  "timestamp": "2026-11-22T21:43:15",
+  "hud_desktop": {
+    "1440x900": {
+      "initial": {
+        "counter_text": "DESCOBERTAS: 0 / 9",
+        "tour_btn_text": "▶ PASSEIO GUIADO",
+        "tour_btn_visible": true,
+        "guided_text_display": "none",
+        "same_line": true,
+        "counter_rect": {
+          "x": 576.171875,
+          "y": 33.796875,
+          "width": 127.828125,
+          "height": 12,
+          "top": 33.796875,
+          "right": 704,
+          "bottom": 45.796875,
+          "left": 576.171875
+        },
+        "tour_btn_rect": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0,
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        },
+        "controls_btn_text": "[H] Controles",
+        "controls_btn_shortcut": "H",
+        "controls_bar_display": "none",
+        "drive_buttons_display": "none",
+        "radio_bottom_px": 16,
+        "radio_display": "grid",
+        "quick_view_parent": "journey"
+      },
+      "menu_open_with_h": true,
+      "menu_closed_by_esc": true,
+      "help_open_by_b": true,
+      "tour_toggle_state": {
+        "btn_text": "Ⅱ PAUSAR PASSEIO",
+        "is_tour_active": null
+      },
+      "help_open_by_f1": true
+    },
+    "1346x680": {
+      "initial": {
+        "counter_text": "DESCOBERTAS: 0 / 9",
+        "tour_btn_text": "▶ PASSEIO GUIADO",
+        "tour_btn_visible": true,
+        "guided_text_display": "none",
+        "same_line": true,
+        "counter_rect": {
+          "x": 529.171875,
+          "y": 31.90625,
+          "width": 127.828125,
+          "height": 12,
+          "top": 31.90625,
+          "right": 657,
+          "bottom": 43.90625,
+          "left": 529.171875
+        },
+        "tour_btn_rect": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0,
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        },
+        "controls_btn_text": "[H] Controles",
+        "controls_btn_shortcut": "H",
+        "controls_bar_display": "none",
+        "drive_buttons_display": "none",
+        "radio_bottom_px": 16,
+        "radio_display": "grid",
+        "quick_view_parent": "journey"
+      },
+      "menu_open_with_h": true,
+      "menu_closed_by_esc": true,
+      "help_open_by_b": true,
+      "tour_toggle_state": {
+        "btn_text": "Ⅱ PAUSAR PASSEIO",
+        "is_tour_active": null
+      },
+      "help_open_by_f1": true
+    }
+  },
+  "hud_touch": {
+    "390x844": {
+      "drive_buttons_present": true,
+      "drive_buttons_display": "flex",
+      "buttons": [
+        {
+          "id": "",
+          "text": "←",
+          "rect": {
+            "x": 12,
+            "y": 772,
+            "width": 47,
+            "height": 56,
+            "top": 772,
+            "right": 59,
+            "bottom": 828,
+            "left": 12
+          },
+          "visible": true
+        },
+        {
+          "id": "",
+          "text": "→",
+          "rect": {
+            "x": 66,
+            "y": 772,
+            "width": 47,
+            "height": 56,
+            "top": 772,
+            "right": 113,
+            "bottom": 828,
+            "left": 66
+          },
+          "visible": true
+        },
+        {
+          "id": "",
+          "text": "FREIO",
+          "rect": {
+            "x": 241,
+            "y": 772,
+            "width": 65,
+            "height": 56,
+            "top": 772,
+            "right": 306,
+            "bottom": 828,
+            "left": 241
+          },
+          "visible": true
+        },
+        {
+          "id": "",
+          "text": "ACELERAR",
+          "rect": {
+            "x": 313,
+            "y": 772,
+            "width": 65,
+            "height": 56,
+            "top": 772,
+            "right": 378,
+            "bottom": 828,
+            "left": 313
+          },
+          "visible": true
+        }
+      ],
+      "gap_center_to_minimap": null,
+      "gap_controls_to_center": -132.328125,
+      "cRect": {
+        "x": 130,
+        "y": 70,
+        "width": 117.03125,
+        "height": 11,
+        "top": 70,
+        "right": 247.03125,
+        "bottom": 81,
+        "left": 130
+      },
+      "tRect": {
+        "x": 0,
+        "y": 0,
+        "width": 0,
+        "height": 0,
+        "top": 0,
+        "right": 0,
+        "bottom": 0,
+        "left": 0
+      },
+      "mRect": null,
+      "kRect": {
+        "x": 14,
+        "y": 12,
+        "width": 118.328125,
+        "height": 34,
+        "top": 12,
+        "right": 132.328125,
+        "bottom": 46,
+        "left": 14
+      },
+      "speed_test": {
+        "speed_before": 0,
+        "speed_after": 0,
+        "responded": false
+      }
+    },
+    "320x568": {
+      "drive_buttons_present": true,
+      "drive_buttons_display": "flex",
+      "buttons": [
+        {
+          "id": "",
+          "text": "←",
+          "rect": {
+            "x": 12,
+            "y": 496,
+            "width": 47,
+            "height": 56,
+            "top": 496,
+            "right": 59,
+            "bottom": 552,
+            "left": 12
+          },
+          "visible": true
+        },
+        {
+          "id": "",
+          "text": "→",
+          "rect": {
+            "x": 66,
+            "y": 496,
+            "width": 47,
+            "height": 56,
+            "top": 496,
+            "right": 113,
+            "bottom": 552,
+            "left": 66
+          },
+          "visible": true
+        },
+        {
+          "id": "",
+          "text": "FREIO",
+          "rect": {
+            "x": 171,
+            "y": 496,
+            "width": 65,
+            "height": 56,
+            "top": 496,
+            "right": 236,
+            "bottom": 552,
+            "left": 171
+          },
+          "visible": true
+        },
+        {
+          "id": "",
+          "text": "ACELERAR",
+          "rect": {
+            "x": 243,
+            "y": 496,
+            "width": 65,
+            "height": 56,
+            "top": 496,
+            "right": 308,
+            "bottom": 552,
+            "left": 243
+          },
+          "visible": true
+        }
+      ],
+      "gap_center_to_minimap": null,
+      "gap_controls_to_center": -132.328125,
+      "cRect": {
+        "x": 95,
+        "y": 70,
+        "width": 117.03125,
+        "height": 11,
+        "top": 70,
+        "right": 212.03125,
+        "bottom": 81,
+        "left": 95
+      },
+      "tRect": {
+        "x": 0,
+        "y": 0,
+        "width": 0,
+        "height": 0,
+        "top": 0,
+        "right": 0,
+        "bottom": 0,
+        "left": 0
+      },
+      "mRect": null,
+      "kRect": {
+        "x": 14,
+        "y": 12,
+        "width": 118.328125,
+        "height": 34,
+        "top": 12,
+        "right": 132.328125,
+        "bottom": 46,
+        "left": 14
+      },
+      "speed_test": {
+        "speed_before": 0,
+        "speed_after": 0,
+        "responded": false
+      }
+    }
+  },
+  "fps_render": {
+    "devicePixelRatio": 2,
+    "renderer_pixelRatio": 1.5,
+    "capped_properly": true,
+    "points": {
+      "Mural 1 (Beginning)": {
+        "fps": 59.8,
+        "p50_ms": 16.7,
+        "p95_ms": 17,
+        "p99_ms": 17.1,
+        "draw_calls": 450,
+        "triangles": 424342
+      },
+      "Palco Central": {
+        "fps": 59.8,
+        "p50_ms": 16.7,
+        "p95_ms": 16.9,
+        "p99_ms": 17,
+        "draw_calls": 450,
+        "triangles": 424342
+      },
+      "Centro da Cidade": {
+        "fps": 59.8,
+        "p50_ms": 16.7,
+        "p95_ms": 17.1,
+        "p99_ms": 17.1,
+        "draw_calls": 450,
+        "triangles": 424342
+      }
+    }
+  },
+  "modelos": {
+    "band_cards_editorial": [
+      {
+        "index": 0,
+        "member": "2D",
+        "img_hidden": true,
+        "img_display": "none",
+        "wrap_hidden": false,
+        "has_canvas": true,
+        "controls_present": true
+      },
+      {
+        "index": 1,
+        "member": "Murdoc",
+        "img_hidden": true,
+        "img_display": "none",
+        "wrap_hidden": false,
+        "has_canvas": true,
+        "controls_present": true
+      },
+      {
+        "index": 2,
+        "member": "Noodle",
+        "img_hidden": true,
+        "img_display": "none",
+        "wrap_hidden": false,
+        "has_canvas": true,
+        "controls_present": true
+      },
+      {
+        "index": 3,
+        "member": "Russel",
+        "img_hidden": true,
+        "img_display": "none",
+        "wrap_hidden": false,
+        "has_canvas": true,
+        "controls_present": true
+      }
+    ],
+    "pilot_cockpit_ok": true,
+    "guitar_noodle_ok": true,
+    "fallback_test": {
+      "has_error_banner": false,
+      "world_running": true,
+      "blocked_urls": [
+        "http://localhost:3000/assets/models/driver-pilot-v5.glb",
+        "http://localhost:3000/assets/models/gorillaz-phase7-web-v3.glb",
+        "http://localhost:3000/assets/models/driver-pilot-v5.glb",
+        "http://localhost:3000/assets/models/gorillaz-phase7-web-v3.glb"
+      ],
+      "page_errors": []
+    }
+  },
+  "regressoes": {
+    "initial_weight_mb": 1.6,
+    "total_weight_mb": 11.2,
+    "map_state": {
+      "open": false,
+      "items": []
+    },
+    "arcade_accessible": true,
+    "piano_accessible": true
+  },
+  "erros_console": [],
+  "erros_http": [],
+  "erros_pagina": []
+}

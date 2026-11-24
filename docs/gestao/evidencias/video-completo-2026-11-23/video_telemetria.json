@@ -1,0 +1,143 @@
+{
+  "start_time": 1795455661.282922,
+  "assertions": [
+    {
+      "check": "Link 'Prefiro conhecer a história' visível",
+      "passed": true,
+      "timestamp": 1795455670.494525
+    },
+    {
+      "check": "4 cards de integrantes detectados",
+      "passed": true,
+      "timestamp": 1795455682.374042
+    },
+    {
+      "check": "Botão #enter-world visível",
+      "passed": true,
+      "timestamp": 1795455687.9330816
+    },
+    {
+      "check": "Diálogo #onboarding-dialog fechado com sucesso",
+      "passed": true,
+      "timestamp": 1795455689.124379
+    },
+    {
+      "check": "Página em modo 3D (html.mode-3d)",
+      "passed": true,
+      "timestamp": 1795455689.132225
+    },
+    {
+      "check": "Painel #journey aberto via tecla H",
+      "passed": true,
+      "timestamp": 1795455692.1947715
+    },
+    {
+      "check": "Painel #journey fechado via Escape",
+      "passed": true,
+      "timestamp": 1795455695.5116265
+    },
+    {
+      "check": "Overlay #full-map-overlay aberto",
+      "passed": true,
+      "timestamp": 1795455700.588974
+    },
+    {
+      "check": "Overlay #full-map-overlay fechado via Escape",
+      "passed": true,
+      "timestamp": 1795455705.1205108
+    },
+    {
+      "check": "Diálogo da descoberta 1 aberto após tecla E",
+      "passed": true,
+      "timestamp": 1795455709.7838633
+    },
+    {
+      "check": "Diálogo da descoberta 2 aberto após tecla E",
+      "passed": true,
+      "timestamp": 1795455716.370052
+    },
+    {
+      "check": "Diálogo da descoberta 3 aberto após tecla E",
+      "passed": true,
+      "timestamp": 1795455722.9644585
+    },
+    {
+      "check": "Contador registrou 3 descobertas (DESCOBERTAS: 3 / 9)",
+      "passed": true,
+      "timestamp": 1795455726.4916337
+    },
+    {
+      "check": "Central de descobertas (#discoveries-drawer) aberta",
+      "passed": true,
+      "timestamp": 1795455727.5861828
+    },
+    {
+      "check": "9 de 9 paradas registradas com sucesso",
+      "passed": true,
+      "timestamp": 1795455772.1686347
+    },
+    {
+      "check": "Cockpit em 1ª pessoa ativo",
+      "passed": true,
+      "timestamp": 1795455786.1980891
+    },
+    {
+      "check": "Modal do 2-D aberto",
+      "passed": true,
+      "timestamp": 1795455813.1231115
+    },
+    {
+      "check": "Diálogo do piano (#piano-dialog) aberto",
+      "passed": true,
+      "timestamp": 1795455816.2090435
+    },
+    {
+      "check": "Piano fechado via Escape",
+      "passed": true,
+      "timestamp": 1795455825.4397135
+    },
+    {
+      "check": "Diálogo do arcade (#arcade-dialog) aberto",
+      "passed": true,
+      "timestamp": 1795455828.4980505
+    },
+    {
+      "check": "Fliperama fechado via Escape",
+      "passed": true,
+      "timestamp": 1795455838.1598983
+    },
+    {
+      "check": "Ciclo 1: modo 3D desativado e scroll liberado",
+      "passed": true,
+      "timestamp": 1795455840.1841629
+    },
+    {
+      "check": "Ciclo 1: modo 3D reativado e scroll travado",
+      "passed": true,
+      "timestamp": 1795455842.2055135
+    },
+    {
+      "check": "Ciclo 2: modo 3D desativado e scroll liberado",
+      "passed": true,
+      "timestamp": 1795455846.0560782
+    },
+    {
+      "check": "Ciclo 2: modo 3D reativado e scroll travado",
+      "passed": true,
+      "timestamp": 1795455848.0694966
+    },
+    {
+      "check": "Ciclo 3: modo 3D desativado e scroll liberado",
+      "passed": true,
+      "timestamp": 1795455851.9052877
+    },
+    {
+      "check": "Ciclo 3: modo 3D reativado e scroll travado",
+      "passed": true,
+      "timestamp": 1795455853.9275124
+    }
+  ],
+  "steps": [],
+  "errors": [],
+  "total_duration_sec": 201.68787717819214
+}

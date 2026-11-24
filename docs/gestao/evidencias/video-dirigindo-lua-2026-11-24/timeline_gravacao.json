@@ -1,0 +1,181 @@
+{
+  "duration_seconds": 205.6,
+  "duration_formatted": "3m 25s",
+  "events": [
+    {
+      "time_s": 0.0,
+      "desc": "Acessando http://localhost:3000/?perf...",
+      "ok": true
+    },
+    {
+      "time_s": 5.8,
+      "desc": "Vitrine do topo exibida com integrantes tocando e Murdoc ao fundo",
+      "ok": true
+    },
+    {
+      "time_s": 13.8,
+      "desc": "Clicando em #enter-world para entrar no 3D",
+      "ok": true
+    },
+    {
+      "time_s": 14.9,
+      "desc": "Fechando diálogo de onboarding (#onboarding-start)",
+      "ok": true
+    },
+    {
+      "time_s": 16.0,
+      "desc": "Asserção APROVADA: classe 'mode-3d' ativa",
+      "ok": true
+    },
+    {
+      "time_s": 16.0,
+      "desc": "Acelerando na Av. Clint Eastwood com KeyW",
+      "ok": true
+    },
+    {
+      "time_s": 20.5,
+      "desc": "Carro em movimento na pista: velocidade 91.6 km/h",
+      "ok": true
+    },
+    {
+      "time_s": 32.6,
+      "desc": "Pausa em Clint Eastwood com Murdoc lunar visível à frente",
+      "ok": true
+    },
+    {
+      "time_s": 32.6,
+      "desc": "Virando para Sudeste (KeyW + KeyD)",
+      "ok": true
+    },
+    {
+      "time_s": 44.7,
+      "desc": "Murdoc lunar saiu do quadro ao virar o carro para o lado oposto",
+      "ok": true
+    },
+    {
+      "time_s": 44.7,
+      "desc": "Curva rumo à Av. Saturnz Barz (KeyW + KeyA)",
+      "ok": true
+    },
+    {
+      "time_s": 59.3,
+      "desc": "Pausa na Av. Saturnz Barz: Murdoc lunar nítido sobre os edifícios",
+      "ok": true
+    },
+    {
+      "time_s": 59.3,
+      "desc": "Dirigindo rumo ao cruzamento central e Aviso de Zumbis (-5, -85)",
+      "ok": true
+    },
+    {
+      "time_s": 75.9,
+      "desc": "Parada em frente à placa de Aviso dos Zumbis (-5, -85)",
+      "ok": true
+    },
+    {
+      "time_s": 75.9,
+      "desc": "Dirigindo pela Av. 19-2000 rumo ao Alce",
+      "ok": true
+    },
+    {
+      "time_s": 94.0,
+      "desc": "Parada em frente ao Alce Geométrico (58, -38)",
+      "ok": true
+    },
+    {
+      "time_s": 94.0,
+      "desc": "Dirigindo pela Av. Plastic Beach rumo a (106, -110)",
+      "ok": true
+    },
+    {
+      "time_s": 112.5,
+      "desc": "Parada em frente ao Pôster Save desobstruído (106, -110)",
+      "ok": true
+    },
+    {
+      "time_s": 112.5,
+      "desc": "Contornando a ilha até o subsolo/garagem em (-77, -41)",
+      "ok": true
+    },
+    {
+      "time_s": 132.1,
+      "desc": "Parada em frente ao Trailer Winnebago (-77, -41)",
+      "ok": true
+    },
+    {
+      "time_s": 132.1,
+      "desc": "Avançando para o mural de Reject False Icons (-101, -110)",
+      "ok": true
+    },
+    {
+      "time_s": 141.0,
+      "desc": "Parada em frente ao Pôster REJECT FALSE ICONS",
+      "ok": true
+    },
+    {
+      "time_s": 141.0,
+      "desc": "Avançando até o cartaz de Pazuzu (-98, -122)",
+      "ok": true
+    },
+    {
+      "time_s": 151.9,
+      "desc": "Parada em frente ao Pôster PAZUZU (-98, -122)",
+      "ok": true
+    },
+    {
+      "time_s": 151.9,
+      "desc": "Pressionando tecla G (Buzina) - 1º toque",
+      "ok": true
+    },
+    {
+      "time_s": 153.5,
+      "desc": "Pressionando tecla G (Buzina) - 2º toque",
+      "ok": true
+    },
+    {
+      "time_s": 155.0,
+      "desc": "Pressionando tecla G (Buzina) - 3º toque",
+      "ok": true
+    },
+    {
+      "time_s": 156.9,
+      "desc": "Pressionando tecla H para abrir menu de controles",
+      "ok": true
+    },
+    {
+      "time_s": 161.9,
+      "desc": "Fechando menu [H] com Escape",
+      "ok": true
+    },
+    {
+      "time_s": 163.9,
+      "desc": "Pressionando tecla V para ativar câmera de 1ª pessoa",
+      "ok": true
+    },
+    {
+      "time_s": 169.4,
+      "desc": "Conduzindo em 1ª pessoa acelerando com W e esterçando com A",
+      "ok": true
+    },
+    {
+      "time_s": 198.5,
+      "desc": "Murdoc lunar visível através do vidro frontal e painel do Geep",
+      "ok": true
+    },
+    {
+      "time_s": 198.5,
+      "desc": "Retornando para a 3ª pessoa com tecla V",
+      "ok": true
+    },
+    {
+      "time_s": 201.1,
+      "desc": "Sessão contínua concluída com sucesso",
+      "ok": true
+    },
+    {
+      "time_s": 205.6,
+      "desc": "Gravação finalizada. Duração total: 205.6 s (3.43 min)",
+      "ok": true
+    }
+  ]
+}

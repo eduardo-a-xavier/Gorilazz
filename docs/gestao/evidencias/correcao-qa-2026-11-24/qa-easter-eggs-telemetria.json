@@ -1,0 +1,209 @@
+{
+  "timestamp": "2026-11-24 08:05:00",
+  "audit_version": "Rodada Easter Eggs & Murdoc Colossal",
+  "environment": {
+    "browser": "Google Chrome (Canal Estável)",
+    "mode": "Janela Visível (headless=False)",
+    "gpu_acceleration": "WebGL2 ANGLE (Direct3D11)",
+    "viewport": {
+      "width": 1440,
+      "height": 900
+    },
+    "flags": [
+      "--enable-webgl",
+      "--ignore-gpu-blocklist",
+      "--use-gl=angle",
+      "--use-angle=d3d11",
+      "--disable-background-timer-throttling",
+      "--disable-backgrounding-occluded-windows",
+      "--disable-renderer-backgrounding",
+      "--no-sandbox"
+    ]
+  },
+  "murdoc_colossal": {
+    "found": true,
+    "position": {
+      "x": -165.0,
+      "y": 0.0,
+      "z": -140.0
+    },
+    "scale_scalar": 33.93,
+    "height_meters": 48.0,
+    "rotation_y": 1.05,
+    "mesh_count": 18,
+    "materials": {
+      "body": "MeshStandardMaterial (multiplyScalar 0.35, cor escura #a0a0a0)",
+      "rim": "MeshBasicMaterial (cor #563c64, BackSide, fog: true)",
+      "eyes": "MeshBasicMaterial (cor #d87746, SphereGeometry)"
+    },
+    "eyes_inspection_defect": {
+      "has_eyes_in_scene": false,
+      "root_cause": "O Three.js GLTFLoader sanitizou o nome do nó no GLB para 'murdoc_Murdoc_Headsmd' (sem ponto). O código em src/scene.js linha 940 busca 'murdoc_Murdoc_Head.smd', retornando null e impedindo a adição das esferas dos olhos âmbar.",
+      "visual_impact": "A silhueta e o contorno roxo aparecem perfeitamente integrados à névoa atrás dos prédios, mas os olhos sutis não acendem."
+    },
+    "avenidas_prints": [
+      {
+        "id": "av_saturnz_barz",
+        "nome": "Av. Saturnz Barz (Sul)",
+        "coordinates": { "x": -65.0, "z": -135.0 },
+        "heading": 1.52,
+        "screenshot": "01-murdoc-colossal-av-saturnz-barz.png",
+        "visible": true
+      },
+      {
+        "id": "av_clint_eastwood",
+        "nome": "Av. Clint Eastwood (Noroeste)",
+        "coordinates": { "x": -60.0, "z": -58.0 },
+        "heading": 0.91,
+        "screenshot": "01-murdoc-colossal-av-clint-eastwood.png",
+        "visible": true
+      },
+      {
+        "id": "rua_song_machine",
+        "nome": "Rua Song Machine (Centro-Oeste)",
+        "coordinates": { "x": -75.0, "z": -108.0 },
+        "heading": 1.23,
+        "screenshot": "01-murdoc-colossal-rua-song-machine.png",
+        "visible": true
+      }
+    ]
+  },
+  "easter_eggs": {
+    "items": [
+      {
+        "id": "moose",
+        "nome": "Alce Geométrico",
+        "position": { "x": 58, "z": -38 },
+        "radius": 4.0,
+        "clearance_road_m": 8.40,
+        "nearest_stage": "Russel (64.61m)",
+        "screenshot": "02-easter-egg-alce.png",
+        "verdict": "APROVADO"
+      },
+      {
+        "id": "trailer",
+        "nome": "Trailer Winnebago (M1-N4-STY)",
+        "position": { "x": -77, "z": -41 },
+        "radius": 4.0,
+        "clearance_road_m": 9.86,
+        "nearest_stage": "2-D (38.02m)",
+        "screenshot": "02-easter-egg-trailer.png",
+        "verdict": "APROVADO"
+      },
+      {
+        "id": "reject",
+        "nome": "Grafite REJECT FALSE ICONS",
+        "position": { "x": -101, "z": -110 },
+        "radius": 2.0,
+        "clearance_road_m": 8.50,
+        "nearest_stage": "2-D (51.37m)",
+        "screenshot": "02-easter-egg-reject.png",
+        "verdict": "APROVADO"
+      },
+      {
+        "id": "save",
+        "nome": "Grafite SAVE US FROM HIM",
+        "position": { "x": 106, "z": -110 },
+        "radius": 2.0,
+        "clearance_road_m": 6.93,
+        "nearest_stage": "Russel (47.58m)",
+        "screenshot": "02-easter-egg-save.png",
+        "verdict": "PARCIAL",
+        "observation": "Árvore procedural de TREE_LOCATIONS próxima a (106, -110) fica na linha de visada frontal do cartaz, cobrindo parcialmente a palavra SAVE."
+      },
+      {
+        "id": "pazuzu",
+        "nome": "Cartaz PAZUZU",
+        "position": { "x": -98, "z": -122 },
+        "radius": 2.0,
+        "clearance_road_m": 9.68,
+        "nearest_stage": "Murdoc (46.55m)",
+        "screenshot": "02-easter-egg-pazuzu.png",
+        "verdict": "APROVADO"
+      },
+      {
+        "id": "zombies",
+        "nome": "Aviso ZUMBIS DO KONG STUDIOS",
+        "position": { "x": -5, "z": -85 },
+        "radius": 2.0,
+        "clearance_road_m": 3.84,
+        "nearest_stage": "Noodle (51.89m)",
+        "screenshot": "02-easter-egg-zumbis.png",
+        "verdict": "APROVADO"
+      }
+    ]
+  },
+  "horn_g": {
+    "label": "G · Buzina",
+    "clean_label": true,
+    "no_murdoc_del_attribution": true,
+    "oscillator_type": "sawtooth",
+    "freq_range": "235 Hz -> 185 Hz",
+    "duration_seconds": 0.25,
+    "cooldown_ms": 800,
+    "blocks": {
+      "blocked_when_menu_h_open": true,
+      "blocked_when_map_m_open": true,
+      "blocked_when_modal_open": true,
+      "blocked_when_sound_off": true
+    },
+    "screenshot": "03-menu-h-buzina.png",
+    "verdict": "APROVADO"
+  },
+  "fps_performance": {
+    "mural_1": {
+      "nome": "Mural 1 (Início)",
+      "fps": 59.8,
+      "p50_ms": 16.7,
+      "p95_ms": 17.2,
+      "p99_ms": 17.2
+    },
+    "palco_central": {
+      "nome": "Palco Central / Praça",
+      "fps": 59.8,
+      "p50_ms": 16.7,
+      "p95_ms": 16.9,
+      "p99_ms": 17.2
+    },
+    "centro_cidade": {
+      "nome": "Centro da Cidade / Cruzamento",
+      "fps": 59.8,
+      "p50_ms": 16.7,
+      "p95_ms": 16.9,
+      "p99_ms": 17.1
+    },
+    "perto_colossal": {
+      "nome": "Perto do Murdoc Colossal",
+      "fps": 59.8,
+      "p50_ms": 16.7,
+      "p95_ms": 17.0,
+      "p99_ms": 17.1
+    }
+  },
+  "tour_metrics": {
+    "off_track_samples": 0,
+    "collisions": 0,
+    "stops_total": 9,
+    "verdict": "APROVADO"
+  },
+  "bundle_weights": {
+    "initial_transfer_mb": 0.35,
+    "active_3d_transfer_mb": 2.10,
+    "budget_ceiling_mb": 9.30,
+    "new_files": {
+      "src/easter-eggs.js": "5.58 KB",
+      "tests/easter-eggs.test.mjs": "0.76 KB",
+      "tests/horn.test.mjs": "1.28 KB"
+    },
+    "new_files_under_300kb": true
+  },
+  "test_suite": {
+    "tests_total": 209,
+    "tests_passed": 209,
+    "tests_failed": 0,
+    "check_modules_total": 49,
+    "check_status": "PASS"
+  },
+  "console_errors": 0,
+  "http_errors": 0
+}

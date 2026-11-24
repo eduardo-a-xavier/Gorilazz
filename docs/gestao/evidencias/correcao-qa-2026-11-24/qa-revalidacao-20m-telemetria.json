@@ -1,0 +1,106 @@
+{
+  "timestamp": "2026-11-24 08:26:36",
+  "views": {
+    "clint_eastwood": {
+      "title": "Av. Clint Eastwood",
+      "coords": {
+        "x": -37.0,
+        "z": -54.0,
+        "heading": 1.43
+      },
+      "screen_projection": {
+        "sx": -101.5333161795042,
+        "sy": 106.26697537581589,
+        "inFront": true
+      },
+      "classification": "claramente visível",
+      "annotated_file": "04-revalidacao-landmark-clint-eastwood-20m.png"
+    },
+    "saturnz_barz": {
+      "title": "Av. Saturnz Barz",
+      "coords": {
+        "x": -57.0,
+        "z": -144.0,
+        "heading": 2.151
+      },
+      "screen_projection": {
+        "sx": 851.980863059058,
+        "sy": 128.7464598753741,
+        "inFront": true
+      },
+      "classification": "claramente visível",
+      "annotated_file": "04-revalidacao-landmark-saturnz-barz-20m.png"
+    },
+    "song_machine": {
+      "title": "Rua Song Machine",
+      "coords": {
+        "x": -36.0,
+        "z": -101.0,
+        "heading": 1.399
+      },
+      "screen_projection": {
+        "sx": 767.9586377448368,
+        "sy": 128.93588406359737,
+        "inFront": true
+      },
+      "classification": "sutil",
+      "annotated_file": "04-revalidacao-landmark-song-machine-20m.png"
+    }
+  },
+  "debug_closeups": {
+    "murdoc_eyes": "04-revalidacao-murdoc-olhos-ambar-debug.png",
+    "save_poster": "04-revalidacao-cartaz-save-sem-arvore.png"
+  },
+  "clearances": {
+    "found": true,
+    "pos": {
+      "x": -150,
+      "y": 0,
+      "z": -75
+    },
+    "scale": 14.1375085494673,
+    "hasRim": true,
+    "rimColor": "#563c64",
+    "eyeCount": 2,
+    "eyeColor": "#d87746"
+  },
+  "fps_benchmarks": {
+    "Mural 1 (Início)": {
+      "avgFps": 60,
+      "p95Fps": 58,
+      "p99Fps": 58,
+      "frameCount": 100
+    },
+    "Palco Central": {
+      "avgFps": 60,
+      "p95Fps": 58,
+      "p99Fps": 58,
+      "frameCount": 100
+    },
+    "Centro da Cidade": {
+      "avgFps": 60,
+      "p95Fps": 59,
+      "p99Fps": 59,
+      "frameCount": 100
+    },
+    "Perto do Landmark 20m": {
+      "avgFps": 60,
+      "p95Fps": 58,
+      "p99Fps": 57,
+      "frameCount": 100
+    }
+  },
+  "tour_telemetry": {
+    "samples": 100,
+    "offTrack": 0,
+    "collisions": 0,
+    "surface": "asfalto",
+    "speed": 0
+  },
+  "network": {
+    "transferred_bytes": 9288450,
+    "transferred_mb": 8.86
+  },
+  "console_errors": [],
+  "http_errors": []
+}

@@ -1,0 +1,312 @@
+{
+  "timestamp": "2026-11-22T22:36:49",
+  "item1_ciclo_20": {
+    "cycles": [
+      {
+        "cycle": 1,
+        "scenario": "normal",
+        "passed": true,
+        "speed": 1.88,
+        "geometries": 336,
+        "textures": 125
+      },
+      {
+        "cycle": 2,
+        "scenario": "modal_integrante",
+        "passed": true,
+        "speed": 1.88,
+        "geometries": 395,
+        "textures": 134
+      },
+      {
+        "cycle": 3,
+        "scenario": "fliperama",
+        "passed": true,
+        "speed": 1.88,
+        "geometries": 400,
+        "textures": 135
+      },
+      {
+        "cycle": 4,
+        "scenario": "piano",
+        "passed": true,
+        "speed": 1.88,
+        "geometries": 402,
+        "textures": 135
+      },
+      {
+        "cycle": 5,
+        "scenario": "passeio",
+        "passed": true,
+        "speed": 2.24,
+        "geometries": 404,
+        "textures": 132
+      },
+      {
+        "cycle": 6,
+        "scenario": "normal",
+        "passed": true,
+        "speed": 1.88,
+        "geometries": 406,
+        "textures": 132
+      },
+      {
+        "cycle": 7,
+        "scenario": "modal_integrante",
+        "passed": true,
+        "speed": 1.88,
+        "geometries": 406,
+        "textures": 132
+      },
+      {
+        "cycle": 8,
+        "scenario": "fliperama",
+        "passed": true,
+        "speed": 1.87,
+        "geometries": 406,
+        "textures": 132
+      },
+      {
+        "cycle": 9,
+        "scenario": "piano",
+        "passed": true,
+        "speed": 1.87,
+        "geometries": 406,
+        "textures": 132
+      },
+      {
+        "cycle": 10,
+        "scenario": "passeio",
+        "passed": true,
+        "speed": 1.88,
+        "geometries": 408,
+        "textures": 132
+      },
+      {
+        "cycle": 11,
+        "scenario": "normal",
+        "passed": true,
+        "speed": 1.88,
+        "geometries": 408,
+        "textures": 132
+      },
+      {
+        "cycle": 12,
+        "scenario": "modal_integrante",
+        "passed": true,
+        "speed": 1.88,
+        "geometries": 408,
+        "textures": 132
+      },
+      {
+        "cycle": 13,
+        "scenario": "fliperama",
+        "passed": true,
+        "speed": 1.88,
+        "geometries": 408,
+        "textures": 132
+      },
+      {
+        "cycle": 14,
+        "scenario": "piano",
+        "passed": true,
+        "speed": 1.88,
+        "geometries": 408,
+        "textures": 132
+      },
+      {
+        "cycle": 15,
+        "scenario": "passeio",
+        "passed": true,
+        "speed": 1.88,
+        "geometries": 409,
+        "textures": 132
+      },
+      {
+        "cycle": 16,
+        "scenario": "normal",
+        "passed": true,
+        "speed": 1.87,
+        "geometries": 409,
+        "textures": 132
+      },
+      {
+        "cycle": 17,
+        "scenario": "modal_integrante",
+        "passed": true,
+        "speed": 1.88,
+        "geometries": 409,
+        "textures": 132
+      },
+      {
+        "cycle": 18,
+        "scenario": "ancora_eras",
+        "passed": true,
+        "speed": 1.88,
+        "geometries": 409,
+        "textures": 132
+      },
+      {
+        "cycle": 19,
+        "scenario": "tela_cheia",
+        "passed": true,
+        "speed": 1.88,
+        "geometries": 409,
+        "textures": 132
+      },
+      {
+        "cycle": 20,
+        "scenario": "normal",
+        "passed": true,
+        "speed": 1.88,
+        "geometries": 409,
+        "textures": 132
+      }
+    ],
+    "all_passed": true,
+    "geometries_start_end": [
+      336,
+      409
+    ],
+    "textures_start_end": [
+      125,
+      132
+    ]
+  },
+  "item2_minimapa": {
+    "initial": {
+      "has_svg": true,
+      "has_bg_image": true,
+      "bg_href_len": 52135
+    },
+    "after_discoveries": {
+      "count": 0,
+      "has_beginning": false,
+      "has_voices": false
+    },
+    "viewport_320": {
+      "rect": {
+        "x": 200,
+        "y": -2,
+        "width": 108,
+        "height": 159.5,
+        "top": -2,
+        "right": 308,
+        "bottom": 157.5,
+        "left": 200
+      },
+      "visible": true
+    }
+  },
+  "item3_central": {
+    "opened_by_counter": true,
+    "search_results": {
+      "Kong Studios": {
+        "count": 1,
+        "samples": [
+          "Kong Studios, o QG interativo"
+        ]
+      },
+      "Jamie Hewlett": {
+        "count": 4,
+        "samples": [
+          "O surgimento frente à MTV",
+          "Kong Studios, o QG interativo",
+          "2-D e a história dos olhos pretos",
+          "O retorno de 2017 e Spirit House"
+        ]
+      },
+      "Cyborg": {
+        "count": 1,
+        "samples": [
+          "Plastic Beach e a Cyborg Noodle"
+        ]
+      },
+      "Grammy": {
+        "count": 1,
+        "samples": [
+          "Demon Days, o moinho e o Grammy"
+        ]
+      },
+      "musica": {
+        "count": 3,
+        "samples": [
+          "O surgimento frente à MTV",
+          "O Geep e a gravação de 19-2000",
+          "Song Machine: música em episódios"
+        ]
+      }
+    },
+    "filters": {
+      "Todas": 9,
+      "Eras": 7,
+      "Personagens": 3,
+      "Bastidores": 7
+    },
+    "go_test": {
+      "has_go_button": true,
+      "text": "Ir até lá"
+    },
+    "esc_stack": {
+      "initial": {
+        "drawer_open": true,
+        "menu_open": true
+      },
+      "after_first_esc": {
+        "drawer_open": false,
+        "menu_open": true
+      },
+      "after_second_esc": {
+        "drawer_open": false,
+        "menu_open": false,
+        "mode_3d": true
+      }
+    },
+    "viewports_titles": {
+      "1440x900": {
+        "fontSize": "30px",
+        "letterSpacing": "0.6px",
+        "wordSpacing": "4.2px"
+      },
+      "1346x680": {
+        "fontSize": "30px",
+        "letterSpacing": "0.6px",
+        "wordSpacing": "4.2px"
+      },
+      "390x844": {
+        "fontSize": "30px",
+        "letterSpacing": "0.6px",
+        "wordSpacing": "4.2px"
+      },
+      "320x568": {
+        "fontSize": "30px",
+        "letterSpacing": "0.6px",
+        "wordSpacing": "4.2px"
+      }
+    }
+  },
+  "item4_efeitos": {
+    "particles": {
+      "found": true,
+      "count": 58,
+      "has_colors": true
+    },
+    "sound_toggle": {
+      "present": true,
+      "s1": "Som de descoberta: ligado",
+      "s2": "Som de descoberta: desligado"
+    }
+  },
+  "item5_regressoes": {
+    "initial_mb": 2.09,
+    "total_mb": 11.23,
+    "points_fps": {
+      "Mural 1": 59.8,
+      "Palco Central": 59.8,
+      "Centro": 59.8
+    }
+  },
+  "erros_console": [],
+  "erros_http": [],
+  "erros_pagina": []
+}
