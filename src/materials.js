@@ -1,6 +1,8 @@
 import * as THREE from './vendor/three.module.min.js';
 
 // Original baked surfaces. Textures are local and share a small material cache.
+// Nitidez: anisotropia 8 (teto comum das GPUs; o driver reduz se o hardware não suportar).
+const MAX_ANISOTROPY = 8;
 export function createSurfaceLibrary() {
   const loader = new THREE.TextureLoader(), cache = new Map(), images = new Map();
   // Uma imagem por URL: cada combinação de repetição usa um clone, que compartilha o mesmo Source
@@ -23,7 +25,7 @@ export function createSurfaceLibrary() {
     return texture;
   }
   const definitions = {
-    asphalt: ['#dfe3dc', .93], earth: ['#b9b19b', 1], grass: ['#b6c69d', 1],
+    asphalt: ['#dfe3dc', .9], earth: ['#b9b19b', .92], grass: ['#b6c69d', .92],
     plaster: ['#e3dfca', .94], brick: ['#dbc2ad', .97], wood: ['#d6c7a1', .91],
     foliage: ['#c1d0a7', .94], roof: ['#b3c6bd', .85],
   };
@@ -32,11 +34,11 @@ export function createSurfaceLibrary() {
       const key = `${name}/${repeatX}/${repeatY}`;
       if (cache.has(key)) return cache.get(key);
       const [color, roughness] = definitions[name] || definitions.plaster;
-      const map = sharedTexture(`./assets/materials/${name}.png`, repeatX, repeatY); map.colorSpace = THREE.SRGBColorSpace; map.anisotropy = 4;
+      const map = sharedTexture(`./assets/materials/${name}.png`, repeatX, repeatY); map.colorSpace = THREE.SRGBColorSpace; map.anisotropy = MAX_ANISOTROPY;
       const result = new THREE.MeshStandardMaterial({map, color, roughness, metalness:0});
       if (name !== 'brick') {
         const normalMap = sharedTexture(`./assets/materials/${name}-normal.png`, repeatX, repeatY);
-        result.normalMap = normalMap; result.normalScale.set(.16,.16);
+        result.normalMap = normalMap; result.normalScale.set(.35,.35);
       }
       cache.set(key,result); return result;
     },

@@ -10,9 +10,14 @@ import { createSlabTexture } from './ground-textures.js';
 export const LEVEL = { asphalt: -.09, junction: -.082, paint: -.07, walk: .07, skirt: -.32 };
 export const WALK = { studio: 2.4, avenue: 2.4, lane: 1.5 };
 export const NODE_DEGREE = NODES.map((_, id) => ROADS.filter(road => road.from === id || road.to === id).length);
+// Raio do cruzamento: nas rotatórias (grau >= 3) o disco de asfalto termina na borda externa da calçada de cada via
+// (meia-via + largura da calçada do tipo da via), para não passar das faixas de pedestre nem sobrepor a calçada.
 export const NODE_RADIUS = NODES.map((_, id) => {
-  const maxHalf = Math.max(...ROADS.filter(road => road.from === id || road.to === id).map(road => road.width)) / 2;
-  return NODE_DEGREE[id] >= 4 ? Math.max(maxHalf + 4.5, 9.5) : NODE_DEGREE[id] === 3 ? maxHalf + 3.5 : maxHalf + 2.5;
+  const incident = ROADS.filter(road => road.from === id || road.to === id);
+  const maxHalf = Math.max(...incident.map(road => road.width)) / 2;
+  // Rotatória (grau >= 3): disco até a borda externa da calçada de cada via + 1 m (cobre a sobreposição das vias); piso de 9,5 m.
+  if (NODE_DEGREE[id] >= 3) return Math.max(9.5, Math.max(...incident.map(road => road.width / 2 + WALK[road.kind])) + 1.2);
+  return maxHalf + 2.5;
 });
 
 function sheet() { return { positions: [], uvs: [], indices: [] }; }
@@ -167,6 +172,8 @@ export function buildRoads(group, surfaces, material) {
   }
 
   const asphalt = sheet(), pavement = sheet(), white = sheet(), yellow = sheet();
+  // Segmentos mantidos da calçada de cada braço (chave `${road.id}:${side}`), usados para fechar a ponta no disco.
+  const keptSidewalk = new Map();
   for (const road of ROADS) {
     const half = road.width / 2, walk = WALK[road.kind], list = frames[road.id];
     // Recorta os segmentos internos aos discos de cruzamento para evitar sobreposição sob os nós.
@@ -185,9 +192,10 @@ export function buildRoads(group, surfaces, material) {
           [b.x + b.nx * side * (half + walk), b.z + b.nz * side * (half + walk)],
           [b.x + b.nx * side * half, b.z + b.nz * side * half],
         ];
-        return pts.every(([x, z]) => !inJunction(x, z) && !onAsphalt(x, z, road, .15));
+        return pts.every(([x, z]) => !inJunction(x, z, .1) && !onAsphalt(x, z, road, .15));
       };
       const kept = Array.from({ length: list.length - 1 }, (_, i) => keep(list[i], list[i + 1]));
+      keptSidewalk.set(`${road.id}:${side}`, kept);
       strip(pavement, road, side * half, side * (half + walk), LEVEL.walk, (_a, _b, i) => kept[i]);
       const outer = side * (half + walk), inner = side * half;
       for (let i = 0; i < list.length - 1; i++) {
@@ -252,6 +260,45 @@ export function buildRoads(group, surfaces, material) {
       const pts = [point(mid, rIn + ring / 2, 0), point(a0, rIn, 0), point(a0, rOut, 0), point(a1, rOut, 0), point(a1, rIn, 0)];
       return pts.every(([x, , z]) => !onAsphalt(x, z, null, .15) && !NODES.some((other, oid) => oid !== id && Math.hypot(x - other.x, z - other.z) < radius[oid]));
     });
+    // Chanfro de cada braço: a faixa de calçada entre a ponta mantida do braço e o disco (raio rIn) fica no topo +0,07,
+    // com meio-fio da corda até o asfalto. Sem isso sobra um recorte reto onde o anel some na faixa do braço.
+    for (const road of ROADS) {
+      if (road.from !== id && road.to !== id) continue;
+      const list = frames[road.id], half = road.width / 2, walk = WALK[road.kind], fromNode = road.from === id;
+      for (const side of [-1, 1]) {
+        const kept = keptSidewalk.get(`${road.id}:${side}`);
+        if (!kept) continue;
+        // Primeiro segmento mantido contando do nó (em `from` começa no índice 0; em `to`, no fim da lista).
+        const i = fromNode ? kept.indexOf(true) : kept.lastIndexOf(true);
+        if (i < 0) continue;
+        const frame = fromNode ? list[i] : list[i + 1];
+        // Cruzamento da linha de meio-fio (offset fixo) com o círculo do disco, andando do braço em direção ao nó.
+        const step = fromNode ? -1 : 1, frameIndex = fromNode ? i : i + 1;
+        const crossing = offset => {
+          let prev = at(list[frameIndex], offset, LEVEL.walk), dPrev = Math.hypot(prev[0] - node.x, prev[2] - node.z);
+          for (let j = frameIndex + step; j >= 0 && j < list.length; j += step) {
+            const p = at(list[j], offset, LEVEL.walk), d = Math.hypot(p[0] - node.x, p[2] - node.z);
+            if (d <= rIn) {
+              const t = (dPrev - rIn) / (dPrev - d || 1), qx = prev[0] + (p[0] - prev[0]) * t - node.x, qz = prev[2] + (p[2] - prev[2]) * t - node.z, L = Math.hypot(qx, qz) || 1;
+              return [node.x + qx / L * rIn, LEVEL.walk, node.z + qz / L * rIn]; // sobre o arco do disco, não na corda
+            }
+            prev = p; dPrev = d;
+          }
+          return null;
+        };
+        const innerEnd = at(frame, side * half, LEVEL.walk), outerEnd = at(frame, side * (half + walk), LEVEL.walk);
+        const innerRim = crossing(side * half), outerRim = crossing(side * (half + walk));
+        if (!innerRim || !outerRim) continue;
+        const corners = [innerRim, outerRim, outerEnd, innerEnd];
+        // Não cobre asfalto de outra via.
+        if (corners.some(([x, , z]) => onAsphalt(x, z, road, .15))) continue;
+        // Topo com normal +Y: a ordem dos vértices é invertida quando o sentido sai para baixo.
+        const ny = (outerRim[2] - innerRim[2]) * (outerEnd[0] - innerRim[0]) - (outerRim[0] - innerRim[0]) * (outerEnd[2] - innerRim[2]);
+        if (ny < 0) quad(pavement, innerRim, innerEnd, outerEnd, outerRim); else quad(pavement, innerRim, outerRim, outerEnd, innerEnd);
+        // Meio-fio da corda do disco: do asfalto (-0,082) até o topo (+0,07).
+        quad(pavement, [innerRim[0], LEVEL.junction, innerRim[2]], [outerRim[0], LEVEL.junction, outerRim[2]], outerRim, innerRim);
+      }
+    }
     for (let i = 0; i < steps; i++) {
       const a0 = i / steps * Math.PI * 2, a1 = (i + 1) / steps * Math.PI * 2;
       const rim1 = point(a1, rIn, LEVEL.junction), rim0 = point(a0, rIn, LEVEL.junction);
@@ -277,10 +324,20 @@ export function buildRoads(group, surfaces, material) {
       }
     }
   });
-  const road = surfaces.get('asphalt'); road.side = THREE.DoubleSide;
+  // Asfalto em repetição de 4 m: o uv do traçado é 1 unidade a cada 3 m, então a textura repete 0,75.
+  const road = surfaces.get('asphalt', .75); road.side = THREE.DoubleSide;
   const paint = color => new THREE.MeshStandardMaterial({ color, roughness: .75, side: THREE.DoubleSide, polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2 });
   // Calçada de ladrilho com rejunte (textura procedural, sem arquivo): uv de 3 m por repetição, como em strip().
+  // Calçada: textura CC0 (ambientCG PavingStones130) em repetição de 4 m; uv do traçado é 1 unidade por 3 m, então repete 0,75.
+  // Nos testes (Node, sem document) usa a textura procedural de ladrilho.
   const concrete = new THREE.MeshStandardMaterial({ color: '#ffffff', map: createSlabTexture(THREE), roughness: .92, side: THREE.DoubleSide });
+  if (typeof document !== 'undefined') {
+    const loader = new THREE.TextureLoader();
+    const tune = t => { t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(.75, .75); t.anisotropy = 8; return t; }; // anisotropia 8
+    concrete.map = tune(loader.load('./assets/materials/paving.webp', () => { concrete.needsUpdate = true; })); concrete.map.colorSpace = THREE.SRGBColorSpace;
+    concrete.normalMap = tune(loader.load('./assets/materials/paving-normal.webp')); concrete.normalScale.set(.35, .35);
+    concrete.roughness = .9;
+  }
   group.add(
     toMesh(asphalt, road, 'road-asphalt'),
     toMesh(pavement, concrete, 'road-pavement'),

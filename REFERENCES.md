@@ -245,7 +245,7 @@ Arquivos fornecidos por Eduardo a partir de seu computador para o projeto; grava
 
 Piloto v6: arquivo GLB fornecido pelo Desenvolvedor Plataforma B (`assets/models/driver-pilot-v6.glb`, 258.776 bytes, SHA-256 `1d7efd3cc1a02741cb16697c9202149e37fe16bd4051611956c4fde2ed47986f`); mantém-se a cadeia de fallback documentada (`v6 → v5 → v4 → v2 → original`).
 
-## Modelos 3D de Cenário (`assets/models/scenery/` — 22 GLBs, Blocos A–E + instrumentos v2)
+## Modelos 3D de Cenário (`assets/models/scenery/` — 23 GLBs, Blocos A–E + instrumentos v2 + alce)
 
 Modelos originais em formato `.glb` criados por **OpenBot / Desenvolvedor Plataforma B** em Blender (sem assets, texturas ou pacotes externos), dedicados ao domínio público sob licença **CC0 1.0 Universal** (`https://creativecommons.org/publicdomain/zero/1.0/`). Carregados de forma *lazy* após a entrada no mundo 3D com `InstancedMesh` e fallback automático às primitivas originais. Nota de fechamento (25/11/2026): **bancos (`bench-01-slatted.glb`) e pedras (`rock-01/02/03`) foram removidos do mapa (limite 0)**, embora os GLBs originais permaneçam catalogados na pasta.
 
@@ -275,3 +275,31 @@ Modelos originais em formato `.glb` criados por **OpenBot / Desenvolvedor Plataf
 | `barrier-01-road.glb` | Original / OpenBot (Desenvolvedor Plataforma B — Bloco E) | CC0-1.0 | `bb654f58746ce44cbd876dbae0619aa875987d3a8ebe5e7d5df4be84e0841a4e` |
 
 - `assets/models/scenery/moose-01.glb` — alce do Easter egg (modelo original, Blender 5.3, CC0 1.0, 2026-11-26; SHA-256 fc36186e7e2be882e90bc7fba214c73acef2a04a319b5d06a48c91f9d6e0354e).
+
+## Texturas de chão (ambientCG, CC0 1.0)
+
+Fonte: https://ambientcg.com (licença CC0 1.0 na própria página de cada ID: https://ambientcg.com/view?id=Asphalt012 , https://ambientcg.com/view?id=PavingStones130 , https://ambientcg.com/view?id=Ground037 ). Baixadas em 2026-11-25, pacote _1K-JPG, mapas Color e NormalGL extraídos, convertidos para WebP 512 px (usados em cena com anisotropia 8). Asfalto teve a saturação reduzida a 25% (processamento do projeto, para tirar manchas avermelhadas).
+
+| Arquivo em assets/materials | ID ambientCG | URL | SHA-256 (novo) | SHA-256 (antigo, substituído) |
+|---|---|---|---|---|
+| asphalt.webp | Asphalt012 (Color, saturação 25%) | https://ambientcg.com/get?file=Asphalt012_1K-JPG.zip | f4d1804ff5b9598b28e83ecdc91828634bdb262936112b548a059a29ac3a1412 | 4c977b87b2ced562d52ef0191928623d4820b3c9e9cce62cd538974a98e837bd |
+| asphalt-normal.webp | Asphalt012 (NormalGL) | (mesmo pacote) | 707289c47275f5acd7a92cd26dc454599f94fa3b5f73f3b2565067f588009219 | 76838fff2e37fc767bcc54badfdd7788ea61b500fb1abc5fa66f2412a98ece22 |
+| paving.webp (novo, calçada) | PavingStones130 (Color) | https://ambientcg.com/get?file=PavingStones130_1K-JPG.zip | 4c8d3cda470fb619586a0ed3d9662802d26d4a0d0df5f633c405c0306f31da95 | — (não existia) |
+| paving-normal.webp (novo, calçada) | PavingStones130 (NormalGL) | (mesmo pacote) | c79bc4584291db3053a95deaf563bd80f4d00fddaccd051382429797b70670eb | — (não existia) |
+| earth.webp | Ground037 (Color) | https://ambientcg.com/get?file=Ground037_1K-JPG.zip | 40ade4b510a9e2ab6d9fbdfa84f8f389a70607040e01d2126c92ce1b85fd853e | 6f63b08f9f77e7f835e23991ac95b0113a8176f42426022cbe01ea9e41af0491 |
+| earth-normal.webp | Ground037 (NormalGL) | (mesmo pacote) | c8c1a108d678eabe3c610e14bc47810421aa467efcb94b049fe4714b302dfd95 | 2b6da237c950d96491a37b1b3bee09e97017bb9bcaf3b8775c4c1d929b30f68e |
+
+Grama (grass.webp, grass-normal.webp): mantida a textura anterior. A candidata ambientCG Grass004 (https://ambientcg.com/get?file=Grass004_1K-JPG.zip) foi baixada e não entrou por falta de verificação visual nas praças.
+
+
+## Kit modular de calçada em Blender (`assets/models/scenery/sidewalk-kit/` — preparado para evolução pós-banca)
+
+Conjunto de **5 peças modulares `.glb` originais** modeladas em Blender sob licença **CC0 1.0 Universal** (`https://creativecommons.org/publicdomain/zero/1.0/`), com evidências em `docs/gestao/evidencias/kit-calcada-2026-11-26/`. **Status:** kit preparado para evolução pós-banca (**ainda não integrado ao jogo** nesta entrega).
+
+| Arquivo em `assets/models/scenery/sidewalk-kit/` | Tamanho | Origem / Licença | SHA-256 |
+| --- | --- | --- | --- |
+| `walk-arc90-r12.glb` | 15.512 bytes | Original (Blender) · CC0-1.0 | `8e9c4f7c9789cda673d25822c0de9383bc9d40c621eb5787cb77112caeb1a0a9` |
+| `walk-arc90-r9p5.glb` | 15.512 bytes | Original (Blender) · CC0-1.0 | `3bbe1ddc63a08baa7d2d3555e2c60a278fef9609c103db5d5fa8c178fdedeb14` |
+| `walk-corner-r0p6.glb` | 8.356 bytes | Original (Blender) · CC0-1.0 | `f4c4ab37822e8b157c6074b2d107f59a511f072f85507e7143c16c794e9e5329` |
+| `walk-plaza-8x6.glb` | 3.472 bytes | Original (Blender) · CC0-1.0 | `5577782da9604d349a9b5cd2e1c344715977d317877d4c6ed7ee1fac213f547d` |
+| `walk-straight-4m.glb` | 3.332 bytes | Original (Blender) · CC0-1.0 | `24e7fa5a7f3103e7e3a23c2f8baee3ba5db833d86b83b86474df97f7dcf3c617` |

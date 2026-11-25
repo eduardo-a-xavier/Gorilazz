@@ -4,7 +4,7 @@
 - **Equipe:** Eduardo Alves Xavier, Gedson de Souza Mancio Júnior e Rafael Machado Colnaghi
 - **Universo original:** criado por Jamie Hewlett e Damon Albarn ([gorillaz.com](https://www.gorillaz.com/))
 - **Duração planejada:** **13 minutos** (faixa exigida: 10 a 15 minutos — sobram 2 minutos de margem para imprevistos ou transições ao vivo)
-- **Data da verificação dos dados:** 25/11/2026 (`HEAD` local em `E:\Gorilazz-Relatorio`, `npm run check` com 52 arquivos OK e `npm test` com `257/257 PASS`)
+- **Data da verificação dos dados:** 25/11/2026 (`HEAD` local em `E:\Gorilazz-Relatorio`, `npm run check` com 52 arquivos OK e `npm test` com `275/275 PASS`)
 
 ---
 
@@ -117,11 +117,11 @@
 
 | Tempo | Ação exata na tela ao vivo | Fala-guia natural |
 | :---: | :--- | :--- |
-| `11:00 – 12:15` | Mostrar rapidamente o cockpit em 1ª pessoa (`V`) girando o volante para a esquerda e direita (evidenciando as mãos do Piloto v6 no aro) e, se desejado, exibir o terminal ou o resumo dos testes (`257/257 PASS`). | “Quero destacar quatro dificuldades reais que enfrentamos e como resolvemos cada uma com engenharia:  
+| `11:00 – 12:15` | Mostrar rapidamente o cockpit em 1ª pessoa (`V`) girando o volante para a esquerda e direita (evidenciando as mãos do Piloto v6 no aro) e, se desejado, exibir o terminal ou o resumo dos testes (`275/275 PASS`). | “Quero destacar quatro dificuldades reais que enfrentamos e como resolvemos cada uma com engenharia:  
 1. **Subcaminho `/Gorilazz/` no GitHub Pages:** caminhos absolutos funcionavam em `localhost`, mas quebravam em produção; padronizamos tudo para caminhos relativos (`./`), criamos o teste `tests/pages-paths.test.mjs` e validamos localmente sob `/Gorilazz/` com **146/146 requisições HTTP 200/304 e zero 404**.  
 2. **Peso do projeto:** chegamos a ter **56,35 MB** só em `assets/` (e mais de **81 MB** rastreados no repositório com evidências). Na faxina final, removemos PNGs duplicados e GLBs legados, reduzindo `assets/` para **28,91 MB** — e o pacote estático inteiro publicado no Pages ficou em **30,53 MB** (sendo `11,41 MB` os três MP3s completos mantidos sob demanda por decisão editorial, sem impactar a carga inicial do 3D, que ficou em **8,58 MB**, abaixo do teto de `9,3 MB`).  
 3. **Cockpit e mãos no volante:** foi a parte visual mais trabalhosa; passamos por seis iterações do piloto até o **`driver-pilot-v6.glb`**, ajustando simetria nas curvas (`<= 0,36 cm` de diferença palma-aro), acabamento fosco e deslocamento do rádio no painel.  
-4. **Qualidade e desempenho:** mantivemos **257 de 257 testes automatizados passando** em Node puro (`npm test`) e validação em Chrome real WebGL2 batendo **60 FPS** estáveis (`60,0–60,1 FPS` nos três pontos principais, com zero erros de console e resolução adaptativa para máquinas mais simples).” |
+4. **Qualidade e desempenho:** mantivemos **275 de 275 testes automatizados passando** em Node puro (`npm test`) e validação em Chrome real WebGL2 batendo **60 FPS** estáveis (`60,0–60,1 FPS` nos três pontos principais, com zero erros de console e resolução adaptativa para máquinas mais simples).” |
 
 ---
 
@@ -154,7 +154,7 @@ Cada afirmação técnica presente no pedido original foi conferida diretamente 
 | **Conversão para `.webp`** | **Confirmado (parcial, especificar)** | **19 artes** em `assets/art/*.webp` (`1,41 MB`), **15 texturas/normal maps** em `assets/materials/*.webp` (`3,43 MB`, PNGs antigos removidos) e texturas WebP embutidas em `gorillaz-phase7-web-v3.glb`. *(Capas em `assets/covers/` seguem JPG e retratos em `assets/portraits/` seguem PNG.)* | `assets/art/`, `assets/materials/`, `REFERENCES.md`, `git show --stat 9e2f1a7` |
 | **Hashes SHA-256** | **Confirmado** | Hashes SHA-256 documentados para modelos, piloto v6, banda, artes WebP, capas, fontes, áudios e os 22 GLBs de cenário. | `REFERENCES.md`, `assets/models/scenery/REFERENCES-scenery.md` |
 | **Redução de peso (`>85 MB para ~30 MB`)** | **Ajustado** | **Não usar ">85 MB"**: no histórico Git, a pasta `assets/` caiu de **56,35 MB** (131 arquivos) para **28,91 MB** (103 arquivos; `30,31 MB` decimais). O site estático completo (`_site`, 161 arquivos) tem **30,53 MB**; o repo rastreado inteiro (com `docs/` que não vai ao Pages) caiu de **81,38 MB** para **63,67 MB**; e a carga inicial real no 3D foi medida em **8,58 MB**. | `git ls-tree` em `9e2f1a7~1` vs. `HEAD`, `relatorio_congelamento_final.md`, `qa-rodada-final-relatorio.md` |
-| **257 testes** | **Confirmado** | `npm test` executado em 25/11/2026: **`257/257 PASS`** (`0` falhas, `~5,6 s`). `npm run check`: **52 arquivos OK**. | Execução direta `npm test` e `npm run check` em 25/11/2026 |
+| **275 testes** | **Confirmado** | `npm test` executado em 25/11/2026: **`275/275 PASS`** (`0` falhas, `~5,6 s`). `npm run check`: **52 arquivos OK**. | Execução direta `npm test` e `npm run check` em 25/11/2026 |
 | **60 FPS** | **Confirmado (com contexto)** | Medido em Chrome real WebGL2 desktop (`60,0–60,1 FPS`, `p95 17,0 ms`, `0` quadros `> 33 ms`). No celular há limite intencional de ~30 FPS e perfil adaptativo (`Auto`/`Desempenho`/`Ultra`). | `docs/gestao/evidencias/correcao-qa-2026-11-23/qa-rodada-final-relatorio.md`, `README.md` |
 
 ### O que não pôde ser confirmado (manter transparência se a banca perguntar)

@@ -1,0 +1,96 @@
+{
+  "http_4xx": [],
+  "console_errors": [],
+  "paving_loaded": true,
+  "paving_normal_loaded": true,
+  "pombos": {
+    "count": 0,
+    "perches": {}
+  },
+  "discos_praca": {
+    "foundPlazaCylinder": false,
+    "foundPlazaDisks": []
+  },
+  "texturas_chao": {
+    "calcada_samples": [
+      {
+        "point": {
+          "x": 0,
+          "z": -35
+        },
+        "meshName": "",
+        "y": -0.07000000029802322,
+        "color": [
+          214,
+          206,
+          179
+        ],
+        "hasMap": false,
+        "mapName": null
+      },
+      {
+        "point": {
+          "x": -10,
+          "z": -25
+        },
+        "meshName": "",
+        "y": 0.07000000029802322,
+        "color": [
+          255,
+          255,
+          255
+        ],
+        "hasMap": true,
+        "mapName": null
+      },
+      {
+        "point": {
+          "x": 10,
+          "z": -25
+        },
+        "meshName": "",
+        "y": 3.0399999618530265,
+        "color": [
+          171,
+          156,
+          122
+        ],
+        "hasMap": false,
+        "mapName": null
+      },
+      {
+        "point": {
+          "x": 0,
+          "z": -65
+        },
+        "meshName": "",
+        "y": 0.07000000029802322,
+        "color": [
+          255,
+          255,
+          255
+        ],
+        "hasMap": true,
+        "mapName": null
+      }
+    ]
+  },
+  "regressoes": {
+    "mooseVisible": true,
+    "parkedCarsCount": 0,
+    "parkedCarsOffAsphalt": 0,
+    "buildingsWithAccess": 38,
+    "hasStudioGround": true
+  },
+  "fps_3a": 60,
+  "fps_1a": 60,
+  "screenshots": {
+    "praca_kong": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\validacao-texturas-chao-2026-11-25\\evidencia_praca_kong_1440x900.png",
+    "fliperama": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\validacao-texturas-chao-2026-11-25\\evidencia_fliperama_1440x900.png",
+    "palco_murdoc_terra": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\validacao-texturas-chao-2026-11-25\\evidencia_palco_murdoc_terra_1440x900.png",
+    "palco_noodle_grama": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\validacao-texturas-chao-2026-11-25\\evidencia_palco_noodle_grama_1440x900.png",
+    "calcada_detalhe_baixa": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\validacao-texturas-chao-2026-11-25\\evidencia_calcada_detalhe_baixa_1440x900.png",
+    "cockpit_1a": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\validacao-texturas-chao-2026-11-25\\evidencia_1a_pessoa_cockpit_1440x900.png"
+  },
+  "mapa_m_ok": true
+}

@@ -410,11 +410,7 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
   const ground = box(scene, [280, 5, 250], [0, -2.8, -75], '#34433f'); ground.material = surfaces.get('grass',90,80); ground.castShadow = false;
   // Tudo o que é estático entra em `city` e é fundido por material mais abaixo.
   const city = new THREE.Group(); scene.add(city);
-  for (const region of REGIONS) {
-    const plaza = cylinder(city, 17, 17, .06, [region.x, -.20, region.z], region.id === 'murals' ? '#454253' : '#495448', 48);
-    // Praça de grama sóbria: a grama clara ('#b6c69d') virava laranja-amarelado no entardecer; o disco usa grama mais escura e neutra.
-    plaza.material = surfaces.get('grass',8).clone(); plaza.material.color.set(region.id === 'murals' ? '#6d7065' : '#66705c'); plaza.material.needsUpdate = true; plaza.castShadow = false; plaza.receiveShadow = true;
-  }
+  // Discos de praça por bairro removidos (manchas de cor sobre o terreno, adendo E): o chão base e as regiões de grama cobrem o entorno.
   buildRoads(city, surfaces, material);
 
   // Prédios: gerados por city.js a partir de CITY_LOTS (inclui os marcos de BUILDINGS).

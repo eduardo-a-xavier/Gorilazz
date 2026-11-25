@@ -15,7 +15,7 @@ export const FAUNA_TUNING = Object.freeze({
   activationRadius: 58,
   fleeRadius: 13.5,
   safeRadius: 19,
-  maxCount: 56,
+  maxCount: 28, // metade da fauna anterior (56): alivia o FPS mantendo o comportamento
 });
 
 function seeded(seed) {
@@ -31,6 +31,7 @@ function seeded(seed) {
 /** Gera os pontos de pouso em praças, calçadas (fora da faixa de rolamento) e telhados baixos. */
 export function createFaunaFlock(count = FAUNA_TUNING.maxCount) {
   const rng = seeded(20261126), birds = [];
+  const reserve = Math.max(6, Math.round(count * .25)); // vagas reservadas para praças e telhados (escala com o limite)
   const addBird = (x, y, z, perch) => {
     if (birds.length >= count) return;
     const phase = rng() * Math.PI * 2, baseYaw = rng() * Math.PI * 2;
@@ -69,7 +70,7 @@ export function createFaunaFlock(count = FAUNA_TUNING.maxCount) {
   }
 
   // 2) Calçadas ao longo das ruas principais (folga de 1,3 m a 3,2 m da borda do asfalto).
-  for (let r = 0; r < ROADS.length && birds.length < count - 14; r++) {
+  for (let r = 0; r < ROADS.length && birds.length < count - reserve; r++) {
     const road = ROADS[r];
     for (const sampleIndex of [18, 42, 64]) {
       const a = road.samples[sampleIndex], b = road.samples[Math.min(road.samples.length - 1, sampleIndex + 1)];
@@ -79,7 +80,7 @@ export function createFaunaFlock(count = FAUNA_TUNING.maxCount) {
       const cx = a.x + nx * side * offset, cz = a.z + nz * side * offset;
       if (roadGap({ x: cx, z: cz }) < 1.2) continue;
       const flockSize = 2 + (r % 2);
-      for (let k = 0; k < flockSize && birds.length < count - 14; k++) {
+      for (let k = 0; k < flockSize && birds.length < count - reserve; k++) {
         const bx = cx + (rng() - .5) * 1.6, bz = cz + (rng() - .5) * 1.6;
         if (roadGap({ x: bx, z: bz }) >= 1.1) addBird(bx, 0, bz, 'sidewalk');
       }

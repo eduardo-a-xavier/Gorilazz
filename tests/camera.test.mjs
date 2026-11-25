@@ -170,8 +170,8 @@ test('installVehicle remove driver e cabin.root antes de descartar geometrias do
   assert.ok(removeIdx > 0 && disposeIdx > removeIdx, 'car.remove(driver, cabin.root) deve preceder car.traverse(...dispose())');
 });
 
-test('vista aérea aumenta camera.near para evitar z-fighting no chão e mantém plaza abaixo de regional-grounds', async () => {
+test('vista aérea aumenta camera.near para evitar z-fighting no chão; discos de praça por bairro removidos (adendo E)', async () => {
   const source = await readFile(new URL('../src/scene.js', import.meta.url), 'utf8');
   assert.match(source, /camera\.near\s*=\s*firstPerson\s*\?[^;]*overview\s*\?[^;]*Math\.min\(20/);
-  assert.match(source, /cylinder\(city,\s*17,\s*17,\s*\.06,\s*\[region\.x,\s*-\.20,\s*region\.z\]/);
+  assert.doesNotMatch(source, /cylinder\(city,\s*17,\s*17,\s*\.06,\s*\[region\.x,\s*-\.20,\s*region\.z\]/, 'sem disco de praça por bairro');
 });

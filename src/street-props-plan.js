@@ -22,9 +22,14 @@ const LAMP_SPACING = 16;     // m entre postes (poucos e espaçados, como numa a
 const STAGE_RING = [4.5, 11]; // m: anel ao redor de cada palco (Russel, Noodle, 2-D e Murdoc)
 
 export const NODE_DEGREE = NODES.map((_, id) => ROADS.filter(road => road.from === id || road.to === id).length);
+// Mesmo critério de roads.js (calçada por tipo de via): disco do cruzamento até a borda externa da calçada.
+const WALK_W = { studio: 2.4, avenue: 2.4, lane: 1.5 };
 export const NODE_RADIUS = NODES.map((_, id) => {
-  const maxHalf = Math.max(...ROADS.filter(road => road.from === id || road.to === id).map(road => road.width)) / 2;
-  return NODE_DEGREE[id] >= 4 ? Math.max(maxHalf + 4.5, 9.5) : NODE_DEGREE[id] === 3 ? maxHalf + 3.5 : maxHalf + 2.5;
+  const incident = ROADS.filter(road => road.from === id || road.to === id);
+  const maxHalf = Math.max(...incident.map(road => road.width)) / 2;
+  // Rotatória (grau >= 3): disco até a borda externa da calçada de cada via + 1 m (cobre a sobreposição das vias); piso de 9,5 m.
+  if (NODE_DEGREE[id] >= 3) return Math.max(9.5, Math.max(...incident.map(road => road.width / 2 + WALK_W[road.kind])) + 1.2);
+  return maxHalf + 2.5;
 });
 
 function roadDist(road, x, z) {

@@ -80,6 +80,8 @@ const routes = new Map([
   ['/src/materials.js', ['src/materials.js', 'text/javascript; charset=utf-8']],
   ['/assets/materials/asphalt-normal.webp', ['assets/materials/asphalt-normal.webp', 'image/webp']],
   ['/assets/materials/asphalt.webp', ['assets/materials/asphalt.webp', 'image/webp']],
+  ['/assets/materials/paving.webp', ['assets/materials/paving.webp', 'image/webp']],
+  ['/assets/materials/paving-normal.webp', ['assets/materials/paving-normal.webp', 'image/webp']],
   ['/assets/materials/brick.webp', ['assets/materials/brick.webp', 'image/webp']],
   ['/assets/materials/earth-normal.webp', ['assets/materials/earth-normal.webp', 'image/webp']],
   ['/assets/materials/earth.webp', ['assets/materials/earth.webp', 'image/webp']],

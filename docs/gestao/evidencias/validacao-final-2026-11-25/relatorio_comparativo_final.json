@@ -1,0 +1,46 @@
+{
+  "antes_publicado": {
+    "label": "antes_publicado",
+    "port": 29203,
+    "http_4xx": [],
+    "console_errors": [],
+    "screenshots": {
+      "no1_rotatoria_sul": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\validacao-final-2026-11-25\\antes_publicado_no1_rotatoria_sul_1440x900.png",
+      "topo_no1_rotatoria_sul": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\validacao-final-2026-11-25\\antes_publicado_topo_no1_rotatoria_sul_1440x900.png",
+      "no3_rotatoria_oeste": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\validacao-final-2026-11-25\\antes_publicado_no3_rotatoria_oeste_1440x900.png",
+      "topo_no3_rotatoria_oeste": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\validacao-final-2026-11-25\\antes_publicado_topo_no3_rotatoria_oeste_1440x900.png",
+      "no5_rotatoria_leste": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\validacao-final-2026-11-25\\antes_publicado_no5_rotatoria_leste_1440x900.png",
+      "topo_no5_rotatoria_leste": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\validacao-final-2026-11-25\\antes_publicado_topo_no5_rotatoria_leste_1440x900.png",
+      "no6_rotatoria_sudeste": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\validacao-final-2026-11-25\\antes_publicado_no6_rotatoria_sudeste_1440x900.png",
+      "topo_no6_rotatoria_sudeste": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\validacao-final-2026-11-25\\antes_publicado_topo_no6_rotatoria_sudeste_1440x900.png",
+      "no7_rotatoria_central": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\validacao-final-2026-11-25\\antes_publicado_no7_rotatoria_central_1440x900.png",
+      "topo_no7_rotatoria_central": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\validacao-final-2026-11-25\\antes_publicado_topo_no7_rotatoria_central_1440x900.png"
+    },
+    "fps_3a": 60,
+    "fps_1a": 59,
+    "paving_loaded": false,
+    "paving_normal_loaded": false
+  },
+  "depois_juncoes": {
+    "label": "depois_juncoes",
+    "port": 32414,
+    "http_4xx": [],
+    "console_errors": [],
+    "screenshots": {
+      "no1_rotatoria_sul": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\validacao-final-2026-11-25\\depois_juncoes_no1_rotatoria_sul_1440x900.png",
+      "topo_no1_rotatoria_sul": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\validacao-final-2026-11-25\\depois_juncoes_topo_no1_rotatoria_sul_1440x900.png",
+      "no3_rotatoria_oeste": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\validacao-final-2026-11-25\\depois_juncoes_no3_rotatoria_oeste_1440x900.png",
+      "topo_no3_rotatoria_oeste": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\validacao-final-2026-11-25\\depois_juncoes_topo_no3_rotatoria_oeste_1440x900.png",
+      "no5_rotatoria_leste": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\validacao-final-2026-11-25\\depois_juncoes_no5_rotatoria_leste_1440x900.png",
+      "topo_no5_rotatoria_leste": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\validacao-final-2026-11-25\\depois_juncoes_topo_no5_rotatoria_leste_1440x900.png",
+      "no6_rotatoria_sudeste": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\validacao-final-2026-11-25\\depois_juncoes_no6_rotatoria_sudeste_1440x900.png",
+      "topo_no6_rotatoria_sudeste": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\validacao-final-2026-11-25\\depois_juncoes_topo_no6_rotatoria_sudeste_1440x900.png",
+      "no7_rotatoria_central": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\validacao-final-2026-11-25\\depois_juncoes_no7_rotatoria_central_1440x900.png",
+      "topo_no7_rotatoria_central": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\validacao-final-2026-11-25\\depois_juncoes_topo_no7_rotatoria_central_1440x900.png"
+    },
+    "fps_3a": 60,
+    "fps_1a": 59,
+    "paving_loaded": true,
+    "paving_normal_loaded": true
+  }
+}
