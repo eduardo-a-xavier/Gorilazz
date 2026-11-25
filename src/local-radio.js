@@ -7,6 +7,8 @@ export const station = [
 ];
 
 export function createLocalRadio({ input, playButton, previousButton, nextButton, title, album, status }) {
+  let base = .65, duck = 1; // volume escolhido pelo usuário e fator de ducking (passeio)
+  const apply = () => { audio.volume = base * duck; };
   const playlist = document.createElement('select');
   playlist.setAttribute('aria-label', 'Escolher e tocar áudio na Kong FM');
   document.querySelector('#road-radio').append(playlist);
@@ -62,8 +64,8 @@ export function createLocalRadio({ input, playButton, previousButton, nextButton
   const actions = {
     play() { if (audio.paused) play(); else audio.pause(); },
     next() { select(index + 1); }, prev() { select(index - 1); },
-    louder() { audio.volume = Math.min(1, audio.volume + .1); },
-    quieter() { audio.volume = Math.max(0, audio.volume - .1); },
+    louder() { base = Math.min(1, base + .1); apply(); },
+    quieter() { base = Math.max(0, base - .1); apply(); },
   };
   playlist.onchange = () => select(Number(playlist.value), true);
   input.onchange = () => {
@@ -110,13 +112,15 @@ export function createLocalRadio({ input, playButton, previousButton, nextButton
   volume.type = 'range'; volume.min = '0'; volume.max = '100'; volume.value = '65';
   volumeControl.append('Volume ', volume);
   playlist.after(volumeControl);
-  volume.oninput = () => { audio.volume = Number(volume.value) / 100; };
-  audio.onvolumechange = () => { volume.value = String(Math.round(audio.volume * 100)); };
-  audio.volume = .65;
+  volume.oninput = () => { base = Number(volume.value) / 100; apply(); };
+  audio.onvolumechange = () => { volume.value = String(Math.round(base * 100)); };
+  base = .65; apply();
   rebuildList(); select(0, false);
   return {
     actions, playlist, select,
     isPlaying: () => !audio.paused, pause: () => { if (!audio.paused) audio.pause(); }, play: () => { if (audio.paused) play(); },
-    read: () => ({ ...tracks[index], index, total: tracks.length, playing: !audio.paused, seconds: Math.floor(audio.currentTime), volume: Math.round(audio.volume * 100) }),
+    read: () => ({ ...tracks[index], index, total: tracks.length, playing: !audio.paused, seconds: Math.floor(audio.currentTime), volume: Math.round(base * 100), duck: Math.round(duck * 100), ducked: duck < 1 }),
+    // Ducking (passeio nos palcos): reduz o volume do Kong FM por um fator 0..1 sem mudar o volume escolhido pelo usuário.
+    setDuck(factor) { duck = Math.max(0, Math.min(1, factor)); apply(); },
   };
 }

@@ -20,7 +20,7 @@ import { MINIMAP_RECT, minimapCanvasSize, paintMinimapArt } from './minimap-art.
 import { isWorldVisible, realignAfterFullscreen } from './world-cycle.js';
 import { readSoundOn, saveSoundOn, playDiscovery, hornAllowed, playHorn, createEngineSound } from './discovery-sound.js';
 import { createDiscoveriesDrawer } from './discoveries-drawer.js';
-import { buildStops, orderTour, createStopProgress, speedCap, takeOver, stopIdFor, localTrackFor, ARRIVE_M, STOP_HOLD_MS, TOAST_MS } from './guided-tour.js';
+import { buildStops, orderTour, createStopProgress, speedCap, takeOver, stopIdFor, localTrackFor, duckTarget, easeDuck, ARRIVE_M, STOP_HOLD_MS, TOAST_MS } from './guided-tour.js';
 import { discoveryIndexForEra, eraNavState } from './era-places.js';
 import { createWorldLoader } from './world-loader.js';
 import { artForDiscovery, creditLine } from './art-panels.js';
@@ -182,14 +182,23 @@ const stopProgress = createStopProgress(storage, tourStops.map(stop => stop.id))
 let guided = null; // { order, index, holdUntil, paused } enquanto o passeio existe (pausado ou não)
 const brakeControls = { throttle: false, brake: true, steer: 0 };
 const roadPointOf = stop => { const road = nearestRoad(stop); return { x: road.x, z: road.z, title: stop.title }; };
-function showGuidedCard(stop) {
-  document.querySelector('#guided-kicker').textContent = stop.kind === 'era' ? 'ERA NA ESTRADA' : 'HISTÓRIA';
+let cardTimer = 0;
+function showGuidedCard(stop, position = 0, total = 0) {
+  clearTimeout(cardTimer);
+  const card = document.querySelector('#guided-card'); card.classList.remove('is-leaving');
+  document.querySelector('#guided-kicker').textContent = (stop.kind === 'era' ? 'ERA NA ESTRADA' : 'HISTÓRIA') + (position ? ` · PONTO ${position} / ${total}` : '');
   document.querySelector('#guided-title').textContent = stop.title;
   document.querySelector('#guided-year').textContent = stop.year;
   document.querySelector('#guided-summary').textContent = stop.summary;
-  document.querySelector('#guided-card').hidden = false;
+  card.hidden = false;
 }
-function hideGuidedCard() { document.querySelector('#guided-card').hidden = true; }
+// Some com fade de 350 ms (sem tranco); o cartão só fica oculto depois da transição.
+function hideGuidedCard() {
+  const card = document.querySelector('#guided-card');
+  if (!card || card.hidden) return;
+  card.classList.add('is-leaving'); clearTimeout(cardTimer);
+  cardTimer = setTimeout(() => { card.hidden = true; card.classList.remove('is-leaving'); }, 350);
+}
 function showStopsToast() { const toast = document.querySelector('#stops-toast'); toast.hidden = false; setTimeout(() => { toast.hidden = true; }, TOAST_MS); }
 function renderTourMapStops() {
   const container = document.querySelector('#full-map-destinations'); if (!container) return;
@@ -236,14 +245,14 @@ let engine = null, engineOn = true;
 try { engineOn = storage?.getItem('gorilazz.engine.v1') !== 'off'; } catch { /* valor padrão */ }
 function startEngineAfterGesture(event) {
   if (!event.isTrusted || !entered || engine) return;
-  try { audioCtx ??= new (window.AudioContext || window.webkitAudioContext)(); audioCtx.resume(); engine = createEngineSound(audioCtx, { plazas: REGIONS, stages: MEMBER_LOCATIONS }); } catch { /* navegador sem Web Audio */ }
+  try { audioCtx ??= new (window.AudioContext || window.webkitAudioContext)(); if (!masterMuted) audioCtx.resume(); engine = createEngineSound(audioCtx, { plazas: REGIONS, stages: MEMBER_LOCATIONS }); } catch { /* navegador sem Web Audio */ }
 }
 document.addEventListener('click', startEngineAfterGesture);
 document.addEventListener('keydown', startEngineAfterGesture);
 document.addEventListener('visibilitychange', () => { if (document.hidden) engine?.update(0, false); });
 
 function playDiscoverySound() {
-  if (!discoverySoundOn) return;
+  if (!discoverySoundOn || masterMuted) return;
   try { audioCtx ??= new (window.AudioContext || window.webkitAudioContext)(); audioCtx.resume?.(); playDiscovery(audioCtx, { radioPlaying: Boolean(localRadio?.isPlaying?.()) }); } catch { /* sem WebAudio: segue sem som */ }
 }
 function recordStop(id) {
@@ -255,20 +264,31 @@ function recordStop(id) {
 function arriveAt(stop) {
   recordStop(stop.id);
   guided.holdUntil = performance.now() + STOP_HOLD_MS;
-  showGuidedCard(stop); setTrack(stop.trackIndex); announce(`${stop.title}. ${stop.year}.`);
+  showGuidedCard(stop, guided.index + 1, guided.order.length); setTrack(stop.trackIndex); announce(`${stop.title}. ${stop.year}.`);
   // Player local da Kong FM acompanha a parada (Concreto ou Maré de plástico); sem trocar se já está nela.
   const localIndex = localTrackFor(stop);
   if (localRadio.read().index !== localIndex) localRadio.select(localIndex);
   syncGuidedHud();
 }
-// Câmera cinematográfica na parada: órbita lenta (~25 s por volta) em torno do ponto, durante a espera.
+// Câmera cinematográfica na parada: fica do lado da rua (de onde o Geep chegou) e balança ±0,45 rad em torno dessa direção,
+// para não cair dentro de murais e prédios que estão atrás do ponto.
+// Em 1ª pessoa a espera NÃO troca de câmera (frameSpot tiraria o cockpit): só gira a cabeça até ±35° em direção à parada.
+const HEAD_LIMIT = 35 * Math.PI / 180;
 function cinematicHold(stop) {
-  const a = performance.now() / 1000 * .25;
-  world?.frameSpot({ x: stop.x, z: stop.z, dirX: Math.sin(a), dirZ: Math.cos(a), distance: 7.5, height: 3.4, target: 2.6 });
+  if (firstPerson) {
+    const h = vehicle.heading, fx = -Math.sin(h), fz = -Math.cos(h), rx = Math.cos(h), rz = -Math.sin(h);
+    const dx = stop.x - vehicle.x, dz = stop.z - vehicle.z;
+    const phi = Math.atan2(dx * rx + dz * rz, dx * fx + dz * fz); // + = à direita do Geep
+    world?.setHeadYaw(-Math.max(-HEAD_LIMIT, Math.min(HEAD_LIMIT, phi)));
+    return;
+  }
+  const t = performance.now() / 1000;
+  const base = Math.atan2(vehicle.x - stop.x, vehicle.z - stop.z), a = base + .45 * Math.sin(t * .6);
+  world?.frameSpot({ x: stop.x, z: stop.z, dirX: Math.sin(a), dirZ: Math.cos(a), distance: 9, height: 3.2, target: 2 });
 }
-function finishGuided() { guided = null; destination = null; hideGuidedCard(); setTour(false); world?.clearPose(); announce('Passeio guiado concluído. Você pode continuar explorando.'); syncGuidedHud(); }
+function finishGuided() { guided = null; destination = null; hideGuidedCard(); setTour(false); world?.clearPose(); world?.setHeadYaw(0); announce('Passeio guiado concluído. Você pode continuar explorando.'); syncGuidedHud(); }
 // Assumir o volante (WASD) ou parar o passeio devolve a câmera de viagem ao normal.
-function endGuided() { if (!guided) return; guided = null; destination = null; hideGuidedCard(); setTour(false); world?.clearPose(); syncGuidedHud(); }
+function endGuided() { if (!guided) return; guided = null; destination = null; hideGuidedCard(); setTour(false); world?.clearPose(); world?.setHeadYaw(0); syncGuidedHud(); }
 // Controle do passeio: espera na parada, chega, reduz a velocidade perto dela e segue a malha de estradas.
 function guidedControls() {
   if (guided.holdUntil) {
@@ -286,6 +306,7 @@ function guidedControls() {
   // Chegada medida até o ponto da pista (alvo do trajeto), para o Geep não sair do asfalto nem cortar a calçada.
   const stop = guided.order[guided.index], roadPoint = roadPointOf(stop), d = distance(vehicle, roadPoint);
   if (d < ARRIVE_M) { arriveAt(stop); return brakeControls; }
+  world?.setHeadYaw(0); // andando: a cabeça volta ao olhar para a frente, sem tranco
   const nav = navigationInput(vehicle, destination);
   if (nav.arrived) { arriveAt(stop); return brakeControls; }
   if (Math.abs(vehicle.speed) > speedCap(d)) return { ...nav, throttle: false, brake: true };
@@ -792,6 +813,7 @@ function frame(time) {
 }
 // Carro no minimapa: posição a cada quadro e rotação do cone suavizada (não salta a cada atualização da HUD).
 let mapHeading = null;
+let duckLevel = 1;
 function updateMapCar(dt) {
   if (mapHeading === null) mapHeading = vehicle.heading;
   const diff = Math.atan2(Math.sin(vehicle.heading - mapHeading), Math.cos(vehicle.heading - mapHeading));
@@ -807,6 +829,12 @@ function updateFrame(time) {
   if (paused) world?.setSkyLook(false);
   engine?.update(vehicle.speed, engineOn && entered && !paused && document.documentElement.classList.contains('mode-3d') && !(guided && guided.paused), { x: vehicle.x, z: vehicle.z, radioPlaying: Boolean(localRadio?.isPlaying?.()) });
   if (entered && !paused) updateMapCar(delta);
+  // Ducking do Kong FM perto dos palcos: suave por quadro, restaura ao sair (guided-tour.js: duckTarget/easeDuck).
+  if (localRadio && entered && !paused) {
+    const near = Math.min(...MEMBER_LOCATIONS.map(m => distance(vehicle, m)));
+    duckLevel = easeDuck(duckLevel, duckTarget(near), delta);
+    localRadio.setDuck?.(masterMuted ? 0 : duckLevel);
+  }
   if (entered && !paused) {
     accumulator = Math.min(accumulator + delta, .1);
     while (accumulator >= 1 / 120) {
@@ -1166,6 +1194,17 @@ const engineButton = document.createElement('button'); engineButton.type = 'butt
 function paintEngineButton() { engineButton.textContent = `Motor: ${engineOn ? 'ligado' : 'silenciado'}`; engineButton.setAttribute('aria-pressed', String(engineOn)); }
 engineButton.addEventListener('click', () => { engineOn = !engineOn; try { storage?.setItem('gorilazz.engine.v1', engineOn ? 'on' : 'off'); } catch { /* sem armazenamento */ } paintEngineButton(); });
 paintEngineButton(); radioMenu.append(engineButton);
+// Som geral: suspende o AudioContext (motor, palcos, pombos e descobertas) e silencia o Kong FM junto.
+let masterMuted = false;
+const muteButton = document.createElement('button'); muteButton.type = 'button'; muteButton.id = 'master-mute';
+function paintMuteButton() { muteButton.textContent = `Som: ${masterMuted ? 'mudo' : 'ligado'}`; muteButton.setAttribute('aria-pressed', String(masterMuted)); }
+muteButton.addEventListener('click', () => {
+  masterMuted = !masterMuted;
+  if (audioCtx) { try { if (masterMuted) audioCtx.suspend(); else audioCtx.resume(); } catch { /* sem WebAudio */ } }
+  localRadio?.setDuck?.(masterMuted ? 0 : duckLevel);
+  paintMuteButton();
+});
+paintMuteButton(); radioMenu.append(muteButton);
 
 for (const selector of ['#kong-fm-help','.radio-import','#road-radio-listen','#road-radio select','.radio-volume']) {
   radioMenu.append(document.querySelector(selector));

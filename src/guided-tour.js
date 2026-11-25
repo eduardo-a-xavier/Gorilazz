@@ -78,3 +78,17 @@ export function takeOver(tour, key) {
   if (!tour?.active || !DRIVE_KEYS.includes(String(key).toLowerCase())) return tour;
   return { ...tour, active: false, takenOverAt: tour.index };
 }
+
+// Ducking do Kong FM perto dos palcos: o rádio abaixa para destacar o áudio espacial das caixas e o ambiente.
+// Fator 1 longe do palco, DUCK_LEVEL colado a ele, com transição linear entre DUCK_OUTER_M e DUCK_INNER_M.
+export const DUCK_LEVEL = 0.35, DUCK_INNER_M = 9, DUCK_OUTER_M = 18;
+export function duckTarget(distanceToStage) {
+  if (!Number.isFinite(distanceToStage) || distanceToStage >= DUCK_OUTER_M) return 1;
+  if (distanceToStage <= DUCK_INNER_M) return DUCK_LEVEL;
+  return DUCK_LEVEL + (1 - DUCK_LEVEL) * ((distanceToStage - DUCK_INNER_M) / (DUCK_OUTER_M - DUCK_INNER_M));
+}
+// Aproxima o fator atual do alvo em 1/tau segundos (suave, sem degrau): chamado por quadro com dt em segundos.
+export function easeDuck(current, target, dt, tau = 0.45) {
+  const k = 1 - Math.exp(-Math.max(0, dt) / tau);
+  return current + (target - current) * k;
+}

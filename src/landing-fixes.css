@@ -167,6 +167,8 @@ html.mode-3d #jogo { height:100vh; min-height:100vh; height:100dvh; min-height:1
 .guided-bar button { min-height:36px; padding:0 12px; border-radius:999px; border:1px solid #c4dc9d; background:#c4dc9d; color:#111415; font:700 12px/1 system-ui,sans-serif; cursor:pointer; white-space:nowrap; }
 #jogo .guided-card { position:absolute; z-index:7; right:var(--right,16px); top:50%; transform:translateY(-50%); width:min(300px,30vw); padding:14px 16px; border-radius:14px 5px 14px 5px; border-left:3px solid var(--acid,#d2e2a8); background:#101b1cf2; color:#e3eddb; box-shadow:0 8px 24px #0007; }
 #jogo .guided-card[hidden] { display:none; }
+#jogo .guided-card { transition:opacity .35s ease; }
+#jogo .guided-card.is-leaving { opacity:0; }
 .guided-card h3 { font:600 18px/1.2 Georgia,serif; margin:6px 0 4px; }
 .guided-card .guided-year { font:700 11px/1 'Courier New',monospace; color:#c4dc9d; margin:0 0 8px; }
 .guided-card p { font:13px/1.5 system-ui,sans-serif; margin:0; }

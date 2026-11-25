@@ -73,6 +73,7 @@ export function spatialAttenuation(listener, source, maxRadius = 32) {
 
 // Motor procedural encorpado (estilo buggy): fundamental sawtooth + sub-harmônico grave (triangle) + harmônico de combustão,
 // com transição de marchas/RPM, atenuação espacial de pombos nas praças e caixas dos palcos no mesmo controle de mudo.
+export const ENGINE_OUT_GAIN = .35;
 export function createEngineSound(context, { plazas = [], stages = [] } = {}) {
   const oscillator = context.createOscillator(), filter = context.createBiquadFilter(), gain = context.createGain();
   oscillator.type = 'sawtooth'; filter.type = 'lowpass'; filter.frequency.value = 260;
@@ -118,7 +119,7 @@ export function createEngineSound(context, { plazas = [], stages = [] } = {}) {
       const engineLevel = isOn ? (.028 + Math.min(.014, kph * .00018)) * duck : 0;
       if (isOn !== previousActive || isOn) {
         previousActive = isOn;
-        gain.gain.setTargetAtTime(engineLevel, t, .08);
+        gain.gain.setTargetAtTime(engineLevel * ENGINE_OUT_GAIN, t, .08); // motor grave e discreto: ~35% do nível antigo, abaixo do Kong FM
       }
       if (layered) {
         subOsc.frequency.setTargetAtTime(fundamentalHz * .5, t, .12);

@@ -1185,6 +1185,7 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
   let previousDistance = 0; let lightingReady = false;
   let overview = false;
   let firstPerson = false;
+  let headYaw = 0; // giro de cabeça em 1ª pessoa (rad), controlado pelo passeio guiado
   let landmarkView = false;
   const look = new THREE.Vector3();
   const cameraTarget = new THREE.Vector3();
@@ -1277,6 +1278,7 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
     setInteraction(value) { interacting = firstPerson && value; highlight(null); release(); },
     recenter() { yaw = pitch = 0; },
     configureLook(gain, intensity) { sensitivity = gain; motion = intensity; },
+    setHeadYaw(value) { headYaw = Math.max(-.62, Math.min(.62, Number(value) || 0)); },
     setFirstPerson(value) { interacting = false; yaw = pitch = smoothYaw = smoothPitch = 0; highlight(null); release(); firstPerson = value; overview = false; landmarkView = false; initialized = false; travelCamera.resync(); },
     focusWindmill(value) { landmarkView = value; overview = false; travelCamera.resync(); },
     zoomBy(amount) { zoom = THREE.MathUtils.clamp(zoom + amount, .7, 1.6); },
@@ -1377,14 +1379,14 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
         car.updateMatrixWorld(true);
         desiredCamera.copy(cabin.eye).applyMatrix4(car.matrixWorld);
         cabinFrame.setFromEuler(cabinEuler.set(car.rotation.x * motion, heading, car.rotation.z * motion, car.rotation.order));
-        smoothYaw = THREE.MathUtils.lerp(smoothYaw,interacting ? -.63 : yaw,blend);
+        smoothYaw = THREE.MathUtils.lerp(smoothYaw,interacting ? -.63 : yaw + headYaw,blend); // headYaw: giro de cabeça do passeio (±35°), volta suave a zero
         smoothPitch = THREE.MathUtils.lerp(smoothPitch,interacting ? -.54 : pitch-.33,blend);
         look.set(-Math.sin(smoothYaw)*Math.cos(smoothPitch), Math.sin(smoothPitch), -Math.cos(smoothYaw)*Math.cos(smoothPitch)).applyQuaternion(cabinFrame).add(desiredCamera);
         cabin.update(vehicle,radio.read(),{interacting,dt,t,reduced,turn:vehicleMotion.wheel});
         if (pilotRig) pilotRig.reach(cabin.hands, car);
       }
       const targetFov = firstPerson ? (camera.aspect < 1 ? 88 : 75) : overview || landmarkView ? 46 : TRAVEL_FOV;
-      camera.near = firstPerson ? .1 : overview ? Math.max(.5, Math.min(20, (camera.position.y - 50) * .1)) : .5;
+      camera.near = firstPerson ? .08 : overview ? Math.max(.5, Math.min(20, (camera.position.y - 50) * .1)) : .5;
       camera.fov = THREE.MathUtils.lerp(camera.fov,targetFov,blend); camera.updateProjectionMatrix();
       // Outdoors de era: arte WebP entra quando o carro chega a ~80 m da era (carga lazy).
       updateEraArt(vehicle);
