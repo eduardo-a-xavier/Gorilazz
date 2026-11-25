@@ -1,0 +1,164 @@
+{
+  "timestamp": "2026-11-25T11:24:40",
+  "server_port": 24182,
+  "browser": "Google Chrome (channel=chrome, headless=False)",
+  "checks": {
+    "item4_master_sound": {
+      "pass": true,
+      "details": {
+        "initialText": "Som: ligado",
+        "initialPressed": "false",
+        "mutedText": "Som: mudo",
+        "unmutedText": "Som: ligado",
+        "radioStateAfterMute": {
+          "name": "Clint Eastwood",
+          "artist": "Gorillaz · Gorillaz (2001)",
+          "url": "./assets/audio/clint-eastwood.mp3",
+          "index": 0,
+          "total": 5,
+          "playing": false,
+          "seconds": 0,
+          "volume": 65,
+          "duck": 0,
+          "ducked": true
+        },
+        "radioStateAfterUnmute": {
+          "name": "Clint Eastwood",
+          "artist": "Gorillaz · Gorillaz (2001)",
+          "url": "./assets/audio/clint-eastwood.mp3",
+          "index": 0,
+          "total": 5,
+          "playing": false,
+          "seconds": 0,
+          "volume": 65,
+          "duck": 100,
+          "ducked": false
+        }
+      }
+    },
+    "item3_arcade_member_dialogs": {
+      "pass": true,
+      "member_esc": {
+        "open": false,
+        "cockpitVisible": true,
+        "firstPersonActive": true
+      },
+      "member_btn": {
+        "open": false,
+        "cockpitVisible": true,
+        "firstPersonActive": true
+      },
+      "arcade_esc": {
+        "open": false,
+        "cockpitVisible": true,
+        "firstPersonActive": true
+      },
+      "arcade_btn": {
+        "open": false,
+        "cockpitVisible": true,
+        "firstPersonActive": true
+      },
+      "speed_after_w": 8.38489856522069,
+      "controls_responsive": true
+    },
+    "item2_pause_resume_skip_takeover": {
+      "pass": true,
+      "tour_3p": {
+        "initialActive": true,
+        "isPaused": true,
+        "isResumed": true,
+        "headingDrift": 0
+      },
+      "skip_wasd": {
+        "idxBefore": 0,
+        "guidedTerminatedByW": true
+      },
+      "tour_1p": {
+        "isRunning": true,
+        "paused": true,
+        "resumed": true,
+        "takenOver": true
+      }
+    },
+    "item1_guided_tour": {
+      "pass": true,
+      "hold_1p_audit": {
+        "firstPerson": true,
+        "cockpitVisible": true,
+        "cardVisible": true,
+        "cardKicker": "ERA NA ESTRADA · PONTO 1 / 9"
+      },
+      "metricas_1a": {
+        "mode": "1a",
+        "samples": 635,
+        "durationS": 172.8,
+        "consoleErrors": 0,
+        "stopsReached": 9,
+        "stopsTotal": 9,
+        "stopsReachedIds": [
+          "era-explosao",
+          "beginning",
+          "era-reinvencao",
+          "voices",
+          "genres",
+          "live",
+          "era-hiato",
+          "demon-days",
+          "era-plastic"
+        ],
+        "legEvents": 9,
+        "offAsphaltSamplesMoving": 0,
+        "geepCornerOnSidewalkSamples": 0,
+        "parkedCarCollisionSamples": 0,
+        "maxSpeedMs": 15.75,
+        "maxSpeedKmh": 56.7,
+        "examplesCarHits": [],
+        "examplesSidewalk": [],
+        "notes": "offAsphalt: centro do Geep fora do asfalto em movimento (roadGap > 0). sidewalk: algum canto do Geep sobre calçada (roadGap > 0,3). Colisão: SAT entre o retângulo do Geep e os carros estacionados de planStreetProps."
+      },
+      "metricas_3a": {
+        "mode": "3a",
+        "samples": 633,
+        "durationS": 170,
+        "consoleErrors": 0,
+        "stopsReached": 9,
+        "stopsTotal": 9,
+        "stopsReachedIds": [
+          "era-explosao",
+          "beginning",
+          "era-reinvencao",
+          "voices",
+          "genres",
+          "live",
+          "era-hiato",
+          "demon-days",
+          "era-plastic"
+        ],
+        "legEvents": 9,
+        "offAsphaltSamplesMoving": 0,
+        "geepCornerOnSidewalkSamples": 0,
+        "parkedCarCollisionSamples": 0,
+        "maxSpeedMs": 15.7,
+        "maxSpeedKmh": 56.5,
+        "examplesCarHits": [],
+        "examplesSidewalk": [],
+        "notes": "offAsphalt: centro do Geep fora do asfalto em movimento (roadGap > 0). sidewalk: algum canto do Geep sobre calçada (roadGap > 0,3). Colisão: SAT entre o retângulo do Geep e os carros estacionados de planStreetProps."
+      },
+      "screenshot_1p": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\validacao-final-chrome-2026-11-25\\evidencia-item1-1a-pessoa-cockpit.png",
+      "screenshot_3p": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\validacao-final-chrome-2026-11-25\\evidencia-item1-3a-pessoa-orbita.png"
+    },
+    "item5_stages_instruments": {
+      "pass": true,
+      "murdoc_screenshot": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\validacao-final-chrome-2026-11-25\\evidencia-item5-palco-murdoc-baixo.png",
+      "noodle_screenshot": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\validacao-final-chrome-2026-11-25\\evidencia-item5-palco-noodle-guitarra.png"
+    },
+    "item6_http_console_fps": {
+      "pass": true,
+      "http_errors_count": 0,
+      "http_errors": [],
+      "console_errors_count": 0,
+      "console_errors": [],
+      "measured_fps": 61
+    }
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "mode": "1a",
+  "samples": 635,
+  "durationS": 172.8,
+  "consoleErrors": 0,
+  "stopsReached": 9,
+  "stopsTotal": 9,
+  "stopsReachedIds": [
+    "era-explosao",
+    "beginning",
+    "era-reinvencao",
+    "voices",
+    "genres",
+    "live",
+    "era-hiato",
+    "demon-days",
+    "era-plastic"
+  ],
+  "legEvents": 9,
+  "offAsphaltSamplesMoving": 0,
+  "geepCornerOnSidewalkSamples": 0,
+  "parkedCarCollisionSamples": 0,
+  "maxSpeedMs": 15.75,
+  "maxSpeedKmh": 56.7,
+  "examplesCarHits": [],
+  "examplesSidewalk": [],
+  "notes": "offAsphalt: centro do Geep fora do asfalto em movimento (roadGap > 0). sidewalk: algum canto do Geep sobre calçada (roadGap > 0,3). Colisão: SAT entre o retângulo do Geep e os carros estacionados de planStreetProps."
+}

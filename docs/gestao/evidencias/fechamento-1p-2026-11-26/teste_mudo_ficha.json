@@ -1,0 +1,11 @@
+{
+ "http_4xx": [],
+ "console_errors": [],
+ "duck_before_mute": 100,
+ "mute_label": "Som: mudo",
+ "duck_muted": 0,
+ "duck_unmuted": 100,
+ "after_ficha_first_person": true,
+ "speed_before_w": 0,
+ "speed_w_after_ficha": 15.899868817648771
+}

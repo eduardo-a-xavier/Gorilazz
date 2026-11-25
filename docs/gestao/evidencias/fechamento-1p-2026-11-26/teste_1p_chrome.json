@@ -1,0 +1,70 @@
+{
+  "steps": {
+    "1_cockpit_1a": {
+      "firstPerson": true,
+      "cockpitHidden": false,
+      "near": 0.08,
+      "speed": 0,
+      "modal": false,
+      "guided": false
+    },
+    "2_parada_1a": {
+      "firstPerson": true,
+      "cockpitHidden": false,
+      "near": 0.08,
+      "speed": 0,
+      "modal": false,
+      "guided": true
+    },
+    "3_fliperama_aberto": {
+      "firstPerson": true,
+      "cockpitHidden": false,
+      "near": 0.08,
+      "speed": 0,
+      "modal": true,
+      "guided": true
+    },
+    "4_fliperama_fechado_esc": {
+      "firstPerson": true,
+      "cockpitHidden": false,
+      "near": 0.08,
+      "speed": 0,
+      "modal": false,
+      "guided": true
+    },
+    "4b_wasd_depois_fliperama": {
+      "firstPerson": true,
+      "cockpitHidden": false,
+      "near": 0.08,
+      "speed": 0,
+      "modal": false,
+      "guided": false
+    },
+    "5_ficha_aberta": {
+      "firstPerson": true,
+      "cockpitHidden": false,
+      "near": 0.08,
+      "speed": 0,
+      "modal": true,
+      "guided": false
+    },
+    "6_ficha_fechada_esc": {
+      "firstPerson": true,
+      "cockpitHidden": false,
+      "near": 0.08,
+      "speed": 0,
+      "modal": false,
+      "guided": false
+    },
+    "6b_wasd_depois_ficha": {
+      "firstPerson": true,
+      "cockpitHidden": false,
+      "near": 0.08,
+      "speed": 0,
+      "modal": false,
+      "guided": false
+    }
+  },
+  "http_4xx": [],
+  "console_errors": []
+}
