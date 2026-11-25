@@ -52,7 +52,7 @@ function place(geometry, material, items, group, { castShadow = false, colorPale
   const dummy = new THREE.Object3D();
   const c = new THREE.Color();
   items.forEach((item, i) => {
-    dummy.position.set(item.x, 0, item.z); dummy.rotation.set(0, item.rot, 0); dummy.scale.setScalar(item.scale); dummy.updateMatrix();
+    dummy.position.set(item.x, item.y ?? 0, item.z); dummy.rotation.set(0, item.rot, 0); dummy.scale.setScalar(item.scale); dummy.updateMatrix();
     mesh.setMatrixAt(i, dummy.matrix);
     if (colorPalette) mesh.setColorAt(i, c.set(colorPalette[(item.colorIdx ?? i) % colorPalette.length]));
   });

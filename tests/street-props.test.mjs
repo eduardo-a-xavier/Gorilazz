@@ -3,9 +3,9 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import * as THREE from '../src/vendor/three.module.min.js';
 import { GLTFLoader } from '../src/vendor/GLTFLoader.js';
-import { planStreetProps, PROP_CLEARANCE, CAR_CLEARANCE, PROP_RADIUS, PROP_LIMITS } from '../src/street-props-plan.js';
+import { planStreetProps, PROP_CLEARANCE, CAR_CLEARANCE, PROP_RADIUS, PROP_LIMITS, carFootprintCorners, benchFootprintCorners, inParkingOrPaintedLines } from '../src/street-props-plan.js';
 import { installStreetProps, SCENERY_GLB_URLS } from '../src/street-props.js';
-import { roadGap, OBSTACLES, DISCOVERIES, MEMBER_LOCATIONS, ERA_GATES } from '../src/world-data.js';
+import { roadGap, nearestRoad, OBSTACLES, DISCOVERIES, MEMBER_LOCATIONS, ERA_GATES } from '../src/world-data.js';
 import { ARCADE_SPOT } from '../src/arcade.js';
 
 const plan = planStreetProps(2026);
@@ -22,11 +22,36 @@ test('o plano é determinístico e cabe nos limites por tipo', () => {
   assert.ok(counts.car >= 25 && counts.car <= 40, `carros estacionados (${counts.car}) devem ficar entre 25 e 40`);
 });
 
-test('nenhum prop invade a pista: folga >= 0,90 m para props e >= 1,20 m para carros estacionados', () => {
+test('nenhum prop de calçada invade a pista (folga >= 0,90 m) e 0 bancos ficam sobre asfalto ou linhas de vaga/faixas', () => {
   for (const item of plan) {
+    if (item.kind === 'car') continue;
     const folga = roadGap(item) - PROP_RADIUS[item.kind];
-    const minClear = item.kind === 'car' ? CAR_CLEARANCE : PROP_CLEARANCE;
-    assert.ok(folga >= minClear - 1e-6, `${item.kind} em ${item.x},${item.z} com folga ${folga.toFixed(2)} m`);
+    assert.ok(folga >= PROP_CLEARANCE - 1e-6, `${item.kind} em ${item.x},${item.z} com folga ${folga.toFixed(2)} m`);
+    if (item.kind === 'bench') {
+      const pts = [item, ...benchFootprintCorners(item)];
+      for (const pt of pts) {
+        assert.ok(roadGap(pt) >= 0.6, `banco em ${item.x},${item.z} a menos de 0,60 m da borda do asfalto (${roadGap(pt).toFixed(2)} m)`);
+        assert.equal(inParkingOrPaintedLines(pt), false, `banco em ${item.x},${item.z} sobre linhas de vaga ou faixa pintada`);
+      }
+    }
+  }
+});
+
+test('0 carros estacionados têm roda fora do asfalto ou centro na calçada; ficam alinhados ao meio-fio e fora da faixa central', () => {
+  const cars = plan.filter(item => item.kind === 'car');
+  assert.ok(cars.length >= 25 && cars.length <= 40, `total de carros: ${cars.length}`);
+  for (const car of cars) {
+    const centerGap = roadGap(car);
+    assert.ok(centerGap <= -1.0 && centerGap >= -2.0, `centro do carro em ${car.x},${car.z} fora da faixa de estacionamento no asfalto (gap=${centerGap.toFixed(2)})`);
+    for (const corner of carFootprintCorners(car)) {
+      const g = roadGap(corner);
+      assert.ok(g <= -0.10, `roda/canto do carro em ${car.x},${car.z} fora do asfalto ou subindo no meio-fio (gap=${g.toFixed(2)})`);
+      assert.ok(g >= -2.75, `roda/canto do carro em ${car.x},${car.z} invade a faixa central do passeio (gap=${g.toFixed(2)})`);
+    }
+    const nr = nearestRoad(car);
+    // O heading do carro deve ser paralelo ao eixo tangente da via (mesmo sentido ou sentido oposto)
+    const parallelSin = Math.abs(Math.sin(car.rot - nr.heading));
+    assert.ok(parallelSin <= 0.15, `carro em ${car.x},${car.z} desalinhado do meio-fio (sin=${parallelSin.toFixed(3)})`);
   }
 });
 
