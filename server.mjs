@@ -23,6 +23,7 @@ const routes = new Map([
   ['/src/easter-eggs.js', ['src/easter-eggs.js', 'text/javascript; charset=utf-8']],
   ['/src/street-props-plan.js', ['src/street-props-plan.js', 'text/javascript; charset=utf-8']],
   ['/src/ground-textures.js', ['src/ground-textures.js', 'text/javascript; charset=utf-8']],
+  ['/src/ground-fit.js', ['src/ground-fit.js', 'text/javascript; charset=utf-8']],
   ['/src/escape-stack.js', ['src/escape-stack.js', 'text/javascript; charset=utf-8']],
   ['/src/piano-game.js', ['src/piano-game.js', 'text/javascript; charset=utf-8']],
   ['/src/piano-screen.js', ['src/piano-screen.js', 'text/javascript; charset=utf-8']],

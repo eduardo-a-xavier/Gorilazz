@@ -14,7 +14,8 @@ export const BENCH_HALF_DEPTH = 0.30;
 // Raio da base de cada tipo (m), usado na folga e no espaçamento.
 export const PROP_RADIUS = { tree: 1.4, bench: 0.9, planter: 0.8, lamp: 0.3, rock: 0.9, car: 3.0, barrier: 0.65 };
 // Teto por tipo: o cenário ganha densidade sem virar floresta nem atrapalhar a leitura da rua.
-export const PROP_LIMITS = { tree: 70, bench: 10, planter: 60, lamp: 110, rock: 60, car: 8, barrier: 12 };
+// Saneamento da banca: bancos e pedras removidos do plano (limite 0); árvores, arbustos, postes e carros permanecem.
+export const PROP_LIMITS = { tree: 70, bench: 0, planter: 60, lamp: 110, rock: 0, car: 8, barrier: 12 };
 const STEP = 5;              // m entre candidatos da grade
 const MIN_SPACING = 6;       // m entre dois props quaisquer
 const LAMP_SPACING = 16;     // m entre postes (poucos e espaçados, como numa avenida)

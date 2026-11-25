@@ -348,7 +348,7 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.NeutralToneMapping; // menos compressão de sombras que o ACES: mais contraste
-  renderer.toneMappingExposure = 1.0;
+  renderer.toneMappingExposure = 1.38; // clareza geral (faixa 1,35–1,42); mãos do cockpit conferidas em print
   renderer.info.autoReset = false;
   container.append(renderer.domElement);
   renderer.domElement.setAttribute('aria-label', 'Estrada 3D com carro, personagens e cenários musicais');
@@ -358,7 +358,7 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
   const scene = new THREE.Scene();
   const surfaces = createSurfaceLibrary();
   scene.background = new THREE.Color('#202631');
-  scene.fog = new THREE.FogExp2('#202631', .007);
+  scene.fog = new THREE.FogExp2('#202631', .0045);
   scene.environmentIntensity = .5; // IBL mais baixo: sombras e relevo aparecem nas fachadas e na pista
   const atmosphere = createAtmosphere(scene, renderer);
   const ambient = createAmbientParticles(THREE, scene); // poeira, esporos e faíscas (micro-efeitos leves)
@@ -367,15 +367,15 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
   const camera = new THREE.PerspectiveCamera(46, 1, .1, 650);
   // Hemisfério: céu mais frio e solo mais escuro dão contraste entre pista, fachadas e painéis (sem custo extra).
   // Contraste e volume: céu frio e solo escuro (preenchimento fraco), sol quente e forte, contorno frio por trás.
-  const skylight = new THREE.HemisphereLight('#e6eeff', '#2e2a22', .55);
+  const skylight = new THREE.HemisphereLight('#e6eeff', '#2e2a22', .8);
   scene.add(skylight);
   const rimLight = new THREE.DirectionalLight('#7fb4ff', .9); rimLight.position.set(-40, 50, -40); scene.add(rimLight); // sem sombra (custo baixo)
-  const sunlight = new THREE.DirectionalLight('#ffd49a', 4.8);
+  const sunlight = new THREE.DirectionalLight('#ffd49a', 5.2);
   sunlight.castShadow = true;
   const shadowSize = light ? 1024 : 2048, lightProfile = light;
   sunlight.shadow.mapSize.set(shadowSize, shadowSize);
   Object.assign(sunlight.shadow.camera, { left: -SHADOW_SPAN / 2, right: SHADOW_SPAN / 2, top: SHADOW_SPAN / 2, bottom: -SHADOW_SPAN / 2, near: 1, far: 260 });
-  sunlight.shadow.normalBias = .05; sunlight.shadow.bias = -.0003;
+  sunlight.shadow.normalBias = .02; sunlight.shadow.bias = -.0005;
   // A sombra é redesenhada em quadros alternados e presa à grade de texels: metade do custo, sem cintilar.
   sunlight.shadow.autoUpdate = false; scene.add(sunlight); scene.add(sunlight.target);
   const lightRight = new THREE.Vector3().crossVectors(new THREE.Vector3(0, 1, 0), atmosphere.sunDirection).normalize();

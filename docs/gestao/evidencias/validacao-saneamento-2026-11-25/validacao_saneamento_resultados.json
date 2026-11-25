@@ -1,0 +1,116 @@
+{
+  "timestamp": "2026-11-25T12:20:20",
+  "server_port": 33251,
+  "browser": "Google Chrome (channel=chrome, headless=False)",
+  "checks": {
+    "criterio1_motor_som_mute": {
+      "pass": true,
+      "engine_idle": {
+        "audio": {
+          "context": "running",
+          "engine": true,
+          "engineGain": 0.1467,
+          "engineOn": true,
+          "masterMuted": false
+        },
+        "targetGainConst": 0.22
+      },
+      "engine_accel": {
+        "speed": 18.31200241187101,
+        "kph": 65.92320868273563,
+        "audio": {
+          "context": "running",
+          "engine": true,
+          "engineGain": 0.2067,
+          "engineOn": true,
+          "masterMuted": false
+        }
+      },
+      "mute_check": {
+        "initialText": "Som: ligado",
+        "mutedText": "Som: mudo",
+        "unmutedText": "Som: ligado",
+        "audioMuted": {
+          "context": "suspended",
+          "engine": true,
+          "engineGain": 0.2048,
+          "engineOn": true,
+          "masterMuted": true
+        },
+        "audioUnmuted": {
+          "context": "suspended",
+          "engine": true,
+          "engineGain": 0.2048,
+          "engineOn": true,
+          "masterMuted": false
+        },
+        "duckMuted": 0,
+        "duckUnmuted": 100
+      }
+    },
+    "criterio2_remocao_bancos_pedras": {
+      "pass": true,
+      "details": {
+        "benchesCount": 0,
+        "rocksCount": 0,
+        "plantersCount": 0,
+        "barriersCount": 1,
+        "treesCount": 12,
+        "carsCount": 0,
+        "bagsCount": 0
+      }
+    },
+    "criterio3_assentamento_props_carros": {
+      "pass": true,
+      "ground_check": {
+        "treesChecked": 12,
+        "minObservedY": 0,
+        "targetGroundY": -0.06
+      },
+      "screenshots": {
+        "cruzamento-1": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\validacao-saneamento-2026-11-25\\evidencia-c3-cruzamento-1.png",
+        "cruzamento-5": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\validacao-saneamento-2026-11-25\\evidencia-c3-cruzamento-5.png",
+        "cruzamento-6": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\validacao-saneamento-2026-11-25\\evidencia-c3-cruzamento-6.png",
+        "cruzamento-7": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\validacao-saneamento-2026-11-25\\evidencia-c3-cruzamento-7.png",
+        "praca-central": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\validacao-saneamento-2026-11-25\\evidencia-c3-praca-central.png",
+        "palco-noodle": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\validacao-saneamento-2026-11-25\\evidencia-c3-palco-noodle.png",
+        "palco-murdoc": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\validacao-saneamento-2026-11-25\\evidencia-c3-palco-murdoc.png"
+      }
+    },
+    "criterio4_iluminacao_exposicao": {
+      "pass": true,
+      "lighting": {
+        "exposure": 1.38,
+        "fogDensity": 0.003,
+        "skylightIntensity": 0.8,
+        "sunlightIntensity": 5.2,
+        "normalBias": 0.02,
+        "bias": -0.0005
+      },
+      "cockpit_screenshot": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\validacao-saneamento-2026-11-25\\evidencia-c4-cockpit-exposicao-138.png"
+    },
+    "criterio5_blocos_isolados_mapa_m": {
+      "pass": true,
+      "map_open": {
+        "open": true
+      },
+      "map_close": {
+        "open": false
+      },
+      "screenshot_map": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\validacao-saneamento-2026-11-25\\evidencia-c5-minimapa-m-aberto.png"
+    },
+    "criterio6_passeio_fps_erros": {
+      "pass": true,
+      "tour": {
+        "orderLength": 9,
+        "paused": true,
+        "resumed": true
+      },
+      "fps": 61,
+      "http_errors_count": 0,
+      "http_errors": [],
+      "console_errors_count": 0,
+      "console_errors": []
+    }
+  }
+}

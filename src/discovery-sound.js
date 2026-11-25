@@ -73,7 +73,9 @@ export function spatialAttenuation(listener, source, maxRadius = 32) {
 
 // Motor procedural encorpado (estilo buggy): fundamental sawtooth + sub-harmônico grave (triangle) + harmônico de combustão,
 // com transição de marchas/RPM, atenuação espacial de pombos nas praças e caixas dos palcos no mesmo controle de mudo.
-export const ENGINE_OUT_GAIN = .35;
+// Ganho de saída do motor em aceleração plena: ~35% do volume do Kong FM (0,65), para o motor grave ser audível sem competir com a rádio.
+export const ENGINE_TARGET_GAIN = .22;
+const ENGINE_LEVEL_MAX = .042; // maior nível interno do motor (base + aceleração), usado para escalar ao alvo
 export function createEngineSound(context, { plazas = [], stages = [] } = {}) {
   const oscillator = context.createOscillator(), filter = context.createBiquadFilter(), gain = context.createGain();
   oscillator.type = 'sawtooth'; filter.type = 'lowpass'; filter.frequency.value = 260;
@@ -119,7 +121,7 @@ export function createEngineSound(context, { plazas = [], stages = [] } = {}) {
       const engineLevel = isOn ? (.028 + Math.min(.014, kph * .00018)) * duck : 0;
       if (isOn !== previousActive || isOn) {
         previousActive = isOn;
-        gain.gain.setTargetAtTime(engineLevel * ENGINE_OUT_GAIN, t, .08); // motor grave e discreto: ~35% do nível antigo, abaixo do Kong FM
+        gain.gain.setTargetAtTime(engineLevel / ENGINE_LEVEL_MAX * ENGINE_TARGET_GAIN, t, .08);
       }
       if (layered) {
         subOsc.frequency.setTargetAtTime(fundamentalHz * .5, t, .12);
@@ -148,6 +150,8 @@ export function createEngineSound(context, { plazas = [], stages = [] } = {}) {
         birdGain.gain.setTargetAtTime(isOn ? maxPlaza * cooGate * .011 * duck : 0, t, .08);
       }
     },
+    gainValue: () => gain.gain.value, // medição em navegador real (ganho atual do motor)
+    stateOf: () => context.state,
     dispose() {
       oscillator.stop(); oscillator.disconnect(); filter.disconnect(); gain.disconnect();
       if (layered) {

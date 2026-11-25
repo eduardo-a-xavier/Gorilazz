@@ -40,3 +40,16 @@ test('transição de marchas/RPM e atenuação espacial de pombos e caixas de pa
  assert.equal(birdGain.gain.calls.at(-1)[0], 0, 'mute global zera som ambiente dos pombos');
  engine.dispose();
 });
+
+test('motor em aceleração plena chega a ganho audível (>= 0,2) e a marcha lenta fica baixa', () => {
+  const gains = [];
+  const node = () => ({ frequency: { value: 0, setTargetAtTime() {} }, gain: { value: 0, calls: [], setTargetAtTime(v) { this.calls.push(v); this.value = v; } }, connect() {}, disconnect() {}, start() {}, stop() {} });
+  const context = { currentTime: 1, state: 'running', destination: {}, createOscillator: node, createBiquadFilter: node, createGain: () => { const n = node(); gains.push(n); return n; } };
+  const engine = createEngineSound(context, { plazas: [], stages: [] });
+  engine.update(30, true, {});
+  const high = gains[0].gain.calls.at(-1);
+  assert.ok(high >= 0.2, `ganho em aceleração plena ${high}`);
+  engine.update(0, true, {});
+  assert.ok(gains[0].gain.calls.at(-1) < high, 'marcha lenta mais baixa que aceleração');
+  assert.equal(engine.stateOf(), 'running');
+});

@@ -773,7 +773,7 @@ const worldLoader = createWorldLoader({
     worldAvailable = true; world.setIntro(!entered);
     // ?perf expõe a cena para medições (scripts/ e console); não altera a experiência.
     world.setQuality(qualitySelect.value);
-      if (new URLSearchParams(location.search).has('perf')) window.__gorilazz = { ui: () => ({ entered, worldVisible, touring, modal: modalOpen(), fullscreen: Boolean(document.fullscreenElement), mode3d: document.documentElement.classList.contains('mode-3d') }), world, vehicle, radio: localRadio, trees: TREE_LOCATIONS, known: journal.known, arcade: arcadeScreen, piano: pianoScreen, openMember, memberView, guided: () => guided, stopProgress, tourStops, startGuided, takeOver };
+      if (new URLSearchParams(location.search).has('perf')) window.__gorilazz = { audio: () => ({ context: audioCtx?.state ?? null, engine: Boolean(engine), engineGain: engine ? Number(engine.gainValue().toFixed(4)) : null, engineOn, masterMuted }), ui: () => ({ entered, worldVisible, touring, modal: modalOpen(), fullscreen: Boolean(document.fullscreenElement), mode3d: document.documentElement.classList.contains('mode-3d') }), world, vehicle, radio: localRadio, trees: TREE_LOCATIONS, known: journal.known, arcade: arcadeScreen, piano: pianoScreen, openMember, memberView, guided: () => guided, stopProgress, tourStops, startGuided, takeOver };
     document.querySelector('.world-shell').classList.add('has-3d');
     document.querySelector('#render-status').textContent = 'MUNDO ABERTO / 3D EM TEMPO REAL';
     return world;

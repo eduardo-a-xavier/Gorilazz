@@ -299,7 +299,10 @@ function buildCity() {
   }
   return lots;
 }
-export const CITY_LOTS = buildCity();
+// Saneamento: blocos isolados nos fundos (sem nenhuma via a menos de 12 m) saem do mundo. O filtro é aplicado
+// depois da geração, então a sequência aleatória dos demais blocos e as ruas não mudam; landmarks ficam.
+export const ISOLATED_LOT_M = 12;
+export const CITY_LOTS = buildCity().filter(lot => lot.landmark || roadGap(lot) <= ISOLATED_LOT_M);
 /** Um portal de entrada por bairro, sobre a rua mais próxima do centro da época. */
 export const ERA_GATES = CITY_ERAS.map((era, index) => {
   let best = null;

@@ -17,8 +17,10 @@ test('o plano é determinístico e cabe nos limites por tipo', () => {
   for (const item of plan) counts[item.kind] = (counts[item.kind] ?? 0) + 1;
   for (const kind of Object.keys(PROP_LIMITS)) assert.ok((counts[kind] ?? 0) <= PROP_LIMITS[kind], `${kind} acima do limite`);
   assert.ok(plan.length >= 100, `densidade: ${plan.length} props`);
-  for (const kind of ['tree', 'bench', 'planter', 'lamp', 'rock', 'car']) assert.ok((counts[kind] ?? 0) > 0, `${kind} ausente`);
-  assert.ok(counts.bench >= 6 && counts.bench <= 10, `bancos curados (${counts.bench}) devem ficar entre 6 e 10`);
+  for (const kind of ['tree', 'planter', 'lamp', 'car']) assert.ok((counts[kind] ?? 0) > 0, `${kind} ausente`);
+  // Saneamento da banca: nenhum banco nem pedra no plano.
+  assert.equal(counts.bench ?? 0, 0, 'bancos removidos do plano');
+  assert.equal(counts.rock ?? 0, 0, 'pedras removidas do plano');
   assert.ok(counts.car >= 6 && counts.car <= 8, `carros estacionados (${counts.car}) devem ficar entre 6 e 8`);
 });
 
@@ -77,26 +79,8 @@ test('0 carro a menos de 6 m de faixa de pedestre, linha de retenção ou cruzam
   }
 });
 
-test('bancos (6 a 10): virados para o palco a 3 a 9 m do tablado, ou em calçada limpa; fora de vagas, de portas e com >= 1,5 m livres', () => {
-  const benches = plan.filter(item => item.kind === 'bench');
-  assert.ok(benches.length >= 6 && benches.length <= 10);
-  for (const b of benches) {
-    for (const o of OBSTACLES) assert.ok(dist(o, b) >= o.radius + 0.9 + 2.9, `banco em ${b.x},${b.z} a menos de 2 m de uma porta/prédio (${o.radius})`);
-    for (const pt of [b, ...benchFootprintCorners(b)]) assert.equal(inParkingOrPaintedLines(pt), false, `banco em ${b.x},${b.z} sobre vagas/linhas`);
-    for (const other of plan) if (other !== b) assert.ok(dist(other, b) >= (other.kind === 'lamp' || other.kind === 'rock' || other.kind === 'planter' ? 1.0 : BENCH_FREE - 0.01) , `banco em ${b.x},${b.z} sem espaço livre (${other.kind})`);
-    if (b.stage) {
-      const stage = MEMBER_LOCATIONS.reduce((best, m) => dist(m, b) < dist(best, b) ? m : best);
-      const f = stageFrame(stage);
-      const lx = (b.x - stage.x) * f.sx + (b.z - stage.z) * f.sz, lz = (b.x - stage.x) * f.fx + (b.z - stage.z) * f.fz;
-      assert.ok(lz >= STAGE_DECK_FRONT, `banco em ${b.x},${b.z} atrás/ao lado do fundo do palco`);
-      const dd = Math.hypot(Math.max(0, Math.abs(lx) - 6), Math.max(0, lz - STAGE_DECK_FRONT));
-      assert.ok(dd >= 0 && Math.hypot(lx, lz - STAGE_DECK_FRONT) <= 9 + 6 && Math.hypot(Math.max(0, Math.abs(lx) - 6), lz - STAGE_DECK_FRONT) <= 9, `banco em ${b.x},${b.z} longe demais do tablado`);
-      assert.ok(Math.abs(Math.atan2(Math.sin(b.rot - benchFacing(b, stage)), Math.cos(b.rot - benchFacing(b, stage)))) < 0.05, `banco em ${b.x},${b.z} não olha para o palco`);
-    } else {
-      assert.equal(b.sidewalk, true);
-      for (const c of [b, ...benchFootprintCorners(b)]) assert.ok(roadGap(c) >= 0.6 && roadGap(c) <= 2.3, `banco de calçada em ${b.x},${b.z} fora da calçada`);
-    }
-  }
+test('saneamento: nenhum banco no plano (bancos removidos das praças, ruas e palcos)', () => {
+  assert.equal(plan.filter(item => item.kind === 'bench').length, 0);
 });
 
 test('props ficam fora de prédios e lotes, das histórias, dos palcos, portais e do fliperama', () => {
@@ -129,13 +113,13 @@ test('loadSceneryModels carrega GLBs de árvores, bancos, arbustos, rochas, post
   };
   await props.loadSceneryModels(diskLoader);
   assert.equal(props.group.userData.treesGlbLoaded, true);
-  assert.equal(props.group.userData.benchesGlbLoaded, true);
   assert.equal(props.group.userData.bushesGlbLoaded, true);
-  assert.equal(props.group.userData.rocksGlbLoaded, true);
+  assert.ok(!props.group.userData.rocksGlbLoaded, 'pedras removidas: GLB de pedra não carrega');
   assert.equal(props.group.userData.lampsGlbLoaded, true);
   assert.equal(props.group.userData.carsGlbLoaded, true);
   const names = props.group.children.map(c => c.name);
-  assert.ok(names.includes('street-trees-glb-1') && names.includes('street-benches-glb') && names.includes('street-cars-glb-1'));
+  assert.ok(names.includes('street-trees-glb-1') && names.includes('street-cars-glb-1'));
+  assert.ok(!names.includes('street-benches-glb'), 'sem bancos no cenário');
   assert.ok(!names.includes('street-tree-crowns'), 'primitivas de árvore removidas após carga do GLB');
 
   // Teste de fallback: se o loader falhar, as primitivas continuam intactas
@@ -143,5 +127,5 @@ test('loadSceneryModels carrega GLBs de árvores, bancos, arbustos, rochas, post
   const failProps = installStreetProps(failScene);
   await failProps.loadSceneryModels({ loadAsync: () => Promise.reject(new Error('404 simulado')) });
   const failNames = failProps.group.children.map(c => c.name);
-  assert.ok(failNames.includes('street-tree-crowns') && failNames.includes('street-benches'));
+  assert.ok(failNames.includes('street-tree-crowns'));
 });

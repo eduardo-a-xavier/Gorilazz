@@ -6,6 +6,7 @@ import * as THREE from './vendor/three.module.min.js';
 import { GLTFLoader } from './vendor/GLTFLoader.js';
 import { planStreetProps, excludeTreesNear } from './street-props-plan.js';
 import { loadModelSafely, repairMaterials } from './model-safety.js';
+import { groundOffsetY } from './ground-fit.js';
 
 const COLOR = {
   trunk: '#5b4a3a',
@@ -47,12 +48,15 @@ function part(color, options = {}) {
   return new THREE.MeshStandardMaterial({ color, roughness: .88, metalness: 0, flatShading: true, ...options });
 }
 
-function place(geometry, material, items, group, { castShadow = false, colorPalette = null } = {}) {
+function place(geometry, material, items, group, { castShadow = false, colorPalette = null, ground = false } = {}) {
   const mesh = new THREE.InstancedMesh(geometry, material, items.length);
   const dummy = new THREE.Object3D();
   const c = new THREE.Color();
+  // Árvores e arbustos: base assentada em GROUND_Y (ground-fit.js), sem flutuar nem afundar.
+  if (ground) { geometry.computeBoundingBox(); }
+  const baseMinY = ground ? geometry.boundingBox.min.y : 0;
   items.forEach((item, i) => {
-    dummy.position.set(item.x, item.y ?? 0, item.z); dummy.rotation.set(0, item.rot, 0); dummy.scale.setScalar(item.scale); dummy.updateMatrix();
+    dummy.position.set(item.x, ground ? groundOffsetY(baseMinY, item.scale) : (item.y ?? 0), item.z); dummy.rotation.set(0, item.rot, 0); dummy.scale.setScalar(item.scale); dummy.updateMatrix();
     mesh.setMatrixAt(i, dummy.matrix);
     if (colorPalette) mesh.setColorAt(i, c.set(colorPalette[(item.colorIdx ?? i) % colorPalette.length]));
   });
@@ -182,7 +186,7 @@ export function installStreetProps(scene, seed = 2026, reserved = []) {
       removeFallback('tree');
       for (const { idx, geometry, material } of variants) {
         const sub = trees.filter((_, i) => i % variants.length === idx);
-        if (sub.length) place(geometry, material, sub, group, { castShadow: true }).name = `street-trees-glb-${idx + 1}`;
+        if (sub.length) place(geometry, material, sub, group, { castShadow: true, ground: true }).name = `street-trees-glb-${idx + 1}`;
       }
       group.userData.treesGlbLoaded = true;
       syncCull();
@@ -205,7 +209,7 @@ export function installStreetProps(scene, seed = 2026, reserved = []) {
       removeFallback('planter');
       for (const { idx, geometry, material } of variants) {
         const sub = planters.filter((_, i) => i % variants.length === idx);
-        if (sub.length) place(geometry, material, sub, group).name = `street-bushes-glb-${idx + 1}`;
+        if (sub.length) place(geometry, material, sub, group, { ground: true }).name = `street-bushes-glb-${idx + 1}`;
       }
       group.userData.bushesGlbLoaded = true;
       syncCull();

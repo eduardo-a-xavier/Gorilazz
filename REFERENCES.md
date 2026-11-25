@@ -18,7 +18,7 @@
 - Cópia pública consultada e baixada: https://github.com/Arslan12216775/kenney_car-kit/tree/153591d606970058a4d0e44aeadf435c2d3f89ed
 - Licença preservada em `assets/models/KENNEY-LICENSE.txt`. O site oficial não abriu na rede desta máquina; arquivos e licença foram verificados na cópia pública.
 - GLBs copiados sem alteração; escala e orientação são ajustadas em execução.
-- `kenney-suv.glb` é o fallback do Geep. `kenney-suv-luxury.glb` é uma alternativa para download e não é carregado na cena.
+- `kenney-suv.glb` é o fallback do Geep. (`kenney-suv-luxury.glb` foi removido na faxina final de assets, commit `9e2f1a7`.)
 
 ## Integridade dos arquivos incluídos
 
@@ -26,16 +26,14 @@
 | --- | --- |
 | `assets/models/gorillaz-geep.glb` | `a07400446fe54848d8e2c44a0b1e60ff643980ec44f866c729d33010239e10d0` |
 | `assets/models/kenney-suv.glb` | `cc195543e412a3c6b7c94dee3313c9998522efc18a0a95a9438a4b476754ff4f` |
-| `assets/models/kenney-suv-luxury.glb` | `45193092aa900794b56817f5158aae0a562f4bc97fe566e15ff75b3b7c863ee2` |
 | `assets/models/driver-pilot.glb` | `db07755496a3426af1349b99dea99644918daf573b8c7b45608571fed9784200` |
 | `assets/models/driver-pilot-v2.glb` | `a956e63c7c978bc7121503d155306ff5ffd7aca9b1f899f07f7bb4efddf399ea` |
-| `assets/models/driver-pilot-v3.glb` | `f9067c3d02ef3b51e7d87ad9ba3932bc050203fe5e3cfcd66b8344b33c1c1c0c` |
 | `assets/models/driver-pilot-v4.glb` | `044f53931cbd9436f636723a67672412ad21b279e2dd5feee33c76a551a79169` |
-| `assets/models/gorillaz-phase7.glb` | `e30f02e978222bf2bacdee81d3ee3e32304de3f9c06cce55a60948c6f49d2398` |
+| `assets/models/driver-pilot-v5.glb` | `906e439d5a6c4b6bcd66535ec4e984fbe0c56aa2c2ae9f4d4ad2b1479a09a2bc` |
+| `assets/models/driver-pilot-v6.glb` | `1d7efd3cc1a02741cb16697c9202149e37fe16bd4051611956c4fde2ed47986f` |
 | `assets/models/gorillaz-phase7-web.glb` | `8aba124746b1f93c9483084b5210a99a6cd9c0f9ded1b9dd2fc9b8cf733deaa7` |
-| `assets/models/gorillaz-phase7-v2.glb` | `468bc09bbda03d82ab413160a18d68e74c551faabd3444c9032bcccdaf47aa3e` |
-| `assets/models/gorillaz-phase7-web-v2.glb` | `f09a451f5dca1acf58f053cdda4ce7d023973b09a0eb4a20a6b87bc1e901aec1` |
-| `assets/models/noodle-guitar-v2.glb` | `534f363b40a20ca365e01a8e1929d3edc3a4e2db98e717956a25d3eb99cd1a83` |
+| `assets/models/gorillaz-phase7-web-v3.glb` | `3bac569dac992d1a4b11d6b5de6ca4e980ac84b990888730c08b10a92aeda4ba` |
+| `assets/models/noodle-guitar-v3.glb` | `cc373d64fcc54f74d0af63d762a815cbc855d7b195030c042605c2f59c77fc7d` |
 | `assets/models/noodle-stage-props-v2.glb` | `156e6b065aed776d9cbf347d8c102b511d904fcb6a97dcda0acd9a6c24bce837` |
 | `assets/radio/concreto.mp3` | `2717334056389e35f15897eaee71ee7553c08c633d47b5b5c9ffe8432115bd07` |
 | `assets/radio/mare.mp3` | `b56f93f31c3b304d72a244efa99a82ffd8887759c7e921bd0f425ebcfc4fb635` |
@@ -75,11 +73,13 @@ Malha viária autoral de mundo aberto: 8 nós e 11 ruas (curvas Catmull-Rom defi
 
 ## Piloto do Geep em uso — Quaternius + acessórios autorais
 
-- Arquivo ativo: `assets/models/driver-pilot-v4.glb` (250.440 bytes), derivado da mesma base Quaternius (CC0 1.0, 65 joints, `Driving_Loop`) com mãos fixadas ao aro do volante (11h/1h) sem fresta no pulso com a manga rosa em 1ª pessoa (`V`).
-- Cadeia de reserva (fallback): `assets/models/driver-pilot-v2.glb` (243.068 bytes) → `assets/models/driver-pilot.glb` (188.920 bytes). A revisão intermediária `assets/models/driver-pilot-v3.glb` (390.460 bytes) permanece no disco sem uso ativo na cadeia.
+- Arquivo ativo: `assets/models/driver-pilot-v6.glb` (258.776 bytes), derivado da mesma base Quaternius (CC0 1.0, 65 joints, `Driving_Loop`) com encaixe simétrico das mãos ao aro do volante (diferença palma-aro `<= 0,36 cm`), acabamento fosco sem brilho estourado e mangas contínuas em 1ª pessoa (`V`).
+- Cadeia de reserva (fallback): `assets/models/driver-pilot-v6.glb` → `driver-pilot-v5.glb` (247.016 bytes) → `driver-pilot-v4.glb` (250.440 bytes) → `driver-pilot-v2.glb` (243.068 bytes) → `driver-pilot.glb` (188.920 bytes). A revisão intermediária `driver-pilot-v3.glb` foi removida na faxina final (commit `9e2f1a7`).
 - Base de personagem e animação: **Quaternius**, Universal Base Characters e Universal Animation Library, https://quaternius.com/, licença **CC0 1.0** (https://creativecommons.org/publicdomain/zero/1.0/).
 - Acréscimos autorais do projeto: jaqueta, óculos/viseira, luvas de direção e fones Kong FM. Créditos em `assets/models/DRIVER-CREDITS.txt`.
 - Métricas (`driver-pilot.glb` base): 6 malhas, 1.526 triângulos na exportação, 1 skin (65 ossos), clipe `Driving_Loop` (195 canais), 0 imagens externas.
+- SHA-256 (`driver-pilot-v6.glb`): `1d7efd3cc1a02741cb16697c9202149e37fe16bd4051611956c4fde2ed47986f`.
+- SHA-256 (`driver-pilot-v5.glb`): `906e439d5a6c4b6bcd66535ec4e984fbe0c56aa2c2ae9f4d4ad2b1479a09a2bc`.
 - SHA-256 (`driver-pilot-v4.glb`): `044f53931cbd9436f636723a67672412ad21b279e2dd5feee33c76a551a79169`.
 - SHA-256 (`driver-pilot-v2.glb`): `a956e63c7c978bc7121503d155306ff5ffd7aca9b1f899f07f7bb4efddf399ea`.
 - SHA-256 (`driver-pilot.glb`): `db07755496a3426af1349b99dea99644918daf573b8c7b45608571fed9784200`.
@@ -95,19 +95,17 @@ Malha viária autoral de mundo aberto: 8 nós e 11 ruas (curvas Catmull-Rom defi
 - Licença exibida pela API da fonte: **Creative Commons Attribution 4.0**, https://creativecommons.org/licenses/by/4.0/
 - `isDownloadable: true`. Arquivo fornecido pelo usuário: `the-gorillaz-band-phase-7.zip`, contendo `source/Gorillazband(phase 7).fbx` e quatro PNG.
 - Crédito adicional na aplicação: `assets/models/PHASE7-CREDITS.txt`.
-- Adaptações: reconexão das quatro texturas originais, pose dos braços em três rigs, aplicação das malhas avaliadas, agrupamento por integrante, alinhamento ao chão, exportação GLB estática e transparência por recorte. As variantes otimizadas para web (`gorillaz-phase7-web.glb` e `gorillaz-phase7-web-v2.glb`) e a revisão `gorillaz-phase7-v2.glb` derivam do mesmo pacote sob a mesma atribuição (CC BY 4.0 indicada na fonte), com texturas WebP de 1024 px, simplificação de malha via `gltf-transform` e ajustes de encaixe/pose em `src/band-pose.js`.
-- Acessórios autorais de palco da Noodle: `assets/models/noodle-guitar-v2.glb` (42.908 bytes) e `assets/models/noodle-stage-props-v2.glb` (16.428 bytes, amplificador e pedaleira), modelados especificamente para este projeto acadêmico e servidos em `server.mjs`.
+- Adaptações: reconexão das quatro texturas originais, pose dos braços em três rigs, aplicação das malhas avaliadas, agrupamento por integrante, alinhamento ao chão, exportação GLB estática e transparência por recorte. As variantes otimizadas para web ativas (`gorillaz-phase7-web-v3.glb` e fallback `gorillaz-phase7-web.glb`) derivam do mesmo pacote sob a mesma atribuição (CC BY 4.0 indicada na fonte), com texturas WebP de 1024 px, simplificação de malha via `gltf-transform` e ajustes de encaixe/pose em `src/band-pose.js`. Os arquivos pesados legados (`gorillaz-phase7.glb`, `gorillaz-phase7-v2.glb` e `gorillaz-phase7-web-v2.glb`) foram removidos na faxina final (commit `9e2f1a7`).
+- Acessórios autorais de palco da Noodle: `assets/models/noodle-guitar-v3.glb` (43.628 bytes; substituiu `noodle-guitar-v2.glb`, removido em `9e2f1a7`) e `assets/models/noodle-stage-props-v2.glb` (16.428 bytes, amplificador e pedaleira), modelados especificamente para este projeto acadêmico e servidos em `server.mjs`.
 - Os retratos `assets/portraits/phase7-*.png` são renderizações derivadas dos mesmos modelos, geradas no Blender para galeria e fichas.
 - Não há vínculo ou endosso do publicador ou dos autores ao projeto acadêmico.
 
 SHA-256 do ZIP fornecido: `5a42d6e9c407feaec18d567b44a6d6b0ea453b20e2e1526d9305efc96225b6e1`.
 
-SHA-256 dos GLBs distribuídos:
-- `gorillaz-phase7.glb`: `e30f02e978222bf2bacdee81d3ee3e32304de3f9c06cce55a60948c6f49d2398`
+SHA-256 dos GLBs distribuídos em `assets/models/`:
+- `gorillaz-phase7-web-v3.glb`: `3bac569dac992d1a4b11d6b5de6ca4e980ac84b990888730c08b10a92aeda4ba`
 - `gorillaz-phase7-web.glb`: `8aba124746b1f93c9483084b5210a99a6cd9c0f9ded1b9dd2fc9b8cf733deaa7`
-- `gorillaz-phase7-v2.glb`: `468bc09bbda03d82ab413160a18d68e74c551faabd3444c9032bcccdaf47aa3e`
-- `gorillaz-phase7-web-v2.glb`: `f09a451f5dca1acf58f053cdda4ce7d023973b09a0eb4a20a6b87bc1e901aec1`
-- `noodle-guitar-v2.glb`: `534f363b40a20ca365e01a8e1929d3edc3a4e2db98e717956a25d3eb99cd1a83`
+- `noodle-guitar-v3.glb`: `cc373d64fcc54f74d0af63d762a815cbc855d7b195030c042605c2f59c77fc7d`
 - `noodle-stage-props-v2.glb`: `156e6b065aed776d9cbf347d8c102b511d904fcb6a97dcda0acd9a6c24bce837`
 
 ## Áudio local (Kong FM) e minigame rítmico de piano
@@ -247,9 +245,9 @@ Arquivos fornecidos por Eduardo a partir de seu computador para o projeto; grava
 
 Piloto v6: arquivo GLB fornecido pelo Desenvolvedor Plataforma B (`assets/models/driver-pilot-v6.glb`, 258.776 bytes, SHA-256 `1d7efd3cc1a02741cb16697c9202149e37fe16bd4051611956c4fde2ed47986f`); mantém-se a cadeia de fallback documentada (`v6 → v5 → v4 → v2 → original`).
 
-## Modelos 3D de Cenário (`assets/models/scenery/` — Blocos A–E)
+## Modelos 3D de Cenário (`assets/models/scenery/` — 22 GLBs, Blocos A–E + instrumentos v2)
 
-Modelos originais em formato `.glb` criados por **OpenBot / Desenvolvedor Plataforma B** em Blender (sem assets, texturas ou pacotes externos), dedicados ao domínio público sob licença **CC0 1.0 Universal** (`https://creativecommons.org/publicdomain/zero/1.0/`). Carregados de forma *lazy* após a entrada no mundo 3D com `InstancedMesh` e fallback automático às primitivas originais:
+Modelos originais em formato `.glb` criados por **OpenBot / Desenvolvedor Plataforma B** em Blender (sem assets, texturas ou pacotes externos), dedicados ao domínio público sob licença **CC0 1.0 Universal** (`https://creativecommons.org/publicdomain/zero/1.0/`). Carregados de forma *lazy* após a entrada no mundo 3D com `InstancedMesh` e fallback automático às primitivas originais. Nota de fechamento (25/11/2026): **bancos (`bench-01-slatted.glb`) e pedras (`rock-01/02/03`) foram removidos do mapa (limite 0)**, embora os GLBs originais permaneçam catalogados na pasta.
 
 | Arquivo em `assets/models/scenery/` | Origem / Autor | Licença | SHA-256 |
 | --- | --- | --- | --- |
@@ -258,15 +256,17 @@ Modelos originais em formato `.glb` criados por **OpenBot / Desenvolvedor Plataf
 | `tree-03-sage.glb` | Original / OpenBot (Desenvolvedor Plataforma B — Bloco A) | CC0-1.0 | `90cf4abaca91cb301d678cc5cfa66b7f71dc3c8002b94746e7a52a98add5d8c8` |
 | `bush-01-mound.glb` | Original / OpenBot (Desenvolvedor Plataforma B — Bloco A) | CC0-1.0 | `31add791f59c56c4a0845bd9d65158fccd2cbc846cf8ebf95f2eba488cfa317e` |
 | `bush-02-spreading.glb` | Original / OpenBot (Desenvolvedor Plataforma B — Bloco A) | CC0-1.0 | `1b13f442c08999195e79151c57f8eab14202eb0b9611907ca3a928f61e5424d2` |
-| `rock-01-slate.glb` | Original / OpenBot (Desenvolvedor Plataforma B — Bloco A) | CC0-1.0 | `1adbcf51233312d715a520ba56b5512f7710da7ac6fc23978dff68d2dad622fe` |
-| `rock-02-ochre.glb` | Original / OpenBot (Desenvolvedor Plataforma B — Bloco A) | CC0-1.0 | `56ef97f484b0a9f0bef52dc94ad91e4e136480528899aef861d489a7edbe9665` |
-| `rock-03-split.glb` | Original / OpenBot (Desenvolvedor Plataforma B — Bloco A) | CC0-1.0 | `a834f96c34e0e3c9018bc1170629da1a763ee987ce04548a3ad34ba0ce2107d1` |
+| `rock-01-slate.glb` *(fora do mapa)* | Original / OpenBot (Desenvolvedor Plataforma B — Bloco A) | CC0-1.0 | `1adbcf51233312d715a520ba56b5512f7710da7ac6fc23978dff68d2dad622fe` |
+| `rock-02-ochre.glb` *(fora do mapa)* | Original / OpenBot (Desenvolvedor Plataforma B — Bloco A) | CC0-1.0 | `56ef97f484b0a9f0bef52dc94ad91e4e136480528899aef861d489a7edbe9665` |
+| `rock-03-split.glb` *(fora do mapa)* | Original / OpenBot (Desenvolvedor Plataforma B — Bloco A) | CC0-1.0 | `a834f96c34e0e3c9018bc1170629da1a763ee987ce04548a3ad34ba0ce2107d1` |
 | `lamp-01-crooked.glb` | Original / OpenBot (Desenvolvedor Plataforma B — Bloco A) | CC0-1.0 | `9539af5ee76f3455f5fcbc1e22e27b273893dc5f2b6775f0db086234656e271f` |
-| `bench-01-slatted.glb` | Original / OpenBot (Desenvolvedor Plataforma B — Bloco A) | CC0-1.0 | `ad484a76812332573929642b834b0a11c92ce66f6d61144c435a3dcff0bd4f34` |
+| `bench-01-slatted.glb` *(fora do mapa)* | Original / OpenBot (Desenvolvedor Plataforma B — Bloco A) | CC0-1.0 | `ad484a76812332573929642b834b0a11c92ce66f6d61144c435a3dcff0bd4f34` |
 | `pigeon-01-animated.glb` | Original / OpenBot (Desenvolvedor Plataforma B — Bloco B) | CC0-1.0 | `6b66769e0b9f66ca3f8b4153364d1538211facc8fa67e0e1a1c436ea9e82e58d` |
 | `instrument-01-bass.glb` | Original / OpenBot (Desenvolvedor Plataforma B — Bloco C) | CC0-1.0 | `610a3b4ff129fd0344b748514beb5f46a03cca02af2e755cbe67d84aa28fc494` |
 | `instrument-02-drums.glb` | Original / OpenBot (Desenvolvedor Plataforma B — Bloco C) | CC0-1.0 | `800b0625167aba393661cf63c9d1bf333b472982ff66c473cfdbcf6a85f5f73c` |
 | `instrument-03-keyboard.glb` | Original / OpenBot (Desenvolvedor Plataforma B — Bloco C) | CC0-1.0 | `16ad2c5aa9876a2986460f7678660a12916b19b5984ce877586b55c71151bfdf` |
+| `instrument-04-bass-v2.glb` | Original / OpenBot (Jazz Bass, Murdoc; modelado do zero) | CC0-1.0 | `7d2b93a0addf114e48db19349f5b84eed36bb6961de57eecd1682921ae1a4755` |
+| `instrument-05-guitar-v2.glb` | Original / OpenBot (Les Paul, Noodle; modelada do zero) | CC0-1.0 | `75f14f19c3ac4ac0267b46f62569b4ed59db1f0ea3017dbe4cf80a733b6fca8b` |
 | `speaker-01-stack.glb` | Original / OpenBot (Desenvolvedor Plataforma B — Bloco D) | CC0-1.0 | `ff67149472bc4e0209f2e806320d7a37a6324787787a5557e163fce7702e6e32` |
 | `speaker-02-tower.glb` | Original / OpenBot (Desenvolvedor Plataforma B — Bloco D) | CC0-1.0 | `8f80e8f9585c80f8334dc92cbf9fa62e8142fb40942ac89020b07e28de617eab` |
 | `arcade-01-kong.glb` | Original / OpenBot (Desenvolvedor Plataforma B — Bloco D) | CC0-1.0 | `ae0f948fb3648f8983311c67db569c2447872dd0a281de748388d53f603064b7` |

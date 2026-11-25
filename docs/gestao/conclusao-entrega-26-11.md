@@ -1,13 +1,13 @@
 # Conclusão da entrega — Gorillaz: The Road
 
-Data de referência: 22/11/2026 (estado final da Rodada Final 23/11). Prazo de entrega: 26/11/2026.
+Data de referência: 25/11/2026 (fechamento final pré-push). Prazo de entrega: 26/11/2026.
 Responsável pela aprovação e autoria exclusiva de commits/publicação: Eduardo Alves Xavier.
-Status geral: **APROVADO PELA QA NA RODADA FINAL (8/8 ITENS HOMOLOGADOS EM 22/11/2026) — Pronto para decisão pendente sobre os palcos no contador X/9 e revisão/commit/push exclusivos de Eduardo.**
+Status geral: **APROVADO PELA QA E CONSOLIDADO PARA FECHAMENTO PRÉ-PUSH (25/11/2026) — Pronto para decisão pendente sobre os palcos no contador X/9, decisão sobre textos de MP3 e revisão/commit/push exclusivos de Eduardo.**
 
 ## 1. Resumo para decisão
 
-- **Suíte automatizada:** `npm run check` (`exit 0`, **40 módulos** JS/MJS validados) e `npm test` (**174/174 PASS**, `0 fail`, `0 skipped`).
-- **Auditoria em navegador real (QA Gorilazz — Rodada Final):** Google Chrome estável + WebGL2 (ANGLE D3D11) via Playwright com **8/8 itens aprovados**, `60,0–60,1 FPS` nos 3 pontos de referência, `0` erros de console, `0` erros de página, `0` status HTTP `>= 400`, **8,58 MB** de carga inicial no 3D (teto `9,3 MB`; `1,32 MB` na landing; `9,95 MB` acumulado após explorar toda a editorial). Fontes: `docs/gestao/evidencias/correcao-qa-2026-11-23/qa-rodada-final-relatorio.md` e `qa-rodada-final-telemetria.json`.
+- **Suíte automatizada (25/11/2026):** `npm run check` (`exit 0`, **53 arquivos** JS/MJS validados — `server.mjs` + 52 módulos em `src/`) e `npm test` (**259/259 PASS**, `0 fail`, `0 skipped`).
+- **Auditoria em navegador real (QA Gorilazz):** Google Chrome estável + WebGL2 (ANGLE D3D11) via Playwright com `60,0–60,1 FPS` nos 3 pontos de referência, `0` erros de console, `0` erros de página, `0` status HTTP `>= 400`, **8,58 MB** de carga inicial no 3D (teto `9,3 MB`; `1,32 MB` na landing; `9,95 MB` acumulado após explorar toda a editorial); pasta `assets/` em **28,91 MB** e pacote estático publicado no GitHub Pages em **30,53 MB**. Fontes: `docs/gestao/evidencias/correcao-qa-2026-11-23/qa-rodada-final-relatorio.md`, `qa-rodada-final-telemetria.json` e `docs/gestao/evidencias/fechamento-final-2026-11-26/relatorio_congelamento_final.md`.
 - **Auditoria de asset 3D (QA Plataforma):** Round-trip Blender 14/14 PASS e auditoria binária e de licenciamento aprovadas.
 - **Higiene de ambiente:** `0` processos `blender.exe` residuais e servidor de QA na porta `3115` encerrado.
 - **Git / Publicação:** Nenhum commit ou push foi realizado por agentes. O repositório aguarda a revisão final e o commit/push manual de Eduardo.
@@ -151,7 +151,15 @@ Veredito QA: **APROVADO (8/8 itens — 100% de conformidade técnica)** · `npm 
 - **Cena (integrantes, placa e props):** pose do Murdoc levemente ajustada (`inclinação -0,03`, contato de mão no instrumento, baixo encostado no peito e traste elevado; braço do corpo ainda encoberto atrás do instrumento); Noodle e Russel desobstruídos após remoção de árvores em raio de `16 m` dos palcos (`src/street-props-plan.js` e `src/world-data.js`); placa **`RUA SONG MACHINE`** (índice 9 de `ROAD_NAMES`) em poste de `4,2 m` com placa a `3,85 m`, legível de frente.
 - **Regressão de `ESC`:** corrigido o bug do `<details open>` no arquivo de eras em `src/app.js` (observer restrito a `<dialog>`, evitando `top.close is not a function`).
 
-## 11. Resumo das medidas verificadas e método declarado (21–23/11/2026)
+### 10.4. Fechamento Final Pré-Push (24–25/11/2026)
+Veredito QA de Congelamento + Lote Pré-Push (`evidencias/fechamento-final-2026-11-26/relatorio_congelamento_final.md`): **`npm run check` (`53` arquivos JS/MJS OK)** · **`npm test` (`259/259 PASS`)** · subcaminho `/Gorilazz/` validado com `146/146` HTTP `200/304` e `0` erros.
+
+- **Piloto v6 e Cockpit (`assets/models/driver-pilot-v6.glb`):** encaixe simétrico das mãos no aro do volante nas três poses (diferença palma-aro `<= 0,36 cm`), acabamento fosco sem brilho estourado, rádio deslocado para a direita sem colisão com a mão e cadeia de fallback `v6 → v5 → v4 → v2 → original` (revisão intermediária `v3` removida em `9e2f1a7`).
+- **Cenário CC0, limpeza de mapa e aterramento (`assets/models/scenery/`, `src/ground-fit.js`):** **22 GLBs próprios CC0** carregados de forma *lazy* em `InstancedMesh`; **bancos e pedras removidos do mapa (limite 0)**; **21 casas/blocos isolados removidos do mundo**; árvores e arbustos aterrados em `y = -0,06` (`src/ground-fit.js`); exposição ajustada para **`1,38`** (`renderer.toneMappingExposure`).
+- **Rádio Kong FM e Áudio Procedural (`src/local-radio.js`, `src/discovery-sound.js`):** **5 faixas** disponíveis na Kong FM (3 músicas do Gorillaz mantidas sob demanda + 2 instrumentais originais); motor procedural de 4 marchas com ganho corrigido (alvo **`0,22`**), pombos nas praças, atenuação espacial por distância nos palcos (`34 m`) e *ducking* da Kong FM até `35%`.
+- **Faxina de assets (commit `9e2f1a7`):** removidos PNGs antigos de `assets/materials/` e GLBs pesados legados (`gorillaz-phase7.glb`, `gorillaz-phase7-v2.glb`, `gorillaz-phase7-web-v2.glb`, `driver-pilot-v3.glb`, `kenney-suv-luxury.glb`, `noodle-guitar-v2.glb`), reduzindo `assets/` de `56,35 MB` para **`28,91 MB`** e fechando o pacote estático publicado no GitHub Pages em **`30,53 MB`** (carga inicial 3D em Chrome real: **`8,58 MB`**).
+
+## 11. Resumo das medidas verificadas e método declarado (21–25/11/2026)
 
 | Rodada (QA) | `npm run check` | `npm test` | FPS (Kong / Murais / Moinho) | Peso transferido (rede) | Peso decodificado (memória) |
 |---|---|---|---|---|---|
@@ -160,21 +168,23 @@ Veredito QA: **APROVADO (8/8 itens — 100% de conformidade técnica)** · `npm 
 | Correção + Verif. Final (21/11) | 35 módulos OK | 139/139 | 60,1 / 60,2 / 59,9 | 8,55–8,70 MB | 11,12 MB |
 | Novas Features (22/11) | 35 módulos OK | 155/155 | 60,2 / 59,7 / 59,9 | 4,18 MB (landing) · 7,56 MB (3D) · 8,41 MB (com cards 360°) | — |
 | Passeio Guiado (22/11) | 40 módulos OK | 165/165 | 60,3 (corrida real) | 7,54 MB (QA) · 4,34 / 8,08 MB (Eng.) | — |
-| **Rodada Final (22–23/11)** | **40 módulos OK** | **174/174** | **60,1 / 60,0 / 60,0** | **1,32 MB (landing) · 8,58 MB (3D inicial; teto 9,3 MB) · 9,95 MB (acumulado editorial)** · 4,34 / 8,10 MB (Eng.) | — |
+| Rodada Final (22–23/11) | 40 módulos OK | 174/174 | 60,1 / 60,0 / 60,0 | 1,32 MB (landing) · 8,58 MB (3D inicial; teto 9,3 MB) · 9,95 MB (acumulado editorial) · 4,34 / 8,10 MB (Eng.) | — |
+| **Fechamento Pré-Push (25/11)** | **53 arquivos OK** | **259/259** | **60,1 / 60,0 / 60,0** *(ref. Chrome real)* | **8,58 MB (3D inicial) · `assets/` 28,91 MB · pacote Pages 30,53 MB** | — |
 
 - **Método declarado de peso:** soma exata dos bytes do cabeçalho `Content-Length` efetivamente transferidos por `server.mjs` (com `gzip` em textos e formatos comprimidos `.webp`/`.glb`/`.mp3`) para cada URL distinta requisitada na sessão, descartando objetos `blob:` internos do navegador. Quando reportado, o *peso decodificado* soma o corpo descompactado em memória após decodificação pelo navegador.
 - **Método declarado de FPS e frame time:** medição via `requestAnimationFrame` (rAF) real em Google Chrome estável com WebGL2 (ANGLE D3D11) a `1440×900`, com `?perf=1`, nos três pontos de referência (Kong Studios/Mural, Palco dos Integrantes e Centro/Pista) e durante a condução (frame time na Rodada Final: `p50 16,7 ms`, `p95 17,0 ms`, `p99 17,2 ms`, `0` quadros `> 33 ms`).
 
-## 12. Decisões pendentes, pendências honestas e fora de escopo (estado final 22–23/11/2026)
+## 12. Decisões pendentes, pendências honestas e fora de escopo (estado final 25/11/2026)
 
-### 12.1. Decisão pendente com Eduardo
+### 12.1. Decisões pendentes com Eduardo
 - **Palcos dos integrantes no contador de descobertas (`X / 9`):** atualmente, os 4 palcos (2-D, Murdoc, Noodle e Russel) abrem a ficha biográfica e **não** somam no contador `X / 9` (`4` portais de era + `5` pontos de história). Comportamento registrado em `docs/gestao/DECISOES.md` sem alterar o código; aguarda decisão de Eduardo sobre manter `X / 9` ou incluir os palcos.
+- **Alinhamento dos textos de direitos autorais dos MP3s (`README.md` e `REFERENCES.md`):** decidir como padronizar as frases legadas ("não inclui gravações comerciais") frente aos 3 MP3s comerciais mantidos sob demanda em `assets/audio/`.
 
 ### 12.2. Pendências honestas e limites conhecidos (não ocultados)
 - **LOD dos props instanciados:** **não feito** (sem medição de ganho de desempenho que o justifique nesta entrega).
-- **Revisão detalhada de caixas de som, bancas e totens:** verificados apenas por geometria/apoio geral sobre as calçadas, sem revisão individual exaustiva das 9 paradas.
-- **Tradução/expansão de faixas musicais por era na Kong FM:** limitada hoje às **2 faixas liberadas** (*Concreto* e *Maré de plástico*), que também seguem sem arquivo de licença formal separado e sem BPM confirmado em `REFERENCES.md`.
-- **Limites visuais e de câmera aceitos:** leve faceta poligonal nos nós dos dedos esquerdos do piloto v4 em zoom macro; braço do corpo do Murdoc ainda encoberto atrás do instrumento; limite aceito de `4 de 576` amostras atravessando copas de árvore em zigue-zague manual rente a 16 árvores (braço mínimo da câmera a `7,5 m`); passeio iniciado fora da Hero `(0, 0)` não validado em corrida completa.
+- **Revisão detalhada de caixas de som e totens:** verificados apenas por geometria/apoio geral sobre as calçadas, sem revisão individual exaustiva das 9 paradas (bancos e pedras foram removidos do mapa — limite 0).
+- **Licença formal dos instrumentais originais (`assets/radio/`):** os 2 instrumentais da Kong FM (*Concreto* e *Maré de plástico*, que acompanham as 3 faixas do Gorillaz nas **5 faixas** da rádio) seguem sem arquivo de licença formal separado e sem BPM confirmado em `REFERENCES.md`.
+- **Limites visuais e de câmera aceitos:** limite aceito de `4 de 576` amostras atravessando copas de árvore em zigue-zague manual rente a 16 árvores (braço mínimo da câmera a `7,5 m`); passeio iniciado fora da Hero `(0, 0)` não validado em corrida completa; micro-vibração visual ligada ao RPM do motor não implementada.
 - **Validação manual fora de automação:** teste em celular físico Android/iOS (`GZ-06`), teste com leitor de tela real e verificação manual do comportamento nativo do Chrome ao segurar `Esc` em tela cheia com `keyboard.lock` ativo.
 - **Ações exclusivas de Eduardo:** confirmação de rubrica/formato/hospedagem (`GZ-01`), validação em aparelho físico (`GZ-06`), ensaio na URL publicada (`GZ-07`), revisão final local (`node server.mjs`), `git add`, `git commit` (sem `Co-authored-by`) e `git push`.
 

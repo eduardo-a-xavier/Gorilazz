@@ -5,6 +5,7 @@ import { nearestRoad, TREE_LOCATIONS, VISUAL_LANDMARKS } from './world-data.js';
 import { letteringTexture } from './materials.js';
 import { NON_DISCOVERY_PROP_SCALE } from './discovery-scale.js';
 import { toneJitter } from './ground-textures.js';
+import { groundOffsetY } from './ground-fit.js';
 
 export function createFrequencyGarden() {
   const garden = new THREE.Group(); garden.name = 'frequency-garden';
@@ -138,8 +139,8 @@ export function installEnvironment(scene, renderer, surfaces, onModel = () => {}
     new THREE.MeshStandardMaterial({roughness:1,flatShading:true}),shrubs.length);
   const pose=new THREE.Object3D();
   shrubs.forEach(({x,z,angle},i)=>{
-    pose.position.set(x,.28,z); pose.rotation.y=angle;
-    pose.scale.set(1.4+i%3*.3,.65+i%4*.14,1.15); pose.updateMatrix();
+    const sy=.65+i%4*.14; pose.position.set(x,groundOffsetY(-1,sy),z); pose.rotation.y=angle; // icosaedro de raio 1: base em -1 antes da escala
+    pose.scale.set(1.4+i%3*.3,sy,1.15); pose.updateMatrix();
     shrubMesh.setMatrixAt(i,pose.matrix);
     shrubMesh.setColorAt(i,new THREE.Color(['#4e6138','#657342','#40573f'][i%3]));
   });
@@ -169,13 +170,14 @@ export function installEnvironment(scene, renderer, surfaces, onModel = () => {}
       let found=null; gltf.scene.updateMatrixWorld(true);
       gltf.scene.traverse(o=>{if(!found&&o.isMesh&&o.geometry)found=o;});
       if(!found)return;
-      const geo=found.geometry.clone().applyMatrix4(found.matrixWorld);
+      const geo=found.geometry.clone().applyMatrix4(found.matrixWorld); geo.computeBoundingBox(); const baseMinY=geo.boundingBox.min.y; // base real da copa/tronco no chão
       const mat=new THREE.MeshStandardMaterial({color:treeTints[vIdx],vertexColors:Boolean(geo.attributes.color),roughness:.86,metalness:.04});
       const sub=TREE_LOCATIONS.map((pt,i)=>({pt,i})).filter(({i})=>i%3===vIdx);
       const instances=new THREE.InstancedMesh(geo,mat,sub.length);instances.castShadow=instances.receiveShadow=true;
       sub.forEach(({pt,i},k)=>{
-        pose.position.set(pt.x,0,pt.z);pose.rotation.set(0,i*2.39,0);
-        const factor=.85+(i%5)*.10;pose.scale.setScalar(factor);pose.updateMatrix();
+        const factor=.85+(i%5)*.10;
+        pose.position.set(pt.x,groundOffsetY(baseMinY,factor),pt.z);pose.rotation.set(0,i*2.39,0);
+        pose.scale.setScalar(factor);pose.updateMatrix();
         instances.setMatrixAt(k,pose.matrix);
       });
       instances.computeBoundingSphere();scene.add(instances);

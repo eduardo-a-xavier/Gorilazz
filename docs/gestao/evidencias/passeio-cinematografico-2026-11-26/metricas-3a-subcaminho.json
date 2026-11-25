@@ -1,7 +1,7 @@
 {
   "mode": "3a",
-  "samples": 633,
-  "durationS": 170,
+  "samples": 634,
+  "durationS": 169.3,
   "consoleErrors": 0,
   "stopsReached": 9,
   "stopsTotal": 9,
@@ -20,8 +20,8 @@
   "offAsphaltSamplesMoving": 0,
   "geepCornerOnSidewalkSamples": 0,
   "parkedCarCollisionSamples": 0,
-  "maxSpeedMs": 15.7,
-  "maxSpeedKmh": 56.5,
+  "maxSpeedMs": 15.72,
+  "maxSpeedKmh": 56.6,
   "examplesCarHits": [],
   "examplesSidewalk": [],
   "notes": "offAsphalt: centro do Geep fora do asfalto em movimento (roadGap > 0). sidewalk: algum canto do Geep sobre calçada (roadGap > 0,3). Colisão: SAT entre o retângulo do Geep e os carros estacionados de planStreetProps."

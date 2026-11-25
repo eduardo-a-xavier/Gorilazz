@@ -1,0 +1,13 @@
+{
+ "label": "depois3",
+ "http_4xx": [],
+ "console_errors": [],
+ "audio_w": {
+  "context": "running",
+  "engine": true,
+  "engineGain": 0.192,
+  "engineOn": true,
+  "masterMuted": false
+ },
+ "fps_3a": 60
+}

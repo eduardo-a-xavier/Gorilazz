@@ -1,0 +1,33 @@
+{
+ "http_4xx": [],
+ "console_errors": [],
+ "audio_before_entry": {
+  "context": null,
+  "engine": false,
+  "engineGain": null,
+  "engineOn": true,
+  "masterMuted": false
+ },
+ "audio_after_entry": {
+  "context": null,
+  "engine": false,
+  "engineGain": null,
+  "engineOn": true,
+  "masterMuted": false
+ },
+ "audio_w_held": {
+  "context": "running",
+  "engine": true,
+  "engineGain": 0.2078,
+  "engineOn": true,
+  "masterMuted": false,
+  "speed": 18.632106351704152
+ },
+ "audio_released": {
+  "context": "running",
+  "engine": true,
+  "engineGain": 0.1945,
+  "engineOn": true,
+  "masterMuted": false
+ }
+}
