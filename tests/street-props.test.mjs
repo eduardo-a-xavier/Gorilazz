@@ -17,11 +17,11 @@ test('o plano é determinístico e cabe nos limites por tipo', () => {
   for (const item of plan) counts[item.kind] = (counts[item.kind] ?? 0) + 1;
   for (const kind of Object.keys(PROP_LIMITS)) assert.ok((counts[kind] ?? 0) <= PROP_LIMITS[kind], `${kind} acima do limite`);
   assert.ok(plan.length >= 100, `densidade: ${plan.length} props`);
-  for (const kind of ['tree', 'planter', 'lamp', 'car']) assert.ok((counts[kind] ?? 0) > 0, `${kind} ausente`);
+  for (const kind of ['tree', 'planter', 'lamp']) assert.ok((counts[kind] ?? 0) > 0, `${kind} ausente`);
   // Saneamento da banca: nenhum banco nem pedra no plano.
   assert.equal(counts.bench ?? 0, 0, 'bancos removidos do plano');
   assert.equal(counts.rock ?? 0, 0, 'pedras removidas do plano');
-  assert.ok(counts.car >= 6 && counts.car <= 8, `carros estacionados (${counts.car}) devem ficar entre 6 e 8`);
+  assert.equal(counts.car ?? 0, 0, `carros estacionados removidos (${counts.car ?? 0})`);
 });
 
 test('nenhum prop de calçada invade a pista (folga >= 0,90 m) e 0 bancos ficam sobre asfalto ou linhas de vaga/faixas', () => {
@@ -41,8 +41,8 @@ test('nenhum prop de calçada invade a pista (folga >= 0,90 m) e 0 bancos ficam 
 
 test('carros: 6 a 8, em escala de Geep, só em vagas pintadas do studio-ground ou recuos retos de avenida', () => {
   const cars = plan.filter(item => item.kind === 'car');
-  assert.ok(cars.length >= 6 && cars.length <= 8, `total de carros: ${cars.length}`);
-  assert.ok(cars.filter(c => c.bay).length >= 5, 'a maioria dos carros fica nas vagas do estacionamento');
+  assert.equal(cars.length, 0, `total de carros: ${cars.length}`);
+  assert.equal(cars.filter(c => c.bay).length, 0, 'sem carros nas vagas');
   for (const car of cars) {
     assert.ok(car.scale >= 1.45, `carro em ${car.x},${car.z} em escala de brinquedo (${car.scale})`);
     assert.equal(car.scale, car.variant === 1 ? CAR_SCALE.van : CAR_SCALE.sedan);
@@ -116,9 +116,9 @@ test('loadSceneryModels carrega GLBs de árvores, bancos, arbustos, rochas, post
   assert.equal(props.group.userData.bushesGlbLoaded, true);
   assert.ok(!props.group.userData.rocksGlbLoaded, 'pedras removidas: GLB de pedra não carrega');
   assert.equal(props.group.userData.lampsGlbLoaded, true);
-  assert.equal(props.group.userData.carsGlbLoaded, true);
+  assert.ok(!props.group.userData.carsGlbLoaded, 'sem carros no plano: GLB de carro não carrega');
   const names = props.group.children.map(c => c.name);
-  assert.ok(names.includes('street-trees-glb-1') && names.includes('street-cars-glb-1'));
+  assert.ok(names.includes('street-trees-glb-1') && !names.includes('street-cars-glb-1'));
   assert.ok(!names.includes('street-benches-glb'), 'sem bancos no cenário');
   assert.ok(!names.includes('street-tree-crowns'), 'primitivas de árvore removidas após carga do GLB');
 

@@ -411,7 +411,9 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
   // Tudo o que é estático entra em `city` e é fundido por material mais abaixo.
   const city = new THREE.Group(); scene.add(city);
   for (const region of REGIONS) {
-    const plaza = cylinder(city, 17, 17, .06, [region.x, -.20, region.z], region.id === 'murals' ? '#454253' : '#495448', 48); plaza.material = surfaces.get('grass',8); plaza.castShadow = false; plaza.receiveShadow = true;
+    const plaza = cylinder(city, 17, 17, .06, [region.x, -.20, region.z], region.id === 'murals' ? '#454253' : '#495448', 48);
+    // Praça de grama sóbria: a grama clara ('#b6c69d') virava laranja-amarelado no entardecer; o disco usa grama mais escura e neutra.
+    plaza.material = surfaces.get('grass',8).clone(); plaza.material.color.set(region.id === 'murals' ? '#6d7065' : '#66705c'); plaza.material.needsUpdate = true; plaza.castShadow = false; plaza.receiveShadow = true;
   }
   buildRoads(city, surfaces, material);
 
@@ -930,10 +932,10 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
       context.fillStyle = CITY_ERAS[eraAt({ x: -140 + i / (size - 1) * 280, z: -200 + j / (size - 1) * 250 })].color; context.fillRect(i, j, 1, 1);
     }
     const soft = document.createElement('canvas'); soft.width = soft.height = size * 2;
-    const blur = soft.getContext('2d'); blur.filter = 'blur(7px)'; blur.drawImage(tint, 0, 0, size * 2, size * 2); blur.filter = 'none';
+    const blur = soft.getContext('2d'); blur.filter = 'blur(7px) saturate(45%)'; blur.drawImage(tint, 0, 0, size * 2, size * 2); blur.filter = 'none'; // lavagem por era dessaturada: não vira laranja/rosa chapado
     blur.globalAlpha = .5; blur.drawImage(tint, 0, 0, size * 2, size * 2);
     const map = new THREE.CanvasTexture(soft); map.colorSpace = THREE.SRGBColorSpace;
-    const wash = new THREE.Mesh(new THREE.PlaneGeometry(280, 250), new THREE.MeshStandardMaterial({ map, transparent: true, opacity: .38, roughness: 1, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -1, polygonOffsetUnits: -1 }));
+    const wash = new THREE.Mesh(new THREE.PlaneGeometry(280, 250), new THREE.MeshStandardMaterial({ map, transparent: true, opacity: .22, roughness: 1, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -1, polygonOffsetUnits: -1 }));
     wash.rotation.x = -Math.PI / 2; wash.position.set(0, -.295, -75); wash.receiveShadow = true; wash.renderOrder = 1; scene.add(wash);
   }
   // Pontos de valor: um facho de luz e uma etiqueta acima de cada história e de cada integrante,

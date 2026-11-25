@@ -1,0 +1,364 @@
+{
+ "label": "antes_pub",
+ "http_4xx": [],
+ "console_errors": [],
+ "veiculos": [
+  {
+   "mesh": "street-cars-glb-1",
+   "i": 0,
+   "x": 11.9,
+   "z": -18.35,
+   "yaw": 1.571,
+   "scale": 1.5,
+   "y": -0.12,
+   "centro": {
+    "name": "studio-ground",
+    "color": [
+     13,
+     18,
+     19
+    ]
+   },
+   "cantos": [
+    {
+     "name": "studio-ground",
+     "color": [
+      13,
+      18,
+      19
+     ]
+    },
+    {
+     "name": "studio-ground",
+     "color": [
+      13,
+      18,
+      19
+     ]
+    },
+    {
+     "name": "studio-ground",
+     "color": [
+      13,
+      18,
+      19
+     ]
+    },
+    {
+     "name": "studio-ground",
+     "color": [
+      13,
+      18,
+      19
+     ]
+    }
+   ]
+  },
+  {
+   "mesh": "street-cars-glb-1",
+   "i": 1,
+   "x": -12.2,
+   "z": -18.35,
+   "yaw": -1.571,
+   "scale": 1.5,
+   "y": -0.12,
+   "centro": {
+    "name": "studio-ground",
+    "color": [
+     13,
+     18,
+     19
+    ]
+   },
+   "cantos": [
+    {
+     "name": "Mesh",
+     "color": [
+      255,
+      255,
+      255
+     ]
+    },
+    {
+     "name": "Mesh",
+     "color": [
+      255,
+      255,
+      255
+     ]
+    },
+    {
+     "name": "studio-ground",
+     "color": [
+      178,
+      143,
+      56
+     ]
+    },
+    {
+     "name": "studio-ground",
+     "color": [
+      178,
+      143,
+      56
+     ]
+    }
+   ]
+  },
+  {
+   "mesh": "street-cars-glb-1",
+   "i": 2,
+   "x": -12.2,
+   "z": 1.65,
+   "yaw": -1.571,
+   "scale": 1.5,
+   "y": -0.12,
+   "centro": {
+    "name": "Mesh",
+    "color": [
+     255,
+     255,
+     255
+    ]
+   },
+   "cantos": [
+    {
+     "name": "Mesh",
+     "color": [
+      188,
+      196,
+      183
+     ]
+    },
+    {
+     "name": "Mesh",
+     "color": [
+      188,
+      196,
+      183
+     ]
+    },
+    {
+     "name": "studio-ground",
+     "color": [
+      174,
+      139,
+      55
+     ]
+    },
+    {
+     "name": "studio-ground",
+     "color": [
+      174,
+      139,
+      55
+     ]
+    }
+   ]
+  },
+  {
+   "mesh": "street-cars-glb-1",
+   "i": 3,
+   "x": 11.9,
+   "z": -3.35,
+   "yaw": 1.571,
+   "scale": 1.5,
+   "y": -0.12,
+   "centro": {
+    "name": "Mesh",
+    "color": [
+     255,
+     255,
+     255
+    ]
+   },
+   "cantos": [
+    {
+     "name": "Mesh",
+     "color": [
+      188,
+      196,
+      183
+     ]
+    },
+    {
+     "name": "Mesh",
+     "color": [
+      255,
+      255,
+      255
+     ]
+    },
+    {
+     "name": "studio-ground",
+     "color": [
+      13,
+      18,
+      19
+     ]
+    },
+    {
+     "name": "Mesh",
+     "color": [
+      188,
+      196,
+      183
+     ]
+    }
+   ]
+  },
+  {
+   "mesh": "street-cars-glb-1",
+   "i": 4,
+   "x": -44.87,
+   "z": -49.68,
+   "yaw": -1.761,
+   "scale": 1.5,
+   "y": -0.085,
+   "centro": {
+    "name": "Mesh",
+    "color": [
+     188,
+     196,
+     183
+    ]
+   },
+   "cantos": [
+    {
+     "name": "Mesh",
+     "color": [
+      188,
+      196,
+      183
+     ]
+    },
+    {
+     "name": "street-lamp-glows",
+     "color": [
+      255,
+      168,
+      55
+     ]
+    },
+    {
+     "name": "Mesh",
+     "color": [
+      188,
+      196,
+      183
+     ]
+    },
+    {
+     "name": "Mesh",
+     "color": [
+      188,
+      196,
+      183
+     ]
+    }
+   ]
+  },
+  {
+   "mesh": "street-cars-glb-2",
+   "i": 0,
+   "x": 11.24,
+   "z": -8.35,
+   "yaw": 1.571,
+   "scale": 1.65,
+   "y": -0.12,
+   "centro": {
+    "name": "studio-ground",
+    "color": [
+     13,
+     18,
+     19
+    ]
+   },
+   "cantos": [
+    {
+     "name": "Mesh",
+     "color": [
+      255,
+      255,
+      255
+     ]
+    },
+    {
+     "name": "Mesh",
+     "color": [
+      255,
+      255,
+      255
+     ]
+    },
+    {
+     "name": "studio-ground",
+     "color": [
+      13,
+      18,
+      19
+     ]
+    },
+    {
+     "name": "studio-ground",
+     "color": [
+      13,
+      18,
+      19
+     ]
+    }
+   ]
+  },
+  {
+   "mesh": "street-cars-glb-2",
+   "i": 1,
+   "x": 11.24,
+   "z": -13.35,
+   "yaw": 1.571,
+   "scale": 1.65,
+   "y": -0.12,
+   "centro": {
+    "name": "studio-ground",
+    "color": [
+     13,
+     18,
+     19
+    ]
+   },
+   "cantos": [
+    {
+     "name": "Mesh",
+     "color": [
+      255,
+      255,
+      255
+     ]
+    },
+    {
+     "name": "Mesh",
+     "color": [
+      255,
+      255,
+      255
+     ]
+    },
+    {
+     "name": "studio-ground",
+     "color": [
+      13,
+      18,
+      19
+     ]
+    },
+    {
+     "name": "studio-ground",
+     "color": [
+      13,
+      18,
+      19
+     ]
+    }
+   ]
+  }
+ ]
+}

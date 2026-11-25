@@ -50,7 +50,9 @@ export function installEasterEggs(scene) {
   const ctx = plateCanvas.getContext('2d'); ctx.fillStyle = '#ddd2a0'; ctx.fillRect(0, 0, 256, 64); ctx.fillStyle = '#161719'; ctx.font = 'bold 34px sans-serif'; ctx.textAlign = 'center'; ctx.fillText('M1-N4-STY', 128, 44);
   const plate = new THREE.MeshBasicMaterial({ map: new THREE.CanvasTexture(plateCanvas) });
   add(trailer, new THREE.PlaneGeometry(1.3, .33), plate, 0, 1, 1.28);
-  scene.add(trailer);
+  // Saneamento de veículos: o furgão do Easter egg estava sobre a área de grama/terra do cemitério, então a malha não entra mais na cena.
+  // O gatilho (EASTER_EGG_POSITIONS, id 'trailer') continua no mesmo lugar e raio.
+  void trailer;
   const atlas = document.createElement('canvas'); atlas.width = 1024; atlas.height = 512;
   const paint = atlas.getContext('2d');
   // O aviso de zumbis é uma criação autoral inspirada no universo fictício.

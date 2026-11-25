@@ -1,0 +1,259 @@
+{
+ "grupos": [
+  {
+   "mesh": "Mesh",
+   "material": "MeshStandardMaterial",
+   "color": [
+    255,
+    255,
+    255
+   ],
+   "map": true,
+   "vertexColors": false,
+   "pontos": 481,
+   "xmin": -60,
+   "xmax": -8,
+   "zmin": -48,
+   "zmax": 10,
+   "y": -0.295
+  },
+  {
+   "mesh": "Mesh",
+   "material": "MeshStandardMaterial",
+   "color": [
+    188,
+    196,
+    183
+   ],
+   "map": true,
+   "vertexColors": false,
+   "pontos": 409,
+   "xmin": -60,
+   "xmax": 10,
+   "zmin": -60,
+   "zmax": 10,
+   "y": -0.09
+  },
+  {
+   "mesh": "city",
+   "material": "MeshStandardMaterial",
+   "color": [
+    255,
+    255,
+    255
+   ],
+   "map": true,
+   "vertexColors": false,
+   "pontos": 143,
+   "xmin": -60,
+   "xmax": 10,
+   "zmin": -46,
+   "zmax": -10,
+   "y": 0.05
+  },
+  {
+   "mesh": "Mesh",
+   "material": "MeshStandardMaterial",
+   "color": [
+    255,
+    255,
+    255
+   ],
+   "map": true,
+   "vertexColors": false,
+   "pontos": 105,
+   "xmin": -60,
+   "xmax": 10,
+   "zmin": -60,
+   "zmax": 10,
+   "y": 0.07
+  },
+  {
+   "mesh": "studio-ground",
+   "material": "MeshStandardMaterial",
+   "color": [
+    255,
+    255,
+    255
+   ],
+   "map": false,
+   "vertexColors": true,
+   "pontos": 66,
+   "xmin": -18,
+   "xmax": 10,
+   "zmin": -22,
+   "zmax": 10,
+   "y": -0.122
+  },
+  {
+   "mesh": "Mesh",
+   "material": "MeshStandardMaterial",
+   "color": [
+    214,
+    206,
+    179
+   ],
+   "map": false,
+   "vertexColors": false,
+   "pontos": 25,
+   "xmin": -44,
+   "xmax": 10,
+   "zmin": -60,
+   "zmax": 10,
+   "y": -0.07
+  },
+  {
+   "mesh": "Mesh",
+   "material": "MeshStandardMaterial",
+   "color": [
+    255,
+    255,
+    255
+   ],
+   "map": true,
+   "vertexColors": false,
+   "pontos": 18,
+   "xmin": -56,
+   "xmax": 4,
+   "zmin": -58,
+   "zmax": -12,
+   "y": -0.066
+  },
+  {
+   "mesh": "Mesh",
+   "material": "MeshStandardMaterial",
+   "color": [
+    188,
+    196,
+    183
+   ],
+   "map": true,
+   "vertexColors": false,
+   "pontos": 16,
+   "xmin": -22,
+   "xmax": -14,
+   "zmin": -28,
+   "zmax": -22,
+   "y": -0.04
+  },
+  {
+   "mesh": "arcade-pad",
+   "material": "MeshStandardMaterial",
+   "color": [
+    35,
+    45,
+    32
+   ],
+   "map": false,
+   "vertexColors": false,
+   "pontos": 16,
+   "xmin": -18,
+   "xmax": -10,
+   "zmin": -14,
+   "zmax": -6,
+   "y": -0.04
+  },
+  {
+   "mesh": "KongStudio_brick",
+   "material": "MeshStandardMaterial",
+   "color": [
+    255,
+    255,
+    255
+   ],
+   "map": true,
+   "vertexColors": false,
+   "pontos": 7,
+   "xmin": -34,
+   "xmax": -22,
+   "zmin": 0,
+   "zmax": 0,
+   "y": -0.18
+  },
+  {
+   "mesh": "Mesh",
+   "material": "MeshStandardMaterial",
+   "color": [
+    194,
+    114,
+    12
+   ],
+   "map": false,
+   "vertexColors": false,
+   "pontos": 5,
+   "xmin": -56,
+   "xmax": -2,
+   "zmin": -58,
+   "zmax": -18,
+   "y": -0.07
+  },
+  {
+   "mesh": "street-lamp-glows",
+   "material": "MeshBasicMaterial",
+   "color": [
+    255,
+    168,
+    55
+   ],
+   "map": true,
+   "vertexColors": false,
+   "pontos": 2,
+   "xmin": -36,
+   "xmax": -36,
+   "zmin": -24,
+   "zmax": -22,
+   "y": -0.07
+  },
+  {
+   "mesh": "city",
+   "material": "MeshStandardMaterial",
+   "color": [
+    204,
+    57,
+    184
+   ],
+   "map": false,
+   "vertexColors": false,
+   "pontos": 1,
+   "xmin": -60,
+   "xmax": -60,
+   "zmin": -48,
+   "zmax": -48,
+   "y": 0.2
+  },
+  {
+   "mesh": "arcade_kong_geometry",
+   "material": "MeshStandardMaterial",
+   "color": [
+    226,
+    136,
+    11
+   ],
+   "map": false,
+   "vertexColors": true,
+   "pontos": 1,
+   "xmin": -14,
+   "xmax": -14,
+   "zmin": -10,
+   "zmax": -10,
+   "y": 0.3
+  },
+  {
+   "mesh": "city",
+   "material": "MeshStandardMaterial",
+   "color": [
+    27,
+    29,
+    27
+   ],
+   "map": false,
+   "vertexColors": false,
+   "pontos": 1,
+   "xmin": -8,
+   "xmax": -8,
+   "zmin": -60,
+   "zmax": -60,
+   "y": 0.045
+  }
+ ]
+}

@@ -1,0 +1,130 @@
+{
+ "pixels": [
+  [
+   300,
+   420,
+   {
+    "mesh": "",
+    "parent": "",
+    "type": "MeshStandardMaterial",
+    "color": [
+     255,
+     255,
+     255
+    ],
+    "map": true,
+    "y": -0.295,
+    "x": -14.13,
+    "z": -30.25
+   }
+  ],
+  [
+   120,
+   360,
+   {
+    "mesh": "",
+    "parent": "",
+    "type": "MeshStandardMaterial",
+    "color": [
+     255,
+     255,
+     255
+    ],
+    "map": true,
+    "y": 0.03,
+    "x": -16.18,
+    "z": -42.59
+   }
+  ],
+  [
+   60,
+   700,
+   {
+    "mesh": "",
+    "parent": "",
+    "type": "MeshStandardMaterial",
+    "color": [
+     255,
+     255,
+     255
+    ],
+    "map": true,
+    "y": -0.295,
+    "x": -18.71,
+    "z": -19.82
+   }
+  ],
+  [
+   420,
+   620,
+   {
+    "mesh": "studio-ground",
+    "parent": "regional-grounds",
+    "type": "MeshStandardMaterial",
+    "color": [
+     255,
+     255,
+     255
+    ],
+    "map": false,
+    "y": -0.126,
+    "x": -16.1,
+    "z": -18.65
+   }
+  ],
+  [
+   220,
+   760,
+   {
+    "mesh": "studio-ground",
+    "parent": "regional-grounds",
+    "type": "MeshStandardMaterial",
+    "color": [
+     255,
+     255,
+     255
+    ],
+    "map": false,
+    "y": -0.126,
+    "x": -17.93,
+    "z": -17.67
+   }
+  ],
+  [
+   500,
+   400,
+   {
+    "mesh": "",
+    "parent": "",
+    "type": "MeshStandardMaterial",
+    "color": [
+     255,
+     255,
+     255
+    ],
+    "map": true,
+    "y": 0.07,
+    "x": -10.66,
+    "z": -27.24
+   }
+  ],
+  [
+   100,
+   480,
+   {
+    "mesh": "",
+    "parent": "",
+    "type": "MeshStandardMaterial",
+    "color": [
+     188,
+     196,
+     183
+    ],
+    "map": true,
+    "y": -0.04,
+    "x": -17.91,
+    "z": -26.38
+   }
+  ]
+ ]
+}

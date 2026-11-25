@@ -376,7 +376,8 @@ export function installCity(scene, surfaces) {
     screen: new THREE.MeshStandardMaterial({ map: ads, emissiveMap: ads, emissive: '#ffffff', emissiveIntensity: 1.45, roughness: .3 }),
     gate: (() => { const t = gateTexture(); return new THREE.MeshStandardMaterial({ map: t, emissiveMap: t, emissive: '#ffffff', emissiveIntensity: .85, roughness: .6, side: THREE.DoubleSide }); })(),
   };
-  const paving = ['#a8a397', '#d9c9a3', '#8f8c85', '#7e8790'].map(pavingMaterial);
+  // Pavimento de lote dessaturado (antes '#d9c9a3' ficava laranja forte no entardecer): mesma família do concreto da calçada.
+  const paving = ['#a8a397', '#bcb6a6', '#9b9890', '#8f9598'].map(pavingMaterial);
   const awnings = ERA_AWNINGS.map(colors => colors.map(stripeMaterial));
   const plastic = PLASTIC.map(color => new THREE.MeshStandardMaterial({ color, roughness: .45 }));
   const batches = new Map(), skyline = new Map(), casters = [], lampMatrices = [];

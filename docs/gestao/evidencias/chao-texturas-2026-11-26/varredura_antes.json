@@ -1,0 +1,31 @@
+{
+ "label": "antes",
+ "pontos": [
+  {
+   "ponto": "13_mirante_frente",
+   "x": 56.0,
+   "z": -118.0,
+   "superficie_centro_e_4_pontos": [
+    "Mesh",
+    "Mesh",
+    "Mesh",
+    "Mesh",
+    "Mesh"
+   ]
+  },
+  {
+   "ponto": "14_mirante_visto_do_alto",
+   "x": 72.0,
+   "z": -150.0,
+   "superficie_centro_e_4_pontos": [
+    "Mesh",
+    "Mesh",
+    "Mesh",
+    "lookout-ground [52,76,26]",
+    "Mesh"
+   ]
+  }
+ ],
+ "http_4xx": [],
+ "console_errors": []
+}

@@ -1,0 +1,59 @@
+{
+ "label": "depois",
+ "http_4xx": [],
+ "console_errors": [],
+ "fps": 60,
+ "veiculos": [
+  {
+   "mesh": "street-cars-glb-1",
+   "i": 0,
+   "x": 11.9,
+   "z": -18.35,
+   "yaw": 1.571,
+   "scale": 1.5,
+   "y": -0.12,
+   "centro": {
+    "name": "studio-ground",
+    "color": [
+     13,
+     18,
+     19
+    ]
+   },
+   "cantos": [
+    {
+     "name": "studio-ground",
+     "color": [
+      13,
+      18,
+      19
+     ]
+    },
+    {
+     "name": "studio-ground",
+     "color": [
+      13,
+      18,
+      19
+     ]
+    },
+    {
+     "name": "studio-ground",
+     "color": [
+      13,
+      18,
+      19
+     ]
+    },
+    {
+     "name": "studio-ground",
+     "color": [
+      13,
+      18,
+      19
+     ]
+    }
+   ]
+  }
+ ]
+}

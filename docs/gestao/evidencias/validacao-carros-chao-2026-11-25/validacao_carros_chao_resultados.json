@@ -1,0 +1,126 @@
+{
+  "timestamp": "2026-11-25T13:22:58",
+  "server_port": 52321,
+  "browser": "Google Chrome (channel=chrome, headless=False)",
+  "checks": {
+    "item1_veiculos_fora_asfalto": {
+      "pass": true,
+      "details": {
+        "vehiclesFound": [],
+        "count": 0,
+        "spotsCount": 11
+      }
+    },
+    "item2_praca_kong_sem_vagas": {
+      "pass": true,
+      "details": {
+        "studioGroundFound": true,
+        "yellowBaysFound": false
+      },
+      "screenshot": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\validacao-carros-chao-2026-11-25\\evidencia-item2-praca-kong-chao-concreto.png"
+    },
+    "item3_cores_chao_transicoes": {
+      "pass": true,
+      "screenshots": {
+        "mirante": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\validacao-carros-chao-2026-11-25\\evidencia-item3-mirante-72-123.png",
+        "costa": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\validacao-carros-chao-2026-11-25\\evidencia-item3-costa.png",
+        "murais": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\validacao-carros-chao-2026-11-25\\evidencia-item3-praca-murais.png"
+      }
+    },
+    "item4_cruzamentos_calcadas": {
+      "pass": true,
+      "screenshots": {
+        "cruzamento-1": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\validacao-carros-chao-2026-11-25\\evidencia-item4-cruzamento-1.png",
+        "cruzamento-5": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\validacao-carros-chao-2026-11-25\\evidencia-item4-cruzamento-5.png",
+        "cruzamento-6": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\validacao-carros-chao-2026-11-25\\evidencia-item4-cruzamento-6.png",
+        "cruzamento-7": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\validacao-carros-chao-2026-11-25\\evidencia-item4-cruzamento-7.png"
+      }
+    },
+    "item5_passeio_guiado_motor": {
+      "pass": true,
+      "engine_measure": {
+        "kph": 56.4293727163782,
+        "gain": 0.1975,
+        "engineOn": true
+      },
+      "tour_audit": {
+        "count": 9,
+        "isPaused": true,
+        "isResumed": true
+      },
+      "metricas_1a": {
+        "mode": "1a",
+        "samples": 637,
+        "durationS": 173.1,
+        "consoleErrors": 0,
+        "stopsReached": 9,
+        "stopsTotal": 9,
+        "stopsReachedIds": [
+          "era-explosao",
+          "beginning",
+          "era-reinvencao",
+          "voices",
+          "genres",
+          "live",
+          "era-hiato",
+          "demon-days",
+          "era-plastic"
+        ],
+        "legEvents": 9,
+        "offAsphaltSamplesMoving": 0,
+        "geepCornerOnSidewalkSamples": 0,
+        "parkedCarCollisionSamples": 0,
+        "maxSpeedMs": 15.72,
+        "maxSpeedKmh": 56.6,
+        "examplesCarHits": [],
+        "examplesSidewalk": [],
+        "notes": "offAsphalt: centro do Geep fora do asfalto em movimento (roadGap > 0). sidewalk: algum canto do Geep sobre calçada (roadGap > 0,3). Colisão: SAT entre o retângulo do Geep e os carros estacionados de planStreetProps."
+      },
+      "metricas_3a": {
+        "mode": "3a",
+        "samples": 634,
+        "durationS": 169.5,
+        "consoleErrors": 0,
+        "stopsReached": 9,
+        "stopsTotal": 9,
+        "stopsReachedIds": [
+          "era-explosao",
+          "beginning",
+          "era-reinvencao",
+          "voices",
+          "genres",
+          "live",
+          "era-hiato",
+          "demon-days",
+          "era-plastic"
+        ],
+        "legEvents": 9,
+        "offAsphaltSamplesMoving": 0,
+        "geepCornerOnSidewalkSamples": 0,
+        "parkedCarCollisionSamples": 0,
+        "maxSpeedMs": 15.75,
+        "maxSpeedKmh": 56.7,
+        "examplesCarHits": [],
+        "examplesSidewalk": [],
+        "notes": "offAsphalt: centro do Geep fora do asfalto em movimento (roadGap > 0). sidewalk: algum canto do Geep sobre calçada (roadGap > 0,3). Colisão: SAT entre o retângulo do Geep e os carros estacionados de planStreetProps."
+      }
+    },
+    "item6_easter_egg_furgao": {
+      "pass": true,
+      "egg_trigger": {
+        "vehicleX": -77,
+        "vehicleZ": -41
+      },
+      "console_errors_during_egg": 0,
+      "screenshot": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\validacao-carros-chao-2026-11-25\\evidencia-item6-easter-egg-cemiterio.png"
+    },
+    "item7_estabilidade_rede_console": {
+      "pass": true,
+      "http_errors_count": 0,
+      "http_errors": [],
+      "console_errors_count": 0,
+      "console_errors": [],
+      "measured_fps": 61
+    }
+  }
+}

@@ -1,0 +1,496 @@
+{
+ "achados": [
+  {
+   "name": "Mesh",
+   "instance": null,
+   "chain": "Mesh < Group < Scene",
+   "color": [
+    233,
+    101,
+    144
+   ],
+   "x": 34.58,
+   "z": -114.99,
+   "y": -0.0,
+   "size": [
+    3.96,
+    0.9,
+    3.39
+   ]
+  },
+  {
+   "name": "Mesh",
+   "instance": null,
+   "chain": "Mesh < helicopter < Scene",
+   "color": [
+    6,
+    8,
+    9
+   ],
+   "x": 67.87,
+   "z": -133.01,
+   "y": 28.884,
+   "size": [
+    3.77,
+    1.59,
+    3.08
+   ]
+  },
+  {
+   "name": "Mesh",
+   "instance": null,
+   "chain": "Mesh < Group < helicopter < Scene",
+   "color": [
+    6,
+    8,
+    9
+   ],
+   "x": 67.5,
+   "z": -132.73,
+   "y": 31.076,
+   "size": [
+    7.14,
+    1.16,
+    2.33
+   ]
+  },
+  {
+   "name": "Mesh",
+   "instance": null,
+   "chain": "Mesh < Group < helicopter < Scene",
+   "color": [
+    6,
+    8,
+    9
+   ],
+   "x": 67.5,
+   "z": -132.73,
+   "y": 30.93,
+   "size": [
+    2.13,
+    1.46,
+    7.15
+   ]
+  },
+  {
+   "name": "Mesh",
+   "instance": null,
+   "chain": "Mesh < helicopter < Scene",
+   "color": [
+    6,
+    8,
+    9
+   ],
+   "x": 92.13,
+   "z": -192.99,
+   "y": 27.385,
+   "size": [
+    3.77,
+    1.59,
+    3.08
+   ]
+  },
+  {
+   "name": "Mesh",
+   "instance": null,
+   "chain": "Mesh < Group < helicopter < Scene",
+   "color": [
+    6,
+    8,
+    9
+   ],
+   "x": 92.5,
+   "z": -193.27,
+   "y": 29.577,
+   "size": [
+    7.14,
+    1.16,
+    2.33
+   ]
+  },
+  {
+   "name": "Mesh",
+   "instance": null,
+   "chain": "Mesh < Group < helicopter < Scene",
+   "color": [
+    6,
+    8,
+    9
+   ],
+   "x": 92.5,
+   "z": -193.27,
+   "y": 29.431,
+   "size": [
+    2.13,
+    1.46,
+    7.15
+   ]
+  },
+  {
+   "name": "Mesh",
+   "instance": null,
+   "chain": "Mesh < Group < Scene",
+   "color": [
+    255,
+    255,
+    255
+   ],
+   "x": 77.84,
+   "z": -147.36,
+   "y": 0.385,
+   "size": [
+    3.04,
+    1.03,
+    3.59
+   ]
+  },
+  {
+   "name": "Mesh",
+   "instance": null,
+   "chain": "Mesh < Group < Group < Scene",
+   "color": [
+    255,
+    255,
+    255
+   ],
+   "x": 0,
+   "z": -0.14,
+   "y": 0.76,
+   "size": [
+    3.69,
+    2.12,
+    5.7
+   ]
+  },
+  {
+   "name": "Mesh",
+   "instance": null,
+   "chain": "Mesh < Group < Group < Scene",
+   "color": [
+    255,
+    255,
+    255
+   ],
+   "x": 0.04,
+   "z": -0.65,
+   "y": 0.76,
+   "size": [
+    2.78,
+    1.13,
+    5.05
+   ]
+  },
+  {
+   "name": "bass_murdoc_mesh",
+   "instance": null,
+   "chain": "bass_murdoc_mesh < bass_murdoc_geometry < bass_murdoc < Scene < instrument",
+   "color": [
+    161,
+    168,
+    154
+   ],
+   "x": 6.43,
+   "z": -4.39,
+   "y": 3.264,
+   "size": [
+    3.85,
+    2.46,
+    1.9
+   ]
+  },
+  {
+   "name": "noodle_stage_props_mesh_3",
+   "instance": null,
+   "chain": "noodle_stage_props_mesh_3 < noodle-stage-props < Scene < instrument < Group",
+   "color": [
+    2,
+    2,
+    3
+   ],
+   "x": -6.24,
+   "z": 3.9,
+   "y": 0.09,
+   "size": [
+    3.68,
+    1.45,
+    1.85
+   ]
+  },
+  {
+   "name": "noodle_stage_props_mesh_4",
+   "instance": null,
+   "chain": "noodle_stage_props_mesh_4 < noodle-stage-props < Scene < instrument < Group",
+   "color": [
+    149,
+    138,
+    116
+   ],
+   "x": -6.25,
+   "z": 3.62,
+   "y": 0.319,
+   "size": [
+    3.24,
+    1.41,
+    1.97
+   ]
+  },
+  {
+   "name": "guitar_noodle_mesh",
+   "instance": null,
+   "chain": "guitar_noodle_mesh < guitar_noodle_geometry < guitar_noodle < Scene < instrument",
+   "color": [
+    255,
+    255,
+    255
+   ],
+   "x": -4.73,
+   "z": 3.57,
+   "y": 3.197,
+   "size": [
+    3.64,
+    2.34,
+    1.82
+   ]
+  },
+  {
+   "name": "Mesh",
+   "instance": null,
+   "chain": "Mesh < Group < Scene",
+   "color": [
+    255,
+    255,
+    255
+   ],
+   "x": -23.5,
+   "z": -25,
+   "y": 8.45,
+   "size": [
+    2.76,
+    1.5,
+    5.33
+   ]
+  },
+  {
+   "name": "Mesh",
+   "instance": null,
+   "chain": "Mesh < Group < Scene",
+   "color": [
+    255,
+    255,
+    255
+   ],
+   "x": -103.38,
+   "z": -85.19,
+   "y": 8.45,
+   "size": [
+    3.27,
+    1.5,
+    5.03
+   ]
+  },
+  {
+   "name": "Mesh",
+   "instance": null,
+   "chain": "Mesh < Group < Scene",
+   "color": [
+    255,
+    255,
+    255
+   ],
+   "x": -46.84,
+   "z": -120.75,
+   "y": 8.45,
+   "size": [
+    4.98,
+    1.5,
+    3.34
+   ]
+  },
+  {
+   "name": "Mesh",
+   "instance": null,
+   "chain": "Mesh < Group < Scene",
+   "color": [
+    255,
+    255,
+    255
+   ],
+   "x": 79.11,
+   "z": -148.42,
+   "y": 8.45,
+   "size": [
+    5.81,
+    1.5,
+    1.48
+   ]
+  },
+  {
+   "name": "Mesh",
+   "instance": null,
+   "chain": "Mesh < Group < Scene",
+   "color": [
+    255,
+    255,
+    255
+   ],
+   "x": -62.4,
+   "z": -76.1,
+   "y": 8.45,
+   "size": [
+    3.81,
+    1.5,
+    4.63
+   ]
+  },
+  {
+   "name": "Mesh",
+   "instance": null,
+   "chain": "Mesh < Group < Scene",
+   "color": [
+    255,
+    255,
+    255
+   ],
+   "x": -51.8,
+   "z": -127.7,
+   "y": 8.45,
+   "size": [
+    4.98,
+    1.5,
+    3.35
+   ]
+  },
+  {
+   "name": "",
+   "instance": 3,
+   "x": 116.47,
+   "z": -28.67,
+   "y": 0,
+   "size": [
+    3.26,
+    1.72,
+    2.59
+   ]
+  },
+  {
+   "name": "",
+   "instance": 7,
+   "x": -96.14,
+   "z": -151.77,
+   "y": 0,
+   "size": [
+    3.26,
+    1.72,
+    2.95
+   ]
+  },
+  {
+   "name": "",
+   "instance": 15,
+   "x": 125.61,
+   "z": -83.26,
+   "y": 0,
+   "size": [
+    3.23,
+    1.72,
+    3.03
+   ]
+  },
+  {
+   "name": "",
+   "instance": 19,
+   "x": -55.94,
+   "z": 13.43,
+   "y": 0,
+   "size": [
+    3.23,
+    1.72,
+    2.47
+   ]
+  },
+  {
+   "name": "",
+   "instance": 23,
+   "x": 124.33,
+   "z": -97.27,
+   "y": 0,
+   "size": [
+    2.58,
+    1.72,
+    3.26
+   ]
+  },
+  {
+   "name": "",
+   "instance": 27,
+   "x": -48.75,
+   "z": -182.74,
+   "y": 0,
+   "size": [
+    2.96,
+    1.72,
+    3.25
+   ]
+  },
+  {
+   "name": "",
+   "instance": 35,
+   "x": -128.47,
+   "z": -149.34,
+   "y": 0,
+   "size": [
+    3.03,
+    1.72,
+    3.23
+   ]
+  },
+  {
+   "name": "",
+   "instance": 39,
+   "x": 57.97,
+   "z": -29.52,
+   "y": 0,
+   "size": [
+    2.48,
+    1.72,
+    3.24
+   ]
+  },
+  {
+   "name": "",
+   "instance": 47,
+   "x": 122.33,
+   "z": 37.35,
+   "y": 0,
+   "size": [
+    3.25,
+    1.72,
+    2.97
+   ]
+  },
+  {
+   "name": "",
+   "instance": 55,
+   "x": 0.83,
+   "z": 22.47,
+   "y": 0,
+   "size": [
+    3.27,
+    1.72,
+    2.71
+   ]
+  },
+  {
+   "name": "",
+   "instance": 59,
+   "x": 110.42,
+   "z": 17.3,
+   "y": 0,
+   "size": [
+    3.24,
+    1.72,
+    2.5
+   ]
+  }
+ ]
+}

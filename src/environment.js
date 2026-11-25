@@ -62,12 +62,11 @@ export function createRegionalGrounds() {
     geometry.setAttribute('color',new THREE.Float32BufferAttribute(colors,3)); geometry.computeVertexNormals();
     const mesh = new THREE.Mesh(geometry,material); mesh.name=name; mesh.receiveShadow=true; group.add(mesh);
   }
+  // Praça do Kong (antes um bolsão de asfalto com faixas de vaga, sem carros): agora piso de concreto claro com rejunte a cada 3 m,
+  // na mesma família de cor da calçada. Fica abaixo das pistas (-0,09), então as ruas continuam por cima.
   region('studio-ground',({rect}) => {
-    rect(-18,-23,36,36,-.126,'#414c50');
-    for (const x of [-16,15.65]) rect(x,-21,.35,32,-.118,'#d6c27f');
-    // Vagas ampliadas para a escala dos carros (separadores de 8,8 m: cabem sedan 6,6 m e van 7,9 m).
-    for (let i=0;i<7;i++) for (const [x,w] of [[-16,8.8],[7.2,8.8]]) rect(x,-21+i*5,w,.3,-.118,'#d6c27f');
-    for (const z of [-22,11.5]) rect(-17,z,34,.5,-.118,'#89958e');
+    rect(-18,-23,36,36,-.126,'#b9b4a6');
+    for (let i=0;i<=12;i++) { rect(-18+i*3-.06,-23,.12,36,-.122,'#9d978a'); rect(-18,-23+i*3-.06,36,.12,-.122,'#9d978a'); }
   });
   region('coast-ground',({quad,rect}) => {
     for (let i=0;i<32;i++) {
@@ -79,10 +78,10 @@ export function createRegionalGrounds() {
     for (const x of [125,131.8]) rect(x,-30,.2,48,-.108,'#5e5241');
   });
   region('lookout-ground',({circle,ring}) => {
-    circle(72,-123,29,25,-.126,'#7f975b');
+    circle(72,-123,29,25,-.126,'#8a9a76');
     ring(72,-123,23,20,.9,-.120,'#b9b397');
     ring(72,-123,17,14,.6,-.120,'#d5caa2');
-    circle(72,-123,15.8,13,-.114,'#8ba568');
+    circle(72,-123,15.8,13,-.114,'#97a57e');
   });
   return group;
 }

@@ -230,36 +230,22 @@ function planParkedCars(placed, counts, pick) {
     return true;
   };
   const order = [0, 1].flatMap(par => ['right', 'left'].flatMap(col => BAY_Z.map((_, idx) => [col, idx]).filter(([, idx]) => idx % 2 === par)));
+  // Auditoria real no Chrome (raycast nos cantos, docs/.../veiculos-auditoria-2026-11-26): só esta vaga do pátio está sobre o asfalto escuro.
+  // Os demais carros (vagas com objetos claros e o carro junto ao meio-fio, que ficava sobre grama) foram removidos.
+  const VERIFIED_BAYS = []; // nenhum carro de rua: o último (11,9; -18,35) não tinha certeza de asfalto (print do Eduardo mostra grama ao redor) e foi removido
   let bayCars = 0;
   for (const [col, idx] of order) {
-    if (bayCars >= 6) break;
+    if (bayCars >= VERIFIED_BAYS.length) break;
     const type = (bayCars % 3 === 1) ? 'van' : 'sedan', variant = type === 'van' ? 1 : 0, scale = CAR_SCALE[type];
     const hl = (variant ? CAR_HALF_LENGTH : 2.20) * scale;
     const left = col === 'left';
     const x = left ? BAY_BACK_X.left + 0.3 + hl : BAY_BACK_X.right - 0.3 - hl;
     const cand = { x: +x.toFixed(2), z: BAY_Z[idx], y: -0.12, kind: 'car', rot: +(left ? -Math.PI / 2 : Math.PI / 2).toFixed(3), scale, variant, bay: true };
+    if (!VERIFIED_BAYS.some(v => Math.hypot(v.x - cand.x, v.z - cand.z) < 0.05)) continue; // só as vagas verificadas
     if (!carOk(cand) || !clear(cand)) continue;
     cand.colorIdx = Math.floor(pick() * 5); counts.car++; bayCars++; placed.push(cand);
   }
-  for (const road of ROADS) {
-    if (road.kind === 'lane' || counts.car >= 8) continue;
-    const half = road.width / 2;
-    for (let i = 10; i < road.samples.length - 10 && counts.car < 8; i++) {
-      if (!straightAt(road, i)) continue;
-      const prev = road.samples[i - 1], curr = road.samples[i], next = road.samples[i + 1];
-      const dx = next.x - prev.x, dz = next.z - prev.z, len = Math.hypot(dx, dz) || 1;
-      const tx = dx / len, tz = dz / len, nx = dz / len, nz = -dx / len;
-      const side = i % 2 ? 1 : -1, type = counts.car % 2 ? 'van' : 'sedan', scale = CAR_SCALE[type], variant = type === 'van' ? 1 : 0;
-      const offset = half - CAR_HALF_WIDTH * scale - 0.3;
-      const cand = { x: +(curr.x + nx * side * offset).toFixed(2), z: +(curr.z + nz * side * offset).toFixed(2), y: -0.085, kind: 'car', rot: +Math.atan2(tx * side, tz * side).toFixed(3), scale, variant };
-      const corners = [cand, ...carFootprintCorners(cand)];
-      if (!corners.every(c => { const g = roadGap(c); return g <= -0.15 && g >= -3.6 && ROADS.every(r => r === road || roadDist(r, c.x, c.z) >= r.width / 2 + 2); })) continue;
-      if (placed.some(o => o.kind === 'car' && dist(o, cand) < 45)) continue;
-      if (inParkingOrPaintedLines(cand) || NODES.some((n, id) => dist(n, cand) < NODE_RADIUS[id] + 14)) continue;
-      if (!carOk(cand) || !clear(cand)) continue;
-      cand.colorIdx = Math.floor(pick() * 5); counts.car++; placed.push(cand);
-    }
-  }
+
 }
 
 // Barreiras viárias (barrier-01-road.glb) posicionadas nas calçadas externas perto de áreas de obra e bordas, fora da pista (folga >= 0.90m).
