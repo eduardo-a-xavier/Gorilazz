@@ -1,10 +1,7 @@
 import * as THREE from './vendor/three.module.min.js';
 import { nearestRoad } from './world-data.js';
-import { GLTFLoader } from './vendor/GLTFLoader.js';
-import { loadModelSafely } from './model-safety.js';
 
 export const EASTER_EGG_POSITIONS = [
-  { id: 'moose', x: 58, z: -38, radius: 4 },
   { id: 'trailer', x: -77, z: -41, radius: 4 },
   { id: 'reject', x: -101, z: -110, radius: 2 },
   { id: 'save', x: 106, z: -110, radius: 2 },
@@ -18,8 +15,6 @@ export function followLunarCamera(anchor, camera) { anchor.position.copy(camera.
 export function configureLunarMaterial(material) { material.fog = false; material.depthTest = false; material.depthWrite = false; return material; }
 
 export function installEasterEggs(scene) {
-  const dark = new THREE.MeshStandardMaterial({ color: '#40302a', roughness: 1 });
-  const antler = new THREE.MeshStandardMaterial({ color: '#b4a081', roughness: 1 });
   const van = new THREE.MeshStandardMaterial({ color: '#a6987d', roughness: .9 });
   const trim = new THREE.MeshStandardMaterial({ color: '#302b30', roughness: .9 });
   const glow = new THREE.MeshBasicMaterial({ color: '#76d677' });
@@ -27,24 +22,6 @@ export function installEasterEggs(scene) {
   const add = (group, geometry, material, x, y, z) => {
     const mesh = new THREE.Mesh(geometry, material); mesh.position.set(x, y, z); group.add(mesh); return mesh;
   };
-  const moose = new THREE.Group(); moose.name = 'easter-moose'; moose.position.set(58, 0, -38); moose.rotation.y = -.5;
-  add(moose, new THREE.BoxGeometry(2.8, 1.5, 1.1), dark, 0, 2.2, 0);
-  add(moose, new THREE.BoxGeometry(1.15, 1.2, 1), dark, 1.5, 2.8, 0);
-  add(moose, new THREE.BoxGeometry(.8, .65, .8), dark, 2.1, 2.6, 0);
-  for (const x of [-.9, .9]) for (const z of [-.38, .38]) add(moose, new THREE.BoxGeometry(.25, 1.5, .25), dark, x, .75, z);
-  for (const side of [-1, 1]) {
-    add(moose, new THREE.BoxGeometry(.18, 1.3, .18), antler, 1.45, 3.8, side * .45).rotation.z = side * .15;
-    add(moose, new THREE.BoxGeometry(.18, .2, 1.15), antler, 1.45, 4.3, side * .95);
-    for (const z of [.6, 1, 1.4]) add(moose, new THREE.BoxGeometry(.14, .5, .14), antler, 1.45, 4.55, side * z);
-  }
-  scene.add(moose); // alce de caixas: fallback se o GLB não carregar
-  // Alce GLB (moose-01.glb, origem nos pés, +X = cabeça): mesma posição, rotação e gatilho do alce de caixas; base em y = -0,06 (como as árvores).
-  loadModelSafely(new GLTFLoader(), './assets/models/scenery/moose-01.glb').then(gltf => {
-    const model = gltf.scene; model.name = 'easter-moose-glb';
-    model.position.set(58, -0.06, -38); model.rotation.y = -.5;
-    model.traverse(o => { if (o.isMesh) { o.castShadow = true; o.receiveShadow = true; } });
-    scene.remove(moose); scene.add(model);
-  }).catch(err => console.warn('Alce GLB indisponível; mantendo o alce de caixas:', err.message));
   const trailer = new THREE.Group(); trailer.name = 'easter-trailer'; trailer.position.set(-77, 0, -41); trailer.rotation.y = .4;
   add(trailer, new THREE.BoxGeometry(5.8, 2.5, 2.5), van, 0, 1.85, 0);
   add(trailer, new THREE.BoxGeometry(5.85, .24, 2.55), trim, 0, 2.65, 0);
@@ -82,7 +59,7 @@ export function installEasterEggs(scene) {
   });
   const atlasTexture = new THREE.CanvasTexture(atlas); atlasTexture.colorSpace = THREE.SRGBColorSpace;
   const posterMaterial = new THREE.MeshBasicMaterial({ map: atlasTexture });
-  EASTER_EGG_POSITIONS.slice(2).forEach((spot, i) => {
+  EASTER_EGG_POSITIONS.slice(1).forEach((spot, i) => {
     const group = new THREE.Group(); group.name = `easter-${spot.id}`; group.position.set(spot.x, 0, spot.z);
     const road = nearestRoad(spot); group.rotation.y = Math.atan2(road.x - spot.x, road.z - spot.z);
     add(group, new THREE.BoxGeometry(3.2, 2.9, .16), trim, 0, 1.45, 0);

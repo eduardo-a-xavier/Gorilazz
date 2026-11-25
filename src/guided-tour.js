@@ -20,15 +20,19 @@ export function buildStops({ gates, cityEras, eraTracks, discoveries, tracks }) 
   return [...eraStops, ...historyStops];
 }
 
-// Ordem do trajeto: a partir de `start`, sempre a parada mais próxima ainda não visitada (guloso, determinístico).
-export function orderTour(stops, start) {
-  const left = stops.slice(); const order = []; let at = start;
-  while (left.length) {
-    let best = 0;
-    for (let i = 1; i < left.length; i++) if (Math.hypot(left[i].x - at.x, left[i].z - at.z) < Math.hypot(left[best].x - at.x, left[best].z - at.z)) best = i;
-    const [next] = left.splice(best, 1); order.push(next); at = next;
-  }
-  return order;
+// Ordem fixa e curada do circuito: menor caminho real entre as 9 paradas sobre a malha viária
+// (portais de era + pontos de história), em sentido contínuo pela ilha. Não depende de onde o carro está:
+// quem começa em qualquer ponto entra na rua mais próxima e segue até a Parada 1 desta lista.
+export const TOUR_ORDER = Object.freeze([
+  'era-explosao', 'beginning', 'era-reinvencao', 'voices', 'genres',
+  'live', 'era-hiato', 'demon-days', 'era-plastic',
+]);
+
+export function orderTour(stops) {
+  const byId = new Map(stops.map(stop => [stop.id, stop]));
+  const fixed = TOUR_ORDER.map(id => byId.get(id)).filter(Boolean);
+  const extra = stops.filter(stop => !TOUR_ORDER.includes(stop.id));
+  return [...fixed, ...extra];
 }
 
 // Progresso persistido no localStorage (somente ids de paradas conhecidas; dados corrompidos viram vazio).

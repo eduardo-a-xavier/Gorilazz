@@ -157,7 +157,6 @@ const routes = new Map([
   ['/assets/models/scenery/instrument-03-keyboard.glb', ['assets/models/scenery/instrument-03-keyboard.glb', 'model/gltf-binary']],
   ['/assets/models/scenery/instrument-04-bass-v2.glb', ['assets/models/scenery/instrument-04-bass-v2.glb', 'model/gltf-binary']],
   ['/assets/models/scenery/instrument-05-guitar-v2.glb', ['assets/models/scenery/instrument-05-guitar-v2.glb', 'model/gltf-binary']],
-  ['/assets/models/scenery/moose-01.glb', ['assets/models/scenery/moose-01.glb', 'model/gltf-binary']],
   ['/assets/models/scenery/speaker-01-stack.glb', ['assets/models/scenery/speaker-01-stack.glb', 'model/gltf-binary']],
   ['/assets/models/scenery/speaker-02-tower.glb', ['assets/models/scenery/speaker-02-tower.glb', 'model/gltf-binary']],
   ['/assets/models/scenery/arcade-01-kong.glb', ['assets/models/scenery/arcade-01-kong.glb', 'model/gltf-binary']],

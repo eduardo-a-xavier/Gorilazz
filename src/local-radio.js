@@ -7,8 +7,8 @@ export const station = [
 ];
 
 export function createLocalRadio({ input, playButton, previousButton, nextButton, title, album, status }) {
-  let base = .65, duck = 1; // volume escolhido pelo usuário e fator de ducking (passeio)
-  const apply = () => { audio.volume = base * duck; };
+  let base = .65, duck = 1, fade = 1; // volume escolhido pelo usuário, ducking (passeio) e fade de troca de faixa
+  const apply = () => { audio.volume = base * duck * fade; };
   const playlist = document.createElement('select');
   playlist.setAttribute('aria-label', 'Escolher e tocar áudio na Kong FM');
   document.querySelector('#road-radio').append(playlist);
@@ -60,6 +60,22 @@ export function createLocalRadio({ input, playButton, previousButton, nextButton
     audio.src = tracks[index].url;
     show();
     if (autoplay) play();
+  }
+  // Troca de faixa com fade-out/fade-in curto, usada nas paradas do passeio (sem corte seco no Kong FM).
+  function rampFade(to, ms, done) {
+    const from = fade, start = performance.now();
+    const step = () => {
+      const k = Math.min(1, (performance.now() - start) / ms);
+      fade = from + (to - from) * k; apply();
+      if (k < 1) requestAnimationFrame(step); else done?.();
+    };
+    if (ms <= 0) { fade = to; apply(); done?.(); return; }
+    requestAnimationFrame(step);
+  }
+  function selectSmooth(next, { autoplay = !audio.paused, fadeMs = 300 } = {}) {
+    const target = (next + tracks.length) % tracks.length;
+    if (target === index) return;
+    rampFade(0, fadeMs, () => { select(target, autoplay); rampFade(1, Math.round(fadeMs * 1.4)); });
   }
   const actions = {
     play() { if (audio.paused) play(); else audio.pause(); },
@@ -117,7 +133,7 @@ export function createLocalRadio({ input, playButton, previousButton, nextButton
   base = .65; apply();
   rebuildList(); select(0, false);
   return {
-    actions, playlist, select,
+    actions, playlist, select, selectSmooth,
     isPlaying: () => !audio.paused, pause: () => { if (!audio.paused) audio.pause(); }, play: () => { if (audio.paused) play(); },
     read: () => ({ ...tracks[index], index, total: tracks.length, playing: !audio.paused, seconds: Math.floor(audio.currentTime), volume: Math.round(base * 100), duck: Math.round(duck * 100), ducked: duck < 1 }),
     // Ducking (passeio nos palcos): reduz o volume do Kong FM por um fator 0..1 sem mudar o volume escolhido pelo usuário.

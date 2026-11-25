@@ -1,9 +1,9 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { buildStops, orderTour, createStopProgress, speedCap, takeOver, TOUR_TOTAL, PROGRESS_KEY, SLOW_ZONE_M, ARRIVE_M } from '../src/guided-tour.js';
+import { buildStops, orderTour, createStopProgress, speedCap, takeOver, TOUR_TOTAL, TOUR_ORDER, PROGRESS_KEY, SLOW_ZONE_M, ARRIVE_M } from '../src/guided-tour.js';
 import { ERA_GATES, CITY_ERAS, DISCOVERIES, roadGap, nearestRoad, WORLD_BOUNDS } from '../src/world-data.js';
 import { tracks } from '../src/content.js';
-import { planPath, navigationInput, CRUISE_SPEED_MS } from '../src/navigation.js';
+import { planPath, navigationInput, CRUISE_SPEED_MS, UNSTICK_DELAY_TICKS, LAUNCH_RAMP_S } from '../src/navigation.js';
 import { createVehicle, stepVehicle, haltVehicle } from '../src/driving.js';
 import { distance } from '../src/world-data.js';
 
@@ -41,13 +41,13 @@ test('título, ano e resumo vêm do conteúdo existente (nenhum texto novo)', ()
   }
 });
 
-test('a ordem do passeio visita as 9 paradas uma única vez, de forma determinística', () => {
-  const start = { x: -18, z: -25 };
-  const order = orderTour(stops, start);
+test('a ordem do passeio é fixa: as 9 paradas uma única vez, na mesma sequência de qualquer ponto de partida', () => {
+  const order = orderTour(stops);
   assert.equal(order.length, 9);
   assert.equal(new Set(order.map(stop => stop.id)).size, 9);
-  assert.deepEqual(orderTour(stops, start).map(stop => stop.id), order.map(stop => stop.id));
-  assert.equal(order[0].id, stops.reduce((best, stop) => Math.hypot(stop.x - start.x, stop.z - start.z) < Math.hypot(best.x - start.x, best.z - start.z) ? stop : best).id, 'começa pela parada mais próxima');
+  assert.deepEqual(order.map(stop => stop.id), TOUR_ORDER);
+  assert.deepEqual(orderTour(stops, { x: 120, z: -180 }).map(stop => stop.id), TOUR_ORDER, 'não depende de onde o carro está');
+  assert.deepEqual(orderTour(stops, { x: -18, z: -25 }).map(stop => stop.id), TOUR_ORDER, 'não depende de onde o carro está');
 });
 
 test('o trajeto automático segue a malha de estradas: nenhum ponto sai da pista ou atravessa prédio', () => {
@@ -168,6 +168,28 @@ test('passeio guiado completo (9/9 paradas, >= 600 amostras): Catmull-Rom + look
   assert.equal(offAsphalt, 0, `${offAsphalt} amostras fora do asfalto`);
   assert.ok(maxSpeedKmh >= 50 && maxSpeedKmh <= 65, `velocidade máxima de cruzeiro (${maxSpeedKmh.toFixed(1)} km/h) na faixa de cruzeiro`);
   assert.ok(maxSteerDelta < .03, `esterço das rodas dianteiras gradual (${maxSteerDelta.toFixed(4)} rad/tick)`);
+});
+
+test('unstick: só dá ré depois de mais de 1,5 s realmente bloqueado', () => {
+  const vehicle = createVehicle();
+  vehicle.blocked = true; vehicle.speed = 0;
+  const nav = { points: [{ x: 0, z: 0 }, { x: 0, z: -100 }], index: 0, target: { x: 0, z: -100 } };
+  for (let i = 0; i < UNSTICK_DELAY_TICKS; i++) {
+    navigationInput(vehicle, nav);
+    assert.equal(nav.reversing, false, `ré falsa no tick ${i} (${(i / 120).toFixed(2)} s)`);
+  }
+  navigationInput(vehicle, nav);
+  assert.equal(nav.reversing, true, 'depois de 1,5 s travado, engata a ré de destravamento');
+});
+
+test('rampa de saída: o carro não exige o cruzeiro inteiro ao sair da parada', () => {
+  const vehicle = createVehicle();
+  vehicle.heading = 0; vehicle.speed = 10;
+  const nav = { points: [{ x: 0, z: 0 }, { x: 0, z: -200 }], index: 0, target: { x: 0, z: -200 } };
+  const early = navigationInput(vehicle, nav, { sinceStop: 0 });
+  assert.equal(early.brake, true, 'a 10 m/s logo na saída, freia para a rampa');
+  const late = navigationInput(vehicle, nav, { sinceStop: LAUNCH_RAMP_S * 2 });
+  assert.equal(late.throttle, true, 'passada a rampa, acelera até o cruzeiro');
 });
 
 test('assumir o volante: WASD e setas encerram o passeio sem apagar o progresso; outras teclas não', () => {

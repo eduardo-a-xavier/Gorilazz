@@ -4,7 +4,7 @@ export const CRUISE_SPEED_MS = 16.5; // ~59.4 km/h (faixa 55–65 km/h nas retas
 export const LOOK_AHEAD_M = 8.5;
 
 // Suavização Catmull-Rom entre pontos da malha viária: elimina quebras secas nos cruzamentos e preserva 100% dos pontos no asfalto.
-export function catmullRomSpline(points, subdivisions = 4) {
+export function catmullRomSpline(points, subdivisions = 8) {
   if (!points || points.length < 2) return points ? points.slice() : [];
   const filtered = [points[0]];
   for (let i = 1; i < points.length; i++) {
@@ -75,7 +75,7 @@ export function planPath(start, target) {
     }
   }
   const rawRoadPath = [first, ...paths[goal].filter((_, i) => i % 2 === 0), last];
-  const smoothRoadPath = catmullRomSpline(rawRoadPath, 3);
+  const smoothRoadPath = catmullRomSpline(rawRoadPath, 8);
   const path = [...smoothRoadPath, target];
   while (path.length < 3) path.splice(1, 0, { x: (first.x + last.x) / 2, z: (first.z + last.z) / 2 });
   return { points: path, index: distance(start, first) < 5 && path.length > 1 ? 1 : 0, target };
@@ -113,7 +113,13 @@ export function sampleLookAhead(vehicle, points, startIndex, lookAhead = LOOK_AH
   return { index: idx, aim, maxCurve };
 }
 
-export function navigationInput(vehicle, navigation) {
+// Ré de destravamento só depois de 1,5 s realmente bloqueado (120 passos/s).
+export const UNSTICK_DELAY_TICKS = 180;
+// Rampa de saída da parada: o carro parte de ~2,5 m/s e chega ao cruzeiro em ~1,8 s.
+export const LAUNCH_RAMP_S = 1.8;
+
+export function navigationInput(vehicle, navigation, { sinceStop = Infinity } = {}) {
+  navigation.reversing ??= false;
   const points = navigation.points;
   const remaining = distance(vehicle, navigation.target);
   const dynamicLookAhead = clamp(6.0 + Math.abs(vehicle.speed) * .32, 6.0, 10.5);
@@ -123,14 +129,19 @@ export function navigationInput(vehicle, navigation) {
   const target = navigation.index >= points.length - 1 ? points[navigation.index] : aim;
   const angle = Math.atan2(-(target.x - vehicle.x), -(target.z - vehicle.z));
   const turn = Math.atan2(Math.sin(angle - vehicle.heading), Math.cos(angle - vehicle.heading));
-  if (!navigation.reversing && ((Math.abs(turn) > 1.65 && remaining > 10) || (vehicle.blocked && remaining > 8))) {
+  if (!navigation.reversing) {
+    navigation.blockedTicks = vehicle.blocked ? (navigation.blockedTicks ?? 0) + 1 : 0;
+  }
+  const stuck = (navigation.blockedTicks ?? 0) > UNSTICK_DELAY_TICKS;
+  if (!navigation.reversing && stuck) {
     navigation.reversing = true;
     navigation.reverseTicks = 0;
+    navigation.blockedTicks = 0;
     navigation.reverseSteer = -Math.sign(turn || 1);
   }
   if (navigation.reversing) {
     navigation.reverseTicks++;
-    if ((vehicle.blocked && vehicle.speed <= 0 && navigation.reverseTicks > 15) || (Math.abs(turn) < 1.15 && navigation.reverseTicks >= 45) || navigation.reverseTicks > 300) {
+    if ((!vehicle.blocked && navigation.reverseTicks > 45) || (vehicle.blocked && vehicle.speed <= 0 && navigation.reverseTicks > 60) || (Math.abs(turn) < 1.15 && navigation.reverseTicks >= 90) || navigation.reverseTicks > 300) {
       navigation.reversing = false;
     } else {
       if (!vehicle.reverseReady && vehicle.speed >= -.05) {
@@ -144,7 +155,11 @@ export function navigationInput(vehicle, navigation) {
   const cornerSeverity = Math.max(Math.abs(turn) * 1.4, maxCurve * .95);
   const curveCap = CRUISE_SPEED_MS / (1 + cornerSeverity * 3.1);
   const arrivalCap = Math.sqrt(Math.max(0, remaining - 5) * 7);
-  const desiredSpeed = Math.min(CRUISE_SPEED_MS, Math.max(2, curveCap), arrivalCap);
+  // Rampa de saída: nos primeiros LAUNCH_RAMP_S após uma parada o teto sobe de 2,5 m/s ao cruzeiro,
+  // em curva de ease-in, em vez de exigir o cruzeiro inteiro de uma vez.
+  const launch = clamp(sinceStop / LAUNCH_RAMP_S, 0, 1);
+  const launchCap = 2.5 + (CRUISE_SPEED_MS - 2.5) * launch * launch;
+  const desiredSpeed = Math.min(CRUISE_SPEED_MS, Math.max(2, curveCap), arrivalCap, launchCap);
   const rawSteer = clamp(turn * 2.1, -1, 1);
   const prevSteer = navigation.smoothSteer ?? rawSteer;
   navigation.smoothSteer = prevSteer + (rawSteer - prevSteer) * .38;

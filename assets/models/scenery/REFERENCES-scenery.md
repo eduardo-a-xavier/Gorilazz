@@ -27,4 +27,3 @@ Modelos originais criados por OpenBot / Desenvolvedor Plataforma B nesta tarefa,
 
 | instrument-04-bass-v2.glb | Original / OpenBot (Jazz Bass, Murdoc; modelado do zero, alca derivada de noodle-guitar-v3.glb) | CC0-1.0 | 7d2b93a0addf114e48db19349f5b84eed36bb6961de57eecd1682921ae1a4755 |
 | instrument-05-guitar-v2.glb | Original / OpenBot (Les Paul, Noodle; modelada do zero, alca derivada de noodle-guitar-v3.glb) | CC0-1.0 | 75f14f19c3ac4ac0267b46f62569b4ed59db1f0ea3017dbe4cf80a733b6fca8b |
-| moose-01.glb | Original / OpenBot (alce do Easter egg; modelado do zero no Blender 5.3, CC0 1.0, 2026-11-26, 2.396 triângulos, 2,60 m) | CC0-1.0 | fc36186e7e2be882e90bc7fba214c73acef2a04a319b5d06a48c91f9d6e0354e |

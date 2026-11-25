@@ -112,7 +112,7 @@ SHA-256 dos GLBs distribuídos em `assets/models/`:
 
 - **`assets/radio/concreto.mp3`** (78.109 bytes, SHA-256 `2717334056389e35f15897eaee71ee7553c08c633d47b5b5c9ffe8432115bd07`): declarado em `src/local-radio.js` e `README.md` como *"Concreto — Kong FM · instrumental original"*. Status documental: sem arquivo de licença formal separado no repositório e sem BPM confirmado (autoria individual e termos formais de licença marcados como **não confirmados**).
 - **`assets/radio/mare.mp3`** (75.399 bytes, SHA-256 `b56f93f31c3b304d72a244efa99a82ffd8887759c7e921bd0f425ebcfc4fb635`): declarado em `src/local-radio.js` e `README.md` como *"Maré de plástico — Kong FM · instrumental original"*. Mesmo status documental: sem arquivo de licença formal separado e sem BPM confirmado.
-- **Carregamento local pelo visitante:** a Kong FM permite carregar arquivos de áudio do próprio dispositivo em memória (`URL.createObjectURL`), sem hospedagem nem redistribuição pelo site. Nenhuma gravação comercial do Gorillaz é distribuída pela aplicação.
+- **Carregamento local e gravações sob demanda:** a Kong FM permite carregar arquivos de áudio do próprio dispositivo em memória (`URL.createObjectURL`). Além disso, há 3 MP3s comerciais no repositório em `assets/audio/` (`clint-eastwood.mp3` — 4,09 MB, `feel-good-inc.mp3` — 3,39 MB e `on-melancholy-hill.mp3` — 4,48 MB), carregados sob demanda com `preload="none"` (`src/local-radio.js` linha 16 e `src/piano-screen.js` linha 21), estritamente para fins acadêmicos ilustrativos e sem redistribuição comercial; a procedência da cópia e as permissões de distribuição não foram verificadas (detalhes e hashes SHA-256 em [Gravações usadas na Kong FM e no piano](#gravações-usadas-na-kong-fm-e-no-piano)).
 - **Minigame rítmico de piano do 2-D (`src/piano-game.js` / `src/piano-screen.js`):** utiliza áudio **100% sintetizado no navegador via Web Audio API**, sem samples ou fonogramas comerciais. Os andamentos (BPM) e compassos (4/4) de referência — *Tomorrow Comes Today* (93 BPM), *Clint Eastwood* (84 BPM) e *On Melancholy Hill* (120 BPM) — foram verificados em 22/11/2026 em SongBPM, Tunebat, GetSongBPM e Musicnotes, com divergências e limites registrados em `docs/gestao/minigame-piano-bpm.md`. Crédito exibido na interface: *"Áudio sintetizado próprio · BPMs de referência · uso acadêmico"*.
 
 ## Conteúdo histórico e recorte editorial
@@ -227,7 +227,6 @@ Fontes oficiais e de jornalismo musical consultadas em **22/11/2026** para as 9 
 
 Os *easter eggs* inseridos no mapa 3D são **homenagens autorais criadas pela equipe do projeto**, inspiradas na obra e no universo fictício do Gorillaz (1998–2023), **sem uso de arquivos originais** (áudio, vídeo, texturas ou fontes oficiais da banda). Verificação editorial completa em `docs/gestao/easter-eggs-referencias.md` (acesso em **24/11/2026**; 0 Wikipédia):
 
-- **Alce gigante de *19-2000* (clipe oficial, 2001):** NME — https://www.nme.com/news/music/gorillaz-160-1386039 ; MUBI — https://mubi.com/pt/us/films/gorillaz-19-2000-mv ; YouTube oficial — https://www.youtube.com/watch?v=bbOjTwOMOL0
 - **Winnebago de Murdoc (Kong Studios):** Gorillaz — Kong Studios FAQs — https://gorillaz.com/kongstudiosfaqs/ *(nota: a placa `"M1-N4-STY"` não foi confirmada em fonte oficial; caso exibida, constitui licença criativa autoral do projeto)*.
 - **Slogan `"REJECT FALSE ICONS"` (campanha *Demon Days*, 2004–2005, e documentário de 2019):** The Guardian — https://www.theguardian.com/music/2006/jan/22/popandrock.gorillaz ; Trafalgar Releasing — https://trafalgar-releasing.com/events/gorillaz-reject-false-icons/ ; Denholm Hewlett — https://www.denholmhewlett.com/portfolio/reject-false-icons-directors-cut
 - **Slogan `"SAVE US FROM HIM"` (campanha *The Now Now* / clipe *"Humility"*, 2018):** It's Nice That — https://www.itsnicethat.com/news/jamie-hewlett-gorillaz-humility-animation-010618 ; NME — https://www.nme.com/blogs/nme-blogs/gorillaz-exclusive-murdoc-hits-back-2d-wormwood-scrubs-cell-2354976
@@ -245,7 +244,7 @@ Arquivos fornecidos por Eduardo a partir de seu computador para o projeto; grava
 
 Piloto v6: arquivo GLB fornecido pelo Desenvolvedor Plataforma B (`assets/models/driver-pilot-v6.glb`, 258.776 bytes, SHA-256 `1d7efd3cc1a02741cb16697c9202149e37fe16bd4051611956c4fde2ed47986f`); mantém-se a cadeia de fallback documentada (`v6 → v5 → v4 → v2 → original`).
 
-## Modelos 3D de Cenário (`assets/models/scenery/` — 23 GLBs, Blocos A–E + instrumentos v2 + alce)
+## Modelos 3D de Cenário (`assets/models/scenery/` — 22 GLBs, Blocos A–E + instrumentos v2)
 
 Modelos originais em formato `.glb` criados por **OpenBot / Desenvolvedor Plataforma B** em Blender (sem assets, texturas ou pacotes externos), dedicados ao domínio público sob licença **CC0 1.0 Universal** (`https://creativecommons.org/publicdomain/zero/1.0/`). Carregados de forma *lazy* após a entrada no mundo 3D com `InstancedMesh` e fallback automático às primitivas originais. Nota de fechamento (25/11/2026): **bancos (`bench-01-slatted.glb`) e pedras (`rock-01/02/03`) foram removidos do mapa (limite 0)**, embora os GLBs originais permaneçam catalogados na pasta.
 
@@ -274,7 +273,6 @@ Modelos originais em formato `.glb` criados por **OpenBot / Desenvolvedor Plataf
 | `car-02-van.glb` | Original / OpenBot (Desenvolvedor Plataforma B — Bloco E) | CC0-1.0 | `140684e6aa8dc30f0230a43de435bab556fc365bd8c231dcac9824139299cfb6` |
 | `barrier-01-road.glb` | Original / OpenBot (Desenvolvedor Plataforma B — Bloco E) | CC0-1.0 | `bb654f58746ce44cbd876dbae0619aa875987d3a8ebe5e7d5df4be84e0841a4e` |
 
-- `assets/models/scenery/moose-01.glb` — alce do Easter egg (modelo original, Blender 5.3, CC0 1.0, 2026-11-26; SHA-256 fc36186e7e2be882e90bc7fba214c73acef2a04a319b5d06a48c91f9d6e0354e).
 
 ## Texturas de chão (ambientCG, CC0 1.0)
 

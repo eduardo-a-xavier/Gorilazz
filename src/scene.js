@@ -1250,7 +1250,7 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
     frameAt(eye, target) { poseView = { eye: new THREE.Vector3(...eye), target: new THREE.Vector3(...target) }; },
     clearPose() { poseView = null; },
     // Depuração: câmera presa a um ponto do mundo, a `distance` na direção `dir` (x, z), olhando para ele.
-    frameSpot({ x, z, dirX = 1, dirZ = 0, distance = 4, height = 2, target = 2 }) { poseView = { eye: new THREE.Vector3(x + dirX * distance, height, z + dirZ * distance), target: new THREE.Vector3(x, target, z) }; },
+    frameSpot({ x, z, dirX = 1, dirZ = 0, distance = 4, height = 2, target = 2, alpha = 1 }) { poseView = { eye: new THREE.Vector3(x + dirX * distance, height, z + dirZ * distance), target: new THREE.Vector3(x, target, z), alpha }; },
     // Mãos de um integrante em coordenadas de mundo (depuração de pose).
     handsOf(index) { const rig = people[index]?.rig; if (!rig) return null; rig.visual.updateMatrixWorld(true); return rig.hands().map(hand => rig.visual.localToWorld(hand)); },
     debug: { renderer, scene, camera, vehicleMotion, cabin, streetProps, fauna, arcadeCabinet, stageSpeakers, get steeringPivot() { return steeringPivot; }, get pilotRig() { return pilotRig; }, setSize(width, height) { renderer.setSize(width, height, false); camera.aspect = width / height; camera.updateProjectionMatrix(); } },
@@ -1431,7 +1431,11 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
       else { camera.position.lerp(desiredCamera, blend); cameraTarget.lerp(look, blend); }
       camera.lookAt(cameraTarget);
       // Depuração de pose (?perf): câmera presa ao integrante escolhido; sem efeito no uso normal.
-      if (poseView) { camera.position.copy(poseView.eye); camera.lookAt(poseView.target); }
+      if (poseView) {
+        const alpha = poseView.alpha ?? 1;
+        if (alpha >= 1) { camera.position.copy(poseView.eye); camera.lookAt(poseView.target); }
+        else { camera.position.lerp(poseView.eye, alpha); cameraTarget.lerp(poseView.target, alpha); camera.lookAt(cameraTarget); }
+      }
       // Tranco de câmera no impacto: curto, proporcional à velocidade, sem acumular no estado da câmera.
       if (impact > .01) { camera.rotateZ(Math.sin(t * 58) * impact * .022); camera.rotateX(Math.sin(t * 47) * impact * .012); impact *= Math.exp(-5 * dt); }
       if (lunarMurdoc) followLunarCamera(lunarMurdoc, camera);

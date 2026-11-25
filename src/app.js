@@ -226,7 +226,7 @@ function syncGuidedHud() {
   renderTourMapStops();
 }
 function legTo(index) {
-  guided.index = index; guided.holdUntil = 0; hideGuidedCard(); world?.clearPose();
+  guided.index = index; guided.holdUntil = 0; guided.departedAt = performance.now(); hideGuidedCard(); world?.clearPose();
   destination = planPath(vehicle, roadPointOf(guided.order[index]));
   // Só gira parado antes de sair se o próximo trecho apontar fortemente para trás (> 105°);
   // curvas frontais e laterais são contornadas organicamente em movimento pela spline Catmull-Rom + look-ahead.
@@ -267,13 +267,16 @@ function arriveAt(stop) {
   showGuidedCard(stop, guided.index + 1, guided.order.length); setTrack(stop.trackIndex); announce(`${stop.title}. ${stop.year}.`);
   // Player local da Kong FM acompanha a parada (Concreto ou Maré de plástico); sem trocar se já está nela.
   const localIndex = localTrackFor(stop);
-  if (localRadio.read().index !== localIndex) localRadio.select(localIndex);
+  if (localRadio.read().index !== localIndex) {
+    if (localRadio.selectSmooth) localRadio.selectSmooth(localIndex); else localRadio.select(localIndex);
+  }
   syncGuidedHud();
 }
 // Câmera cinematográfica na parada: fica do lado da rua (de onde o Geep chegou) e balança ±0,45 rad em torno dessa direção,
 // para não cair dentro de murais e prédios que estão atrás do ponto.
 // Em 1ª pessoa a espera NÃO troca de câmera (frameSpot tiraria o cockpit): só gira a cabeça até ±35° em direção à parada.
 const HEAD_LIMIT = 35 * Math.PI / 180;
+const smooth01 = t => t * t * (3 - 2 * t);
 function cinematicHold(stop) {
   if (firstPerson) {
     const h = vehicle.heading, fx = -Math.sin(h), fz = -Math.cos(h), rx = Math.cos(h), rz = -Math.sin(h);
@@ -282,9 +285,14 @@ function cinematicHold(stop) {
     world?.setHeadYaw(-Math.max(-HEAD_LIMIT, Math.min(HEAD_LIMIT, phi)));
     return;
   }
-  const t = performance.now() / 1000;
+  const now = performance.now(), t = now / 1000;
+  // Entra e sai do enquadramento lateral com ease-in/ease-out, sem corte seco ao chegar.
+  const start = guided.holdUntil - STOP_HOLD_MS;
+  const fadeIn = smooth01(Math.max(0, Math.min(1, (now - start) / 700)));
+  const fadeOut = smooth01(Math.max(0, Math.min(1, (guided.holdUntil - now) / 600)));
+  const alpha = fadeIn * fadeOut;
   const base = Math.atan2(vehicle.x - stop.x, vehicle.z - stop.z), a = base + .45 * Math.sin(t * .6);
-  world?.frameSpot({ x: stop.x, z: stop.z, dirX: Math.sin(a), dirZ: Math.cos(a), distance: 9, height: 3.2, target: 2 });
+  world?.frameSpot({ x: stop.x, z: stop.z, dirX: Math.sin(a), dirZ: Math.cos(a), distance: 9, height: 3.2, target: 2, alpha });
 }
 function finishGuided() { guided = null; destination = null; hideGuidedCard(); setTour(false); world?.clearPose(); world?.setHeadYaw(0); announce('Passeio guiado concluído. Você pode continuar explorando.'); syncGuidedHud(); }
 // Assumir o volante (WASD) ou parar o passeio devolve a câmera de viagem ao normal.
@@ -307,7 +315,7 @@ function guidedControls() {
   const stop = guided.order[guided.index], roadPoint = roadPointOf(stop), d = distance(vehicle, roadPoint);
   if (d < ARRIVE_M) { arriveAt(stop); return brakeControls; }
   world?.setHeadYaw(0); // andando: a cabeça volta ao olhar para a frente, sem tranco
-  const nav = navigationInput(vehicle, destination);
+  const nav = navigationInput(vehicle, destination, { sinceStop: (performance.now() - (guided.departedAt ?? performance.now())) / 1000 });
   if (nav.arrived) { arriveAt(stop); return brakeControls; }
   if (Math.abs(vehicle.speed) > speedCap(d)) return { ...nav, throttle: false, brake: true };
   return nav;
@@ -315,7 +323,7 @@ function guidedControls() {
 function startGuided() {
   enterWorld(); setShowcase(false); if (overview || landmarkView) { overview = false; landmarkView = false; world?.setOverview(false); } syncCameraModes();
   toggleHudMenu(null);
-  if (!guided) guided = { order: orderTour(tourStops, vehicle), index: 0, holdUntil: 0, paused: false };
+  if (!guided) guided = { order: orderTour(tourStops), index: 0, holdUntil: 0, paused: false, departedAt: performance.now() };
   guided.paused = false; legTo(guided.index);
   announce(`Passeio guiado pelas ${guided.order.length} paradas. Pressione WASD para assumir o volante.`);
   focusWorld();
