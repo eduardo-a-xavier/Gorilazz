@@ -715,8 +715,8 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
   // Feedback de jogo: partículas instanciadas leves (1 draw call) de poeira/faísca neon ao frear e ao passar perto dos pontos.
   const FX_COUNT = 36;
   const fxMesh = new THREE.InstancedMesh(
-    new THREE.OctahedronGeometry(.12, 0),
-    new THREE.MeshBasicMaterial({ color: '#ffffff', transparent: true, opacity: .85, blending: THREE.AdditiveBlending, depthWrite: false, toneMapped: false }),
+    new THREE.OctahedronGeometry(.07, 0),
+    new THREE.MeshBasicMaterial({ color: '#ffffff', transparent: true, opacity: .4, depthWrite: false }),
     FX_COUNT
   );
   fxMesh.name = 'drive-fx-particles'; fxMesh.frustumCulled = false;

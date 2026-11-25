@@ -1,8 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { ambientAnchors, particleLayout, totalParticles, PARTICLE_KINDS } from '../src/ambient-particles.js';
+import { ambientAnchors, particleLayout, totalParticles, PARTICLE_KINDS, PARTICLE_STYLE, particleAllowed } from '../src/ambient-particles.js';
 import { readSoundOn, saveSoundOn, discoveryTones, discoveryGain, SOUND_KEY } from '../src/discovery-sound.js';
-import { DISCOVERIES } from '../src/world-data.js';
+import { DISCOVERIES, MEMBER_LOCATIONS, roadGap } from '../src/world-data.js';
 
 class MemoryStorage { constructor() { this.map = new Map(); } getItem(k) { return this.map.has(k) ? this.map.get(k) : null; } setItem(k, v) { this.map.set(k, String(v)); } }
 
@@ -48,4 +48,13 @@ test('som: dois tons ascendentes e curtos; mais baixo com o rádio tocando', () 
   assert.ok(second.at + second.dur < .5, 'curto');
   assert.ok(discoveryGain(true) < discoveryGain(false), 'com o rádio tocando sai mais baixo');
   assert.ok(discoveryGain(false) <= .2, 'volume moderado');
+});
+
+test('partículas ambientes discretas: pequenas, opacidade <= 0,25 e nenhuma perto de palcos ou ruas', () => {
+  assert.ok(PARTICLE_STYLE.size <= .42 * .3 + 1e-9 && PARTICLE_STYLE.opacity <= .25);
+  const anchors = ambientAnchors();
+  for (const kind of Object.keys(PARTICLE_KINDS)) for (const p of particleLayout(kind, anchors[kind]).filter(particleAllowed)) {
+    for (const m of MEMBER_LOCATIONS) assert.ok(Math.hypot(m.x - p.x, m.z - p.z) >= 20, `${kind} perto de palco`);
+    assert.ok(roadGap(p) >= 10, `${kind} perto da rua`);
+  }
 });

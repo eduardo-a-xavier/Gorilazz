@@ -5,21 +5,23 @@ import { ARCADE_SPOT } from './arcade.js';
 
 export const PROP_CLEARANCE = 0.9; // m: folga mínima entre a borda do asfalto e a base do prop de calçada
 export const CAR_CLEARANCE = 1.2;  // m: folga mínima dos carros estacionados à faixa central de rodagem
+// Escala dos carros estacionados: o Geep mede ~6,6 m x 3,9 m x 4,0 m no jogo; o sedan (4,4 m) ganha 1,5x (~6,6 m, mesmo comprimento do Geep) e a van 1,65x (altura ~2,9 m).
+export const CAR_SCALE = { sedan: 1.5, van: 1.65 };
 export const CAR_HALF_WIDTH = 1.09;
 export const CAR_HALF_LENGTH = 2.40;
 export const BENCH_HALF_LENGTH = 0.86;
 export const BENCH_HALF_DEPTH = 0.30;
 // Raio da base de cada tipo (m), usado na folga e no espaçamento.
-export const PROP_RADIUS = { tree: 1.4, bench: 0.9, planter: 0.8, lamp: 0.3, rock: 0.9, car: 1.35, barrier: 0.65 };
+export const PROP_RADIUS = { tree: 1.4, bench: 0.9, planter: 0.8, lamp: 0.3, rock: 0.9, car: 3.0, barrier: 0.65 };
 // Teto por tipo: o cenário ganha densidade sem virar floresta nem atrapalhar a leitura da rua.
-export const PROP_LIMITS = { tree: 70, bench: 12, planter: 60, lamp: 110, rock: 60, car: 36, barrier: 12 };
+export const PROP_LIMITS = { tree: 70, bench: 10, planter: 60, lamp: 110, rock: 60, car: 8, barrier: 12 };
 const STEP = 5;              // m entre candidatos da grade
 const MIN_SPACING = 6;       // m entre dois props quaisquer
 const LAMP_SPACING = 16;     // m entre postes (poucos e espaçados, como numa avenida)
 const STAGE_RING = [4.5, 11]; // m: anel ao redor de cada palco (Russel, Noodle, 2-D e Murdoc)
 
-const NODE_DEGREE = NODES.map((_, id) => ROADS.filter(road => road.from === id || road.to === id).length);
-const NODE_RADIUS = NODES.map((_, id) => {
+export const NODE_DEGREE = NODES.map((_, id) => ROADS.filter(road => road.from === id || road.to === id).length);
+export const NODE_RADIUS = NODES.map((_, id) => {
   const maxHalf = Math.max(...ROADS.filter(road => road.from === id || road.to === id).map(road => road.width)) / 2;
   return NODE_DEGREE[id] >= 4 ? Math.max(maxHalf + 4.5, 9.5) : NODE_DEGREE[id] === 3 ? maxHalf + 3.5 : maxHalf + 2.5;
 });
@@ -38,7 +40,7 @@ function roadDist(road, x, z) {
 export function carFootprintCorners(car) {
   const s = car.scale ?? 1;
   const hw = CAR_HALF_WIDTH * s;
-  const hl = (car.variant === 1 ? 2.40 : 2.20) * s;
+  const hl = (car.variant === 1 ? CAR_HALF_LENGTH : 2.20) * s;
   const cos = Math.cos(car.rot), sin = Math.sin(car.rot);
   return [
     { x: car.x - hw * cos - hl * sin, z: car.z + hw * sin - hl * cos },
@@ -110,95 +112,151 @@ function kindFor(point, pick) {
   return 'tree';
 }
 
-// Bancos curados (10 unidades): limpa o tablado dos palcos (< 6.8 m) e posiciona os bancos nas praças/calçadas (>= 0.6 m da borda do asfalto, fora de vagas/faixas e tablados).
-function planCuratedBenches(placed, counts) {
-  for (let i = placed.length - 1; i >= 0; i--) {
-    const item = placed[i];
-    if ((item.kind === 'rock' || item.kind === 'planter') && MEMBER_LOCATIONS.some(stage => dist(item, stage) < 6.8)) {
-      counts[item.kind]--;
-      placed.splice(i, 1);
-    }
-  }
-  const curatedBenches = [
-    // Praça Kong Studios (recuados para a praça/calçada em frente ao edifício das estrelas, fora das linhas de vaga do studio-ground e de degraus laterais)
-    { x: 18.9, z: -9.6, rot: -1.571 },
-    { x: 18.9, z: -13.2, rot: -1.571 },
-    // Praça do Palco Russel (recuados no gramado/praça fora do tablado do palco e virados de frente para o palco em 59,-102.6)
-    { x: 50.2, z: -94.2, rot: 2.333 },
-    { x: 55.8, z: -92.4, rot: 2.58 },
-    // Praça do Palco 2-D (alinhados na borda externa da praça, voltados para o palco)
-    { x: -69.12, z: -82.82, rot: 0.785 },
-    { x: -55.68, z: -82.82, rot: -0.785 },
-    // Praça do Palco Murdoc
-    { x: -49.31, z: -133.71, rot: -0.393 },
-    { x: -45.5, z: -134.8, rot: -0.72 },
-    // Praça do Palco Noodle
-    { x: 28.08, z: -111.58, rot: 2.356 },
-    { x: 28.08, z: -125.02, rot: 0.785 },
-  ];
-  for (const cand of curatedBenches) {
-    if (counts.bench >= PROP_LIMITS.bench) break;
-    if (OBSTACLES.some(o => dist(o, cand) < o.radius + PROP_RADIUS.bench + 0.1)) continue;
-    if (DISCOVERIES.some(d => dist(d, cand) < 9.05)) continue;
-    // Se uma pedra ou arbusto ocupava o ponto exato do banco curado, substitui sem afetar árvores
-    for (let i = placed.length - 1; i >= 0; i--) {
-      const p = placed[i];
-      if ((p.kind === 'rock' || p.kind === 'planter') && dist(p, cand) < 3.6) {
-        counts[p.kind]--;
-        placed.splice(i, 1);
-      }
-    }
-    const bench = { x: +cand.x.toFixed(2), z: +cand.z.toFixed(2), y: 0, kind: 'bench', rot: +cand.rot.toFixed(3), scale: 0.92, variant: 0 };
-    const corners = [bench, ...benchFootprintCorners(bench)];
-    if (!corners.every(c => roadGap(c) >= 0.6 && !inParkingOrPaintedLines(c))) continue;
-    counts.bench++;
-    placed.push(bench);
-  }
+// Frente do palco (direção do público) e eixo lateral, em coordenadas do mundo.
+export const STAGE_DECK_FRONT = 3.6; // m: borda frontal do tablado a partir do centro (2,4 x escala 1,5)
+export const STAGE_DECK_HALF_WIDTH = 6.0;
+export const stageFrame = stage => ({ fx: Math.sin(stage.heading), fz: Math.cos(stage.heading), sx: Math.cos(stage.heading), sz: -Math.sin(stage.heading) });
+export const benchFacing = (bench, target) => Math.atan2(target.x - bench.x, target.z - bench.z);
+export const BENCH_DOOR_CLEARANCE = 3.0; // m além do colisor do lote: a porta fica a mais de 2 m do banco
+export const BENCH_FREE = 2.4;           // m entre o centro do banco e qualquer outro prop (>= 1,5 m livres ao redor)
+
+function benchSpotOk(cand, placed) {
+  const bench = { x: cand.x, z: cand.z, rot: cand.rot, scale: 0.92 };
+  const corners = [bench, ...benchFootprintCorners(bench)];
+  if (!corners.every(c => Number.isFinite(roadGap(c)) && roadGap(c) >= 0.6 && !inParkingOrPaintedLines(c))) return false;
+  if (OBSTACLES.some(o => dist(o, cand) < o.radius + PROP_RADIUS.bench + BENCH_DOOR_CLEARANCE)) return false;
+  if (DISCOVERIES.some(d => dist(d, cand) < 9.05)) return false;
+  if (ERA_GATES.some(g => dist(g, cand) < 6)) return false;
+  if (dist(ARCADE_SPOT, cand) < 6) return false;
+  if (placed.some(p => (p.kind === 'tree' || p.kind === 'bench' || p.kind === 'barrier' || p.kind === 'car') && dist(p, cand) < BENCH_FREE + (p.kind === 'car' ? 2.2 : 0))) return false;
+  return true;
 }
 
-// Carros estacionados (25 a 36) nas laterais das avenidas: 100% sobre o ASFALTO (rodas dentro do asfalto, encostados ao meio-fio sem subir na calçada), paralelos ao eixo da via e fora da faixa central do passeio.
-function planParkedCars(placed, counts, pick) {
+// Bancos curados (6 a 10): só virados para o palco (4 a 9 m do tablado, de frente para quem toca) ou alinhados à rua sobre calçada limpa, sem porta, vaga ou obstáculo por perto.
+function planCuratedBenches(placed, counts) {
+  const byStage = [];
+  for (const stage of MEMBER_LOCATIONS) {
+    const f = stageFrame(stage), chosen = [];
+    // O palco fica ~8 m da pista e de frente para ela: só cabe plateia nas laterais frontais do tablado (3 a 9 m do tablado, à frente da linha do palco).
+    for (const dx of [7.2, 8, 8.8, 9.4]) for (const zp of [4.6, 5.4, 6.2, 3.8, 7]) for (const sgn of [1, -1]) {
+      if (chosen.length >= 2) break;
+      const lx = dx * sgn;
+      const cand = { x: +(stage.x + f.fx * zp + f.sx * lx).toFixed(2), z: +(stage.z + f.fz * zp + f.sz * lx).toFixed(2), dx: sgn };
+      cand.rot = +benchFacing(cand, stage).toFixed(3);
+      if (chosen.some(c => dist(c, cand) < 4.2 || c.dx === sgn)) continue;
+      if (benchSpotOk(cand, placed)) chosen.push(cand);
+    }
+    byStage.push(chosen);
+  }
+  // Até 2 bancos em calçada limpa de avenida (alinhados ao meio-fio, virados para a rua), longe de cruzamentos e palcos.
+  const sidewalk = [];
   for (const road of ROADS) {
     if (road.kind === 'lane') continue;
     const half = road.width / 2;
-    const offset = half - CAR_HALF_WIDTH - 0.25; // centro a 1.34 m da borda interna do meio-fio -> roda externa a ~0.25 m do meio-fio, 100% no asfalto
-    for (let i = 5; i < road.samples.length - 5; i += 2) {
-      if (counts.car >= 32) return;
+    for (let i = 8; i < road.samples.length - 8 && sidewalk.length < 2; i += 2) {
+      const prev = road.samples[i - 1], curr = road.samples[i], next = road.samples[i + 1];
+      const dx = next.x - prev.x, dz = next.z - prev.z, len = Math.hypot(dx, dz) || 1;
+      const nx = dz / len, nz = -dx / len;
+      for (const side of [1, -1]) {
+        const off = half + 1.35, cand = { x: +(curr.x + nx * side * off).toFixed(2), z: +(curr.z + nz * side * off).toFixed(2), y: 0.07 };
+        cand.rot = +Math.atan2(-nx * side, -nz * side).toFixed(3); // assento voltado para a rua
+        if (NODES.some((n, id) => dist(n, cand) < NODE_RADIUS[id] + 9)) continue;
+        if (MEMBER_LOCATIONS.some(m => dist(m, cand) < 16) || sidewalk.some(c => dist(c, cand) < 40)) continue;
+        const bench = { ...cand, scale: 0.92 };
+        if (![bench, ...benchFootprintCorners(bench)].every(c => roadGap(c) >= 0.6 && roadGap(c) <= 2.2)) continue;
+        if (benchSpotOk(cand, placed) && !placed.some(p => dist(p, cand) < 3)) { sidewalk.push(cand); break; }
+      }
+    }
+  }
+  for (const cand of [...byStage.flat(), ...sidewalk]) {
+    if (counts.bench >= PROP_LIMITS.bench) break;
+    for (let i = placed.length - 1; i >= 0; i--) {
+      const p = placed[i];
+      if ((p.kind === 'rock' || p.kind === 'planter' || p.kind === 'lamp') && dist(p, cand) < BENCH_FREE) { counts[p.kind]--; placed.splice(i, 1); }
+    }
+    counts.bench++;
+    placed.push({ x: cand.x, z: cand.z, y: cand.y ?? 0, kind: 'bench', rot: cand.rot, scale: 0.92, variant: 0, ...(cand.y ? { sidewalk: true } : { stage: true }) });
+  }
+}
+
+// Vagas pintadas de Kong Studios (studio-ground, ver environment.js): separadores a cada 5 m em z; fundos em x = -16 e x = +15,65.
+export const BAY_Z = [-18.35, -13.35, -8.35, -3.35, 1.65, 6.65];
+export const BAY_BACK_X = { left: -15.8, right: 15.5 };
+export const BAY_INNER_X = { left: -7.2, right: 7.2 };
+export const CROSSWALK_CLEARANCE = 6; // m: nenhum carro a menos disso de faixa de pedestre/retenção
+// Amostras do trecho de faixa de pedestre e retenção de cada chegada a cruzamento (grau >= 3), como em roads.js.
+export function crosswalkPoints() {
+  const pts = [];
+  for (const road of ROADS) for (const [node, order] of [[road.from, road.samples], [road.to, road.samples.slice().reverse()]]) {
+    if (NODE_DEGREE[node] < 3) continue;
+    const start = order.findIndex(f => Math.hypot(f.x - NODES[node].x, f.z - NODES[node].z) > NODE_RADIUS[node] + 1.2);
+    if (start < 0) continue;
+    for (let i = start; i < order.length && Math.hypot(order[i].x - order[start].x, order[i].z - order[start].z) < 5; i++) pts.push({ x: order[i].x, z: order[i].z });
+  }
+  return pts;
+}
+// Trecho reto em torno de um índice de amostra: variação de rumo pequena numa janela de +-w amostras.
+function straightAt(road, i, w = 6) {
+  const hd = k => { const a = road.samples[k], b = road.samples[k + 1]; return Math.atan2(b.x - a.x, b.z - a.z); };
+  const ref = hd(i);
+  for (let k = i - w; k <= i + w; k++) { const d = Math.abs(Math.atan2(Math.sin(hd(k) - ref), Math.cos(hd(k) - ref))); if (d > 0.05) return false; }
+  return true;
+}
+
+const CROSSWALKS = crosswalkPoints();
+export const CAR_GATE_CLEARANCE = 8, CAR_DISCOVERY_CLEARANCE = 8, CAR_ARCADE_CLEARANCE = 6;
+function carOk(cand) {
+  if (OBSTACLES.some(o => dist(o, cand) < o.radius + 3.6)) return false;
+  if (DISCOVERIES.some(d => dist(d, cand) < CAR_DISCOVERY_CLEARANCE)) return false;
+  if (MEMBER_LOCATIONS.some(m => dist(m, cand) < 12)) return false;
+  if (ERA_GATES.some(g => dist(g, cand) < CAR_GATE_CLEARANCE)) return false;
+  if (dist(ARCADE_SPOT, cand) < CAR_ARCADE_CLEARANCE) return false;
+  if (TREE_LOCATIONS.some(t => dist(t, cand) < 6)) return false;
+  if ([cand, ...carFootprintCorners(cand)].some(c => CROSSWALKS.some(q => dist(q, c) < CROSSWALK_CLEARANCE))) return false;
+  if (NODES.some((n, id) => NODE_DEGREE[id] >= 3 && dist(n, cand) < NODE_RADIUS[id] + 14)) return false;
+  return true;
+}
+
+// 6 a 8 carros na escala do Geep: 6 dentro das vagas pintadas do estacionamento do studio-ground e até 2 em recuos retos e longos de avenida, longe de faixas, esquinas, curvas e portais.
+function planParkedCars(placed, counts, pick) {
+  const clear = cand => {
+    for (let i = placed.length - 1; i >= 0; i--) {
+      const p = placed[i];
+      if (p.kind === 'tree') { if (dist(p, cand) < 5) return false; continue; }
+      if (p.kind === 'car' || p.kind === 'bench') { if (dist(p, cand) < 4.9) return false; continue; }
+      if (dist(p, cand) < 4.4 + (PROP_RADIUS[p.kind] ?? 1)) { counts[p.kind]--; placed.splice(i, 1); }
+    }
+    return true;
+  };
+  const order = [0, 1].flatMap(par => ['right', 'left'].flatMap(col => BAY_Z.map((_, idx) => [col, idx]).filter(([, idx]) => idx % 2 === par)));
+  let bayCars = 0;
+  for (const [col, idx] of order) {
+    if (bayCars >= 6) break;
+    const type = (bayCars % 3 === 1) ? 'van' : 'sedan', variant = type === 'van' ? 1 : 0, scale = CAR_SCALE[type];
+    const hl = (variant ? CAR_HALF_LENGTH : 2.20) * scale;
+    const left = col === 'left';
+    const x = left ? BAY_BACK_X.left + 0.3 + hl : BAY_BACK_X.right - 0.3 - hl;
+    const cand = { x: +x.toFixed(2), z: BAY_Z[idx], y: -0.12, kind: 'car', rot: +(left ? -Math.PI / 2 : Math.PI / 2).toFixed(3), scale, variant, bay: true };
+    if (!carOk(cand) || !clear(cand)) continue;
+    cand.colorIdx = Math.floor(pick() * 5); counts.car++; bayCars++; placed.push(cand);
+  }
+  for (const road of ROADS) {
+    if (road.kind === 'lane' || counts.car >= 8) continue;
+    const half = road.width / 2;
+    for (let i = 10; i < road.samples.length - 10 && counts.car < 8; i++) {
+      if (!straightAt(road, i)) continue;
       const prev = road.samples[i - 1], curr = road.samples[i], next = road.samples[i + 1];
       const dx = next.x - prev.x, dz = next.z - prev.z, len = Math.hypot(dx, dz) || 1;
       const tx = dx / len, tz = dz / len, nx = dz / len, nz = -dx / len;
-      for (const side of (i % 2 === 0 ? [1, -1] : [-1, 1])) {
-        if (counts.car >= 32) return;
-        const p = { x: curr.x + nx * side * offset, z: curr.z + nz * side * offset };
-        const heading = Math.atan2(tx * side, tz * side);
-        const variant = counts.car % 3 === 0 ? 1 : 0; // 0 = car-01-sedan, 1 = car-02-van
-        const cand = {
-          x: +p.x.toFixed(2),
-          z: +p.z.toFixed(2),
-          y: -0.085,
-          kind: 'car',
-          rot: +heading.toFixed(3),
-          scale: 1.0,
-          variant,
-        };
-        if (NODES.some((n, id) => dist(n, cand) < NODE_RADIUS[id] + 8.0)) continue;
-        if (OBSTACLES.some(o => dist(o, cand) < o.radius + PROP_RADIUS.car + 0.3)) continue;
-        if (DISCOVERIES.some(d => dist(d, cand) < 10)) continue;
-        if (MEMBER_LOCATIONS.some(m => dist(m, cand) < 10)) continue;
-        if (ERA_GATES.some(g => dist(g, cand) < 10.2)) continue;
-        if (dist(ARCADE_SPOT, cand) < 6) continue;
-        if (placed.some(other => dist(other, cand) < (other.kind === 'car' ? 6.8 : 2.6))) continue;
-        const corners = [cand, ...carFootprintCorners(cand)];
-        const allOnAsphalt = corners.every(c => {
-          const g = roadGap(c);
-          const dThis = roadDist(road, c.x, c.z) - half;
-          return g <= -0.15 && g >= -2.65 && Math.abs(g - dThis) < 0.06 && ROADS.every(r => r === road || roadDist(r, c.x, c.z) >= r.width / 2 + 1.8);
-        });
-        if (!allOnAsphalt) continue;
-        cand.colorIdx = Math.floor(pick() * 5);
-        counts.car++;
-        placed.push(cand);
-      }
+      const side = i % 2 ? 1 : -1, type = counts.car % 2 ? 'van' : 'sedan', scale = CAR_SCALE[type], variant = type === 'van' ? 1 : 0;
+      const offset = half - CAR_HALF_WIDTH * scale - 0.3;
+      const cand = { x: +(curr.x + nx * side * offset).toFixed(2), z: +(curr.z + nz * side * offset).toFixed(2), y: -0.085, kind: 'car', rot: +Math.atan2(tx * side, tz * side).toFixed(3), scale, variant };
+      const corners = [cand, ...carFootprintCorners(cand)];
+      if (!corners.every(c => { const g = roadGap(c); return g <= -0.15 && g >= -3.6 && ROADS.every(r => r === road || roadDist(r, c.x, c.z) >= r.width / 2 + 2); })) continue;
+      if (placed.some(o => o.kind === 'car' && dist(o, cand) < 45)) continue;
+      if (inParkingOrPaintedLines(cand) || NODES.some((n, id) => dist(n, cand) < NODE_RADIUS[id] + 14)) continue;
+      if (!carOk(cand) || !clear(cand)) continue;
+      cand.colorIdx = Math.floor(pick() * 5); counts.car++; placed.push(cand);
     }
   }
 }
@@ -245,9 +303,9 @@ export function planStreetProps(seed = 2026) {
       accept({ x: x + (pick() - .5) * 2.4, z: z + (pick() - .5) * 2.4 });
     }
   }
-  // 3) Bancos curados e alinhados nas praças/palcos (8 a 12 unidades em escala real)
+  // 3) Bancos curados: virados para o palco ou em calçada limpa (6 a 10 unidades)
   planCuratedBenches(placed, counts);
-  // 4) Carros estacionados nas laterais das avenidas (25 a 36 unidades a >= 1.2 m da pista)
+  // 4) Carros estacionados (6 a 8) em vagas pintadas e recuos retos
   planParkedCars(placed, counts, carPick);
   // 5) Barreiras viárias nas laterais de calçada
   planRoadBarriers(placed, counts);
