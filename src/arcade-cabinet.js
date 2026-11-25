@@ -2,11 +2,16 @@
 // Dimensões em metros: visível da câmera de 3ª pessoa (~50 m) graças ao corpo maior, ao feixe de luz e ao anel no chão.
 // Sem PointLight: cada luz extra encarece o shader de todos os materiais; o brilho vem de materiais emissivos.
 import * as THREE from './vendor/three.module.min.js';
+import { GLTFLoader } from './vendor/GLTFLoader.js';
 import { ARCADE_SPOT, ARCADE_PAD_RADIUS } from './arcade.js';
 import { NON_DISCOVERY_PROP_SCALE } from './discovery-scale.js';
 import { nearestRoad } from './world-data.js';
+import { loadModelSafely, repairMaterials } from './model-safety.js';
+
+export const ARCADE_GLB_URL = './assets/models/scenery/arcade-01-kong.glb';
 
 function canvasTexture(width, height, draw) {
+  if (typeof document === 'undefined') return new THREE.DataTexture(new Uint8Array(4), 1, 1);
   const canvas = document.createElement('canvas'); canvas.width = width; canvas.height = height;
   draw(canvas.getContext('2d'), width, height);
   const texture = new THREE.CanvasTexture(canvas); texture.colorSpace = THREE.SRGBColorSpace; return texture;
@@ -42,13 +47,15 @@ export function installArcadeCabinet(scene) {
   group.rotation.y = Math.atan2(road.x - ARCADE_SPOT.x, road.z - ARCADE_SPOT.z);
   const body = new THREE.MeshStandardMaterial({ color: '#1b2a35', roughness: .7 });
   const trim = new THREE.MeshStandardMaterial({ color: '#4d7699', roughness: .5 });
+  const fallbackMeshes = [];
   const add = (geometry, material, position, rotation = [0, 0, 0]) => {
-    const mesh = new THREE.Mesh(geometry, material); mesh.position.set(...position); mesh.rotation.set(...rotation); group.add(mesh); return mesh;
+    const mesh = new THREE.Mesh(geometry, material); mesh.position.set(...position); mesh.rotation.set(...rotation); group.add(mesh); fallbackMeshes.push(mesh); return mesh;
   };
+  const screenTex = screenTexture();
   add(new THREE.BoxGeometry(1.8, 3.6, 1.3), body, [0, 1.8, 0]);                                  // corpo
   add(new THREE.BoxGeometry(2.0, .14, 1.5), trim, [0, 3.67, 0]);                                  // topo
   add(new THREE.BoxGeometry(1.8, .72, .2), new THREE.MeshBasicMaterial({ map: marqueeTexture(), toneMapped: false }), [0, 4.1, .66]); // marquise
-  add(new THREE.BoxGeometry(1.4, 1.05, .06), new THREE.MeshBasicMaterial({ map: screenTexture(), toneMapped: false }), [0, 2.65, .68], [-.25, 0, 0]); // tela
+  add(new THREE.BoxGeometry(1.4, 1.05, .06), new THREE.MeshBasicMaterial({ map: screenTex, toneMapped: false }), [0, 2.65, .68], [-.25, 0, 0]); // tela
   add(new THREE.BoxGeometry(1.6, .4, .62), trim, [0, 1.9, .82], [.42, 0, 0]);                     // painel de controle
   add(new THREE.BoxGeometry(2.0, .2, 1.5), body, [0, .1, 0]);                                    // base
   // Feixe de luz e anel no chão: destaque visível de longe, sem sombra e sem custo de luz.
@@ -61,5 +68,38 @@ export function installArcadeCabinet(scene) {
   ring.rotation.x = Math.PI / 2; ring.position.set(ARCADE_SPOT.x, .01, ARCADE_SPOT.z); ring.name = 'arcade-ring'; scene.add(ring);
   group.traverse(node => { if (node.isMesh && node !== beam) { node.castShadow = true; node.receiveShadow = true; } });
   scene.add(group);
+
+  let glbLoaded = false;
+  group.userData.loadArcadeModel = (loader = new GLTFLoader()) => {
+    if (glbLoaded) return Promise.resolve(true);
+    return loadModelSafely(loader, ARCADE_GLB_URL).then(gltf => {
+      repairMaterials(gltf.scene);
+      gltf.scene.traverse(obj => {
+        if (!obj.isMesh) return;
+        obj.castShadow = true; obj.receiveShadow = true;
+        if (obj.name === 'screen' || /Screen_ReplaceWithGameTexture/i.test(obj.material?.name || '')) {
+          obj.material = new THREE.MeshBasicMaterial({ map: screenTex, toneMapped: false });
+        } else if (obj.geometry) {
+          obj.material = new THREE.MeshStandardMaterial({
+            color: '#f2c13a', // acabamento amarelo/preto Kong Arcade sobre as cores de vértice
+            vertexColors: Boolean(obj.geometry.attributes.color),
+            roughness: .68,
+            metalness: .08,
+            emissive: '#000000',
+            emissiveIntensity: 0,
+          });
+        }
+      });
+      for (const m of fallbackMeshes) { group.remove(m); m.geometry?.dispose?.(); }
+      fallbackMeshes.length = 0;
+      group.add(gltf.scene);
+      group.userData.glbLoaded = true;
+      glbLoaded = true;
+      return true;
+    }).catch(err => {
+      console.warn('Gabinete Kong Arcade GLB indisponível; mantendo procedural:', err.message);
+      return false;
+    });
+  };
   return group;
 }

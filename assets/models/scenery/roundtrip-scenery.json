@@ -1,0 +1,122 @@
+[
+  {
+    "file": "tree-01-broadleaf.glb",
+    "triangles": 1070,
+    "degenerate_triangles": 0,
+    "pass_roundtrip": true
+  },
+  {
+    "file": "tree-02-windswept.glb",
+    "triangles": 1070,
+    "degenerate_triangles": 0,
+    "pass_roundtrip": true
+  },
+  {
+    "file": "tree-03-sage.glb",
+    "triangles": 1070,
+    "degenerate_triangles": 0,
+    "pass_roundtrip": true
+  },
+  {
+    "file": "bush-01-mound.glb",
+    "triangles": 240,
+    "degenerate_triangles": 0,
+    "pass_roundtrip": true
+  },
+  {
+    "file": "bush-02-spreading.glb",
+    "triangles": 240,
+    "degenerate_triangles": 0,
+    "pass_roundtrip": true
+  },
+  {
+    "file": "rock-01-slate.glb",
+    "triangles": 80,
+    "degenerate_triangles": 0,
+    "pass_roundtrip": true
+  },
+  {
+    "file": "rock-02-ochre.glb",
+    "triangles": 80,
+    "degenerate_triangles": 0,
+    "pass_roundtrip": true
+  },
+  {
+    "file": "rock-03-split.glb",
+    "triangles": 80,
+    "degenerate_triangles": 0,
+    "pass_roundtrip": true
+  },
+  {
+    "file": "lamp-01-crooked.glb",
+    "triangles": 208,
+    "degenerate_triangles": 0,
+    "pass_roundtrip": true
+  },
+  {
+    "file": "bench-01-slatted.glb",
+    "triangles": 436,
+    "degenerate_triangles": 0,
+    "pass_roundtrip": true
+  },
+  {
+    "file": "pigeon-01-animated.glb",
+    "triangles": 1132,
+    "degenerate_triangles": 0,
+    "pass_roundtrip": true
+  },
+  {
+    "file": "instrument-01-bass.glb",
+    "triangles": 1076,
+    "degenerate_triangles": 0,
+    "pass_roundtrip": true
+  },
+  {
+    "file": "instrument-02-drums.glb",
+    "triangles": 3408,
+    "degenerate_triangles": 0,
+    "pass_roundtrip": true
+  },
+  {
+    "file": "instrument-03-keyboard.glb",
+    "triangles": 2752,
+    "degenerate_triangles": 0,
+    "pass_roundtrip": true
+  },
+  {
+    "file": "speaker-01-stack.glb",
+    "triangles": 996,
+    "degenerate_triangles": 0,
+    "pass_roundtrip": true
+  },
+  {
+    "file": "speaker-02-tower.glb",
+    "triangles": 1696,
+    "degenerate_triangles": 0,
+    "pass_roundtrip": true
+  },
+  {
+    "file": "arcade-01-kong.glb",
+    "triangles": 1587,
+    "degenerate_triangles": 0,
+    "pass_roundtrip": true
+  },
+  {
+    "file": "car-01-sedan.glb",
+    "triangles": 1560,
+    "degenerate_triangles": 0,
+    "pass_roundtrip": true
+  },
+  {
+    "file": "car-02-van.glb",
+    "triangles": 1776,
+    "degenerate_triangles": 0,
+    "pass_roundtrip": true
+  },
+  {
+    "file": "barrier-01-road.glb",
+    "triangles": 296,
+    "degenerate_triangles": 0,
+    "pass_roundtrip": true
+  }
+]

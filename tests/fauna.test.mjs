@@ -2,8 +2,9 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import * as THREE from '../src/vendor/three.module.min.js';
+import { GLTFLoader } from '../src/vendor/GLTFLoader.js';
 import { CITY_LOTS, roadGap } from '../src/world-data.js';
-import { createFaunaFlock, stepFaunaFlock, installFauna, FAUNA_TUNING } from '../src/fauna.js';
+import { createFaunaFlock, stepFaunaFlock, installFauna, FAUNA_TUNING, PIGEON_GLB_URL } from '../src/fauna.js';
 
 test('fauna: aves ficam em calçadas, praças e telhados baixos, nunca sobre o asfalto', () => {
   const flock = createFaunaFlock();
@@ -101,4 +102,21 @@ test('pombo parado para de bicar e vira a cabeça para o carro que se aproxima (
   assert.equal(bird.state, 'idle', 'ainda não voa');
   assert.ok(Math.abs(bird.yaw - Math.atan2(-actor.x, 0)) < .25 || bird.yaw > 1 || bird.yaw < -1, `cabeça virada para o carro (yaw ${bird.yaw.toFixed(2)})`);
   assert.ok(minPitch > -.25, `bicada reduzida em alerta (pitch mín. ${minPitch.toFixed(2)}; sem alerta chega a -0.58)`);
+});
+
+test('loadPigeonModel substitui a geometria de corpos e asas pelo pigeon-01-animated.glb mantendo 2 InstancedMesh e fallback', async () => {
+  assert.equal(PIGEON_GLB_URL, './assets/models/scenery/pigeon-01-animated.glb');
+  const scene = new THREE.Scene();
+  const fauna = installFauna(scene, 16);
+  const diskLoader = {
+    async loadAsync(url) {
+      const bytes = await readFile(new URL(`../${url.replace('./', '')}`, import.meta.url));
+      const buf = bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength);
+      return new Promise((res, rej) => new GLTFLoader().parse(buf, '', res, rej));
+    },
+  };
+  const ok = await fauna.loadPigeonModel(diskLoader);
+  assert.equal(ok, true);
+  assert.equal(fauna.bodies.userData.glbLoaded, true);
+  assert.equal(scene.children.filter(c => c.isInstancedMesh).length, 2);
 });

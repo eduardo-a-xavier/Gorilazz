@@ -1,6 +1,10 @@
 import * as THREE from './vendor/three.module.min.js';
+import { GLTFLoader } from './vendor/GLTFLoader.js';
 import { mergeGeometries } from './vendor/BufferGeometryUtils.js';
 import { CITY_LOTS, REGIONS, ROADS, distance, roadGap } from './world-data.js';
+import { loadModelSafely, repairMaterials } from './model-safety.js';
+
+export const PIGEON_GLB_URL = './assets/models/scenery/pigeon-01-animated.glb';
 
 // Fauna urbana procedural (pombos e passarinhos) com InstancedMesh (2 draw calls no total:
 // corpos e asas) e raio de ativação barato. Ficam em calçadas, praças e beirais de telhados
@@ -292,10 +296,48 @@ export function installFauna(scene, count = FAUNA_TUNING.maxCount) {
   if (wings.instanceColor) wings.instanceColor.needsUpdate = true;
   scene.add(bodies, wings);
 
+  let pigeonLoaded = false;
+  function loadPigeonModel(loader = new GLTFLoader()) {
+    if (pigeonLoaded) return Promise.resolve(true);
+    return loadModelSafely(loader, PIGEON_GLB_URL).then(gltf => {
+      repairMaterials(gltf.scene);
+      gltf.scene.updateMatrixWorld(true);
+      const bodyParts = [], wingParts = [];
+      gltf.scene.traverse(obj => {
+        if (!obj.isMesh || !obj.geometry) return;
+        const g = (obj.geometry.index ? obj.geometry.toNonIndexed() : obj.geometry.clone()).applyMatrix4(obj.matrixWorld);
+        // O GLB do pombo aponta para +Z; giramos 180° em Y para alinhar com -Z de syncInstance
+        g.rotateY(Math.PI);
+        if (/^wing_/i.test(obj.name)) {
+          g.translate(0, -.22, 0);
+          wingParts.push(g);
+        } else {
+          bodyParts.push(g);
+        }
+      });
+      if (!bodyParts.length || !wingParts.length) throw new Error('Malhas do pombo incompletas');
+      const newBodyGeo = mergeGeometries(bodyParts);
+      const newWingGeo = mergeGeometries(wingParts);
+      bodies.geometry.dispose();
+      wings.geometry.dispose();
+      bodies.geometry = newBodyGeo;
+      wings.geometry = newWingGeo;
+      if (newBodyGeo.attributes.color) { bodyMat.vertexColors = true; bodyMat.needsUpdate = true; }
+      if (newWingGeo.attributes.color) { wingMat.vertexColors = true; wingMat.needsUpdate = true; }
+      bodies.userData.glbLoaded = true;
+      pigeonLoaded = true;
+      return true;
+    }).catch(err => {
+      console.warn('Pombo GLB indisponível; mantendo procedural:', err.message);
+      return false;
+    });
+  }
+
   return {
     flock,
     bodies,
     wings,
+    loadPigeonModel,
     update(vehicle, cameraPosition, dt, t, reduced) {
       const stats = stepFaunaFlock(flock, vehicle, dt, t, reduced, cameraPosition);
       if (stats.activeCount > 0) {

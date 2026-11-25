@@ -236,7 +236,7 @@ let engine = null, engineOn = true;
 try { engineOn = storage?.getItem('gorilazz.engine.v1') !== 'off'; } catch { /* valor padrão */ }
 function startEngineAfterGesture(event) {
   if (!event.isTrusted || !entered || engine) return;
-  try { audioCtx ??= new (window.AudioContext || window.webkitAudioContext)(); audioCtx.resume(); engine = createEngineSound(audioCtx); } catch { /* navegador sem Web Audio */ }
+  try { audioCtx ??= new (window.AudioContext || window.webkitAudioContext)(); audioCtx.resume(); engine = createEngineSound(audioCtx, { plazas: REGIONS, stages: MEMBER_LOCATIONS }); } catch { /* navegador sem Web Audio */ }
 }
 document.addEventListener('click', startEngineAfterGesture);
 document.addEventListener('keydown', startEngineAfterGesture);
@@ -805,7 +805,7 @@ function updateFrame(time) {
   worldVisible = refreshWorldVisibility(); // a cada quadro: o observer não acompanha mudanças de tela cheia e scroll
   const paused = modalOpen() || document.hidden || !worldVisible;
   if (paused) world?.setSkyLook(false);
-  engine?.update(vehicle.speed, engineOn && entered && !paused && document.documentElement.classList.contains('mode-3d') && !(guided && guided.paused));
+  engine?.update(vehicle.speed, engineOn && entered && !paused && document.documentElement.classList.contains('mode-3d') && !(guided && guided.paused), { x: vehicle.x, z: vehicle.z, radioPlaying: Boolean(localRadio?.isPlaying?.()) });
   if (entered && !paused) updateMapCar(delta);
   if (entered && !paused) {
     accumulator = Math.min(accumulator + delta, .1);

@@ -478,9 +478,14 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
     const texture = new THREE.CanvasTexture(canvas); texture.colorSpace = THREE.SRGBColorSpace; texture.anisotropy = 8;
     return new THREE.MeshStandardMaterial({ map: texture, roughness: .95 });
   })();
+  const stageSpeakers = [];
   function memberStage(index, at) {
     const set = MEMBER_SET[index], stage = new THREE.Group(); stage.position.set(at.x, 0, at.z); stage.rotation.y = at.facing;
     stage.scale.setScalar(NON_DISCOVERY_PROP_SCALE); city.add(stage);
+    const spkGroup = new THREE.Group(); spkGroup.position.set(at.x, 0, at.z); spkGroup.rotation.y = at.facing;
+    spkGroup.scale.setScalar(NON_DISCOVERY_PROP_SCALE); scene.add(spkGroup);
+    const spkFallback = [];
+    stageSpeakers.push({ group: spkGroup, fallback: spkFallback });
     const canvas = document.createElement('canvas'); canvas.width = 1024; canvas.height = 512; const context = canvas.getContext('2d');
     const texture = new THREE.CanvasTexture(canvas); texture.colorSpace = THREE.SRGBColorSpace; texture.anisotropy = 8;
     function paint(image) {
@@ -530,11 +535,11 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
     // Tablado de paletes: tampo de madeira e saia escura com frestas.
     const deck = box(stage, [8, .26, 5.6], [0, -.13, -.4], '#8b6a45'); deck.material = surfaces.get('wood', 4, 3); deck.castShadow = false;
     for (let i = 0; i < 7; i++) box(stage, [.9, .24, .08], [-3.3 + i * 1.1, -.14, 2.42], '#2a2420').castShadow = false;
-    // Caixas de som empilhadas nos dois lados.
+    // Caixas de som empilhadas nos dois lados (substituídas de forma lazy por speaker-01-stack.glb e speaker-02-tower.glb).
     for (const side of [-1, 1]) for (const [y, size] of [[.75, 1.5], [2.05, 1.05]]) {
-      box(stage, [size, size, 1], [side * 3.45, y, -2.6], '#17191b');
-      const cone = cylinder(stage, size * .33, size * .33, .08, [side * 3.45, y, -2.07], '#2e3236', 20); cone.rotation.x = Math.PI / 2; cone.castShadow = false;
-      const cap = cylinder(stage, size * .12, size * .12, .1, [side * 3.45, y, -2.05], set.accent, 12); cap.rotation.x = Math.PI / 2; cap.castShadow = false;
+      spkFallback.push(box(spkGroup, [size, size, 1], [side * 3.45, y, -2.6], '#17191b'));
+      const cone = cylinder(spkGroup, size * .33, size * .33, .08, [side * 3.45, y, -2.07], '#2e3236', 20); cone.rotation.x = Math.PI / 2; cone.castShadow = false; spkFallback.push(cone);
+      const cap = cylinder(spkGroup, size * .12, size * .12, .1, [side * 3.45, y, -2.05], set.accent, 12); cap.rotation.x = Math.PI / 2; cap.castShadow = false; spkFallback.push(cap);
     }
     // Engradados e um cabo no chão.
     box(stage, [.8, .6, .8], [-2.5, .3, 1.5], set.accent); box(stage, [.8, .6, .8], [-2.7, .9, 1.45], '#2a3036').rotation.y = .3;
@@ -596,7 +601,35 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
   installEasterEggs(scene);
   const landmarks = installLandmarks(scene, material, bake);
   const fauna = installFauna(scene);
-  installArcadeCabinet(scene);
+  const arcadeCabinet = installArcadeCabinet(scene);
+  let stageSpeakersLoaded = false;
+  function loadStageSpeakers(loader = new GLTFLoader()) {
+    if (stageSpeakersLoaded) return;
+    stageSpeakersLoaded = true;
+    Promise.all([
+      loadModelSafely(loader, './assets/models/scenery/speaker-01-stack.glb'),
+      loadModelSafely(loader, './assets/models/scenery/speaker-02-tower.glb'),
+    ]).then(([stackGltf, towerGltf]) => {
+      for (const g of [stackGltf, towerGltf]) {
+        repairMaterials(g.scene);
+        g.scene.traverse(o => {
+          if (o.isMesh && o.geometry) {
+            o.castShadow = true; o.receiveShadow = true;
+            o.material = new THREE.MeshStandardMaterial({ color: '#b5b8b1', vertexColors: Boolean(o.geometry.attributes.color), roughness: .76, metalness: .08 });
+          }
+        });
+      }
+      for (const entry of stageSpeakers) {
+        for (const m of entry.fallback) { entry.group.remove(m); m.geometry?.dispose?.(); }
+        entry.fallback.length = 0;
+        const leftTower = towerGltf.scene.clone(true); leftTower.position.set(-3.45, 0, -2.5);
+        const rightTower = towerGltf.scene.clone(true); rightTower.position.set(3.45, 0, -2.5);
+        const sideStack = stackGltf.scene.clone(true); sideStack.position.set(-2.35, 0, -2.35);
+        entry.group.add(leftTower, rightTower, sideStack);
+        entry.group.userData.speakersGlbLoaded = true;
+      }
+    }).catch(err => console.warn('Caixas de som GLB indisponíveis; mantendo procedurais:', err.message));
+  }
   sign('MURAIS ←|MOINHO →', {x:9.5,z:-40.5,heading:1.2}, '#7fa6ff');
   const artLoader = new THREE.TextureLoader(), artRequested = new Set();
   let haloTex = null;
@@ -1005,6 +1038,7 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
       bake(visual);
       // Braços em pose de tocar e instrumento na escala do corpo (band-pose.js); as baquetas ficam soltas para acompanhar as mãos.
       const rig = rigBand(visual, index, material); bake(rig.kit, [...rig.sticks, ...(rig.guitar ? [rig.guitar] : [])]);
+      loadMemberInstrument(rig, index, bandLoader);
       if (index === 2) loadNoodleExtras(rig, bandLoader);
       visual.traverse(object => { object.userData.member = index; });
       const actor = people[index]; actor.rig = rig;
@@ -1019,7 +1053,28 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
     bandStatus.textContent = 'PERSONAGENS GEOMÉTRICOS / MODO ALTERNATIVO'; bandStatus.dataset.loaded = 'false';
     }
   }
-  // Noodle: guitarra e alça em GLB (v2) e props de palco (amplificador e pedaleira). Se a guitarra v2 não carregar, a procedural segue visível.
+  // Instrumentos GLB em espaço local normalizado dos personagens (2-D: teclado instrument-03-keyboard.glb, Russel: bateria instrument-02-drums.glb com baquetas dinâmicas, Noodle: guitarra v3).
+  function loadMemberInstrument(rig, index, loader) {
+    const urls = {
+      0: './assets/models/scenery/instrument-03-keyboard.glb',
+      3: './assets/models/scenery/instrument-02-drums.glb',
+    };
+    const url = urls[index];
+    if (!url) return;
+    loadModelSafely(loader, url).then(gltf => {
+      repairMaterials(gltf.scene);
+      gltf.scene.traverse(obj => {
+        if (obj.isMesh && obj.geometry) {
+          obj.castShadow = true; obj.receiveShadow = true;
+          obj.material = new THREE.MeshStandardMaterial({ color: '#d0d4cc', vertexColors: Boolean(obj.geometry.attributes.color), roughness: .72, metalness: .10 });
+        }
+      });
+      if (rig.guitar) rig.guitar.visible = false;
+      rig.kit.add(gltf.scene);
+      rig.kit.userData.instrumentGlbLoaded = true;
+    }).catch(err => console.warn(`Instrumento GLB do integrante ${index} indisponível; mantendo procedural:`, err.message));
+  }
+  // Noodle: guitarra e alça em GLB (v2/v3) e props de palco (amplificador e pedaleira). Se a guitarra v2 não carregar, a procedural segue visível.
   function loadNoodleExtras(rig, loader) {
     const prepare = gltf => { gltf.scene.traverse(object => { if (object.isMesh) { object.castShadow = true; object.receiveShadow = true; } }); repairMaterials(gltf.scene); };
     loadModelSafely(loader, './assets/models/noodle-guitar-v3.glb').catch(() => loadModelSafely(loader, './assets/models/noodle-guitar-v2.glb')).then(gltf => {
@@ -1198,10 +1253,18 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
     frameSpot({ x, z, dirX = 1, dirZ = 0, distance = 4, height = 2, target = 2 }) { poseView = { eye: new THREE.Vector3(x + dirX * distance, height, z + dirZ * distance), target: new THREE.Vector3(x, target, z) }; },
     // Mãos de um integrante em coordenadas de mundo (depuração de pose).
     handsOf(index) { const rig = people[index]?.rig; if (!rig) return null; rig.visual.updateMatrixWorld(true); return rig.hands().map(hand => rig.visual.localToWorld(hand)); },
-    debug: { renderer, scene, camera, vehicleMotion, cabin, streetProps, get steeringPivot() { return steeringPivot; }, get pilotRig() { return pilotRig; }, setSize(width, height) { renderer.setSize(width, height, false); camera.aspect = width / height; camera.updateProjectionMatrix(); } },
+    debug: { renderer, scene, camera, vehicleMotion, cabin, streetProps, fauna, arcadeCabinet, stageSpeakers, get steeringPivot() { return steeringPivot; }, get pilotRig() { return pilotRig; }, setSize(width, height) { renderer.setSize(width, height, false); camera.aspect = width / height; camera.updateProjectionMatrix(); } },
     setOverview(value) { overview = value; landmarkView = false; firstPerson = false; travelCamera.resync(); },
     // Abertura: câmera mais baixa e deslocada, para o Geep e a banda ficarem no terço direito e o título respirar.
-    setIntro(value) { intro = value; if (!value) streetProps.loadSceneryModels?.(); },
+    setIntro(value) {
+      intro = value;
+      if (!value) {
+        streetProps.loadSceneryModels?.();
+        fauna.loadPigeonModel?.();
+        arcadeCabinet.userData?.loadArcadeModel?.();
+        loadStageSpeakers();
+      }
+    },
     captureView() { return { firstPerson, overview, landmarkView, yaw, pitch, smoothYaw, smoothPitch, dragAngle, dragElevation, zoom, skyStopped: skyLook.stopped, skyAmount: skyLook.amount }; },
     restoreView(view) {
       if (!view) return;

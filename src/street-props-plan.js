@@ -6,9 +6,9 @@ import { ARCADE_SPOT } from './arcade.js';
 export const PROP_CLEARANCE = 0.9; // m: folga mínima entre a borda do asfalto e a base do prop
 export const CAR_CLEARANCE = 1.2;  // m: folga mínima dos carros estacionados à faixa de rodagem
 // Raio da base de cada tipo (m), usado na folga e no espaçamento.
-export const PROP_RADIUS = { tree: 1.4, bench: 0.9, planter: 0.8, lamp: 0.3, rock: 0.9, car: 1.35 };
+export const PROP_RADIUS = { tree: 1.4, bench: 0.9, planter: 0.8, lamp: 0.3, rock: 0.9, car: 1.35, barrier: 0.65 };
 // Teto por tipo: o cenário ganha densidade sem virar floresta nem atrapalhar a leitura da rua.
-export const PROP_LIMITS = { tree: 70, bench: 12, planter: 60, lamp: 110, rock: 60, car: 36 };
+export const PROP_LIMITS = { tree: 70, bench: 12, planter: 60, lamp: 110, rock: 60, car: 36, barrier: 12 };
 const STEP = 5;              // m entre candidatos da grade
 const MIN_SPACING = 6;       // m entre dois props quaisquer
 const LAMP_SPACING = 16;     // m entre postes (poucos e espaçados, como numa avenida)
@@ -53,8 +53,15 @@ function kindFor(point, pick) {
   return 'tree';
 }
 
-// Bancos curados (8 a 12): convertem até 8 props laterais dos anéis de palco e praças em bancos alinhados para o palco ou rua.
+// Bancos curados (8 a 12): limpa o tablado dos palcos (< 6.2 m) e converte até 8 props laterais dos anéis e praças em bancos alinhados.
 function planCuratedBenches(placed, counts) {
+  for (let i = placed.length - 1; i >= 0; i--) {
+    const item = placed[i];
+    if ((item.kind === 'rock' || item.kind === 'planter') && MEMBER_LOCATIONS.some(stage => dist(item, stage) < 6.2)) {
+      counts[item.kind]--;
+      placed.splice(i, 1);
+    }
+  }
   for (const stage of MEMBER_LOCATIONS) {
     let stageBenches = 0;
     for (const item of placed) {
@@ -122,11 +129,26 @@ function planParkedCars(placed, counts, pick) {
   }
 }
 
+// Barreiras viárias (barrier-01-road.glb) posicionadas nas calçadas externas perto de áreas de obra e bordas, fora da pista (folga >= 0.90m).
+function planRoadBarriers(placed, counts) {
+  for (let z = -165; z <= -25 && counts.barrier < 6; z += 18) {
+    for (let x = -95; x <= 95 && counts.barrier < 6; x += 18) {
+      const cand = { x, z };
+      const gap = roadGap(cand);
+      if (gap < 2.2 || gap > 5.0 || !fits(cand, 'barrier', placed)) continue;
+      const road = nearestRoad(cand);
+      const rot = Math.atan2(road.x - cand.x, road.z - cand.z);
+      counts.barrier++;
+      placed.push({ x: +cand.x.toFixed(2), z: +cand.z.toFixed(2), kind: 'barrier', rot: +rot.toFixed(3), scale: 1.0, variant: 0 });
+    }
+  }
+}
+
 // Grade com leve variação determinística; cada ponto aceito entra na lista e nos limites por tipo.
 export function planStreetProps(seed = 2026) {
   const pick = rng(seed);
   const carPick = rng(seed ^ 0x5A5A5A5A);
-  const counts = { tree: 0, bench: 0, planter: 0, lamp: 0, rock: 0, car: 0 };
+  const counts = { tree: 0, bench: 0, planter: 0, lamp: 0, rock: 0, car: 0, barrier: 0 };
   const placed = [];
   const accept = point => {
     const gap = roadGap(point);
@@ -153,5 +175,7 @@ export function planStreetProps(seed = 2026) {
   planCuratedBenches(placed, counts);
   // 4) Carros estacionados nas laterais das avenidas (25 a 36 unidades a >= 1.2 m da pista)
   planParkedCars(placed, counts, carPick);
+  // 5) Barreiras viárias nas laterais de calçada
+  planRoadBarriers(placed, counts);
   return placed;
 }

@@ -1,0 +1,92 @@
+[
+  {
+    "axis": [
+      1,
+      0,
+      0
+    ],
+    "minimum_triangle_area": 0.002071067690849304,
+    "pass": true
+  },
+  {
+    "axis": [
+      0,
+      1,
+      0
+    ],
+    "minimum_triangle_area": 0.002071067690849304,
+    "pass": true
+  },
+  {
+    "axis": [
+      0,
+      0,
+      1
+    ],
+    "minimum_triangle_area": 0.002071067690849304,
+    "pass": true
+  },
+  {
+    "axis": [
+      -1,
+      0,
+      0
+    ],
+    "minimum_triangle_area": 0.002071067690849304,
+    "pass": true
+  },
+  {
+    "axis": [
+      0,
+      -1,
+      0
+    ],
+    "minimum_triangle_area": 0.002071067690849304,
+    "pass": true
+  },
+  {
+    "axis": [
+      0,
+      0,
+      -1
+    ],
+    "minimum_triangle_area": 0.002071067690849304,
+    "pass": true
+  },
+  {
+    "axis": [
+      0.3,
+      0.6,
+      0.8
+    ],
+    "minimum_triangle_area": 0.0020710662938654423,
+    "pass": true
+  },
+  {
+    "beveled_box": [
+      0.003,
+      0.043,
+      0.003
+    ],
+    "minimum_triangle_area": 4.489475315949676e-07,
+    "pass": true
+  },
+  {
+    "beveled_box": [
+      0.018,
+      0.012,
+      0.022
+    ],
+    "minimum_triangle_area": 7.18315959602478e-06,
+    "pass": true
+  },
+  {
+    "beveled_box": [
+      0.035,
+      0.014,
+      0.01
+    ],
+    "minimum_triangle_area": 4.988306500308681e-06,
+    "pass": true
+  }
+]

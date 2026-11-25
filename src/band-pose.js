@@ -172,24 +172,26 @@ export function rigBand(visual, index, material) {
     const head = box(strap, [.15 * scale, .075 * scale, .022], body, [neck + .06, .02, .006], { rotation: [0, 0, .12] });
     for (let i = 0; i < (bass ? 4 : 6); i++) disc(head, .011, .03, '#c9c2b4', [-.055 + i * (bass ? .036 : .022), i % 2 ? .045 : -.045, 0], { rotation: [0, 0, 0] });
   } else if (spec.play === 'keys') {
-    // Teclado em cavalete na altura das mãos e microfone diante da boca.
+    // Teclado em cavalete na altura das mãos e microfone diante da boca (dentro de subgrupo para substituição lazy pelo GLB instrument-03-keyboard).
+    const keysGroup = new THREE.Group(); keysGroup.name = 'keys-procedural'; kit.add(keysGroup); guitar = keysGroup;
     const middle = right.hand.clone().add(left.hand).multiplyScalar(.5), y = middle.y - .06, z = middle.z + .03;
-    box(kit, [.98, .055, .3], '#1b1e21', [0, y, z]); box(kit, [.9, .012, .16], '#f1ecdc', [0, y + .032, z + .045]);
-    for (let i = 0; i < 20; i++) if (i % 7 !== 2 && i % 7 !== 6) box(kit, [.022, .014, .09], '#111415', [-.42 + i * .0445, y + .04, z + .012]);
-    box(kit, [.3, .012, .05], '#7fa6ff', [-.28, y + .032, z - .1], { glow: true });
-    for (const turn of [-1, 1]) box(kit, [.035, Math.hypot(y, .5) + .02, .035], '#2a3036', [0, y / 2, z], { rotation: [0, 0, turn * Math.atan2(.5, y)] });
+    box(keysGroup, [.98, .055, .3], '#1b1e21', [0, y, z]); box(keysGroup, [.9, .012, .16], '#f1ecdc', [0, y + .032, z + .045]);
+    for (let i = 0; i < 20; i++) if (i % 7 !== 2 && i % 7 !== 6) box(keysGroup, [.022, .014, .09], '#111415', [-.42 + i * .0445, y + .04, z + .012]);
+    box(keysGroup, [.3, .012, .05], '#7fa6ff', [-.28, y + .032, z - .1], { glow: true });
+    for (const turn of [-1, 1]) box(keysGroup, [.035, Math.hypot(y, .5) + .02, .035], '#2a3036', [0, y / 2, z], { rotation: [0, 0, turn * Math.atan2(.5, y)] });
     const mouth = spec.shoulder[1] + .13;
-    add(kit, new THREE.CylinderGeometry(.008, .008, mouth, 8), '#9a9d8b', [-.3, mouth / 2, z + .12]); disc(kit, .12, .02, '#2a3036', [-.3, .01, z + .12]);
-    box(kit, [.3, .012, .012], '#9a9d8b', [-.16, mouth, z + .1], { rotation: [0, .1, .12] }); add(kit, new THREE.SphereGeometry(.032, 12, 8), '#2a3036', [-.02, mouth + .02, z + .09]);
+    add(keysGroup, new THREE.CylinderGeometry(.008, .008, mouth, 8), '#9a9d8b', [-.3, mouth / 2, z + .12]); disc(keysGroup, .12, .02, '#2a3036', [-.3, .01, z + .12]);
+    box(keysGroup, [.3, .012, .012], '#9a9d8b', [-.16, mouth, z + .1], { rotation: [0, .1, .12] }); add(keysGroup, new THREE.SphereGeometry(.032, 12, 8), '#2a3036', [-.02, mouth + .02, z + .09]);
   } else {
-    // Bateria compacta à frente: bumbo, caixa, surdo, chimbal, prato e baquetas nas mãos.
+    // Bateria compacta à frente: bumbo, caixa, surdo, chimbal, prato (dentro de subgrupo para substituição pelo GLB instrument-02-drums) e baquetas dinâmicas nas mãos.
+    const drumsGroup = new THREE.Group(); drumsGroup.name = 'drums-procedural'; kit.add(drumsGroup); guitar = drumsGroup;
     const middle = right.hand.clone().add(left.hand).multiplyScalar(.5), y = middle.y - .2, z = middle.z + .12;
-    const kick = disc(kit, .3, .3, '#3a68d8', [0, .32, z + .3], { rotation: flat }); disc(kit, .28, .012, '#f1ecdc', [0, .32, z + .456], { rotation: flat });
+    const kick = disc(drumsGroup, .3, .3, '#3a68d8', [0, .32, z + .3], { rotation: flat }); disc(drumsGroup, .28, .012, '#f1ecdc', [0, .32, z + .456], { rotation: flat });
     for (const s of [-1, 1]) box(kick, [.02, .3, .02], '#9a9d8b', [s * .3, 0, -.1], { rotation: [0, 0, s * .5] });
-    disc(kit, .2, .13, '#c9c2b4', [0, y, z]); disc(kit, .19, .012, '#f1ecdc', [0, y + .07, z]); add(kit, new THREE.CylinderGeometry(.012, .012, y, 6), '#9a9d8b', [0, y / 2, z]);
-    disc(kit, .24, .26, '#3a68d8', [.5, y - .1, z + .05]); disc(kit, .23, .012, '#f1ecdc', [.5, y + .035, z + .05]);
-    for (const lift of [0, .028]) disc(kit, .19, .008, '#d9b64a', [-.48, y + .14 + lift, z + .02]); add(kit, new THREE.CylinderGeometry(.01, .01, y + .14, 6), '#9a9d8b', [-.48, (y + .14) / 2, z + .02]);
-    disc(kit, .27, .008, '#d9b64a', [.42, y + .48, z + .34], { rotation: [.2, 0, -.12] }); add(kit, new THREE.CylinderGeometry(.01, .01, y + .48, 6), '#9a9d8b', [.42, (y + .48) / 2, z + .34]);
+    disc(drumsGroup, .2, .13, '#c9c2b4', [0, y, z]); disc(drumsGroup, .19, .012, '#f1ecdc', [0, y + .07, z]); add(drumsGroup, new THREE.CylinderGeometry(.012, .012, y, 6), '#9a9d8b', [0, y / 2, z]);
+    disc(drumsGroup, .24, .26, '#3a68d8', [.5, y - .1, z + .05]); disc(drumsGroup, .23, .012, '#f1ecdc', [.5, y + .035, z + .05]);
+    for (const lift of [0, .028]) disc(drumsGroup, .19, .008, '#d9b64a', [-.48, y + .14 + lift, z + .02]); add(drumsGroup, new THREE.CylinderGeometry(.01, .01, y + .14, 6), '#9a9d8b', [-.48, (y + .14) / 2, z + .02]);
+    disc(drumsGroup, .27, .008, '#d9b64a', [.42, y + .48, z + .34], { rotation: [.2, 0, -.12] }); add(drumsGroup, new THREE.CylinderGeometry(.01, .01, y + .48, 6), '#9a9d8b', [.42, (y + .48) / 2, z + .34]);
     for (const sideIndex of [0, 1]) { const stick = box(kit, [.016, .016, .42], '#d8b98a', [0, 0, 0]); stick.userData.side = sideIndex; sticks.push(stick); }
     pose(0, true);
   }

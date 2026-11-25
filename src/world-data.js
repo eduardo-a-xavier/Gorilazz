@@ -1,4 +1,6 @@
 // Coordinates are shared by physics, map, navigation and scenery.
+// Fator reversível de alargamento das pistas (Incremento 5): mantido em 1.0 por padrão para preservar 100% dos quarteirões, colisões e rotas verdes.
+export const ROAD_WIDTH_SCALE = 1.0;
 export const WORLD_BOUNDS = { minX: -135, maxX: 135, minZ: -195, maxZ: 45 };
 export const REGIONS = [
   { id: 'kong', name: 'Kong Studios', x: 0, z: -5, color: '#d2e2a8', track: 0 },
@@ -35,7 +37,7 @@ export const ROADS = connections.map(([from, to, controls], id) => {
   const length = samples.slice(1).reduce((sum, p, i) => sum + Math.hypot(p.x - samples[i].x, p.z - samples[i].z), 0);
   const kind = id === 0 ? 'studio' : id < 7 ? 'avenue' : 'lane';
   const [name, short] = ROAD_NAMES[id];
-  return { id, from, to, samples, length, kind, name, short, width: { studio: 13, avenue: 15, lane: 10 }[kind] };
+  return { id, from, to, samples, length, kind, name, short, width: ({ studio: 13, avenue: 15, lane: 10 }[kind]) * ROAD_WIDTH_SCALE };
 });
 // Disposição: cada ponto é recuado até uma distância fixa da borda da rua mais próxima e passa
 // a olhar para ela (`facing`). Nada fica na calçada, no asfalto ou de costas para quem chega.

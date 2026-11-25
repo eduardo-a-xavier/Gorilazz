@@ -208,8 +208,32 @@ test('armazenamento que recusa escrita não derruba o placar da partida', () => 
 });
 
 import { mazeDotCount } from '../src/arcade.js';
+import { readFile } from 'node:fs/promises';
+import * as THREE from '../src/vendor/three.module.min.js';
+import { GLTFLoader } from '../src/vendor/GLTFLoader.js';
+import { installArcadeCabinet, ARCADE_GLB_URL } from '../src/arcade-cabinet.js';
+
 test('antes de começar, o diálogo mostra o total de pontos do labirinto (não zero)', () => {
   const total = mazeDotCount();
   assert.ok(total > 50, `pontos no labirinto: ${total}`);
   assert.equal(total, parseGrid(buildMaze()).flat().filter(cell => cell === '.' || cell === 'o').length);
+});
+
+test('installArcadeCabinet carrega arcade-01-kong.glb com textura real na tela e acabamento Kong amarelo/preto', async () => {
+  assert.equal(ARCADE_GLB_URL, './assets/models/scenery/arcade-01-kong.glb');
+  const scene = new THREE.Scene();
+  const group = installArcadeCabinet(scene);
+  const diskLoader = {
+    async loadAsync(url) {
+      const bytes = await readFile(new URL(`../${url.replace('./', '')}`, import.meta.url));
+      const buf = bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength);
+      return new Promise((res, rej) => new GLTFLoader().parse(buf, '', res, rej));
+    },
+  };
+  const ok = await group.userData.loadArcadeModel(diskLoader);
+  assert.equal(ok, true);
+  assert.equal(group.userData.glbLoaded, true);
+  let screenMesh = null;
+  group.traverse(o => { if (o.isMesh && o.name === 'screen') screenMesh = o; });
+  assert.ok(screenMesh && screenMesh.material?.map, 'nó screen recebeu a textura dinâmica do fliperama');
 });

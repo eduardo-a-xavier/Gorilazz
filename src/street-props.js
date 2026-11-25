@@ -40,6 +40,7 @@ export const SCENERY_GLB_URLS = Object.freeze({
     './assets/models/scenery/car-01-sedan.glb',
     './assets/models/scenery/car-02-van.glb',
   ],
+  barrier: './assets/models/scenery/barrier-01-road.glb',
 });
 
 function part(color, options = {}) {
@@ -119,8 +120,8 @@ export function installStreetProps(scene, seed = 2026, reserved = []) {
   const group = new THREE.Group(); group.name = 'street-props';
   scene.add(group);
 
-  const trees = by('tree'), benches = by('bench'), planters = by('planter'), rocks = by('rock'), lamps = by('lamp'), cars = by('car');
-  const fallbackRegistries = { tree: [], bench: [], planter: [], rock: [], lamp: [], car: [] };
+  const trees = by('tree'), benches = by('bench'), planters = by('planter'), rocks = by('rock'), lamps = by('lamp'), cars = by('car'), barriers = by('barrier');
+  const fallbackRegistries = { tree: [], bench: [], planter: [], rock: [], lamp: [], car: [], barrier: [] };
   let activeRadius = Infinity, lastCullX = 0, lastCullZ = 0;
 
   function addFallback(kind, mesh) {
@@ -162,6 +163,9 @@ export function installStreetProps(scene, seed = 2026, reserved = []) {
   if (cars.length) {
     const carBody = mergeBoxes([box(2.1, .75, 4.3, 0, .55, 0), box(1.85, .58, 2.2, 0, 1.15, -.15)]);
     addFallback('car', place(carBody, part('#ffffff'), cars, group, { colorPalette: COLOR.carTints })).name = 'street-cars-fallback';
+  }
+  if (barriers.length) {
+    addFallback('barrier', place(box(2.1, .95, .45, 0, .48, 0), part('#d98c3b'), barriers, group)).name = 'street-barriers-fallback';
   }
 
   let loadingPromise = null;
@@ -244,14 +248,23 @@ export function installStreetProps(scene, seed = 2026, reserved = []) {
       syncCull();
     }).catch(err => console.warn('Carros GLB indisponíveis; mantendo fallback:', err.message)) : Promise.resolve();
 
-    loadingPromise = Promise.allSettled([treesJob, benchJob, bushJob, rockJob, lampJob, carsJob]);
+    // 7) Barreiras viárias (barrier-01-road.glb)
+    const barrierJob = barriers.length ? loadModelSafely(loader, SCENERY_GLB_URLS.barrier).then(gltf => {
+      const { geometry, material } = extractSceneryMesh(gltf, { tint: '#d4be96', roughness: .82 });
+      removeFallback('barrier');
+      place(geometry, material, barriers, group).name = 'street-barriers-glb';
+      group.userData.barriersGlbLoaded = true;
+      syncCull();
+    }).catch(err => console.warn('Barreira GLB indisponível; mantendo fallback:', err.message)) : Promise.resolve().then(() => { group.userData.barriersGlbLoaded = true; });
+
+    loadingPromise = Promise.allSettled([treesJob, benchJob, bushJob, rockJob, lampJob, carsJob, barrierJob]);
     return loadingPromise;
   }
 
   return {
     group,
     count: plan.length,
-    counts: { tree: trees.length, bench: benches.length, planter: planters.length, rock: rocks.length, lamp: lamps.length, car: cars.length },
+    counts: { tree: trees.length, bench: benches.length, planter: planters.length, rock: rocks.length, lamp: lamps.length, car: cars.length, barrier: barriers.length },
     loadSceneryModels,
     setCullState(x, z, r) { lastCullX = x; lastCullZ = z; activeRadius = r; },
   };

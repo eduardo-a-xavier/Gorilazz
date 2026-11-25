@@ -1,0 +1,11 @@
+{
+  "status": "pass",
+  "models": 20,
+  "blender_roundtrip": "20/20",
+  "geometry_regression": "10/10",
+  "all_glbs_bytes": 1091352,
+  "folder_total_bytes": 1554801,
+  "limit_bytes": 2000000,
+  "runtime_integration": "not performed",
+  "own_blender_processes_remaining": 0
+}
