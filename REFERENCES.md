@@ -273,3 +273,5 @@ Modelos originais em formato `.glb` criados por **OpenBot / Desenvolvedor Plataf
 | `car-01-sedan.glb` | Original / OpenBot (Desenvolvedor Plataforma B — Bloco E) | CC0-1.0 | `d10de50a0e215b0580c1a654739247c88852853fc6e94c5e2ec85635773518af` |
 | `car-02-van.glb` | Original / OpenBot (Desenvolvedor Plataforma B — Bloco E) | CC0-1.0 | `140684e6aa8dc30f0230a43de435bab556fc365bd8c231dcac9824139299cfb6` |
 | `barrier-01-road.glb` | Original / OpenBot (Desenvolvedor Plataforma B — Bloco E) | CC0-1.0 | `bb654f58746ce44cbd876dbae0619aa875987d3a8ebe5e7d5df4be84e0841a4e` |
+
+- `assets/models/scenery/moose-01.glb` — alce do Easter egg (modelo original, Blender 5.3, CC0 1.0, 2026-11-26; SHA-256 fc36186e7e2be882e90bc7fba214c73acef2a04a319b5d06a48c91f9d6e0354e).

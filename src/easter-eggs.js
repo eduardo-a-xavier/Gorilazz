@@ -1,5 +1,7 @@
 import * as THREE from './vendor/three.module.min.js';
 import { nearestRoad } from './world-data.js';
+import { GLTFLoader } from './vendor/GLTFLoader.js';
+import { loadModelSafely } from './model-safety.js';
 
 export const EASTER_EGG_POSITIONS = [
   { id: 'moose', x: 58, z: -38, radius: 4 },
@@ -35,7 +37,14 @@ export function installEasterEggs(scene) {
     add(moose, new THREE.BoxGeometry(.18, .2, 1.15), antler, 1.45, 4.3, side * .95);
     for (const z of [.6, 1, 1.4]) add(moose, new THREE.BoxGeometry(.14, .5, .14), antler, 1.45, 4.55, side * z);
   }
-  scene.add(moose);
+  scene.add(moose); // alce de caixas: fallback se o GLB não carregar
+  // Alce GLB (moose-01.glb, origem nos pés, +X = cabeça): mesma posição, rotação e gatilho do alce de caixas; base em y = -0,06 (como as árvores).
+  loadModelSafely(new GLTFLoader(), './assets/models/scenery/moose-01.glb').then(gltf => {
+    const model = gltf.scene; model.name = 'easter-moose-glb';
+    model.position.set(58, -0.06, -38); model.rotation.y = -.5;
+    model.traverse(o => { if (o.isMesh) { o.castShadow = true; o.receiveShadow = true; } });
+    scene.remove(moose); scene.add(model);
+  }).catch(err => console.warn('Alce GLB indisponível; mantendo o alce de caixas:', err.message));
   const trailer = new THREE.Group(); trailer.name = 'easter-trailer'; trailer.position.set(-77, 0, -41); trailer.rotation.y = .4;
   add(trailer, new THREE.BoxGeometry(5.8, 2.5, 2.5), van, 0, 1.85, 0);
   add(trailer, new THREE.BoxGeometry(5.85, .24, 2.55), trim, 0, 2.65, 0);
