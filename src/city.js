@@ -1,7 +1,7 @@
 import { isClosedSign, CLOSED_SIGN_NEON } from './sign-style.js';
 import * as THREE from './vendor/three.module.min.js';
 import { mergeGeometries } from './vendor/BufferGeometryUtils.js';
-import { CITY_LOTS, CITY_ERAS, ERA_GATES } from './world-data.js';
+import { CITY_LOTS, CITY_ERAS, ERA_GATES, accessPad } from './world-data.js';
 import { eraBillboardCredits } from './content.js';
 import { NON_DISCOVERY_PROP_SCALE } from './discovery-scale.js';
 
@@ -451,6 +451,7 @@ export function installCity(scene, surfaces) {
     box(base, mat.roof, [w - .1, .2, d - .1], [0, h + .05, 0]);
     for (const s of [-1, 1]) { box(base, trim, [w + .3, .8, .3], [0, h + .4, s * d / 2]); box(base, trim, [.3, .8, d + .3], [s * w / 2, h + .4, 0]); }
     // Térreo por época: loja iluminada, porta de enrolar fechada ou entrada simples.
+    let padX = 0; // onde a porta/entrada fica no eixo X do prédio (acesso à calçada)
     if (lot.shop) {
       const row = era * 6 + Math.floor(rng() * 6);
       box(base, dark ? mat.shutter : mat.storefront, [w * .86, 2.3, .3], [0, 1.6, d / 2 + .05]);
@@ -461,13 +462,16 @@ export function installCity(scene, surfaces) {
         for (const s of [-1, 1]) box(base, mat.metal, [.06, .06, 1.6], [s * w * .43, 2.75, d / 2 + .9], [.3, 0, 0]);
       }
     } else {
-      const x = (rng() - .5) * (w - 3);
+      const x = (rng() - .5) * (w - 3); padX = x;
       box(base, dark ? mat.plank : modern ? mat.trimDark : mat.door, [1.3, 2.4, .25], [x, 1.5, d / 2 + .02]);
       if (dark) for (const k of [-.5, .5]) box(base, mat.plank, [1.7, .22, .08], [x, 1.5 + k, d / 2 + .18], [0, 0, k * .5]);
       box(base, trim, [1.8, .25, .3], [x, 2.8, d / 2 + .08]);
       box(base, mat.stone, [2, .3, .9], [x, .35, d / 2 + .4]);
       box(base, dark ? mat.dead : modern ? mat.neonCyan : mat.glow, [.3, .3, .3], [x + 1.1, 2.6, d / 2 + .2]);
     }
+    // Acesso: trecho curto de calçada da porta até o fim da calçada da rua mais próxima (sem porta sem acesso).
+    const pad = accessPad(lot, padX);
+    if (pad) box(base, mat.stone, [1.8, .1, pad.length], [pad.doorLocal.u + pad.dirLocal.u * pad.length / 2, .32, pad.doorLocal.v + pad.dirLocal.v * pad.length / 2], [0, Math.atan2(pad.dirLocal.u, pad.dirLocal.v), 0]);
     // Escada de incêndio (Ato 1) ou enferrujada (Ato 3).
     if (lot.escape && floors >= 3) {
       const x = w / 2 + .6, len = Math.min(d * .7, 4.2), m = dark ? mat.rust : mat.metal;

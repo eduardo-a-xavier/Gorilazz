@@ -55,6 +55,7 @@ function atlas(rows, height, paint) {
 // Quinas de calçada entre duas vias vizinhas de um cruzamento: um contorno contínuo, não células.
 // Região além dos dois meios-fios (cunha convexa), com canto arredondado por arco de raio fixo (CORNER_RC),
 // tangente às duas vias, recortada pelo anel do cruzamento. Sai como polígono convexo (fan).
+export const CORNER_FILL = false;
 export const CORNER_RC = 4, CORNER_ARC_SEGMENTS = 14, CORNER_MAX_GAP = 2.62, CORNER_MIN_GAP = 1.2;
 const RIM_SEGMENTS = 96;
 function clipConvex(subject, clip) {
@@ -236,7 +237,8 @@ export function buildRoads(group, surfaces, material) {
   // Cruzamentos e emendas: disco de asfalto em todos os nós; pintura de rotatória apenas em nós com degree >= 3.
   NODES.forEach((node, id) => {
     const steps = 72, ring = WALK.avenue, rIn = radius[id], rOut = rIn + ring, isRoundabout = NODE_DEGREE[id] >= 3;
-    for (const poly of cornerBlocks(id)) for (let k = 1; k + 1 < poly.length; k++) {
+    // Lajes de quina desativadas (ver CORNER_FILL): entravam no miolo da rotatória e apareciam como leques inclinados.
+    if (CORNER_FILL) for (const poly of cornerBlocks(id)) for (let k = 1; k + 1 < poly.length; k++) {
       // Fan convexo a partir do primeiro vértice, com normal +Y (orientação conferida no plano xz).
       let b1 = poly[k], b2 = poly[k + 1];
       const area2 = (b1[0] - poly[0][0]) * (b2[1] - poly[0][1]) - (b1[1] - poly[0][1]) * (b2[0] - poly[0][0]);

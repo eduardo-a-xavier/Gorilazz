@@ -301,6 +301,25 @@ function buildCity() {
 }
 // Saneamento: blocos isolados nos fundos (sem nenhuma via a menos de 12 m) saem do mundo. O filtro é aplicado
 // depois da geração, então a sequência aleatória dos demais blocos e as ruas não mudam; landmarks ficam.
+// Acesso à porta: a calçada tem 2,4 m além da borda da via. Se a porta do prédio para além dela, um trecho curto
+// de calçada liga a porta ao fim da calçada mais próxima. Devolve null quando a porta já alcança a calçada.
+export const SIDEWALK_W = 2.4, DOOR_FRONT = .6;
+export function accessPad(lot, doorX = 0) {
+  const c = Math.cos(lot.rotation), s = Math.sin(lot.rotation), lz = lot.d / 2 + DOOR_FRONT;
+  const door = { x: lot.x + doorX * c + lz * s, z: lot.z - doorX * s + lz * c };
+  let best = null;
+  for (const road of ROADS) for (const q of road.samples) {
+    const dd = Math.hypot(q.x - door.x, q.z - door.z);
+    if (!best || dd < best.dd) best = { dd, x: q.x, z: q.z };
+  }
+  const gap = roadGap(door);
+  const reach = gap - SIDEWALK_W;
+  if (!(reach > .15)) return null;
+  const dx = (best.x - door.x) / best.dd, dz = (best.z - door.z) / best.dd;
+  // Direção local ao prédio (mesma convenção de toWorld acima, inversa)
+  const du = dx * c - dz * s, dv = dx * s + dz * c;
+  return { doorX, length: reach + .3, dirLocal: { u: du, v: dv }, doorLocal: { u: doorX, v: lz }, gapToEdge: gap };
+}
 export const ISOLATED_LOT_M = 12;
 export const CITY_LOTS = buildCity().filter(lot => lot.landmark || roadGap(lot) <= ISOLATED_LOT_M);
 /** Um portal de entrada por bairro, sobre a rua mais próxima do centro da época. */
