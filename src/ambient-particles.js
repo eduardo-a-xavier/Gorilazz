@@ -1,7 +1,15 @@
 // Partículas atmosféricas leves: poeira dourada na área inicial, esporos perto do moinho de Demon Days e faíscas
 // neon na Av. Saturnz Barz. Um único THREE.Points (uma chamada de desenho), poucas partículas, sem alocação por quadro.
 // As funções de posição são puras (testadas em Node); createAmbientParticles recebe THREE para não importar o vendor aqui.
-import { DISCOVERIES, ROADS } from './world-data.js';
+import { DISCOVERIES, ROADS, MEMBER_LOCATIONS, roadGap } from './world-data.js';
+
+// Sutis e discretas: sem partículas perto de palcos nem sobre/ao lado das ruas (onde o Geep dirige).
+export const PARTICLE_STYLE = Object.freeze({ size: .12, opacity: .22, stageClearance: 22, roadClearance: 10 });
+export function particleAllowed(p) {
+  if (MEMBER_LOCATIONS.some(m => Math.hypot(m.x - p.x, m.z - p.z) < PARTICLE_STYLE.stageClearance)) return false;
+  const gap = roadGap(p);
+  return Number.isFinite(gap) && gap >= PARTICLE_STYLE.roadClearance;
+}
 
 export const PARTICLE_KINDS = Object.freeze({
   dust: { count: 24, radius: 26, color: [1, .82, .42], y: [.4, 2.6] },
@@ -40,8 +48,8 @@ export function totalParticles() {
 
 export function createAmbientParticles(THREE, scene) {
   const anchors = ambientAnchors();
-  const layouts = Object.keys(PARTICLE_KINDS).map(kind => ({ kind, items: particleLayout(kind, anchors[kind]) }));
-  const count = totalParticles();
+  const layouts = Object.keys(PARTICLE_KINDS).map(kind => ({ kind, items: particleLayout(kind, anchors[kind]).filter(particleAllowed) }));
+  const count = layouts.reduce((sum, l) => sum + l.items.length, 0);
   const positions = new Float32Array(count * 3), colors = new Float32Array(count * 3);
   const base = [], phases = [];
   let k = 0;
@@ -63,7 +71,7 @@ export function createAmbientParticles(THREE, scene) {
   halo.addColorStop(0, 'rgba(255,255,255,1)'); halo.addColorStop(.4, 'rgba(255,255,255,.6)'); halo.addColorStop(1, 'rgba(255,255,255,0)');
   dotCtx.fillStyle = halo; dotCtx.fillRect(0, 0, 32, 32);
   const sprite = new THREE.CanvasTexture(dot);
-  const material = new THREE.PointsMaterial({ map: sprite, size: .42, sizeAttenuation: true, vertexColors: true, transparent: true, opacity: .85, depthWrite: false, toneMapped: false });
+  const material = new THREE.PointsMaterial({ map: sprite, size: PARTICLE_STYLE.size, sizeAttenuation: true, vertexColors: true, transparent: true, opacity: PARTICLE_STYLE.opacity, depthWrite: false });
   const points = new THREE.Points(geometry, material);
   points.frustumCulled = false; points.name = 'ambient-particles';
   scene.add(points);

@@ -1,0 +1,95 @@
+{
+  "timestamp": "2026-11-24T23:30:43",
+  "base_url": "http://127.0.0.1:25924/Gorilazz/",
+  "http_responses": {
+    "total": 146,
+    "status_200_304": 146,
+    "status_4xx_5xx": []
+  },
+  "forbidden_assets_checked": {
+    "png_in_materials": [],
+    "gorillaz_phase7_glb": [],
+    "kenney_suv_luxury_glb": []
+  },
+  "console_errors": [],
+  "page_errors": [],
+  "download_links_checked": [
+    {
+      "href": "./assets/models/KENNEY-LICENSE.txt",
+      "resolved_url": "http://127.0.0.1:25924/Gorilazz/assets/models/KENNEY-LICENSE.txt",
+      "status": 200,
+      "ok": true
+    },
+    {
+      "href": "./assets/models/GEEP-CREDITS.txt",
+      "resolved_url": "http://127.0.0.1:25924/Gorilazz/assets/models/GEEP-CREDITS.txt",
+      "status": 200,
+      "ok": true
+    },
+    {
+      "href": "./assets/models/PHASE7-CREDITS.txt",
+      "resolved_url": "http://127.0.0.1:25924/Gorilazz/assets/models/PHASE7-CREDITS.txt",
+      "status": 200,
+      "ok": true
+    },
+    {
+      "href": "./assets/models/driver-pilot.glb",
+      "resolved_url": "http://127.0.0.1:25924/Gorilazz/assets/models/driver-pilot.glb",
+      "status": 200,
+      "ok": true
+    },
+    {
+      "href": "./assets/models/gorillaz-geep.glb",
+      "resolved_url": "http://127.0.0.1:25924/Gorilazz/assets/models/gorillaz-geep.glb",
+      "status": 200,
+      "ok": true
+    },
+    {
+      "href": "./assets/models/DRIVER-CREDITS.txt",
+      "resolved_url": "http://127.0.0.1:25924/Gorilazz/assets/models/DRIVER-CREDITS.txt",
+      "status": 200,
+      "ok": true
+    },
+    {
+      "href": "./assets/environment/CREDITS.txt",
+      "resolved_url": "http://127.0.0.1:25924/Gorilazz/assets/environment/CREDITS.txt",
+      "status": 200,
+      "ok": true
+    },
+    {
+      "href": "./assets/models/kenney-suv.glb",
+      "resolved_url": "http://127.0.0.1:25924/Gorilazz/assets/models/kenney-suv.glb",
+      "status": 200,
+      "ok": true
+    }
+  ],
+  "audio_tests": [
+    {
+      "url": "/Gorilazz/assets/audio/clint-eastwood.mp3",
+      "success": true,
+      "duration": 267.021
+    },
+    {
+      "url": "/Gorilazz/assets/audio/feel-good-inc.mp3",
+      "success": true,
+      "duration": 255.021
+    },
+    {
+      "url": "/Gorilazz/assets/audio/on-melancholy-hill.mp3",
+      "success": true,
+      "duration": 262.541
+    }
+  ],
+  "piano_test": {
+    "tested": true,
+    "dialogOpened": true,
+    "canvasValid": true
+  },
+  "screenshots": {
+    "01-palco-murdoc-baixo": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\fechamento-final-2026-11-26\\01-palco-murdoc-baixo.png",
+    "02-palco-noodle-guitarra": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\fechamento-final-2026-11-26\\02-palco-noodle-guitarra.png",
+    "03-calcadas-ladrilho": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\fechamento-final-2026-11-26\\03-calcadas-ladrilho.png",
+    "04-esquinas-nos-1-5-6-7": "E:\\Gorilazz-Relatorio\\docs\\gestao\\evidencias\\fechamento-final-2026-11-26\\04-esquinas-nos-1-5-6-7.png"
+  },
+  "verdict": "PASSA"
+}

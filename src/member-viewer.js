@@ -5,7 +5,6 @@ import { GLTFLoader } from './vendor/GLTFLoader.js';
 import { loadModelSafely, repairMaterials } from './model-safety.js';
 
 const MODEL = './assets/models/gorillaz-phase7-web-v3.glb';
-const MODEL_V2 = './assets/models/gorillaz-phase7-web-v2.glb';
 const FALLBACK_MODEL = './assets/models/gorillaz-phase7-web.glb';
 const STEP = Math.PI / 4; // botões ‹ › giram 45°
 
@@ -18,7 +17,7 @@ export function createMemberViewer({ canvas, onReady, onFail }) {
     if (source) return source;
     loading ??= (async () => {
       const loader = new GLTFLoader();
-      const gltf = await loadModelSafely(loader, MODEL).catch(() => loadModelSafely(loader, MODEL_V2)).catch(() => loadModelSafely(loader, FALLBACK_MODEL));
+      const gltf = await loadModelSafely(loader, MODEL).catch(() => loadModelSafely(loader, FALLBACK_MODEL));
       repairMaterials(gltf.scene);
       source = gltf.scene;
       return source;
@@ -111,7 +110,7 @@ function spinLoad() {
   if (spinSource) return Promise.resolve(spinSource);
   spinLoading ??= (async () => {
     const loader = new GLTFLoader();
-    const gltf = await loadModelSafely(loader, MODEL).catch(() => loadModelSafely(loader, MODEL_V2)).catch(() => loadModelSafely(loader, FALLBACK_MODEL));
+    const gltf = await loadModelSafely(loader, MODEL).catch(() => loadModelSafely(loader, FALLBACK_MODEL));
     repairMaterials(gltf.scene); spinSource = gltf.scene; return spinSource;
   })();
   return spinLoading;

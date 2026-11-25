@@ -1,6 +1,7 @@
 import { PLATE_STYLE } from './sign-style.js';
 import * as THREE from './vendor/three.module.min.js';
 import { ROADS, NODES, CITY_LOTS } from './world-data.js';
+import { createSlabTexture } from './ground-textures.js';
 
 // Malha viária desenhada como rua de verdade: asfalto, rotatórias limpas nos cruzamentos de grau >= 3,
 // emendas contínuas nos nós de grau 2, calçada elevada com meio-fio, tampas e saia até abaixo do chão,
@@ -49,6 +50,90 @@ function atlas(rows, height, paint) {
   const context = canvas.getContext('2d'); context.textAlign = 'center'; context.textBaseline = 'middle';
   rows.forEach((text, i) => paint(context, text, i * height, height));
   const texture = new THREE.CanvasTexture(canvas); texture.colorSpace = THREE.SRGBColorSpace; texture.anisotropy = 8; return texture;
+}
+
+// Quinas de calçada entre duas vias vizinhas de um cruzamento: um contorno contínuo, não células.
+// Região além dos dois meios-fios (cunha convexa), com canto arredondado por arco de raio fixo (CORNER_RC),
+// tangente às duas vias, recortada pelo anel do cruzamento. Sai como polígono convexo (fan).
+export const CORNER_RC = 4, CORNER_ARC_SEGMENTS = 14, CORNER_MAX_GAP = 2.62, CORNER_MIN_GAP = 1.2;
+const RIM_SEGMENTS = 96;
+function clipConvex(subject, clip) {
+  let out = subject;
+  for (let i = 0; i < clip.length && out.length; i++) {
+    const A = clip[i], B = clip[(i + 1) % clip.length], input = out; out = [];
+    const side = p => (B[0] - A[0]) * (p[1] - A[1]) - (B[1] - A[1]) * (p[0] - A[0]);
+    for (let k = 0; k < input.length; k++) {
+      const P = input[k], Q = input[(k + 1) % input.length], sp = side(P), sq = side(Q);
+      if (sp >= 0) out.push(P);
+      if ((sp >= 0) !== (sq >= 0)) { const t = sp / (sp - sq); out.push([P[0] + (Q[0] - P[0]) * t, P[1] + (Q[1] - P[1]) * t]); }
+    }
+  }
+  return out;
+}
+// Arredonda vértices agudos (< 90°) com arco tangente aos dois lados: o recorte do meio-fio no anel fica suave, sem dentes.
+export const CORNER_VERTEX_R = 2.5;
+function roundCorners(poly, r) {
+  const out = [];
+  const n = poly.length;
+  for (let i = 0; i < n; i++) {
+    const P = poly[(i - 1 + n) % n], V = poly[i], N = poly[(i + 1) % n];
+    const ux = P[0] - V[0], uz = P[1] - V[1], vx = N[0] - V[0], vz = N[1] - V[1];
+    const lu = Math.hypot(ux, uz), lv = Math.hypot(vx, vz);
+    if (lu < 1e-6 || lv < 1e-6) { out.push(V); continue; }
+    const cos = (ux * vx + uz * vz) / (lu * lv), theta = Math.acos(Math.max(-1, Math.min(1, cos)));
+    if (theta >= Math.PI / 2 - 1e-6) { out.push(V); continue; }
+    const d = Math.min(r / Math.tan(theta / 2), lu / 2, lv / 2), rr = d * Math.tan(theta / 2);
+    const T1 = [V[0] + ux / lu * d, V[1] + uz / lu * d], T2 = [V[0] + vx / lv * d, V[1] + vz / lv * d];
+    const bx = ux / lu + vx / lv, bz = uz / lu + vz / lv, bl = Math.hypot(bx, bz) || 1;
+    const dc = rr / Math.sin(theta / 2), Cc = [V[0] + bx / bl * dc, V[1] + bz / bl * dc];
+    const a1 = Math.atan2(T1[1] - Cc[1], T1[0] - Cc[0]);
+    let sw = Math.atan2(T2[1] - Cc[1], T2[0] - Cc[0]) - a1; while (sw > Math.PI) sw -= 2 * Math.PI; while (sw < -Math.PI) sw += 2 * Math.PI;
+    for (let k = 0; k <= 6; k++) { const a = a1 + sw * k / 6; out.push([Cc[0] + Math.cos(a) * rr, Cc[1] + Math.sin(a) * rr]); }
+  }
+  return out;
+}
+export function cornerBlocks(id) {
+  const node = NODES[id], rIn = NODE_RADIUS[id];
+  const arms = ROADS.filter(road => road.from === id || road.to === id).map(road => {
+    const pts = road.from === id ? road.samples : road.samples.slice().reverse();
+    const p = pts.find(q => Math.hypot(q.x - node.x, q.z - node.z) > rIn + 2) ?? pts[pts.length - 1];
+    const dx = p.x - node.x, dz = p.z - node.z, L = Math.hypot(dx, dz) || 1;
+    return { e: [dx / L, dz / L], h: road.width / 2, angle: Math.atan2(dz, dx) };
+  }).sort((u, v) => u.angle - v.angle);
+  const rim = Array.from({ length: RIM_SEGMENTS }, (_, i) => { const t = i / RIM_SEGMENTS * Math.PI * 2; return [node.x + Math.cos(t) * rIn, node.z + Math.sin(t) * rIn]; });
+  const blocks = [];
+  if (arms.length < 2) return blocks;
+  for (let k = 0; k < arms.length; k++) {
+    const A = arms[k], B = arms[(k + 1) % arms.length];
+    let gap = B.angle - A.angle; if (gap <= 0) gap += Math.PI * 2;
+    if (arms.length === 2 && k === 1) break;
+    if (gap < CORNER_MIN_GAP || gap > CORNER_MAX_GAP) continue;
+    // Normais dos meios-fios voltadas uma para a outra.
+    let nA = [-A.e[1], A.e[0]], nB = [-B.e[1], B.e[0]];
+    if (nA[0] * B.e[0] + nA[1] * B.e[1] < 0) nA = [-nA[0], -nA[1]];
+    if (nB[0] * A.e[0] + nB[1] * A.e[1] < 0) nB = [-nB[0], -nB[1]];
+    // X = interseção das duas linhas de meio-fio: nA*hA + eA*t = nB*hB + eB*u.
+    const ra = [nB[0] * B.h - nA[0] * A.h, nB[1] * B.h - nA[1] * A.h];
+    const bx = -B.e[0], bz = -B.e[1];
+    const det = A.e[0] * bz - A.e[1] * bx;
+    if (Math.abs(det) < 1e-6) continue;
+    const t = (ra[0] * bz - ra[1] * bx) / det, u = (A.e[0] * ra[1] - A.e[1] * ra[0]) / det;
+    if (t <= 0 || u <= 0) continue;
+    const X = [node.x + nA[0] * A.h + A.e[0] * t, node.z + nA[1] * A.h + A.e[1] * t];
+    const beta = Math.acos(Math.max(-1, Math.min(1, A.e[0] * B.e[0] + A.e[1] * B.e[1])));
+    const d = CORNER_RC / Math.tan(beta / 2);
+    let bisX = A.e[0] + B.e[0], bisZ = A.e[1] + B.e[1]; const bl = Math.hypot(bisX, bisZ) || 1; bisX /= bl; bisZ /= bl;
+    const C = [X[0] + bisX * CORNER_RC / Math.sin(beta / 2), X[1] + bisZ * CORNER_RC / Math.sin(beta / 2)];
+    const TA = [X[0] + A.e[0] * d, X[1] + A.e[1] * d], TB = [X[0] + B.e[0] * d, X[1] + B.e[1] * d];
+    const a1 = Math.atan2(TA[1] - C[1], TA[0] - C[0]);
+    let a2 = Math.atan2(TB[1] - C[1], TB[0] - C[0]); let sweep = a2 - a1; while (sweep > Math.PI) sweep -= 2 * Math.PI; while (sweep < -Math.PI) sweep += 2 * Math.PI;
+    const poly = [[TA[0] + A.e[0] * 60, TA[1] + A.e[1] * 60], TA];
+    for (let i = 0; i <= CORNER_ARC_SEGMENTS; i++) { const a = a1 + sweep * i / CORNER_ARC_SEGMENTS; poly.push([C[0] + Math.cos(a) * CORNER_RC, C[1] + Math.sin(a) * CORNER_RC]); }
+    poly.push([TB[0] + B.e[0] * 60, TB[1] + B.e[1] * 60], [C[0] + bisX * 80, C[1] + bisZ * 80]);
+    const clipped = roundCorners(clipConvex(poly, rim), CORNER_VERTEX_R);
+    if (clipped.length >= 3) blocks.push(clipped);
+  }
+  return blocks;
 }
 
 export function buildRoads(group, surfaces, material) {
@@ -151,6 +236,14 @@ export function buildRoads(group, surfaces, material) {
   // Cruzamentos e emendas: disco de asfalto em todos os nós; pintura de rotatória apenas em nós com degree >= 3.
   NODES.forEach((node, id) => {
     const steps = 72, ring = WALK.avenue, rIn = radius[id], rOut = rIn + ring, isRoundabout = NODE_DEGREE[id] >= 3;
+    for (const poly of cornerBlocks(id)) for (let k = 1; k + 1 < poly.length; k++) {
+      // Fan convexo a partir do primeiro vértice, com normal +Y (orientação conferida no plano xz).
+      let b1 = poly[k], b2 = poly[k + 1];
+      const area2 = (b1[0] - poly[0][0]) * (b2[1] - poly[0][1]) - (b1[1] - poly[0][1]) * (b2[0] - poly[0][0]);
+      if (Math.abs(area2) < 1e-7) continue; // triângulo degenerado (pontos repetidos ou colineares)
+      if (area2 > 0) [b1, b2] = [b2, b1];
+      triangle(pavement, [poly[0][0], LEVEL.walk, poly[0][1]], [b1[0], LEVEL.walk, b1[1]], [b2[0], LEVEL.walk, b2[1]]);
+    }
     const point = (angle, r, y) => [node.x + Math.cos(angle) * r, y, node.z + Math.sin(angle) * r];
     const keptRing = Array.from({ length: steps }, (_, i) => {
       const a0 = i / steps * Math.PI * 2, a1 = (i + 1) / steps * Math.PI * 2, mid = (a0 + a1) / 2;
@@ -184,7 +277,8 @@ export function buildRoads(group, surfaces, material) {
   });
   const road = surfaces.get('asphalt'); road.side = THREE.DoubleSide;
   const paint = color => new THREE.MeshStandardMaterial({ color, roughness: .75, side: THREE.DoubleSide, polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2 });
-  const concrete = new THREE.MeshStandardMaterial({ color: '#b9b4a6', roughness: .95, side: THREE.DoubleSide });
+  // Calçada de ladrilho com rejunte (textura procedural, sem arquivo): uv de 3 m por repetição, como em strip().
+  const concrete = new THREE.MeshStandardMaterial({ color: '#ffffff', map: createSlabTexture(THREE), roughness: .92, side: THREE.DoubleSide });
   group.add(
     toMesh(asphalt, road, 'road-asphalt'),
     toMesh(pavement, concrete, 'road-pavement'),

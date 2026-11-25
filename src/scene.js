@@ -715,8 +715,8 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
   // Feedback de jogo: partículas instanciadas leves (1 draw call) de poeira/faísca neon ao frear e ao passar perto dos pontos.
   const FX_COUNT = 36;
   const fxMesh = new THREE.InstancedMesh(
-    new THREE.OctahedronGeometry(.12, 0),
-    new THREE.MeshBasicMaterial({ color: '#ffffff', transparent: true, opacity: .85, blending: THREE.AdditiveBlending, depthWrite: false, toneMapped: false }),
+    new THREE.OctahedronGeometry(.07, 0),
+    new THREE.MeshBasicMaterial({ color: '#ffffff', transparent: true, opacity: .4, depthWrite: false }),
     FX_COUNT
   );
   fxMesh.name = 'drive-fx-particles'; fxMesh.frustumCulled = false;
@@ -966,12 +966,9 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
     try {
     // Versão para a cena: texturas WebP de 1024 px e malha simplificada. O GLB original segue disponível para download.
     const bandLoader = new GLTFLoader();
-    // Ordem: v3 (A-pose relaxada, mãos suavizadas) → v2 → web → phase7 v2 → phase7 original.
+    // Ordem: v3 (A-pose relaxada, mãos suavizadas) → web (fallback leve). Os antigos phase7 v2/original (9 MB cada) saíram da cadeia.
     const gltf = await loadModelSafely(bandLoader, './assets/models/gorillaz-phase7-web-v3.glb')
-      .catch(() => loadModelSafely(bandLoader, './assets/models/gorillaz-phase7-web-v2.glb'))
-      .catch(() => loadModelSafely(bandLoader, './assets/models/gorillaz-phase7-web.glb'))
-      .catch(() => loadModelSafely(bandLoader, './assets/models/gorillaz-phase7-v2.glb'))
-      .catch(() => loadModelSafely(bandLoader, './assets/models/gorillaz-phase7.glb'));
+      .catch(() => loadModelSafely(bandLoader, './assets/models/gorillaz-phase7-web.glb'));
     repairMaterials(gltf.scene);
     const roots = Array(4).fill(null);
     gltf.scene.traverse(object => { if (Number.isInteger(object.userData.memberIndex) && object.userData.memberIndex >= 0 && object.userData.memberIndex < 4) roots[object.userData.memberIndex] = object; });
@@ -1053,10 +1050,11 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
     bandStatus.textContent = 'PERSONAGENS GEOMÉTRICOS / MODO ALTERNATIVO'; bandStatus.dataset.loaded = 'false';
     }
   }
-  // Instrumentos GLB em espaço local normalizado dos personagens (2-D: teclado instrument-03-keyboard.glb, Russel: bateria instrument-02-drums.glb com baquetas dinâmicas, Noodle: guitarra v3).
+  // Instrumentos GLB em espaço local normalizado dos personagens (2-D: teclado instrument-03-keyboard.glb, Murdoc: baixo instrument-04-bass-v2.glb, Russel: bateria instrument-02-drums.glb com baquetas dinâmicas, Noodle: guitarra instrument-05-guitar-v2.glb).
   function loadMemberInstrument(rig, index, loader) {
     const urls = {
       0: './assets/models/scenery/instrument-03-keyboard.glb',
+      1: './assets/models/scenery/instrument-04-bass-v2.glb', // Murdoc: baixo v2 (mesmos encaixes neck/strum do baixo atual)
       3: './assets/models/scenery/instrument-02-drums.glb',
     };
     const url = urls[index];
@@ -1077,7 +1075,10 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
   // Noodle: guitarra e alça em GLB (v2/v3) e props de palco (amplificador e pedaleira). Se a guitarra v2 não carregar, a procedural segue visível.
   function loadNoodleExtras(rig, loader) {
     const prepare = gltf => { gltf.scene.traverse(object => { if (object.isMesh) { object.castShadow = true; object.receiveShadow = true; } }); repairMaterials(gltf.scene); };
-    loadModelSafely(loader, './assets/models/noodle-guitar-v3.glb').catch(() => loadModelSafely(loader, './assets/models/noodle-guitar-v2.glb')).then(gltf => {
+    // Cadeia: guitarra v2 do pacote de instrumentos (instrument-05), depois a v3 e a v2 antigas; se nada carregar, a procedural segue.
+    loadModelSafely(loader, './assets/models/scenery/instrument-05-guitar-v2.glb')
+      .catch(() => loadModelSafely(loader, './assets/models/noodle-guitar-v3.glb'))
+      .then(gltf => {
       prepare(gltf); if (rig.guitar) rig.guitar.visible = false; rig.kit.add(gltf.scene);
     }).catch(error => console.warn('Guitarra v2 da Noodle indisponível; mantendo a procedural:', error.message));
     loadModelSafely(loader, './assets/models/noodle-stage-props-v2.glb').then(gltf => {

@@ -11,11 +11,9 @@ export function createSurfaceLibrary() {
     let entry = images.get(url), texture;
     if (!entry) {
       entry = { loaded: false, clones: [] };
-      // WebP lossless primeiro (~36% menor); se falhar, volta ao PNG original sem mudar o material.
+      // Só WebP (o PNG original saiu do pacote): a textura marca para envio à GPU quando a imagem chega.
       const markLoaded = () => { entry.loaded = true; for (const clone of entry.clones) clone.needsUpdate = true; };
-      texture = entry.base = loader.load(url.replace(/\.png$/, '.webp'), markLoaded, undefined, () => {
-        loader.load(url, source => { entry.base.image = source.image; entry.base.needsUpdate = true; markLoaded(); });
-      });
+      texture = entry.base = loader.load(url.replace(/\.png$/, '.webp'), markLoaded);
       images.set(url, entry);
     } else {
       texture = entry.base.clone();

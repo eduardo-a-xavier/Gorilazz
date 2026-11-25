@@ -38,14 +38,13 @@ test('servidor revalida por ETag, comprime texto e mantém a lista explícita de
       assert.equal(res.status, 200, `fonte ${path} sem 404`);
       assert.equal(res.headers.get('content-type'), type);
     }
-    // Texturas: WebP primeiro, PNG original como fallback (materials.js).
+    // Texturas: só WebP (o PNG original saiu do pacote; materials.js não tem mais fallback).
     for (const name of ['asphalt-normal', 'wood', 'grass-normal']) {
       const webp = await fetch(`${origin}/assets/materials/${name}.webp`);
       assert.equal(webp.status, 200, `webp ${name}`);
       assert.equal(webp.headers.get('content-type'), 'image/webp');
       const png = await fetch(`${origin}/assets/materials/${name}.png`);
-      assert.equal(png.status, 200, `fallback png ${name}`);
-      assert.equal(png.headers.get('content-type'), 'image/png');
+      assert.equal(png.status, 404, `png ${name} removido`);
     }
     for (const path of ['/src/onboarding.js', '/src/onboarding.css', '/src/arcade.js', '/src/arcade-screen.js', '/src/arcade-cabinet.js', '/src/arcade.css', '/src/landing-fixes.css', '/src/era-places.js']) assert.equal((await fetch(origin + path)).status, 200, path);
     // Artes do polimento (assets/art): manifesto JSON e WebP com o tipo correto.

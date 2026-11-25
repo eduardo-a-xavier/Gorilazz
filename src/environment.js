@@ -4,6 +4,7 @@ import { mergeGeometries } from './vendor/BufferGeometryUtils.js';
 import { nearestRoad, TREE_LOCATIONS, VISUAL_LANDMARKS } from './world-data.js';
 import { letteringTexture } from './materials.js';
 import { NON_DISCOVERY_PROP_SCALE } from './discovery-scale.js';
+import { toneJitter } from './ground-textures.js';
 
 export function createFrequencyGarden() {
   const garden = new THREE.Group(); garden.name = 'frequency-garden';
@@ -35,7 +36,9 @@ export function createRegionalGrounds() {
     const triangle = (a,b,c,y,color) => {
       if (!palette.has(color)) palette.set(color,new THREE.Color(color));
       const ink = palette.get(color);
-      for (const [x,z] of [a,c,b]) { positions.push(x,y,z); colors.push(ink.r,ink.g,ink.b); }
+      // Variação de tom por triângulo (±5%): grama e praças deixam de ser um verde/amarelo liso.
+      const k = toneJitter((a[0]+b[0]+c[0])/3, (a[1]+b[1]+c[1])/3);
+      for (const [x,z] of [a,c,b]) { positions.push(x,y,z); colors.push(ink.r*k,ink.g*k,ink.b*k); }
     };
     const quad = (a,b,c,d,y,color) => { triangle(a,b,c,y,color); triangle(a,c,d,y,color); };
     const rect = (x,z,w,d,y,color) => quad([x,z],[x+w,z],[x+w,z+d],[x,z+d],y,color);
@@ -61,7 +64,8 @@ export function createRegionalGrounds() {
   region('studio-ground',({rect}) => {
     rect(-18,-23,36,36,-.126,'#414c50');
     for (const x of [-16,15.65]) rect(x,-21,.35,32,-.118,'#d6c27f');
-    for (let i=0;i<7;i++) for (const x of [-16,11]) rect(x,-21+i*5,5,.3,-.118,'#d6c27f');
+    // Vagas ampliadas para a escala dos carros (separadores de 8,8 m: cabem sedan 6,6 m e van 7,9 m).
+    for (let i=0;i<7;i++) for (const [x,w] of [[-16,8.8],[7.2,8.8]]) rect(x,-21+i*5,w,.3,-.118,'#d6c27f');
     for (const z of [-22,11.5]) rect(-17,z,34,.5,-.118,'#89958e');
   });
   region('coast-ground',({quad,rect}) => {

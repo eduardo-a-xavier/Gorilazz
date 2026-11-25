@@ -24,3 +24,6 @@ Modelos originais criados por OpenBot / Desenvolvedor Plataforma B nesta tarefa,
 | car-01-sedan.glb | Original / OpenBot (bloco E) | CC0-1.0 | d10de50a0e215b0580c1a654739247c88852853fc6e94c5e2ec85635773518af |
 | car-02-van.glb | Original / OpenBot (bloco E) | CC0-1.0 | 140684e6aa8dc30f0230a43de435bab556fc365bd8c231dcac9824139299cfb6 |
 | barrier-01-road.glb | Original / OpenBot (bloco E) | CC0-1.0 | bb654f58746ce44cbd876dbae0619aa875987d3a8ebe5e7d5df4be84e0841a4e |
+
+| instrument-04-bass-v2.glb | Original / OpenBot (Jazz Bass, Murdoc; modelado do zero, alca derivada de noodle-guitar-v3.glb) | CC0-1.0 | 7d2b93a0addf114e48db19349f5b84eed36bb6961de57eecd1682921ae1a4755 |
+| instrument-05-guitar-v2.glb | Original / OpenBot (Les Paul, Noodle; modelada do zero, alca derivada de noodle-guitar-v3.glb) | CC0-1.0 | 75f14f19c3ac4ac0267b46f62569b4ed59db1f0ea3017dbe4cf80a733b6fca8b |
