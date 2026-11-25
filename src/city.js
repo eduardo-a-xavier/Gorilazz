@@ -436,11 +436,10 @@ export function installCity(scene, surfaces) {
     const rng = seeded(lot.seed); const { w, d, floors, style, era } = lot; const h = floors * FLOOR;
     const base = frame(lot.x, -.3, lot.z, lot.rotation);
     const dark = era === 2, modern = era === 3;
-    // Calçada com meio-fio: cimento, areia (Plastic Beach), asfalto gasto ou granito.
-    const pave = new THREE.BoxGeometry(w + 2.2, .3, d + 4.6); const uv = pave.attributes.uv;
+    // Calçada do lote: topo em y = +0,065 (5 mm abaixo de LEVEL.walk = +0,07 para eliminar degrau e z-fighting com a calçada da rua).
+    const pave = new THREE.BoxGeometry(w + 2.2, .33, d + 4.6); const uv = pave.attributes.uv;
     for (let i = 0; i < uv.count; i++) uv.setXY(i, uv.getX(i) * (w + 2.2) / 4, uv.getY(i) * (d + 4.6) / 4);
     put(batches, paving[era], place(base, pave, [0, .2, 1.3]));
-    box(base, mat.stone, [w + .3, .25, .3], [0, .22, d / 2 + 3.6]);
     // Corpo, embasamento, frisos e platibanda.
     walls(base, facadeMaterial(style, lot.tint), w, d, floors, rng);
     caster(base, [w - .06, h + .8, d - .06], [0, (h + .8) / 2, 0]);
@@ -469,9 +468,14 @@ export function installCity(scene, surfaces) {
       box(base, mat.stone, [2, .3, .9], [x, .35, d / 2 + .4]);
       box(base, dark ? mat.dead : modern ? mat.neonCyan : mat.glow, [.3, .3, .3], [x + 1.1, 2.6, d / 2 + .2]);
     }
-    // Acesso: trecho curto de calçada da porta até o fim da calçada da rua mais próxima (sem porta sem acesso).
+    // Acesso: trecho contínuo de calçada da porta até a calçada da rua, nivelado com o lote (+0,065) e com saia até o terreno (sem degrau nem z-fighting).
     const pad = accessPad(lot, padX);
-    if (pad) box(base, mat.stone, [1.8, .1, pad.length], [pad.doorLocal.u + pad.dirLocal.u * pad.length / 2, .32, pad.doorLocal.v + pad.dirLocal.v * pad.length / 2], [0, Math.atan2(pad.dirLocal.u, pad.dirLocal.v), 0]);
+    if (pad) {
+      const padGeo = new THREE.BoxGeometry(2.0, .33, pad.length);
+      const puv = padGeo.attributes.uv;
+      for (let i = 0; i < puv.count; i++) puv.setXY(i, puv.getX(i) * 2.0 / 4, puv.getY(i) * pad.length / 4);
+      put(batches, paving[era], place(base, padGeo, [pad.doorLocal.u + pad.dirLocal.u * pad.length / 2, .2, pad.doorLocal.v + pad.dirLocal.v * pad.length / 2], [0, Math.atan2(pad.dirLocal.u, pad.dirLocal.v), 0]));
+    }
     // Escada de incêndio (Ato 1) ou enferrujada (Ato 3).
     if (lot.escape && floors >= 3) {
       const x = w / 2 + .6, len = Math.min(d * .7, 4.2), m = dark ? mat.rust : mat.metal;

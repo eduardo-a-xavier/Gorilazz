@@ -982,31 +982,32 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
       giant.traverse(object => {
         if (!object.isMesh) return;
         object.geometry = object.geometry.clone();
+        object.geometry.computeVertexNormals();
         object.material = object.material.clone();
-        object.material.color.multiplyScalar(.35);
+        object.material.color.multiplyScalar(.68);
+        object.material.roughness = .92;
+        object.material.metalness = 0;
+        if (object.material.map) {
+          object.material.emissiveMap = object.material.map;
+          object.material.emissive = new THREE.Color('#7a7488');
+          object.material.emissiveIntensity = .58;
+        }
         configureLunarMaterial(object.material);
+        // Auto-oclusão 3D limpa no busto lunar (sem backfaces nem boca/nuca atravessando o rosto);
+        // o depth buffer é limpo logo após em renderOrder -0.45 para a cidade continuar sempre à frente.
+        object.material.side = THREE.FrontSide;
+        object.material.depthTest = true;
+        object.material.depthWrite = true;
         object.material.onBeforeCompile = shader => {
           shader.vertexShader = shader.vertexShader.replace('#include <common>', '#include <common>\nvarying vec3 lunarNormal;')
             .replace('#include <beginnormal_vertex>', '#include <beginnormal_vertex>\nlunarNormal = normalize(normalMatrix * objectNormal);');
           shader.fragmentShader = shader.fragmentShader.replace('#include <common>', '#include <common>\nvarying vec3 lunarNormal;')
-            .replace('#include <color_fragment>', '#include <color_fragment>\ndiffuseColor.rgb += vec3(.16, .07, .23) * pow(1.0 - abs(normalize(lunarNormal).z), 3.0);');
+            .replace('#include <color_fragment>', '#include <color_fragment>\ndiffuseColor.rgb += vec3(.14, .09, .22) * pow(1.0 - max(0.0, normalize(lunarNormal).z), 2.6);');
         };
         object.material.transparent = false; object.renderOrder = -.5;
         object.castShadow = object.receiveShadow = false;
         object.frustumCulled = true;
       });
-      let head; giant.traverse(object => { if (isMurdocHead(object)) head = object; });
-      if (head) {
-        const headBox = new THREE.Box3().setFromObject(head), size = headBox.getSize(new THREE.Vector3());
-        const eyeMaterial = configureLunarMaterial(new THREE.MeshBasicMaterial({ color: '#d87746' }));
-        for (const side of [-1, 1]) {
-          const eye = new THREE.Mesh(new THREE.SphereGeometry(size.x * .025, 6, 4), eyeMaterial);
-          eye.name = 'murdoc-colossal-eye';
-          eye.renderOrder = -.49;
-          eye.position.set((headBox.min.x + headBox.max.x) / 2 + side * size.x * .13, headBox.min.y + size.y * .70, headBox.max.z + size.z * .01);
-          giant.add(eye);
-        }
-      }
       const bustBounds = new THREE.Box3().setFromObject(giant), center = bustBounds.getCenter(new THREE.Vector3());
       const centered = new THREE.Group(); centered.add(giant); centered.position.set(-center.x, -center.y, -center.z);
       const bust = new THREE.Group(); bust.add(centered); bust.scale.setScalar(LUNAR_MURDOC.height / (bustBounds.max.y - bustBounds.min.y));
@@ -1014,11 +1015,14 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
       bust.rotation.y = Math.atan2(-LUNAR_MURDOC.x, -LUNAR_MURDOC.z);
       const haloMaterial = new THREE.ShaderMaterial({ depthWrite: false, depthTest: false, fog: false,
         uniforms: {}, vertexShader: 'varying vec2 vUv; void main(){vUv=uv;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}',
-        fragmentShader: 'varying vec2 vUv; void main(){float d=length(vUv-vec2(.5))*2.;if(d>1.)discard;vec3 c=mix(vec3(.055,.05,.075),vec3(.22,.16,.26),smoothstep(.7,1.,d));gl_FragColor=vec4(c,1.);}' });
+        fragmentShader: 'varying vec2 vUv; void main(){float d=length(vUv-vec2(.5))*2.;if(d>1.)discard;vec3 c=mix(vec3(.07,.06,.11),vec3(.24,.18,.32),smoothstep(.55,1.,d));gl_FragColor=vec4(c,1.);}' });
       const halo = new THREE.Mesh(new THREE.PlaneGeometry(LUNAR_MURDOC.disk, LUNAR_MURDOC.disk), haloMaterial); halo.name = 'murdoc-lunar-halo'; halo.renderOrder = -.6;
       halo.position.set(LUNAR_MURDOC.x * 1.01, LUNAR_MURDOC.y * 1.01, LUNAR_MURDOC.z * 1.01);
       halo.lookAt(0, 0, 0);
-      lunarMurdoc = new THREE.Group(); lunarMurdoc.name = 'murdoc-lunar'; lunarMurdoc.add(bust, halo); scene.add(lunarMurdoc);
+      const depthReset = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), new THREE.MeshBasicMaterial({ colorWrite: false, depthWrite: true, depthTest: false }));
+      depthReset.name = 'murdoc-lunar-depth-reset'; depthReset.renderOrder = -.45; depthReset.frustumCulled = false;
+      depthReset.onAfterRender = r => { r.state.buffers.depth.setMask(true); r.clearDepth(); };
+      lunarMurdoc = new THREE.Group(); lunarMurdoc.name = 'murdoc-lunar'; lunarMurdoc.add(bust, halo, depthReset); scene.add(lunarMurdoc);
     }
     roots.forEach((model, index) => {
       const center = bounds[index].getCenter(new THREE.Vector3());
