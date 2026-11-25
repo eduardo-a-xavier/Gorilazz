@@ -1,0 +1,507 @@
+{
+  "models": [
+    {
+      "file": "tree-01-broadleaf.glb",
+      "kind": "tree",
+      "triangles": 1070,
+      "bytes": 27912,
+      "sha256": "28c736e2995469547ea6dfaaf9ae307fa7d63ef67592a78953129c840498c893",
+      "height_m": 6.0,
+      "materials": 1,
+      "origin": [
+        0,
+        0,
+        0
+      ],
+      "block": "A"
+    },
+    {
+      "file": "tree-02-windswept.glb",
+      "kind": "tree",
+      "triangles": 1070,
+      "bytes": 27932,
+      "sha256": "12c2162fc6b73712b0e4846dc879a22fbf6c4fe2700bd9ae3471153b423e72b4",
+      "height_m": 5.5,
+      "materials": 1,
+      "origin": [
+        0,
+        0,
+        0
+      ],
+      "block": "A"
+    },
+    {
+      "file": "tree-03-sage.glb",
+      "kind": "tree",
+      "triangles": 1070,
+      "bytes": 27928,
+      "sha256": "90cf4abaca91cb301d678cc5cfa66b7f71dc3c8002b94746e7a52a98add5d8c8",
+      "height_m": 6.7,
+      "materials": 1,
+      "origin": [
+        0,
+        0,
+        0
+      ],
+      "block": "A"
+    },
+    {
+      "file": "bush-01-mound.glb",
+      "kind": "bush",
+      "triangles": 240,
+      "bytes": 7136,
+      "sha256": "31add791f59c56c4a0845bd9d65158fccd2cbc846cf8ebf95f2eba488cfa317e",
+      "height_m": 1.427,
+      "materials": 1,
+      "origin": [
+        0,
+        0,
+        0
+      ],
+      "block": "A"
+    },
+    {
+      "file": "bush-02-spreading.glb",
+      "kind": "bush",
+      "triangles": 240,
+      "bytes": 7136,
+      "sha256": "1b13f442c08999195e79151c57f8eab14202eb0b9611907ca3a928f61e5424d2",
+      "height_m": 1.4185,
+      "materials": 1,
+      "origin": [
+        0,
+        0,
+        0
+      ],
+      "block": "A"
+    },
+    {
+      "file": "rock-01-slate.glb",
+      "kind": "rock",
+      "triangles": 80,
+      "bytes": 9592,
+      "sha256": "1adbcf51233312d715a520ba56b5512f7710da7ac6fc23978dff68d2dad622fe",
+      "height_m": 0.9573,
+      "materials": 1,
+      "origin": [
+        0,
+        0,
+        0
+      ],
+      "block": "A"
+    },
+    {
+      "file": "rock-02-ochre.glb",
+      "kind": "rock",
+      "triangles": 80,
+      "bytes": 9596,
+      "sha256": "56ef97f484b0a9f0bef52dc94ad91e4e136480528899aef861d489a7edbe9665",
+      "height_m": 1.2592,
+      "materials": 1,
+      "origin": [
+        0,
+        0,
+        0
+      ],
+      "block": "A"
+    },
+    {
+      "file": "rock-03-split.glb",
+      "kind": "rock",
+      "triangles": 80,
+      "bytes": 9596,
+      "sha256": "a834f96c34e0e3c9018bc1170629da1a763ee987ce04548a3ad34ba0ce2107d1",
+      "height_m": 1.2809,
+      "materials": 1,
+      "origin": [
+        0,
+        0,
+        0
+      ],
+      "block": "A"
+    },
+    {
+      "file": "lamp-01-crooked.glb",
+      "kind": "lamp",
+      "triangles": 208,
+      "bytes": 14212,
+      "sha256": "9539af5ee76f3455f5fcbc1e22e27b273893dc5f2b6775f0db086234656e271f",
+      "height_m": 4.9096,
+      "materials": 1,
+      "origin": [
+        0,
+        0,
+        0
+      ],
+      "block": "A"
+    },
+    {
+      "file": "bench-01-slatted.glb",
+      "kind": "bench",
+      "triangles": 436,
+      "bytes": 35732,
+      "sha256": "ad484a76812332573929642b834b0a11c92ce66f6d61144c435a3dcff0bd4f34",
+      "height_m": 1.0,
+      "materials": 1,
+      "origin": [
+        0,
+        0,
+        0
+      ],
+      "block": "A"
+    },
+    {
+      "file": "pigeon-01-animated.glb",
+      "block": "B",
+      "triangles": 1132,
+      "bytes": 39480,
+      "sha256": "6b66769e0b9f66ca3f8b4153364d1538211facc8fa67e0e1a1c436ea9e82e58d",
+      "materials": 1,
+      "animations": [
+        "walk",
+        "peck",
+        "fly"
+      ],
+      "nodes": [
+        "body",
+        "foot_L",
+        "foot_R",
+        "neck_head",
+        "wing_L",
+        "wing_R",
+        "pigeon_root"
+      ]
+    },
+    {
+      "file": "instrument-01-bass.glb",
+      "block": "C",
+      "triangles": 1076,
+      "bytes": 74004,
+      "sha256": "610a3b4ff129fd0344b748514beb5f46a03cca02af2e755cbe67d84aa28fc494",
+      "materials": 1,
+      "animations": [],
+      "nodes": [
+        "bass_murdoc_geometry",
+        "neck",
+        "socket_hand_neck_R",
+        "socket_hand_strum_L",
+        "strap_shoulder",
+        "strum",
+        "bass_murdoc"
+      ],
+      "sockets_gltf": {
+        "socket_hand_neck_R": [
+          0.33,
+          1.1,
+          0.28
+        ],
+        "socket_hand_strum_L": [
+          -0.04,
+          0.9,
+          0.19
+        ],
+        "neck": [
+          0.33,
+          1.1,
+          0.28
+        ],
+        "strum": [
+          -0.04,
+          0.9,
+          0.19
+        ],
+        "strap_shoulder": [
+          -0.12,
+          1.3,
+          -0.015
+        ]
+      },
+      "placement": "identity at character feet; already in normalized band coordinates"
+    },
+    {
+      "file": "instrument-02-drums.glb",
+      "block": "C",
+      "triangles": 3408,
+      "bytes": 89672,
+      "sha256": "800b0625167aba393661cf63c9d1bf333b472982ff66c473cfdbcf6a85f5f73c",
+      "materials": 1,
+      "animations": [],
+      "nodes": [
+        "drums_russel_geometry",
+        "kick",
+        "pad_L",
+        "pad_R",
+        "snare",
+        "socket_pad_L",
+        "socket_pad_R",
+        "tom_L",
+        "tom_R",
+        "drums_russel"
+      ],
+      "sockets_gltf": {
+        "socket_pad_R": [
+          0.3,
+          0.93,
+          0.2
+        ],
+        "socket_pad_L": [
+          -0.3,
+          0.93,
+          0.2
+        ],
+        "pad_R": [
+          0.3,
+          0.93,
+          0.2
+        ],
+        "pad_L": [
+          -0.3,
+          0.93,
+          0.2
+        ],
+        "kick": [
+          0,
+          0.32,
+          0.78
+        ],
+        "snare": [
+          0,
+          0.81,
+          0.32
+        ],
+        "tom_R": [
+          0.3,
+          0.93,
+          0.2
+        ],
+        "tom_L": [
+          -0.3,
+          0.93,
+          0.2
+        ]
+      }
+    },
+    {
+      "file": "instrument-03-keyboard.glb",
+      "block": "C",
+      "triangles": 2752,
+      "bytes": 215016,
+      "sha256": "16ad2c5aa9876a2986460f7678660a12916b19b5984ce877586b55c71151bfdf",
+      "materials": 1,
+      "animations": [],
+      "nodes": [
+        "keyboard_twod_geometry",
+        "microphone",
+        "pad_L",
+        "pad_R",
+        "socket_pad_L",
+        "socket_pad_R",
+        "keyboard_twod"
+      ],
+      "sockets_gltf": {
+        "socket_pad_R": [
+          0.22,
+          0.89,
+          0.18
+        ],
+        "socket_pad_L": [
+          -0.22,
+          0.89,
+          0.18
+        ],
+        "pad_R": [
+          0.22,
+          0.89,
+          0.18
+        ],
+        "pad_L": [
+          -0.22,
+          0.89,
+          0.18
+        ],
+        "microphone": [
+          -0.02,
+          1.23,
+          0.33
+        ]
+      }
+    },
+    {
+      "file": "speaker-01-stack.glb",
+      "block": "D",
+      "triangles": 996,
+      "bytes": 55288,
+      "sha256": "ff67149472bc4e0209f2e806320d7a37a6324787787a5557e163fce7702e6e32",
+      "materials": 1,
+      "animations": [],
+      "nodes": [
+        "speaker_stack_geometry",
+        "speaker_stack"
+      ]
+    },
+    {
+      "file": "speaker-02-tower.glb",
+      "block": "D",
+      "triangles": 1696,
+      "bytes": 81088,
+      "sha256": "8f80e8f9585c80f8334dc92cbf9fa62e8142fb40942ac89020b07e28de617eab",
+      "materials": 1,
+      "animations": [],
+      "nodes": [
+        "speaker_tower_geometry",
+        "speaker_tower"
+      ]
+    },
+    {
+      "file": "arcade-01-kong.glb",
+      "block": "D",
+      "triangles": 1587,
+      "bytes": 128880,
+      "sha256": "ae0f948fb3648f8983311c67db569c2447872dd0a281de748388d53f603064b7",
+      "materials": 2,
+      "animations": [],
+      "nodes": [
+        "arcade_kong_geometry",
+        "screen",
+        "arcade_kong"
+      ],
+      "screen_center_gltf": [
+        0,
+        2.65,
+        0.68
+      ],
+      "screen_rotation_x": -0.25,
+      "screen_size": [
+        1.4,
+        1.05
+      ]
+    },
+    {
+      "file": "car-01-sedan.glb",
+      "block": "E",
+      "triangles": 1560,
+      "bytes": 99112,
+      "sha256": "d10de50a0e215b0580c1a654739247c88852853fc6e94c5e2ec85635773518af",
+      "materials": 1,
+      "animations": [],
+      "nodes": [
+        "car-01-sedan_geometry",
+        "front_bumper",
+        "roof",
+        "car-01-sedan"
+      ]
+    },
+    {
+      "file": "car-02-van.glb",
+      "block": "E",
+      "triangles": 1776,
+      "bytes": 114808,
+      "sha256": "140684e6aa8dc30f0230a43de435bab556fc365bd8c231dcac9824139299cfb6",
+      "materials": 1,
+      "animations": [],
+      "nodes": [
+        "car-02-van_geometry",
+        "front_bumper",
+        "roof",
+        "car-02-van"
+      ]
+    },
+    {
+      "file": "barrier-01-road.glb",
+      "block": "E",
+      "triangles": 296,
+      "bytes": 17232,
+      "sha256": "bb654f58746ce44cbd876dbae0619aa875987d3a8ebe5e7d5df4be84e0841a4e",
+      "materials": 1,
+      "animations": [],
+      "nodes": [
+        "barrier_geometry",
+        "barrier_road"
+      ]
+    }
+  ],
+  "axis": "Y-up",
+  "units": "meters",
+  "checks": [
+    {
+      "file": "tree-01-broadleaf.glb",
+      "pass": true
+    },
+    {
+      "file": "tree-02-windswept.glb",
+      "pass": true
+    },
+    {
+      "file": "tree-03-sage.glb",
+      "pass": true
+    },
+    {
+      "file": "bush-01-mound.glb",
+      "pass": true
+    },
+    {
+      "file": "bush-02-spreading.glb",
+      "pass": true
+    },
+    {
+      "file": "rock-01-slate.glb",
+      "pass": true
+    },
+    {
+      "file": "rock-02-ochre.glb",
+      "pass": true
+    },
+    {
+      "file": "rock-03-split.glb",
+      "pass": true
+    },
+    {
+      "file": "lamp-01-crooked.glb",
+      "pass": true
+    },
+    {
+      "file": "bench-01-slatted.glb",
+      "pass": true
+    },
+    {
+      "file": "pigeon-01-animated.glb",
+      "pass": true
+    },
+    {
+      "file": "instrument-01-bass.glb",
+      "pass": true
+    },
+    {
+      "file": "instrument-02-drums.glb",
+      "pass": true
+    },
+    {
+      "file": "instrument-03-keyboard.glb",
+      "pass": true
+    },
+    {
+      "file": "speaker-01-stack.glb",
+      "pass": true
+    },
+    {
+      "file": "speaker-02-tower.glb",
+      "pass": true
+    },
+    {
+      "file": "arcade-01-kong.glb",
+      "pass": true
+    },
+    {
+      "file": "car-01-sedan.glb",
+      "pass": true
+    },
+    {
+      "file": "car-02-van.glb",
+      "pass": true
+    },
+    {
+      "file": "barrier-01-road.glb",
+      "pass": true
+    }
+  ]
+}

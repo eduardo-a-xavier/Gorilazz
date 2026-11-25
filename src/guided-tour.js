@@ -69,7 +69,7 @@ export function stopIdFor(hit) {
 export function speedCap(distance) {
   if (distance >= SLOW_ZONE_M) return Infinity;
   if (distance <= ARRIVE_M) return 1.5;
-  return 1.5 + (6 - 1.5) * ((distance - ARRIVE_M) / (SLOW_ZONE_M - ARRIVE_M));
+  return 1.5 + (16.5 - 1.5) * ((distance - ARRIVE_M) / (SLOW_ZONE_M - ARRIVE_M));
 }
 
 // Assumir o volante: qualquer tecla de direção encerra o passeio automático, sem zerar o progresso.

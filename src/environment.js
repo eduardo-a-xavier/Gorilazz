@@ -121,7 +121,7 @@ export function installEnvironment(scene, renderer, surfaces, onModel = () => {}
     const plaque=new THREE.Mesh(new THREE.PlaneGeometry(3.8*NON_DISCOVERY_PROP_SCALE,.8*NON_DISCOVERY_PROP_SCALE),new THREE.MeshStandardMaterial({map:letteringTexture(label,{height:128}),roughness:.9}));plaque.position.set(point.x,.8*NON_DISCOVERY_PROP_SCALE,point.z+2.76);scene.add(plaque);
   }
   // Shared prototype geometry/materials: repeated trees use only a few draw calls.
-  // Low planting beds follow the tree groves but leave the shoulders clear.
+  // Low planting beds follow the tree groves but leave the shoulders clear (replaced lazily by bush-01/02 GLB).
   const shrubs = [];
   for (const [i, tree] of TREE_LOCATIONS.entries()) {
     for (let j=0; j<3; j++) {
@@ -130,17 +130,54 @@ export function installEnvironment(scene, renderer, surfaces, onModel = () => {}
       if (nearestRoad({x,z}).distance>12) shrubs.push({x,z,angle});
     }
   }
-  const shrubMesh=new THREE.InstancedMesh(new THREE.IcosahedronGeometry(1,0),
+  let shrubMesh=new THREE.InstancedMesh(new THREE.IcosahedronGeometry(1,0),
     new THREE.MeshStandardMaterial({roughness:1,flatShading:true}),shrubs.length);
   const pose=new THREE.Object3D();
   shrubs.forEach(({x,z,angle},i)=>{
     pose.position.set(x,.28,z); pose.rotation.y=angle;
     pose.scale.set(1.4+i%3*.3,.65+i%4*.14,1.15); pose.updateMatrix();
     shrubMesh.setMatrixAt(i,pose.matrix);
-    shrubMesh.setColorAt(i,new THREE.Color(['#63764b','#83915b','#536e52'][i%3]));
+    shrubMesh.setColorAt(i,new THREE.Color(['#4e6138','#657342','#40573f'][i%3]));
   });
   shrubMesh.receiveShadow=true;scene.add(shrubMesh);
-  const treesPromise=loader.loadAsync('./assets/environment/broadleaf-tree.glb').then(gltf=>{
+  Promise.all(['./assets/models/scenery/bush-01-mound.glb','./assets/models/scenery/bush-02-spreading.glb'].map(u=>loader.loadAsync(u))).then(gltfs=>{
+    scene.remove(shrubMesh); shrubMesh.geometry.dispose();
+    gltfs.forEach((gltf,vIdx)=>{
+      let found=null; gltf.scene.updateMatrixWorld(true);
+      gltf.scene.traverse(o=>{if(!found&&o.isMesh&&o.geometry)found=o;});
+      if(!found)return;
+      const geo=found.geometry.clone().applyMatrix4(found.matrixWorld);
+      const mat=new THREE.MeshStandardMaterial({color:vIdx===0?'#76946e':'#6d8c6c',vertexColors:Boolean(geo.attributes.color),roughness:.88,metalness:.04});
+      const sub=shrubs.filter((_,i)=>i%2===vIdx);
+      const inst=new THREE.InstancedMesh(geo,mat,sub.length); inst.receiveShadow=true;
+      sub.forEach(({x,z,angle},i)=>{
+        pose.position.set(x,0,z); pose.rotation.y=angle;
+        pose.scale.setScalar(.85+(i%4)*.12); pose.updateMatrix();
+        inst.setMatrixAt(i,pose.matrix);
+      });
+      inst.computeBoundingSphere(); scene.add(inst);
+    });
+  }).catch(()=>{});
+  const treeUrls=['./assets/models/scenery/tree-01-broadleaf.glb','./assets/models/scenery/tree-02-windswept.glb','./assets/models/scenery/tree-03-sage.glb'];
+  const treeTints=['#7f9c7a','#739478','#869e7d'];
+  const treesPromise=Promise.all(treeUrls.map(u=>loader.loadAsync(u))).then(gltfs=>{
+    gltfs.forEach((gltf,vIdx)=>{
+      let found=null; gltf.scene.updateMatrixWorld(true);
+      gltf.scene.traverse(o=>{if(!found&&o.isMesh&&o.geometry)found=o;});
+      if(!found)return;
+      const geo=found.geometry.clone().applyMatrix4(found.matrixWorld);
+      const mat=new THREE.MeshStandardMaterial({color:treeTints[vIdx],vertexColors:Boolean(geo.attributes.color),roughness:.86,metalness:.04});
+      const sub=TREE_LOCATIONS.map((pt,i)=>({pt,i})).filter(({i})=>i%3===vIdx);
+      const instances=new THREE.InstancedMesh(geo,mat,sub.length);instances.castShadow=instances.receiveShadow=true;
+      sub.forEach(({pt,i},k)=>{
+        pose.position.set(pt.x,0,pt.z);pose.rotation.set(0,i*2.39,0);
+        const factor=.85+(i%5)*.10;pose.scale.setScalar(factor);pose.updateMatrix();
+        instances.setMatrixAt(k,pose.matrix);
+      });
+      instances.computeBoundingSphere();scene.add(instances);
+    });
+    report('trees','ready');
+  }).catch(()=>loader.loadAsync('./assets/environment/broadleaf-tree.glb').then(gltf=>{
     gltf.scene.updateMatrixWorld(true);
     gltf.scene.traverse(part=>{
       if(!part.isMesh)return;
@@ -148,7 +185,6 @@ export function installEnvironment(scene, renderer, surfaces, onModel = () => {}
       let geometry = part.geometry;
       if (foliage) {
         geometry.computeBoundingBox(); const bounds=geometry.boundingBox, width=bounds.max.x-bounds.min.x, height=bounds.max.y-bounds.min.y;
-        // Copas secundárias fundidas à geometria original: mantém uma draw call por material.
         const left=geometry.clone(), right=geometry.clone();
         left.scale(.58,.58,.58); left.translate(-width*.25,height*.2,0);
         right.scale(.52,.52,.52); right.translate(width*.25,height*.27,0);
@@ -163,7 +199,7 @@ export function installEnvironment(scene, renderer, surfaces, onModel = () => {}
       });
       instances.computeBoundingSphere();scene.add(instances);
     });report('trees','ready');
-  }).catch(error=>{console.warn('Vegetação alternativa:',error.message);report('trees','fallback');
+  })).catch(error=>{console.warn('Vegetação alternativa:',error.message);report('trees','fallback');
     for(const point of TREE_LOCATIONS){const crown=new THREE.Mesh(new THREE.SphereGeometry(2.2,12,8),surfaces.get('foliage'));crown.position.set(point.x,3.7,point.z);scene.add(crown);}
   });
   return Promise.allSettled([studioPromise,treesPromise]);

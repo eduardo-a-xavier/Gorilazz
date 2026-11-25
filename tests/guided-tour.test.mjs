@@ -3,7 +3,9 @@ import assert from 'node:assert/strict';
 import { buildStops, orderTour, createStopProgress, speedCap, takeOver, TOUR_TOTAL, PROGRESS_KEY, SLOW_ZONE_M, ARRIVE_M } from '../src/guided-tour.js';
 import { ERA_GATES, CITY_ERAS, DISCOVERIES, roadGap, nearestRoad, WORLD_BOUNDS } from '../src/world-data.js';
 import { tracks } from '../src/content.js';
-import { planPath } from '../src/navigation.js';
+import { planPath, navigationInput, CRUISE_SPEED_MS } from '../src/navigation.js';
+import { createVehicle, stepVehicle, haltVehicle } from '../src/driving.js';
+import { distance } from '../src/world-data.js';
 
 const eraTracks = ['clint', 'melancholy', 'revolving', 'saturnz'];
 const stops = buildStops({ gates: ERA_GATES, cityEras: CITY_ERAS, eraTracks, discoveries: DISCOVERIES, tracks });
@@ -107,10 +109,65 @@ test('chega a 9/9 e marca como completo; o toast depende de a visita ser nova', 
 
 test('velocidade: livre longe das paradas, reduzida na zona de chegada e mínima ao chegar', () => {
   assert.equal(speedCap(SLOW_ZONE_M + 10), Infinity);
-  assert.ok(speedCap(SLOW_ZONE_M - 1) < 6.01);
+  assert.ok(speedCap(SLOW_ZONE_M - 1) < 16.51);
   assert.equal(speedCap(ARRIVE_M - 1), 1.5);
   let previous = Infinity;
   for (let d = SLOW_ZONE_M; d >= 0; d -= 1) { const cap = speedCap(d); assert.ok(cap <= previous + 1e-9, `velocidade sobe ao chegar em ${d} m`); previous = cap; }
+});
+
+test('passeio guiado completo (9/9 paradas, >= 600 amostras): Catmull-Rom + look-ahead, cruzeiro ~55-65 km/h nas retas, esterço gradual e 0 amostras fora do asfalto', () => {
+  assert.ok(CRUISE_SPEED_MS * 3.6 >= 55 && CRUISE_SPEED_MS * 3.6 <= 65, 'velocidade de cruzeiro alvo entre 55 e 65 km/h');
+  const vehicle = createVehicle();
+  const order = orderTour(stops, vehicle);
+  const progress = createStopProgress(new MemoryStorage(), stops.map(s => s.id));
+  let totalTicks = 0, sampleCount = 0, offAsphalt = 0, maxSpeedKmh = 0, maxSteerDelta = 0, prevSteering = 0;
+
+  for (let i = 0; i < order.length; i++) {
+    const stop = order[i];
+    const roadPt = nearestRoad(stop);
+    const target = { x: roadPt.x, z: roadPt.z, title: stop.title };
+    const dest = planPath(vehicle, target);
+    // Gira parado apenas se o próximo trecho apontar fortemente para trás (> 1.85 rad)
+    let aimIdx = dest.index;
+    while (aimIdx < dest.points.length - 1 && distance(vehicle, dest.points[aimIdx]) < 8) aimIdx++;
+    const nextPt = dest.points[aimIdx];
+    const targetHeading = Math.atan2(-(nextPt.x - vehicle.x), -(nextPt.z - vehicle.z));
+    let align = Math.abs(Math.atan2(Math.sin(targetHeading - vehicle.heading), Math.cos(targetHeading - vehicle.heading))) > 1.85 ? targetHeading : null;
+
+    let arrived = false;
+    for (let tick = 0; tick < 120 * 90; tick++) {
+      totalTicks++;
+      if (align !== null) {
+        if (Math.abs(vehicle.speed) > .3) stepVehicle(vehicle, { throttle: false, brake: true, steer: 0 }, 1 / 120);
+        else {
+          const diff = Math.atan2(Math.sin(align - vehicle.heading), Math.cos(align - vehicle.heading));
+          if (Math.abs(diff) < .03) { vehicle.heading = align; align = null; }
+          else vehicle.heading += Math.sign(diff) * Math.min(Math.abs(diff), 1.6 / 120);
+          stepVehicle(vehicle, { throttle: false, brake: true, steer: 0 }, 1 / 120);
+        }
+      } else {
+        const d = distance(vehicle, target);
+        if (d < ARRIVE_M) { arrived = true; progress.visit(stop.id); haltVehicle(vehicle); prevSteering = 0; break; }
+        let nav = navigationInput(vehicle, dest);
+        if (nav.arrived) { arrived = true; progress.visit(stop.id); haltVehicle(vehicle); prevSteering = 0; break; }
+        if (Math.abs(vehicle.speed) > speedCap(d)) nav = { ...nav, throttle: false, brake: true };
+        stepVehicle(vehicle, nav, 1 / 120);
+        maxSteerDelta = Math.max(maxSteerDelta, Math.abs(vehicle.steering - prevSteering));
+        prevSteering = vehicle.steering;
+      }
+      maxSpeedKmh = Math.max(maxSpeedKmh, vehicle.speed * 3.6);
+      if (totalTicks % 15 === 0) {
+        sampleCount++;
+        if (vehicle.surface !== 'asfalto' || roadGap(vehicle) > .01) offAsphalt++;
+      }
+    }
+    assert.ok(arrived, `não chegou à parada ${i + 1}: ${stop.id}`);
+  }
+  assert.equal(progress.count, 9, '9/9 paradas visitadas');
+  assert.ok(sampleCount >= 600, `amostras coletadas (${sampleCount}) devem ser >= 600`);
+  assert.equal(offAsphalt, 0, `${offAsphalt} amostras fora do asfalto`);
+  assert.ok(maxSpeedKmh >= 50 && maxSpeedKmh <= 65, `velocidade máxima de cruzeiro (${maxSpeedKmh.toFixed(1)} km/h) na faixa de cruzeiro`);
+  assert.ok(maxSteerDelta < .03, `esterço das rodas dianteiras gradual (${maxSteerDelta.toFixed(4)} rad/tick)`);
 });
 
 test('assumir o volante: WASD e setas encerram o passeio sem apagar o progresso; outras teclas não', () => {

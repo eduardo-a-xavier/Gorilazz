@@ -1168,7 +1168,9 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
     setQuality(mode) {
       const config = qualitySettings(mode, devicePixelRatio, fauna.flock.length, FX_COUNT);
       qualityMode = config.name; pixelRatio = config.pixelRatio;
-      limitStreetProps(streetProps.group, live.vehicle?.x ?? 0, live.vehicle?.z ?? 0, qualityMode === 'performance' ? 85 : Infinity); lastPropsCull = -Infinity;
+      const r = qualityMode === 'performance' ? 85 : Infinity;
+      streetProps.setCullState?.(live.vehicle?.x ?? 0, live.vehicle?.z ?? 0, r);
+      limitStreetProps(streetProps.group, live.vehicle?.x ?? 0, live.vehicle?.z ?? 0, r); lastPropsCull = -Infinity;
       renderer.setPixelRatio(pixelRatio);
       renderer.shadowMap.enabled = config.shadows;
       fxMesh.count = config.particles; fauna.bodies.count = fauna.wings.count = config.birds; dust.visible = config.dust;
@@ -1196,10 +1198,10 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
     frameSpot({ x, z, dirX = 1, dirZ = 0, distance = 4, height = 2, target = 2 }) { poseView = { eye: new THREE.Vector3(x + dirX * distance, height, z + dirZ * distance), target: new THREE.Vector3(x, target, z) }; },
     // Mãos de um integrante em coordenadas de mundo (depuração de pose).
     handsOf(index) { const rig = people[index]?.rig; if (!rig) return null; rig.visual.updateMatrixWorld(true); return rig.hands().map(hand => rig.visual.localToWorld(hand)); },
-    debug: { renderer, scene, camera, vehicleMotion, cabin, get steeringPivot() { return steeringPivot; }, get pilotRig() { return pilotRig; }, setSize(width, height) { renderer.setSize(width, height, false); camera.aspect = width / height; camera.updateProjectionMatrix(); } },
+    debug: { renderer, scene, camera, vehicleMotion, cabin, streetProps, get steeringPivot() { return steeringPivot; }, get pilotRig() { return pilotRig; }, setSize(width, height) { renderer.setSize(width, height, false); camera.aspect = width / height; camera.updateProjectionMatrix(); } },
     setOverview(value) { overview = value; landmarkView = false; firstPerson = false; travelCamera.resync(); },
     // Abertura: câmera mais baixa e deslocada, para o Geep e a banda ficarem no terço direito e o título respirar.
-    setIntro(value) { intro = value; },
+    setIntro(value) { intro = value; if (!value) streetProps.loadSceneryModels?.(); },
     captureView() { return { firstPerson, overview, landmarkView, yaw, pitch, smoothYaw, smoothPitch, dragAngle, dragElevation, zoom, skyStopped: skyLook.stopped, skyAmount: skyLook.amount }; },
     restoreView(view) {
       if (!view) return;
@@ -1228,7 +1230,7 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
       scene.background.copy(scene.fog.color);
       atmosphere.update(sunlight.color, skylight.color, scene.fog.color, t, reduced); atmosphere.follow(x, z); ambient.update(t, reduced);
       adapt(dt, t);
-      if (qualityMode === 'performance' && t-lastPropsCull >= 1) { limitStreetProps(streetProps.group, x, z, 85); lastPropsCull = t; }
+      if (qualityMode === 'performance' && t-lastPropsCull >= 1) { streetProps.setCullState?.(x, z, 85); limitStreetProps(streetProps.group, x, z, 85); lastPropsCull = t; }
       landmarks.update(t, reduced, dt); fauna.update(vehicle, camera.position, dt, t, reduced);
       lightingReady = true;
       scene.fog.density = THREE.MathUtils.lerp(scene.fog.density, overview ? .001 : landmarkView ? .002 : .003, blend);

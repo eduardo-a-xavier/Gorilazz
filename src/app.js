@@ -219,14 +219,15 @@ function syncGuidedHud() {
 function legTo(index) {
   guided.index = index; guided.holdUntil = 0; hideGuidedCard(); world?.clearPose();
   destination = planPath(vehicle, roadPointOf(guided.order[index]));
-  // Antes de sair, o Geep gira no lugar (parado, sobre o asfalto) até a frente apontar para o ponto que o navigationInput vai mirar:
-  // o primeiro do trecho a 8 m ou mais (o trecho começa com pontos colados no carro, que podem apontar para trás).
-  // Mirar no primeiro ponto fazia o navigationInput dar marcha ré e levar o carro para a calçada.
+  // Só gira parado antes de sair se o próximo trecho apontar fortemente para trás (> 105°);
+  // curvas frontais e laterais são contornadas organicamente em movimento pela spline Catmull-Rom + look-ahead.
   const path = destination.points;
   let aim = destination.index;
   while (aim < path.length - 1 && distance(vehicle, path[aim]) < 8) aim++;
   const next = path[aim];
-  guided.align = Math.atan2(-(next.x - vehicle.x), -(next.z - vehicle.z));
+  const targetHeading = Math.atan2(-(next.x - vehicle.x), -(next.z - vehicle.z));
+  const diff = Math.abs(Math.atan2(Math.sin(targetHeading - vehicle.heading), Math.cos(targetHeading - vehicle.heading)));
+  guided.align = diff > 1.85 ? targetHeading : null;
   setTour(true); syncGuidedHud();
 }
 // Conta uma parada (passeio ou tecla E). Só a primeira visita soma; HUD e mapa são atualizados na hora.

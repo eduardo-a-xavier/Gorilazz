@@ -50,14 +50,14 @@ export function createCabin() {
 
   // Coluna de instrumentos atrás do volante e módulo central de rádio Kong FM com visor emissivo,
   // moldura chanfrada, seletores rotativos e seis botões físicos em relevo.
-  // Luz de preenchimento fraca só na cabine (desligada fora da 1ª pessoa porque root.visible = false).
-  const cabinLight = new THREE.PointLight('#d8f2dc', .85, 2.5, 1.8);
+  // Luz de preenchimento fraca só na cabine (desligada fora da 1ª pessoa porque root.visible = false), posicionada à direita longe das mãos.
+  const cabinLight = new THREE.PointLight('#d8f2dc', .24, 1.9, 2.0);
   root.add(cabinLight);
   const cluster = new THREE.Group(), radioUnit = new THREE.Group(); root.add(cluster,radioUnit);
-  box(cluster,.78,.34,.16,0,0,-.095,'#19211f','#7fa68a',.16); box(cluster,.72,.28,.04,0,0,-.018,trim,'#9ad4a8',.24); box(cluster,.2,.5,.14,0,-.36,-.12,trim);
-  const clusterHalo = new THREE.Mesh(unit, new THREE.MeshBasicMaterial({ color: '#c4dc9d', transparent: true, opacity: .18, blending: THREE.AdditiveBlending, depthWrite: false, toneMapped: false }));
+  box(cluster,.78,.34,.16,0,0,-.095,'#19211f','#7fa68a',.08); box(cluster,.72,.28,.04,0,0,-.018,trim,'#9ad4a8',.10); box(cluster,.2,.5,.14,0,-.36,-.12,trim);
+  const clusterHalo = new THREE.Mesh(unit, new THREE.MeshBasicMaterial({ color: '#c4dc9d', transparent: true, opacity: .07, blending: THREE.AdditiveBlending, depthWrite: false, toneMapped: false }));
   clusterHalo.scale.set(.70,.24,.01); clusterHalo.position.set(0,0,.024); cluster.add(clusterHalo);
-  const clusterStrip = new THREE.Mesh(unit, new THREE.MeshBasicMaterial({ color: '#c4dc9d', toneMapped: false }));
+  const clusterStrip = new THREE.Mesh(unit, new THREE.MeshBasicMaterial({ color: '#8fa370', toneMapped: false }));
   clusterStrip.scale.set(.66,.014,.016); clusterStrip.position.set(0,.125,.002); cluster.add(clusterStrip);
   // Mostrador do velocímetro à frente da moldura de topo: sem isso, a chapa escura cobre o número quando o rádio está ativo.
   const dial = display(256,80,.66,.2); dial.mesh.position.z = .03; cluster.add(dial.mesh);
@@ -78,13 +78,13 @@ export function createCabin() {
   const needle = new THREE.Mesh(new THREE.BoxGeometry(.008,.085,.006),new THREE.MeshBasicMaterial({color:'#e35c40',toneMapped:false}));
   const needlePivot = new THREE.Group(); needle.position.y=.0425; needlePivot.add(needle); needlePivot.position.set(-.21,0,.055); cluster.add(needlePivot);
   dial.mesh.scale.set(.57,.75,1); dial.mesh.position.x=.13;
-  box(radioUnit,1.08,.62,.22,0,0,-.12,'#a89c7d','#c8b98c',.12);
-  box(radioUnit,1.02,.56,.05,0,0,-.022,'#4b3023','#996b38',.16);
-  box(radioUnit,.96,.30,.02,0,.095,-.006,'#0c1413','#c4dc9d',.22);
+  box(radioUnit,1.08,.62,.22,0,0,-.12,'#8d8266','#c8b98c',.04);
+  box(radioUnit,1.02,.56,.05,0,0,-.022,'#4b3023','#996b38',.06);
+  box(radioUnit,.96,.30,.02,0,.095,-.006,'#0c1413','#c4dc9d',.08);
   box(radioUnit,.5,.7,.16,0,-.6,-.14,panel);
-  const radioHalo = new THREE.Mesh(unit, new THREE.MeshBasicMaterial({ color: '#c4dc9d', transparent: true, opacity: .16, blending: THREE.AdditiveBlending, depthWrite: false, toneMapped: false }));
+  const radioHalo = new THREE.Mesh(unit, new THREE.MeshBasicMaterial({ color: '#c4dc9d', transparent: true, opacity: .06, blending: THREE.AdditiveBlending, depthWrite: false, toneMapped: false }));
   radioHalo.scale.set(.96,.29,.01); radioHalo.position.set(0,.095,.003); radioUnit.add(radioHalo);
-  const visorGlow = new THREE.Mesh(unit, new THREE.MeshBasicMaterial({ color: '#c4dc9d', toneMapped: false }));
+  const visorGlow = new THREE.Mesh(unit, new THREE.MeshBasicMaterial({ color: '#8fa370', toneMapped: false }));
   visorGlow.scale.set(.94,.014,.016); visorGlow.position.set(0,.252,.004); radioUnit.add(visorGlow);
   for (const side of [-1, 1]) {
     box(radioUnit,.055,.055,.045,side*.46,-.16,.012,'#2f3c38');
@@ -139,9 +139,9 @@ export function createCabin() {
     // Base do plano do volante: `across` aponta para a direita do motorista, `upward` para o alto do aro.
     across.set(1,0,0).addScaledVector(steering.normal,-steering.normal.x).normalize(); upward.crossVectors(steering.normal,across).normalize();
     cluster.position.copy(steering.centre).addScaledVector(upward,steering.radius + .2).addScaledVector(steering.normal,-.1); cluster.lookAt(eye);
-    radioUnit.position.set(steering.centre.x + .74,steering.centre.y - .08,steering.centre.z - .08); radioUnit.lookAt(eye.x + .2,eye.y,eye.z); radioUnit.scale.setScalar(.72);
+    radioUnit.position.set(steering.centre.x + .84,steering.centre.y - .10,steering.centre.z - .11); radioUnit.lookAt(eye.x + .25,eye.y,eye.z); radioUnit.scale.setScalar(.68);
     cluster.scale.setScalar(.72);
-    cabinLight.position.set(steering.centre.x + .28, steering.centre.y + .22, steering.centre.z + .34);
+    cabinLight.position.set(steering.centre.x + .62, steering.centre.y + .36, steering.centre.z + .52);
     // Retrovisor numa haste curta sobre o para-brisa baixo, ao centro, sem cobrir a rua.
     mirror.position.set(.2,eye.y - .2,eye.z - 1.5); mirror.scale.setScalar(.8); mirror.lookAt(eye.x,eye.y,eye.z);
     mirrorCamera.position.copy(mirror.position); mirrorCamera.rotation.set(0,Math.PI,0);

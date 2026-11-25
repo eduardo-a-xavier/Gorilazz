@@ -33,9 +33,10 @@ function buildArmOnlyIndex(mesh, splitHand = false) {
       if (w <= .01) continue;
       const name = bones[sIdx.getComponent(v, k)]?.name || '';
       if (ARM_BONE_RE.test(name)) armW += w;
+      else if (/^clavicle_/i.test(name)) armW += w * .7;
       if (HAND_BONE_RE.test(name)) handW += w;
     }
-    return { isArm: armW >= .45, isHand: handW >= .35 };
+    return { isArm: armW >= .22, isHand: handW >= .35 };
   };
   const sleeve = [], hand = [];
   for (let i = 0; i < index.count; i += 3) {
@@ -145,15 +146,20 @@ export function createPilotRig(pilot, animations = [], { preposed = false } = {}
   }
   const list = [...Object.values(entries), ...fingers], turn = new THREE.Quaternion();
   const hidden = [], jacket = [], trimmedMeshes = [];
-  // Acabamento fosco unificado para mangas e luvas do piloto v2 (2.806 tris, pulsos soldados).
-  const armMat = (color, emissive, emissiveIntensity = .18, roughness = .78) =>
-    new THREE.MeshStandardMaterial({ color, emissive, emissiveIntensity, roughness, metalness: .02 });
-  const sleeveMat = armMat('#4d7699', '#22384d', .2);
-  const cuffMat = armMat('#f0a9c8', '#f2559c', .15, .72);
-  const gauntletMat = armMat('#38546e', '#192938', .18);
-  const gloveMat = armMat('#e6ddc6', '#57503f', .16);
+  // Acabamento fosco unificado para mangas e luvas do piloto (emissiveIntensity zero: sem estourar bloom nas mãos e punhos).
+  const armMat = (color, roughness = .82) =>
+    new THREE.MeshStandardMaterial({ color, emissive: '#000000', emissiveIntensity: 0, roughness, metalness: 0 });
+  const sleeveMat = armMat('#446b8c', .82);
+  const cuffMat = armMat('#c97a99', .80);
+  const gauntletMat = armMat('#324b62', .82);
+  const gloveMat = armMat('#c8beab', .84);
   pilot.traverse(object => {
     if (!object.isMesh) return;
+    if (object.material) {
+      const clearEmissive = m => { if (m && m.emissive) { m.emissive.set('#000000'); m.emissiveIntensity = 0; m.roughness = Math.max(m.roughness ?? .8, .8); m.metalness = 0; } };
+      if (Array.isArray(object.material)) object.material.forEach(clearEmissive);
+      else clearEmissive(object.material);
+    }
     if (isPilotArmMesh(object)) {
       jacket.push(object);
       smoothNormals(object.geometry); // normais soldadas: sombreamento suave
