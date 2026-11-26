@@ -80,14 +80,15 @@ test('prédios seguem gradiente orgânico (núcleo central mais alto que as bord
 });
 
 test('mapa completo na tecla M ignora campos de texto, fecha com Escape e HUD mantém faixa e troca rápida', async () => {
-  const appSource = await readFile(new URL('../src/app.js', import.meta.url), 'utf8');
+  const hudSource = await readFile(new URL('../src/hud-controller.js', import.meta.url), 'utf8');
+  const audioSource = await readFile(new URL('../src/audio-controller.js', import.meta.url), 'utf8');
   const htmlSource = await readFile(new URL('../index.html', import.meta.url), 'utf8');
   assert.match(htmlSource, /id="full-map-overlay"/);
   assert.match(htmlSource, /id="road-radio-track"/);
-  assert.match(appSource, /if\s*\(event\.target\.closest\('input,select,textarea,\[contenteditable\]'\)\)\s*return;/);
-  assert.match(appSource, /if\s*\(key\s*===\s*'m'\)\s*\{\s*event\.preventDefault\(\);\s*toggleFullMap\(\);/);
-  assert.match(appSource, /map:\s*\(\)\s*=>\s*toggleFullMap\(false\)/, 'o Esc fecha o mapa pela pilha de prioridade (src/escape-stack.js)');
-  assert.ok(!appSource.includes("'#road-radio-prev','#road-radio-next'"), 'botões prev/next da Kong FM permanecem visíveis na barra principal da HUD');
+  assert.match(hudSource, /if\s*\(event\.target\.closest\('input,select,textarea,\[contenteditable\]'\)\)\s*return;/);
+  assert.match(hudSource, /if\s*\(key\s*===\s*'m'\)\s*\{\s*event\.preventDefault\(\);\s*toggleFullMap\(\);/);
+  assert.match(hudSource, /map:\s*\(\)\s*=>\s*toggleFullMap\(false\)/, 'o Esc fecha o mapa pela pilha de prioridade (src/escape-stack.js)');
+  assert.ok(!audioSource.includes("'#road-radio-prev','#road-radio-next'"), 'botões prev/next da Kong FM permanecem visíveis na barra principal da HUD');
 });
 
 test('pombo parado para de bicar e vira a cabeça para o carro que se aproxima (alerta antes da fuga)', () => {

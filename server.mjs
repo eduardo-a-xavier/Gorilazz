@@ -4,6 +4,13 @@ import { gzipSync } from 'node:zlib';
 const routes = new Map([
   ['/src/atmosphere.js', ['src/atmosphere.js', 'text/javascript; charset=utf-8']],
   ['/src/camera-state.js', ['src/camera-state.js', 'text/javascript; charset=utf-8']],
+  ['/src/garage-dock.js', ['src/garage-dock.js', 'text/javascript; charset=utf-8']],
+  ['/src/minigames.js', ['src/minigames.js', 'text/javascript; charset=utf-8']],
+  ['/src/audio-controller.js', ['src/audio-controller.js', 'text/javascript; charset=utf-8']],
+  ['/src/map-ui.js', ['src/map-ui.js', 'text/javascript; charset=utf-8']],
+  ['/src/navigation-ui.js', ['src/navigation-ui.js', 'text/javascript; charset=utf-8']],
+  ['/src/editorial-ui.js', ['src/editorial-ui.js', 'text/javascript; charset=utf-8']],
+  ['/src/hud-controller.js', ['src/hud-controller.js', 'text/javascript; charset=utf-8']],
   ['/src/band-pose.js', ['src/band-pose.js', 'text/javascript; charset=utf-8']],
   ['/src/pilot-rig.js', ['src/pilot-rig.js', 'text/javascript; charset=utf-8']],
   ['/src/fauna.js', ['src/fauna.js', 'text/javascript; charset=utf-8']],
