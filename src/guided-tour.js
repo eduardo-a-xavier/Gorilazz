@@ -3,7 +3,7 @@
 // Título, ano e resumo vêm dos dados já existentes; nenhum texto novo é criado aqui.
 export const TOUR_TOTAL = 9;
 export const PROGRESS_KEY = 'gorilazz.stops.v1';
-export const SLOW_ZONE_M = 40;    // a partir daqui o Geep reduz a velocidade
+export const SLOW_ZONE_M = 24;    // zona curta de aproximação final antes da parada
 export const STOP_HOLD_MS = 4500; // tempo parado em cada parada, com o card
 export const ARRIVE_M = 12;       // distância para contar a parada como visitada
 export const TOAST_MS = 2500;     // toasts e dicas somem sozinhos depois de 2,5 s

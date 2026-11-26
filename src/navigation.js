@@ -1,7 +1,7 @@
 import { NODES, ROADS, distance, nearestRoad, roadGap } from './world-data.js';
 const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
-export const CRUISE_SPEED_MS = 16.5; // ~59.4 km/h (faixa 55–65 km/h nas retas)
-export const LOOK_AHEAD_M = 8.5;
+export const CRUISE_SPEED_MS = 17.6; // ~63.4 km/h (ritmo vivo na faixa 55–65 km/h nas retas)
+export const LOOK_AHEAD_M = 9.5;
 
 // Suavização Catmull-Rom entre pontos da malha viária: elimina quebras secas nos cruzamentos e preserva 100% dos pontos no asfalto.
 export function catmullRomSpline(points, subdivisions = 8) {
@@ -115,17 +115,17 @@ export function sampleLookAhead(vehicle, points, startIndex, lookAhead = LOOK_AH
 
 // Ré de destravamento só depois de 1,5 s realmente bloqueado (120 passos/s).
 export const UNSTICK_DELAY_TICKS = 180;
-// Rampa de saída da parada: o carro parte de ~2,5 m/s e chega ao cruzeiro em ~1,8 s.
-export const LAUNCH_RAMP_S = 1.8;
+// Rampa de saída da parada: o carro parte de ~4 m/s e chega ao cruzeiro em ~1,2 s.
+export const LAUNCH_RAMP_S = 1.2;
 
 export function navigationInput(vehicle, navigation, { sinceStop = Infinity } = {}) {
   navigation.reversing ??= false;
   const points = navigation.points;
   const remaining = distance(vehicle, navigation.target);
-  const dynamicLookAhead = clamp(6.0 + Math.abs(vehicle.speed) * .32, 6.0, 10.5);
+  const dynamicLookAhead = clamp(6.5 + Math.abs(vehicle.speed) * .34, 6.5, 11.5);
   const { index, aim, maxCurve } = sampleLookAhead(vehicle, points, navigation.index, dynamicLookAhead);
   navigation.index = index;
-  if (navigation.index >= points.length - 1 && remaining < 8 && Math.abs(vehicle.speed) < 1) return { arrived: true, throttle: false, brake: true, steer: 0 };
+  if ((navigation.index >= points.length - 1 || remaining < 6) && remaining < 8 && Math.abs(vehicle.speed) < 1) return { arrived: true, throttle: false, brake: true, steer: 0, drift: false };
   const target = navigation.index >= points.length - 1 ? points[navigation.index] : aim;
   const angle = Math.atan2(-(target.x - vehicle.x), -(target.z - vehicle.z));
   const turn = Math.atan2(Math.sin(angle - vehicle.heading), Math.cos(angle - vehicle.heading));
@@ -145,28 +145,33 @@ export function navigationInput(vehicle, navigation, { sinceStop = Infinity } = 
       navigation.reversing = false;
     } else {
       if (!vehicle.reverseReady && vehicle.speed >= -.05) {
-        if (Math.abs(vehicle.speed) >= .05) return { throttle: false, brake: true, steer: 0, arrived: false };
-        return { throttle: false, brake: !vehicle.brakeWasDown, steer: 0, arrived: false };
+        if (Math.abs(vehicle.speed) >= .05) return { throttle: false, brake: true, steer: 0, drift: false, arrived: false };
+        return { throttle: false, brake: !vehicle.brakeWasDown, steer: 0, drift: false, arrived: false };
       }
-      return { throttle: false, brake: true, steer: clamp((navigation.reverseSteer ?? -Math.sign(turn || 1)) * .9, -1, 1), arrived: false };
+      return { throttle: false, brake: true, steer: clamp((navigation.reverseSteer ?? -Math.sign(turn || 1)) * .9, -1, 1), drift: false, arrived: false };
     }
   }
-  // Velocidade de cruzeiro nas retas (~16.5 m/s ≈ 59.4 km/h), reduzindo suavemente antes de curvas (maxCurve) e na aproximação do destino.
-  const cornerSeverity = Math.max(Math.abs(turn) * 1.4, maxCurve * .95);
-  const curveCap = CRUISE_SPEED_MS / (1 + cornerSeverity * 3.1);
+  // Velocidade de cruzeiro viva nas retas (~63 km/h), mantendo fluidez em curvas médias e desacelerando só em curvas fechadas ou aproximação final.
+  const absTurn = Math.abs(turn);
+  const cornerSeverity = Math.max(Math.max(0, absTurn - .12) * 1.2, Math.max(0, maxCurve - .22) * .78);
+  const curveCap = CRUISE_SPEED_MS / (1 + cornerSeverity * 2.1);
+  const minCornerSpeed = absTurn > 1.0 ? 2.0 : 5.2;
   const arrivalCap = Math.sqrt(Math.max(0, remaining - 5) * 7);
-  // Rampa de saída: nos primeiros LAUNCH_RAMP_S após uma parada o teto sobe de 2,5 m/s ao cruzeiro,
-  // em curva de ease-in, em vez de exigir o cruzeiro inteiro de uma vez.
+  // Rampa de saída progressiva e ágil.
   const launch = clamp(sinceStop / LAUNCH_RAMP_S, 0, 1);
-  const launchCap = 2.5 + (CRUISE_SPEED_MS - 2.5) * launch * launch;
-  const desiredSpeed = Math.min(CRUISE_SPEED_MS, Math.max(2, curveCap), arrivalCap, launchCap);
-  const rawSteer = clamp(turn * 2.1, -1, 1);
+  const launchCap = 4.0 + (CRUISE_SPEED_MS - 4.0) * (launch * (2 - launch));
+  const desiredSpeed = Math.min(CRUISE_SPEED_MS, Math.max(minCornerSpeed, curveCap), arrivalCap, launchCap);
+  const rawSteer = clamp(turn * 2.25, -1, 1);
   const prevSteer = navigation.smoothSteer ?? rawSteer;
-  navigation.smoothSteer = prevSteer + (rawSteer - prevSteer) * .38;
+  navigation.smoothSteer = prevSteer + (rawSteer - prevSteer) * .42;
+  // Drift / escorregada controlada orgânica em curvas moderadas/fechadas com velocidade firme, mantendo margem de segurança no asfalto.
+  const safeOnRoad = roadGap(vehicle) <= 0.01 && remaining > 18;
+  const drift = safeOnRoad && vehicle.speed > 9.5 && absTurn <= .95 && (absTurn > .22 || maxCurve > .48) && Math.abs(navigation.smoothSteer) > .22;
   return {
-    throttle: vehicle.speed < desiredSpeed - .5,
+    throttle: vehicle.speed < desiredSpeed - .4,
     brake: vehicle.speed > desiredSpeed + .5,
     steer: clamp(navigation.smoothSteer, -1, 1),
+    drift,
     arrived: false,
   };
 }

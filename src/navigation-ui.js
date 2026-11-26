@@ -142,13 +142,8 @@ export function createNavigationUI({
     hideGuidedCard(); cameraState.exitTourOrbit(); getWorld()?.clearPose();
     const dest = planPath(vehicle, roadPointOf(guided.order[index]));
     setDestination(dest);
-    const path = dest.points;
-    let aim = dest.index;
-    while (aim < path.length - 1 && distance(vehicle, path[aim]) < 8) aim++;
-    const next = path[aim];
-    const targetHeading = Math.atan2(-(next.x - vehicle.x), -(next.z - vehicle.z));
-    const diff = Math.abs(Math.atan2(Math.sin(targetHeading - vehicle.heading), Math.cos(targetHeading - vehicle.heading)));
-    guided.align = diff > 1.85 ? targetHeading : null;
+    // Sem giro seco no lugar: o piloto automático executa manobra progressiva com deslocamento real ao longo da spline.
+    guided.align = null;
     setTour(true); syncGuidedHud();
   }
 
