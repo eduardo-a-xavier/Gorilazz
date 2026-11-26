@@ -23,6 +23,7 @@ import { shouldLoadArt } from './art-panels.js';
 import { eraBillboardCredits } from './content.js';
 import { createVehicleMotion, updateVehicleMotion } from './vehicle-motion.js';
 import { clampFrameDelta } from './frame-timing.js';
+import { createCameraState } from './camera-state.js';
 
 const SHADOW_SPAN = 90;
 // Funde as malhas estáticas de um grupo por material: uma chamada de desenho por material.
@@ -332,7 +333,7 @@ export function createTravelCamera(blockers = DEFAULT_BLOCKERS) {
 }
 
 // Local credited Geep and Phase 7 models; original scenery and geometric fallbacks.
-export function createWorld(container, onMember, {onLost = () => {}, onRestored = () => {}, onViewReset = () => {}, onFullscreen = () => {}, onExplore = () => {}, radio, onRadio, onSteer} = {}) {
+export function createWorld(container, onMember, {onLost = () => {}, onRestored = () => {}, onViewReset = () => {}, onFullscreen = () => {}, onExplore = () => {}, radio, onRadio, onSteer, cameraState = createCameraState({ showcase: false })} = {}) {
   // Perfil gráfico: automático por padrão; ?qualidade=leve ou ?qualidade=alta força um perfil.
   const requested = new URLSearchParams(location.search).get('qualidade');
   // O contêiner ainda não tem largura quando o mundo é criado (clientWidth = 0); sem o recurso à janela,
@@ -806,7 +807,7 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
       // Encaixe calibrado no Geep (driver_fit.json): banco esquerdo, olhando para a frente (−Z).
       pilot.position.set(-0.6213, 0.208, 0.4471); pilot.scale.setScalar(1.22); pilot.rotation.y = 0; pilot.name = 'driver';
       pilotRig = createPilotRig(pilot, gltf.animations, { preposed: pilotPreposed });
-      pilot.visible = !firstPerson;
+      pilot.visible = !cameraState.firstPerson;
       car.remove(driver); car.add(pilot); pilot.updateWorldMatrix(true, true);
       driver = pilot; driverHead = head; upperArmL = armL; upperArmR = armR;
       renderer.domElement.dataset.pilot = 'glb';
@@ -1104,7 +1105,7 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
   const live = { vehicle: null, showcase: true, nearby: null, reduced: false }; let hoverAt = 0;
   let driverHovered=false, driverPointerStart=null, driverDragged=false;
   function actionAt(event) {
-    if (firstPerson || overview || !live.vehicle) return null;
+    if (cameraState.firstPerson || cameraState.overview || !live.vehicle) return null;
     const slow = Math.abs(live.vehicle.speed) < 2;
     if (!live.reduced && Math.abs(live.vehicle.speed)<=.05 && driver.visible && hitAt(event,[driver])) return {type:'driver'};
     if (live.nearby?.type === 'discovery' && slow && hitAt(event, [discoveryObjects[live.nearby.index].group])) return { type: 'discovery' };
@@ -1122,14 +1123,14 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
     if (event.button !== 0) return;
     moved = false;
     driverPointerStart={x:event.clientX,y:event.clientY}; driverDragged=false; driverHovered=true; driverReaction.cancel();
-    if (firstPerson && interacting) return;
-    steeringDrag = firstPerson && Boolean(hitAt(event,[cabin.wheel]));
+    if (cameraState.firstPerson && interacting) return;
+    steeringDrag = cameraState.firstPerson && Boolean(hitAt(event,[cabin.wheel]));
     dragging = {x:event.clientX, y:event.clientY, origin:event.clientX};
     renderer.domElement.setPointerCapture(event.pointerId); renderer.domElement.style.cursor = 'grabbing';
   });
   renderer.domElement.addEventListener('pointermove', event => {
     if (driverPointerStart && Math.hypot(event.clientX-driverPointerStart.x,event.clientY-driverPointerStart.y)>4) driverDragged=true;
-    if (firstPerson && interacting) {
+    if (cameraState.firstPerson && interacting) {
       const hit = hitAt(event,cabin.controls); highlight(hit);
       renderer.domElement.style.cursor = hit ? 'pointer' : 'default'; return;
     }
@@ -1144,7 +1145,7 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
     }
     const dx = event.clientX - dragging.x; const dy = event.clientY - dragging.y;
     if (Math.abs(dx) + Math.abs(dy) > 3) moved = true;
-    if (firstPerson) {
+    if (cameraState.firstPerson) {
       if (steeringDrag) onSteer(THREE.MathUtils.clamp((dragging.origin-event.clientX)/80,-1,1));
       else {
         yaw = THREE.MathUtils.clamp(yaw-dx*.005*sensitivity,-1.35,1.35);
@@ -1161,7 +1162,7 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
   renderer.domElement.addEventListener('pointercancel', () => { driverPointerStart=null; driverDragged=true; driverReaction.cancel(); });
   renderer.domElement.addEventListener('click', event => {
     driverPointerStart=null;
-    if (firstPerson) {
+    if (cameraState.firstPerson) {
       if (interacting) { const action = hitAt(event,cabin.controls)?.userData.action; if (action) { cabin.pressKey(action); onRadio(action); } }
       return;
     }
@@ -1174,9 +1175,9 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
     if (hit) onMember(hit.userData.member);
   });
   // Duplo clique alterna a tela cheia, menos enquanto se aperta as teclas do rádio na cabine.
-  renderer.domElement.addEventListener('dblclick', event => { if (firstPerson && interacting) return; event.preventDefault(); onFullscreen(); });
+  renderer.domElement.addEventListener('dblclick', event => { if (cameraState.firstPerson && interacting) return; event.preventDefault(); onFullscreen(); });
   renderer.domElement.addEventListener('keydown', event => {
-    if (event.key === 'Home') { dragAngle = 0; dragElevation = 0; zoom = 1; overview = false; landmarkView = false; onViewReset(); event.preventDefault(); }
+    if (event.key === 'Home') { dragAngle = 0; dragElevation = 0; zoom = 1; cameraState.reset(); onViewReset(); event.preventDefault(); }
   });
   function resize() {
     const width = container.clientWidth; const height = container.clientHeight;
@@ -1185,10 +1186,7 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
   }
   const observer = new ResizeObserver(resize); observer.observe(container); resize();
   let previousDistance = 0; let lightingReady = false;
-  let overview = false;
-  let firstPerson = false;
   let headYaw = 0; // giro de cabeça em 1ª pessoa (rad), controlado pelo passeio guiado
-  let landmarkView = false;
   const look = new THREE.Vector3();
   const cameraTarget = new THREE.Vector3();
   const desiredCamera = new THREE.Vector3();
@@ -1258,7 +1256,7 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
     // Mãos de um integrante em coordenadas de mundo (depuração de pose).
     handsOf(index) { const rig = people[index]?.rig; if (!rig) return null; rig.visual.updateMatrixWorld(true); return rig.hands().map(hand => rig.visual.localToWorld(hand)); },
     debug: { renderer, scene, camera, vehicleMotion, cabin, streetProps, fauna, arcadeCabinet, stageSpeakers, get steeringPivot() { return steeringPivot; }, get pilotRig() { return pilotRig; }, setSize(width, height) { renderer.setSize(width, height, false); camera.aspect = width / height; camera.updateProjectionMatrix(); } },
-    setOverview(value) { overview = value; landmarkView = false; firstPerson = false; travelCamera.resync(); },
+    setOverview(value) { cameraState.setMode(value ? 'world' : 'follow'); travelCamera.resync(); },
     // Abertura: câmera mais baixa e deslocada, para o Geep e a banda ficarem no terço direito e o título respirar.
     setIntro(value) {
       intro = value;
@@ -1269,23 +1267,27 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
         loadStageSpeakers();
       }
     },
-    captureView() { return { firstPerson, overview, landmarkView, yaw, pitch, smoothYaw, smoothPitch, dragAngle, dragElevation, zoom, skyStopped: skyLook.stopped, skyAmount: skyLook.amount }; },
+    captureView() { return { camera: cameraState.save(), firstPerson: cameraState.firstPerson, overview: cameraState.overview, landmarkView: cameraState.landmarkView, yaw, pitch, smoothYaw, smoothPitch, dragAngle, dragElevation, zoom, skyStopped: skyLook.stopped, skyAmount: skyLook.amount }; },
     restoreView(view) {
       if (!view) return;
-      ({ firstPerson, overview, landmarkView, yaw, pitch, smoothYaw, smoothPitch, dragAngle, dragElevation, zoom } = view);
+      if (view.camera) cameraState.restore(view.camera);
+      else cameraState.setMode(view.firstPerson ? 'cockpit' : view.overview ? 'world' : view.landmarkView ? 'windmill' : 'follow');
+      ({ yaw, pitch, smoothYaw, smoothPitch, dragAngle, dragElevation, zoom } = view);
       skyLook.stopped = view.skyStopped ?? 0; skyLook.amount = view.skyAmount ?? 0; skyLookHeld = false;
       interacting = false; highlight(null); release(); initialized = false; travelCamera.resync();
     },
+    syncCameraState() { if (!cameraState.firstPerson) { interacting = false; highlight(null); release(); } travelCamera.resync(); },
     setSkyLook(value) { skyLookHeld = Boolean(value); },
-    setInteraction(value) { interacting = firstPerson && value; highlight(null); release(); },
+    setInteraction(value) { interacting = cameraState.firstPerson && value; highlight(null); release(); },
     recenter() { yaw = pitch = 0; },
     configureLook(gain, intensity) { sensitivity = gain; motion = intensity; },
     setHeadYaw(value) { headYaw = Math.max(-.62, Math.min(.62, Number(value) || 0)); },
-    setFirstPerson(value) { interacting = false; yaw = pitch = smoothYaw = smoothPitch = 0; highlight(null); release(); firstPerson = value; overview = false; landmarkView = false; initialized = false; travelCamera.resync(); },
-    focusWindmill(value) { landmarkView = value; overview = false; travelCamera.resync(); },
+    setFirstPerson(value) { interacting = false; yaw = pitch = smoothYaw = smoothPitch = 0; highlight(null); release(); cameraState.setMode(value ? 'cockpit' : 'follow'); initialized = false; travelCamera.resync(); },
+    focusWindmill(value) { cameraState.setMode(value ? 'windmill' : 'follow'); travelCamera.resync(); },
     zoomBy(amount) { zoom = THREE.MathUtils.clamp(zoom + amount, .7, 1.6); },
-    resetCamera() { dragAngle = 0; dragElevation = 0; zoom = 1; overview = false; landmarkView = false; travelCamera.resync(); },
+    resetCamera() { dragAngle = 0; dragElevation = 0; zoom = 1; cameraState.reset(); travelCamera.resync(); },
     update(vehicle, time, orbit, reduced, showcase, known, nearby) {
+      const firstPerson = cameraState.firstPerson, overview = cameraState.overview, landmarkView = cameraState.landmarkView;
       live.vehicle = vehicle; live.showcase = showcase; live.nearby = nearby; live.reduced=reduced;
       const {x,z,heading} = vehicle; const t = time / 1000;
       const dt = previousTime === null ? .016 : clampFrameDelta((time - previousTime) / 1000); previousTime = time;

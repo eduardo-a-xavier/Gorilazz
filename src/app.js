@@ -24,6 +24,7 @@ import { buildStops, orderTour, createStopProgress, speedCap, takeOver, stopIdFo
 import { discoveryIndexForEra, eraNavState } from './era-places.js';
 import { createWorldLoader } from './world-loader.js';
 import { artForDiscovery, creditLine } from './art-panels.js';
+import { createCameraState } from './camera-state.js';
 let artManifest = null;
 fetch('./assets/art/manifest.json').then(r => r.json()).then(manifest => { artManifest = manifest; }).catch(() => {});
 import { ARCADE_SPOT, ARCADE_RADIUS } from './arcade.js';
@@ -91,8 +92,8 @@ function tickOnboarding() {
 }
 setInterval(tickOnboarding, 400);
 // Fliperama de Kong Studios: E perto da máquina, com o carro parado, abre o minigame e pausa a condução.
-let cameraFocus = false; // fliperama aberto: a câmera foca a tela do gabinete
-const arcadeScreen = createArcadeScreen({ dialog: document.querySelector('#arcade-dialog'), onClose: () => { cameraFocus = false; world?.clearPose(); restoreFocus(); } });
+const cameraState = createCameraState({ showcase: true });
+const arcadeScreen = createArcadeScreen({ dialog: document.querySelector('#arcade-dialog'), onClose: () => { cameraState.exitModalFocus(); world?.clearPose(); restoreFocus(); } });
 // Frente do gabinete: a mesma direção que arcade-cabinet.js usa (para a via mais próxima).
 const arcadeFront = (() => { const road = nearestRoad(ARCADE_SPOT), dx = road.x - ARCADE_SPOT.x, dz = road.z - ARCADE_SPOT.z, len = Math.hypot(dx, dz) || 1; return { x: dx / len, z: dz / len }; })();
 // Visualizador 360° do integrante no modal: a ficha mostra o modelo girável; sem ele, fica o retrato 2D.
@@ -111,7 +112,7 @@ document.querySelector('#character-piano').addEventListener('click', () => piano
 const arcadeNear = () => entered && Math.hypot(vehicle.x - ARCADE_SPOT.x, vehicle.z - ARCADE_SPOT.z) < ARCADE_RADIUS && Math.abs(vehicle.speed) < 2;
 function openArcade() {
   if (modalOpen()) return;
-  stop(); previousFocus = document.activeElement; cameraFocus = true;
+  stop(); previousFocus = document.activeElement; cameraState.enterModalFocus();
   // Câmera aproxima a tela do gabinete ao abrir o jogo; ao fechar, clearPose devolve a câmera ao carro.
   world?.frameSpot({ x: ARCADE_SPOT.x + arcadeFront.x * .6, z: ARCADE_SPOT.z + arcadeFront.z * .6, dirX: arcadeFront.x, dirZ: arcadeFront.z, distance: 3.4, height: 2.5, target: 2.2 });
   arcadeScreen.open();
@@ -140,15 +141,18 @@ const dialog = document.querySelector('#character-dialog');
 const discoveryDialog = document.querySelector('#discovery-dialog');
 const journalDialog = document.querySelector('#journal-dialog');
 const modalOpen = () => Boolean(document.querySelector('dialog[open]'));
-let entered = false, showcase = true, orbital = false, overview = false, landmarkView = false, firstPerson = false;
+let entered = false;
 let world = null, destination = null, touring = false, previousFocus = null, nearby = null;
 let lastTime, accumulator = 0, currentRegion = -1, currentDistrict = -1, tourIndex = 0;
 const tourButton = document.querySelector('#tour-toggle');
 const bandToggle = document.querySelector('#band-toggle');
 const input = createInput({ enabled: () => entered && worldVisible, driftEnabled: () => !touring, onManual() {
   endGuided(); // assumir o volante: o passeio sai sem tranco; o progresso continua salvo
-  enterWorld(); destination = null; setTour(false); setShowcase(false);
-  if (overview || landmarkView) { overview = false; landmarkView = false; firstPerson = false; world?.setFirstPerson(false); world?.setOverview(false); syncCameraModes(); }
+  enterWorld(); destination = null; setTour(false);
+  cameraState.onManualInput();
+  bandToggle.setAttribute('aria-pressed', String(cameraState.showcase));
+  world?.syncCameraState?.();
+  syncCameraModes();
 }, onInteract: interact });
 
 function announce(text) { document.querySelector('#announcement').textContent = text; }
@@ -162,7 +166,7 @@ function enterWorld() {
   document.querySelector('.scene-intro').classList.add('leaving');
   document.querySelector('.scene-intro').inert = true;
 }
-function setShowcase(value) { showcase = value; bandToggle.setAttribute('aria-pressed', String(value)); }
+function setShowcase(value) { cameraState.setShowcase(value); bandToggle.setAttribute('aria-pressed', String(cameraState.showcase)); }
 function setTour(value) {
   touring = value;
   sceneSection.dataset.touring = String(value); tourButton.setAttribute('aria-pressed', String(value));
@@ -172,7 +176,7 @@ function stop() { input.clear(); haltVehicle(vehicle); destination = null; accum
 window.addEventListener('blur', stop);
 document.addEventListener('visibilitychange', () => { if (document.hidden) stop(); });
 document.querySelector('#enter-world').addEventListener('click', () => { enterWorld(); focusWorld(); });
-bandToggle.addEventListener('click', () => { stop(); setShowcase(!showcase); });
+bandToggle.addEventListener('click', () => { stop(); setShowcase(!cameraState.showcase); });
 document.querySelector('#recover-car').addEventListener('click', () => { stop(); recoverVehicle(vehicle); setShowcase(false); announce('Geep reposicionado no caminho mais próximo.'); });
 // ---- Passeio guiado (9 paradas) e contador de descobertas: regras em src/guided-tour.js ----
 // As 9 paradas são os 4 portais de era (CITY_ERAS) e os 5 pontos de história (DISCOVERIES), com texto já existente.
@@ -226,7 +230,7 @@ function syncGuidedHud() {
   renderTourMapStops();
 }
 function legTo(index) {
-  guided.index = index; guided.holdUntil = 0; guided.departedAt = performance.now(); hideGuidedCard(); world?.clearPose();
+  guided.index = index; guided.holdUntil = 0; guided.departedAt = performance.now(); hideGuidedCard(); cameraState.exitTourOrbit(); world?.clearPose();
   destination = planPath(vehicle, roadPointOf(guided.order[index]));
   // Só gira parado antes de sair se o próximo trecho apontar fortemente para trás (> 105°);
   // curvas frontais e laterais são contornadas organicamente em movimento pela spline Catmull-Rom + look-ahead.
@@ -278,13 +282,14 @@ function arriveAt(stop) {
 const HEAD_LIMIT = 35 * Math.PI / 180;
 const smooth01 = t => t * t * (3 - 2 * t);
 function cinematicHold(stop) {
-  if (firstPerson) {
+  if (cameraState.firstPerson) {
     const h = vehicle.heading, fx = -Math.sin(h), fz = -Math.cos(h), rx = Math.cos(h), rz = -Math.sin(h);
     const dx = stop.x - vehicle.x, dz = stop.z - vehicle.z;
     const phi = Math.atan2(dx * rx + dz * rz, dx * fx + dz * fz); // + = à direita do Geep
     world?.setHeadYaw(-Math.max(-HEAD_LIMIT, Math.min(HEAD_LIMIT, phi)));
     return;
   }
+  cameraState.enterTourOrbit();
   const now = performance.now(), t = now / 1000;
   // Entra e sai do enquadramento lateral com ease-in/ease-out, sem corte seco ao chegar.
   const start = guided.holdUntil - STOP_HOLD_MS;
@@ -294,9 +299,9 @@ function cinematicHold(stop) {
   const base = Math.atan2(vehicle.x - stop.x, vehicle.z - stop.z), a = base + .45 * Math.sin(t * .6);
   world?.frameSpot({ x: stop.x, z: stop.z, dirX: Math.sin(a), dirZ: Math.cos(a), distance: 9, height: 3.2, target: 2, alpha });
 }
-function finishGuided() { guided = null; destination = null; hideGuidedCard(); setTour(false); world?.clearPose(); world?.setHeadYaw(0); announce('Passeio guiado concluído. Você pode continuar explorando.'); syncGuidedHud(); }
+function finishGuided() { guided = null; destination = null; hideGuidedCard(); setTour(false); cameraState.exitTourOrbit(); world?.clearPose(); world?.setHeadYaw(0); announce('Passeio guiado concluído. Você pode continuar explorando.'); syncGuidedHud(); }
 // Assumir o volante (WASD) ou parar o passeio devolve a câmera de viagem ao normal.
-function endGuided() { if (!guided) return; guided = null; destination = null; hideGuidedCard(); setTour(false); world?.clearPose(); world?.setHeadYaw(0); syncGuidedHud(); }
+function endGuided() { if (!guided) return; guided = null; destination = null; hideGuidedCard(); setTour(false); cameraState.exitTourOrbit(); world?.clearPose(); world?.setHeadYaw(0); syncGuidedHud(); }
 // Controle do passeio: espera na parada, chega, reduz a velocidade perto dela e segue a malha de estradas.
 function guidedControls() {
   if (guided.holdUntil) {
@@ -321,7 +326,7 @@ function guidedControls() {
   return nav;
 }
 function startGuided() {
-  enterWorld(); setShowcase(false); if (overview || landmarkView) { overview = false; landmarkView = false; world?.setOverview(false); } syncCameraModes();
+  enterWorld(); cameraState.onStartTour(); bandToggle.setAttribute('aria-pressed', String(cameraState.showcase)); world?.syncCameraState?.(); syncCameraModes();
   toggleHudMenu(null);
   if (!guided) guided = { order: orderTour(tourStops), index: 0, holdUntil: 0, paused: false, departedAt: performance.now() };
   guided.paused = false; legTo(guided.index);
@@ -331,7 +336,7 @@ function startGuided() {
 document.querySelector('#guided-toggle').addEventListener('click', () => { if (guided && !guided.paused) stop(); else startGuided(); });
 syncGuidedHud(); // mostra o progresso salvo logo na carga (sem esperar a primeira visita)
 function startNavigation(point) {
-  endGuided(); stop(); enterWorld(); setShowcase(false); if (overview || landmarkView) { overview = false; landmarkView = false; world?.setOverview(false); } syncCameraModes();
+  endGuided(); stop(); enterWorld(); cameraState.onStartTour(); bandToggle.setAttribute('aria-pressed', String(cameraState.showcase)); world?.syncCameraState?.(); syncCameraModes();
   toggleHudMenu(null);
   destination = planPath(vehicle, point); setTour(true); announce(`Passeio até ${point.title}. Você pode assumir a direção a qualquer momento.`);
   focusWorld();
@@ -343,8 +348,9 @@ tourButton.addEventListener('click', () => {
   startGuided();
 });
 document.querySelector('#camera-toggle').addEventListener('click', event => {
-  orbital = !orbital; event.currentTarget.setAttribute('aria-pressed', String(orbital));
-  event.currentTarget.textContent = orbital ? '↗ CÂMERA DE VIAGEM' : '↻ CÂMERA ORBITAL';
+  cameraState.toggleMode('orbit'); world?.syncCameraState?.(); syncCameraModes();
+  event.currentTarget.setAttribute('aria-pressed', String(cameraState.orbital));
+  event.currentTarget.textContent = cameraState.orbital ? '↗ CÂMERA DE VIAGEM' : '↻ CÂMERA ORBITAL';
 });
 const cameraTools = document.querySelector('.camera-tools');
 const cameraMenuToggle = document.querySelector('#camera-menu-toggle');
@@ -370,10 +376,11 @@ cameraMenuToggle.addEventListener('click', () => setCameraMenu(cameraTools.datas
 document.addEventListener('pointerdown', event => { if (!cameraTools.contains(event.target)) setCameraMenu(false); });
 document.addEventListener('keydown', event => { if (event.key === 'Escape') setCameraMenu(false); });
 function resetViewControls() {
-  overview = false; landmarkView = false; orbital = false;
+  cameraState.reset();
   const button = document.querySelector('#camera-toggle'); button.setAttribute('aria-pressed','false'); button.textContent = '↻ CÂMERA ORBITAL'; syncCameraModes();
 }
 function syncCameraModes() {
+  const { firstPerson, overview, landmarkView, orbital } = cameraState;
   cockpit.hidden = !firstPerson;
   sceneSection.classList.toggle('inside-geep',firstPerson);
   if (!firstPerson) { focusRadio(false); input.setWheelSteer(0); }
@@ -383,6 +390,8 @@ function syncCameraModes() {
   document.querySelector('#overview-toggle').textContent = overview ? '↙ VOLTAR AO JIPE' : '◎ VER MUNDO';
   document.querySelector('#windmill-focus').setAttribute('aria-pressed', String(landmarkView));
   document.querySelector('#windmill-focus').textContent = landmarkView ? '↙ VOLTAR AO JIPE' : '✦ VER MOINHO';
+  document.querySelector('#camera-toggle').setAttribute('aria-pressed', String(orbital));
+  document.querySelector('#camera-toggle').textContent = orbital ? '↗ CÂMERA DE VIAGEM' : '↻ CÂMERA ORBITAL';
   quickFirstPerson.setAttribute('aria-pressed', String(firstPerson));
   quickFirstPerson.textContent = firstPerson ? '↙ Ver o Geep · V' : '◉ 1ª pessoa · V';
 }
@@ -464,13 +473,14 @@ document.addEventListener('click', event => {
 quickFirstPerson.addEventListener('click', () => document.querySelector('#first-person').click());
 quickFullscreen.addEventListener('click', () => fullscreenButton.click());
 document.addEventListener('fullscreenchange', () => { // ao sair da tela cheia, o navegador restaura a rolagem antiga: o mundo volta ao topo se ainda estiver em modo 3D
+  cameraState.onFullscreenChange();
   if (realignAfterFullscreen({ fullscreen: Boolean(document.fullscreenElement), mode3d: document.documentElement.classList.contains('mode-3d') })) sceneSection.scrollIntoView({ block: 'start', behavior: 'instant' });
   worldVisible = refreshWorldVisibility(); quickFullscreen.textContent = document.fullscreenElement === sceneSection ? '× Sair da tela cheia · F' : '⛶ Tela cheia · F'; });
 const cockpit = document.querySelector('#cockpit');
 let radioFocused = false;
 const consoleFocus = document.querySelector('#console-focus');
 function focusRadio(value) {
-  radioFocused = firstPerson && value;
+  radioFocused = cameraState.firstPerson && value;
   world?.setInteraction(radioFocused);
   consoleFocus.setAttribute('aria-pressed',String(radioFocused));
   consoleFocus.textContent = radioFocused ? 'Esc · Voltar à estrada' : 'R · Sintonizar';
@@ -484,7 +494,7 @@ function toggleFullMap(force) {
   if (!fullMapOverlay) return;
   const open = typeof force === 'boolean' ? force : fullMapOverlay.hidden;
   if (open) onboarding.markUsed('map');
-  if (open && fullMapOverlay.hidden) { mapCameraSnapshot = { view: world?.captureView(), firstPerson, overview, landmarkView, orbital, showcase }; enterWorld(); stop(); toggleHudMenu(null); }
+  if (open && fullMapOverlay.hidden) { mapCameraSnapshot = { view: world?.captureView(), camera: cameraState.save() }; enterWorld(); stop(); toggleHudMenu(null); }
   fullMapOverlay.hidden = !open;
   sceneSection.classList.toggle('full-map-open', open);
   mapOpenBtn?.setAttribute('aria-expanded', String(open));
@@ -492,7 +502,7 @@ function toggleFullMap(force) {
   quickMap.setAttribute('aria-pressed', String(open));
   if (open) document.querySelector('#full-map-close')?.focus({ preventScroll: true });
   else {
-    if (mapCameraSnapshot) { ({ firstPerson, overview, landmarkView, orbital, showcase } = mapCameraSnapshot); world?.restoreView(mapCameraSnapshot.view); mapCameraSnapshot = null; syncCameraModes(); }
+    if (mapCameraSnapshot) { cameraState.restore(mapCameraSnapshot.camera); world?.restoreView(mapCameraSnapshot.view); mapCameraSnapshot = null; bandToggle.setAttribute('aria-pressed', String(cameraState.showcase)); syncCameraModes(); }
     focusWorld();
   }
 }
@@ -505,16 +515,16 @@ for (const slider of cockpit.querySelectorAll('input')) slider.oninput = () => {
 };
 document.querySelector('#first-person').addEventListener('click', () => {
   if (!worldAvailable) return;
-  enterWorld(); firstPerson = !firstPerson; overview = landmarkView = false;
-  setShowcase(false); world.setFirstPerson(firstPerson); syncCameraModes(); focusWorld();
+  enterWorld(); cameraState.toggleMode('cockpit');
+  setShowcase(false); world.setFirstPerson(cameraState.firstPerson); syncCameraModes(); focusWorld();
   if (!reducedMotion.matches) document.querySelector('#world canvas')?.animate([{opacity:.45},{opacity:1}],{duration:220});
 });
 document.addEventListener('keydown', event => {
   if (event.key.toLowerCase() !== 'l' || !entered || !worldVisible || modalOpen() || !fullMapOverlay.hidden || event.target.closest?.('input,select,textarea,[contenteditable]')) return;
-  event.preventDefault(); world?.setSkyLook(true);
+  event.preventDefault(); cameraState.setSky(true); world?.setSkyLook(true);
 });
-document.addEventListener('keyup', event => { if (event.key.toLowerCase() === 'l') world?.setSkyLook(false); });
-window.addEventListener('blur', () => world?.setSkyLook(false));
+document.addEventListener('keyup', event => { if (event.key.toLowerCase() === 'l') { cameraState.setSky(false); world?.setSkyLook(false); } });
+window.addEventListener('blur', () => { cameraState.setSky(false); world?.setSkyLook(false); });
 document.addEventListener('keydown', event => {
   if (!worldVisible || modalOpen() || event.repeat || event.ctrlKey || event.metaKey || event.altKey) return;
   const key = event.key.toLowerCase();
@@ -534,8 +544,8 @@ document.addEventListener('keydown', event => {
   if (key === 'v') document.querySelector('#first-person').click();
   if (key === 'f') fullscreenButton.click();
   if (key === 'h' && !modalOpen() && !(fullMapOverlay && !fullMapOverlay.hidden)) toggleControls(); // H não abre sobre o mapa completo
-  if (firstPerson && key === 'r') consoleFocus.click();
-  if (firstPerson && key === 'c') { focusRadio(false); world.recenter(); }
+  if (cameraState.firstPerson && key === 'r') consoleFocus.click();
+  if (cameraState.firstPerson && key === 'c') { focusRadio(false); world.recenter(); }
 });
 // Central de Descobertas: abre pelo contador DESCOBERTAS X / 9, pelo menu [H] Controles e pelo botão do mapa (M).
 // "Ir até lá" define o destino do passeio pelo ponto da ficha.
@@ -574,8 +584,8 @@ paintSoundButton(); journeyPanel.append(soundButton);
 document.querySelector('#zoom-in').addEventListener('click', () => world?.zoomBy(-.15));
 document.querySelector('#zoom-out').addEventListener('click', () => world?.zoomBy(.15));
 document.querySelector('#reset-camera').addEventListener('click', () => { world?.resetCamera(); resetViewControls(); });
-document.querySelector('#overview-toggle').addEventListener('click', () => { firstPerson = false; world?.setFirstPerson(false); cockpit.hidden = true; input.setWheelSteer(0); document.querySelector('#first-person').setAttribute('aria-pressed','false'); overview = !overview; landmarkView = false; world?.setOverview(overview); syncCameraModes(); });
-document.querySelector('#windmill-focus').addEventListener('click', () => { enterWorld(); stop(); firstPerson = false; world?.setFirstPerson(false); cockpit.hidden = true; input.setWheelSteer(0); document.querySelector('#first-person').setAttribute('aria-pressed','false'); landmarkView = !landmarkView; overview = false; world?.focusWindmill(landmarkView); syncCameraModes(); });
+document.querySelector('#overview-toggle').addEventListener('click', () => { cameraState.toggleMode('world'); world?.setOverview(cameraState.overview); syncCameraModes(); });
+document.querySelector('#windmill-focus').addEventListener('click', () => { enterWorld(); stop(); cameraState.toggleMode('windmill'); world?.focusWindmill(cameraState.landmarkView); syncCameraModes(); });
 document.querySelector('#read-chapter').addEventListener('click', () => { document.querySelector('#paradas').scrollIntoView({behavior: reducedMotion.matches ? 'instant' : 'smooth'}); document.querySelector('#panel').focus({preventScroll:true}); });
 
 const actors = members.map((member, index) => {
@@ -756,9 +766,10 @@ const worldLoader = createWorldLoader({
   onStatus: text => { document.querySelector('#render-status').textContent = text; },
   mount: ({ createWorld }) => {
     world = createWorld(document.querySelector('#world'), index => {
-      if (showcase || distance(vehicle, MEMBER_LOCATIONS[index]) < 13 && Math.abs(vehicle.speed) < 2) openMember(index);
+      if (cameraState.showcase || distance(vehicle, MEMBER_LOCATIONS[index]) < 13 && Math.abs(vehicle.speed) < 2) openMember(index);
       else announce('Aproxime-se e reduza a velocidade para conhecer este integrante.');
     }, {
+      cameraState,
       onViewReset: resetViewControls,
       onFullscreen: () => fullscreenButton.click(),
       onExplore: () => interact(),
@@ -781,7 +792,7 @@ const worldLoader = createWorldLoader({
     worldAvailable = true; world.setIntro(!entered);
     // ?perf expõe a cena para medições (scripts/ e console); não altera a experiência.
     world.setQuality(qualitySelect.value);
-      if (new URLSearchParams(location.search).has('perf')) window.__gorilazz = { audio: () => ({ context: audioCtx?.state ?? null, engine: Boolean(engine), engineGain: engine ? Number(engine.gainValue().toFixed(4)) : null, engineOn, masterMuted }), ui: () => ({ entered, worldVisible, touring, modal: modalOpen(), fullscreen: Boolean(document.fullscreenElement), mode3d: document.documentElement.classList.contains('mode-3d') }), world, vehicle, radio: localRadio, trees: TREE_LOCATIONS, known: journal.known, arcade: arcadeScreen, piano: pianoScreen, openMember, memberView, guided: () => guided, stopProgress, tourStops, startGuided, takeOver };
+      if (new URLSearchParams(location.search).has('perf')) window.__gorilazz = { audio: () => ({ context: audioCtx?.state ?? null, engine: Boolean(engine), engineGain: engine ? Number(engine.gainValue().toFixed(4)) : null, engineOn, masterMuted }), ui: () => ({ entered, worldVisible, touring, modal: modalOpen(), fullscreen: Boolean(document.fullscreenElement), mode3d: document.documentElement.classList.contains('mode-3d') }), world, vehicle, cameraState, radio: localRadio, trees: TREE_LOCATIONS, known: journal.known, arcade: arcadeScreen, piano: pianoScreen, openMember, memberView, guided: () => guided, stopProgress, tourStops, startGuided, takeOver };
     document.querySelector('.world-shell').classList.add('has-3d');
     document.querySelector('#render-status').textContent = 'MUNDO ABERTO / 3D EM TEMPO REAL';
     return world;
@@ -911,7 +922,7 @@ function updateFrame(time) {
   if (zoomLabel) zoomLabel.textContent = mapZoomed ? 'ZOOM +' : moving ? `${speed} KM/H` : 'AUTO';
   const fullCoords = document.querySelector('#full-map-coords');
   if (fullCoords) fullCoords.textContent = `${REGIONS[region].name} · Ato ${CITY_ERAS[eraAt(vehicle)].act} · Kong FM: ${localRadio.read().name}`;
-  const state = modalOpen() || !fullMapOverlay?.hidden || sceneSection.classList.contains('menu-open') ? 'menu' : overview || landmarkView ? 'exploring' : moving ? 'driving' : 'stopped';
+  const state = modalOpen() || !fullMapOverlay?.hidden || sceneSection.classList.contains('menu-open') ? 'menu' : cameraState.overview || cameraState.landmarkView ? 'exploring' : moving ? 'driving' : 'stopped';
   if (sceneSection.dataset.hudState !== state) sceneSection.dataset.hudState = state;
   document.querySelector('#dial-value').style.strokeDasharray = `${Math.min(speed/110,1)*76} 100`;
   if (lastRoute !== destination || lastRouteIndex !== destination?.index) {
@@ -926,9 +937,9 @@ function updateFrame(time) {
   const moving = Math.abs(vehicle.speed) > .1;
   const renderInterval = window.innerWidth <= 700 ? 1000/30 : 1000/60;
   // Com o fliperama aberto, só a câmera continua atualizando (a física fica parada): ela foca a tela do gabinete.
-  const renderable = !paused || (cameraFocus && worldVisible && !document.hidden);
+  const renderable = !paused || (cameraState.cameraFocus && worldVisible && !document.hidden);
   if (world && worldAvailable && renderable && time-lastRenderTime+.5 >= renderInterval) {
-    world.update(vehicle, time, orbital, reducedMotion.matches, showcase, journal.known, nearby); lastRenderTime = time;
+    world.update(vehicle, time, cameraState.orbital, reducedMotion.matches, cameraState.showcase, journal.known, nearby); lastRenderTime = time;
   }
   if (moving && !paused && time-lastSavedTime > 1500) { persistJourney(); lastSavedTime = time; }
 }
@@ -1270,7 +1281,7 @@ function updateTelemetry() {
   const rigEl = document.querySelector('#telemetry-rig');
   const vStatus = document.querySelector('#vehicle-status');
   if (rigEl && vStatus) {
-    const mode = firstPerson ? 'Cabine 1ª pessoa' : overview ? 'Vista aérea' : landmarkView ? 'Mirante do moinho' : touring ? 'Passeio guiado' : 'Câmera de viagem';
+    const mode = cameraState.firstPerson ? 'Cabine 1ª pessoa' : cameraState.overview ? 'Vista aérea' : cameraState.landmarkView ? 'Mirante do moinho' : touring ? 'Passeio guiado' : 'Câmera de viagem';
     const pilot = document.querySelector('#world canvas')?.dataset.pilot === 'glb'
       ? 'Piloto: 6 malhas · 2.806 tris · 65 ossos · Driving_Loop + reatividade de direção'
       : 'Piloto procedural (GLB indisponível ou carregando)';
@@ -1285,19 +1296,19 @@ function scrollToWorld() {
   sceneSection.scrollIntoView({ behavior: reducedMotion.matches ? 'instant' : 'smooth' });
 }
 document.querySelector('#garage-action-drive')?.addEventListener('click', () => {
-  enterWorld(); setShowcase(false); if (overview || landmarkView) { overview = false; landmarkView = false; world?.setOverview(false); }
+  enterWorld(); cameraState.onManualInput(); bandToggle.setAttribute('aria-pressed', String(cameraState.showcase)); world?.syncCameraState?.();
   syncCameraModes(); scrollToWorld(); focusWorld();
 });
 document.querySelector('#garage-action-cockpit')?.addEventListener('click', () => {
   scrollToWorld();
   if (worldAvailable) {
-    enterWorld(); firstPerson = true; overview = landmarkView = false;
+    enterWorld(); cameraState.setMode('cockpit');
     setShowcase(false); world?.setFirstPerson(true); syncCameraModes(); focusWorld();
   } else focusWorld();
 });
 document.querySelector('#garage-action-overview')?.addEventListener('click', () => {
-  enterWorld(); firstPerson = false; landmarkView = false; overview = true;
-  world?.setFirstPerson(false); world?.setOverview(true); syncCameraModes(); scrollToWorld(); focusWorld();
+  enterWorld(); cameraState.setMode('world');
+  world?.setOverview(true); syncCameraModes(); scrollToWorld(); focusWorld();
 });
 document.querySelector('#garage-action-tour')?.addEventListener('click', () => {
   const point = DISCOVERIES.find(d => !journal.known.has(d.id)) || DISCOVERIES[tourIndex++ % DISCOVERIES.length];
