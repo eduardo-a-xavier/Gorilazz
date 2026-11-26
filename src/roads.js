@@ -1,6 +1,7 @@
 import { PLATE_STYLE } from './sign-style.js';
 import * as THREE from './vendor/three.module.min.js';
-import { ROADS, NODES, CITY_LOTS } from './world-data.js';
+import { ROADS, NODES, CITY_LOTS, DISCOVERIES, MEMBER_LOCATIONS, ERA_GATES, VISUAL_LANDMARKS } from './world-data.js';
+import { ARCADE_SPOT } from './arcade.js';
 import { createSlabTexture } from './ground-textures.js';
 
 // Malha viária desenhada como rua de verdade: asfalto, rotatórias limpas nos cruzamentos de grau >= 3,
@@ -364,6 +365,23 @@ export function buildRoads(group, surfaces, material) {
   const prop = (size, position, surface, shadow = true) => {
     const mesh = new THREE.Mesh(new THREE.BoxGeometry(...size), surface); mesh.position.set(...position); mesh.castShadow = shadow; mesh.receiveShadow = true; group.add(mesh); return mesh;
   };
+  // Zonas livres de placas de rua e postes/filetes para não obstruir elementos interativos, painéis, portais ou palcos.
+  const FIXTURE_KEEP_CLEAR = [
+    { x: ARCADE_SPOT.x, z: ARCADE_SPOT.z, radius: 11.5 },
+    { x: 9.5, z: -40.5, radius: 6.0 }, // Totem direcional MURAIS / MOINHO
+    ...DISCOVERIES.map(d => ({ x: d.x, z: d.z, radius: 12.5 })),
+    ...MEMBER_LOCATIONS.map(m => ({ x: m.x, z: m.z, radius: 12.0 })),
+    ...ERA_GATES.map(g => ({ x: g.x, z: g.z, radius: 12.5 })),
+    ...Object.values(VISUAL_LANDMARKS).map(v => ({ x: v.x, z: v.z, radius: 11.5 })),
+  ];
+  const placedFixtures = [];
+  const isFixtureClear = (x, z, padJunction = 0, padAsphalt = .3) => {
+    if (inJunction(x, z, padJunction) || onAsphalt(x, z, null, padAsphalt)) return false;
+    if (CITY_LOTS.some(l => l.shop && Math.hypot(x - l.x, z - l.z) < Math.hypot(l.w, l.d) / 2 + 2.8)) return false;
+    if (FIXTURE_KEEP_CLEAR.some(zone => Math.hypot(x - zone.x, z - zone.z) < zone.radius)) return false;
+    if (placedFixtures.some(p => Math.hypot(x - p.x, z - p.z) < 2.2)) return false;
+    return true;
+  };
   for (const item of ROADS) {
     const half = item.width / 2, walk = WALK[item.kind], list = frames[item.id], row = [0, 1 - (item.id + 1) / ROADS.length, 1, 1 - item.id / ROADS.length];
     // Um nome por sentido, no terço da rua, na pista da direita de quem vem, com os 4 cantos validados dentro do próprio asfalto.
@@ -382,17 +400,24 @@ export function buildRoads(group, surfaces, material) {
         break;
       }
     }
-    // Placa de rua em cada ponta, na calçada da direita de quem entra na rua, afastada de fachadas de lojas.
+    // Placa de rua em cada ponta, na calçada da direita (ou oposta se obstruída), afastada de lojas e elementos interativos.
     for (const [order, direction] of [[list, 1], [list.slice().reverse(), -1]]) {
       const node = direction > 0 ? item.from : item.to;
-      const frame = order.find(entry => {
-        if (Math.hypot(entry.x - NODES[node].x, entry.z - NODES[node].z) <= radius[node] + 7) return false;
-        const px = entry.x - entry.nx * direction * (half + walk - .5), pz = entry.z - entry.nz * direction * (half + walk - .5);
-        return !CITY_LOTS.some(l => l.shop && Math.hypot(px - l.x, pz - l.z) < Math.hypot(l.w, l.d) / 2 + 2.8);
-      }) || order.find(entry => Math.hypot(entry.x - NODES[node].x, entry.z - NODES[node].z) > radius[node] + 7);
-      if (!frame) continue;
-      const x = frame.x - frame.nx * direction * (half + walk - .5), z = frame.z - frame.nz * direction * (half + walk - .5);
-      if (inJunction(x, z) || onAsphalt(x, z, null, .3)) continue;
+      const offset = half + walk - .5;
+      const findSpot = (sideSign, limit) => {
+        for (let i = 0; i < Math.min(order.length, limit); i++) {
+          const entry = order[i];
+          if (Math.hypot(entry.x - NODES[node].x, entry.z - NODES[node].z) <= radius[node] + 7) continue;
+          const px = entry.x + entry.nx * sideSign * offset, pz = entry.z + entry.nz * sideSign * offset;
+          if (isFixtureClear(px, pz, 0, .3)) return { frame: entry, x: px, z: pz };
+        }
+        return null;
+      };
+      const halfOrder = Math.ceil(order.length * .5);
+      const spot = findSpot(-direction, halfOrder) || findSpot(direction, halfOrder) || findSpot(-direction, order.length) || findSpot(direction, order.length);
+      if (!spot) continue;
+      const { frame, x, z } = spot;
+      placedFixtures.push({ x, z });
       prop([.14, 4.2, .14], [x, 2.1, z], pole);
       const heading = Math.atan2(frame.tx, frame.tz);
       for (const turn of [0, Math.PI]) {
@@ -406,9 +431,16 @@ export function buildRoads(group, surfaces, material) {
     let next = 14, side = item.id % 2 ? 1 : -1;
     for (const frame of list) {
       if (frame.along < next) continue; next += 34; side = -side;
-      const x = frame.x + frame.nx * side * (half + walk - .45), z = frame.z + frame.nz * side * (half + walk - .45);
-      if (inJunction(x, z, 1) || onAsphalt(x, z, null, .5)) continue;
-      const inward = Math.atan2(-frame.nx * side, -frame.nz * side);
+      let chosenSide = side;
+      let x = frame.x + frame.nx * chosenSide * (half + walk - .45), z = frame.z + frame.nz * chosenSide * (half + walk - .45);
+      if (!isFixtureClear(x, z, 1, .5)) {
+        chosenSide = -side;
+        x = frame.x + frame.nx * chosenSide * (half + walk - .45);
+        z = frame.z + frame.nz * chosenSide * (half + walk - .45);
+        if (!isFixtureClear(x, z, 1, .5)) continue;
+      }
+      placedFixtures.push({ x, z });
+      const inward = Math.atan2(-frame.nx * chosenSide, -frame.nz * chosenSide);
       prop([.18, 6.4, .18], [x, 3.2, z], pole);
       prop([.12, .12, 2.2], [x + Math.sin(inward) * 1, 6.4, z + Math.cos(inward) * 1], pole, false).rotation.y = inward;
       prop([.42, .14, .9], [x + Math.sin(inward) * 1.9, 6.3, z + Math.cos(inward) * 1.9], lampGlow, false).rotation.y = inward;

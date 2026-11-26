@@ -1,7 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import * as THREE from '../src/vendor/three.module.min.js';
-import { ROADS, NODES, CITY_LOTS, ERA_GATES } from '../src/world-data.js';
+import { ROADS, NODES, CITY_LOTS, ERA_GATES, DISCOVERIES, MEMBER_LOCATIONS, VISUAL_LANDMARKS } from '../src/world-data.js';
+import { ARCADE_SPOT } from '../src/arcade.js';
 import { buildRoads, LEVEL, NODE_DEGREE, NODE_RADIUS, gap, inJunction, onAsphalt } from '../src/roads.js';
 
 function createRoadGroup() {
@@ -153,6 +154,40 @@ test('detector de placas e letreiros: zero sobreposição entre placas de rua, f
       const dx = Math.max(0, Math.abs(p.x - l.x) - l.w / 2);
       const dz = Math.max(0, Math.abs(p.z - l.z) - l.d / 2);
       assert.ok(Math.hypot(dx, dz) >= 2.0, `andaime/painel em (${l.x}, ${l.z}) sobreposto ao portal de era`);
+    }
+  }
+});
+
+test('placas de rua e postes respeitam folga livre diante do fliperama, histórias, palcos, portais, totem e marcos', () => {
+  const group = createRoadGroup();
+  const fixtures = [];
+  group.traverse(obj => {
+    if (!obj.isMesh) return;
+    const p = obj.geometry?.parameters;
+    if (obj.geometry?.type === 'PlaneGeometry' && p && Math.abs(p.height - .62) < 1e-4 && Math.abs(obj.position.y - 3.85) < 1e-3) {
+      if (!fixtures.some(f => f.kind === 'sign' && Math.hypot(f.x - obj.position.x, f.z - obj.position.z) < .2)) {
+        fixtures.push({ kind: 'sign', x: obj.position.x, z: obj.position.z });
+      }
+    }
+    if (obj.geometry?.type === 'BoxGeometry' && p && Math.abs(p.height - 6.4) < 1e-4 && Math.abs(obj.position.y - 3.2) < 1e-3) {
+      fixtures.push({ kind: 'pole', x: obj.position.x, z: obj.position.z });
+    }
+  });
+  assert.ok(fixtures.filter(f => f.kind === 'sign').length >= 10, 'placas de rua devem ser geradas');
+  assert.ok(fixtures.filter(f => f.kind === 'pole').length >= 6, 'postes de iluminação devem ser gerados');
+
+  const zones = [
+    { name: 'Fliperama KONG', x: ARCADE_SPOT.x, z: ARCADE_SPOT.z, radius: 11.4 },
+    { name: 'Totem MURAIS/MOINHO', x: 9.5, z: -40.5, radius: 5.9 },
+    ...DISCOVERIES.map(d => ({ name: `História ${d.id}`, x: d.x, z: d.z, radius: 12.4 })),
+    ...MEMBER_LOCATIONS.map((m, i) => ({ name: `Palco ${i}`, x: m.x, z: m.z, radius: 11.9 })),
+    ...ERA_GATES.map(g => ({ name: `Portal era ${g.era}`, x: g.x, z: g.z, radius: 12.4 })),
+    ...Object.entries(VISUAL_LANDMARKS).map(([k, v]) => ({ name: `Marco ${k}`, x: v.x, z: v.z, radius: 11.4 })),
+  ];
+  for (const f of fixtures) {
+    for (const z of zones) {
+      const d = Math.hypot(f.x - z.x, f.z - z.z);
+      assert.ok(d >= z.radius, `${f.kind} em (${f.x.toFixed(1)}, ${f.z.toFixed(1)}) obstruindo ${z.name} (d=${d.toFixed(2)} m < ${z.radius} m)`);
     }
   }
 });
