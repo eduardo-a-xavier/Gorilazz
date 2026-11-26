@@ -1,31 +1,20 @@
 import { createCabin } from './cabin.js';
 import * as THREE from './vendor/three.module.min.js';
 import { GLTFLoader } from './vendor/GLTFLoader.js';
-import { CITY_ERAS, CITY_LOTS, ERA_GATES, eraAt, ROADS, NODES, REGIONS, DISCOVERIES, MEMBER_LOCATIONS, TREE_LOCATIONS, behind } from './world-data.js';
+import { CITY_LOTS, ERA_GATES, MEMBER_LOCATIONS, TREE_LOCATIONS } from './world-data.js';
 import { mergeGeometries } from './vendor/BufferGeometryUtils.js';
-import { createSurfaceLibrary, letteringTexture } from './materials.js';
-import { installEnvironment } from './environment.js';
-import { installCity, updateEraArt } from './city.js';
-import { installStreetProps, limitStreetProps } from './street-props.js';
-import { installEasterEggs, EASTER_EGG_POSITIONS, isMurdocHead, LUNAR_MURDOC, followLunarCamera, configureLunarMaterial } from './easter-eggs.js';
-import { createAmbientParticles } from './ambient-particles.js';
-import { createAtmosphere } from './atmosphere.js';
-import { createPostFX } from './postfx.js';
-import { buildRoads } from './roads.js';
-import { installLandmarks } from './landmarks.js';
-import { rigBand } from './band-pose.js';
+import { createSurfaceLibrary } from './materials.js';
+import { updateEraArt } from './city.js';
 import { createPilotRig, PILOT_MODEL_URL, PILOT_V5_URL, PILOT_V4_URL, PILOT_V2_URL, PILOT_FALLBACK_URL } from './pilot-rig.js';
-import { installFauna } from './fauna.js';
-import { installArcadeCabinet } from './arcade-cabinet.js';
 import { loadModelSafely, repairMaterials } from './model-safety.js';
-import { DISCOVERY_PROP_SCALE, NON_DISCOVERY_PROP_SCALE, ROAD_SIGN_SCALE } from './discovery-scale.js';
-import { shouldLoadArt } from './art-panels.js';
-import { eraBillboardCredits } from './content.js';
 import { createVehicleMotion, updateVehicleMotion } from './vehicle-motion.js';
 import { clampFrameDelta } from './frame-timing.js';
 import { createCameraState } from './camera-state.js';
+import { installLighting } from './world/lighting.js';
+import { installTerrainAndRoads, installEraGroundWash } from './world/terrain-roads.js';
+import { installWorldProps, FX_COUNT } from './world/props.js';
+import { installStagesAndBand } from './world/stages.js';
 
-const SHADOW_SPAN = 90;
 // Funde as malhas estáticas de um grupo por material: uma chamada de desenho por material.
 // Objetos em `keep` (animados ou com material trocado em execução) ficam intactos.
 function bake(group, keep = []) {
@@ -358,38 +347,10 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
   renderer.domElement.addEventListener('webglcontextrestored', () => onRestored());
   const scene = new THREE.Scene();
   const surfaces = createSurfaceLibrary();
-  scene.background = new THREE.Color('#202631');
-  scene.fog = new THREE.FogExp2('#202631', .0045);
-  scene.environmentIntensity = .5; // IBL mais baixo: sombras e relevo aparecem nas fachadas e na pista
-  const atmosphere = createAtmosphere(scene, renderer);
-  const ambient = createAmbientParticles(THREE, scene); // poeira, esporos e faíscas (micro-efeitos leves)
-  let postfx = light ? null : createPostFX(renderer);
-  renderer.domElement.dataset.quality = light ? 'leve' : postfx ? 'alta' : 'padrao';
+  const lighting = installLighting({ scene, renderer, light });
   const camera = new THREE.PerspectiveCamera(46, 1, .1, 650);
-  // Hemisfério: céu mais frio e solo mais escuro dão contraste entre pista, fachadas e painéis (sem custo extra).
-  // Contraste e volume: céu frio e solo escuro (preenchimento fraco), sol quente e forte, contorno frio por trás.
-  const skylight = new THREE.HemisphereLight('#e6eeff', '#2e2a22', .8);
-  scene.add(skylight);
-  const rimLight = new THREE.DirectionalLight('#7fb4ff', .9); rimLight.position.set(-40, 50, -40); scene.add(rimLight); // sem sombra (custo baixo)
-  const sunlight = new THREE.DirectionalLight('#ffd49a', 5.2);
-  sunlight.castShadow = true;
-  const shadowSize = light ? 1024 : 2048, lightProfile = light;
-  sunlight.shadow.mapSize.set(shadowSize, shadowSize);
-  Object.assign(sunlight.shadow.camera, { left: -SHADOW_SPAN / 2, right: SHADOW_SPAN / 2, top: SHADOW_SPAN / 2, bottom: -SHADOW_SPAN / 2, near: 1, far: 260 });
-  sunlight.shadow.normalBias = .02; sunlight.shadow.bias = -.0005;
-  // A sombra é redesenhada em quadros alternados e presa à grade de texels: metade do custo, sem cintilar.
-  sunlight.shadow.autoUpdate = false; scene.add(sunlight); scene.add(sunlight.target);
-  const lightRight = new THREE.Vector3().crossVectors(new THREE.Vector3(0, 1, 0), atmosphere.sunDirection).normalize();
-  const lightUp = new THREE.Vector3().crossVectors(atmosphere.sunDirection, lightRight);
-  const shadowCentre = new THREE.Vector3(); let frameCount = 0;
-  function aimSun(x, z) {
-    const texel = SHADOW_SPAN / shadowSize; shadowCentre.set(x, 0, z);
-    const right = Math.round(shadowCentre.dot(lightRight) / texel) * texel, up = Math.round(shadowCentre.dot(lightUp) / texel) * texel;
-    const depth = shadowCentre.dot(atmosphere.sunDirection);
-    sunlight.target.position.set(0, 0, 0).addScaledVector(lightRight, right).addScaledVector(lightUp, up).addScaledVector(atmosphere.sunDirection, depth);
-    sunlight.position.copy(sunlight.target.position).addScaledVector(atmosphere.sunDirection, 130);
-    sunlight.shadow.needsUpdate = true;
-  }
+  let frameCount = 0;
+
   const materials = new Map();
   function material(color, glow = false) {
     const key = color + glow;
@@ -408,164 +369,8 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
     const mesh = new THREE.Mesh(new THREE.CylinderGeometry(top, bottom, height, sides), material(color));
     mesh.position.set(...at); mesh.castShadow = true; parent.add(mesh); return mesh;
   }
-  const ground = box(scene, [280, 5, 250], [0, -2.8, -75], '#34433f'); ground.material = surfaces.get('grass',90,80); ground.castShadow = false;
-  // Tudo o que é estático entra em `city` e é fundido por material mais abaixo.
-  const city = new THREE.Group(); scene.add(city);
-  // Discos de praça por bairro removidos (manchas de cor sobre o terreno, adendo E): o chão base e as regiões de grama cobrem o entorno.
-  buildRoads(city, surfaces, material);
 
-  // Prédios: gerados por city.js a partir de CITY_LOTS (inclui os marcos de BUILDINGS).
-  // The hills sit beyond the drivable boundary; the road surface stays level.
-  for (let i=0;i<23;i++) {
-    const angle=i*Math.PI*2/23;
-    const hill=new THREE.Mesh(new THREE.IcosahedronGeometry(1,1),material(i%2?'#5f7666':'#71867a'));
-    hill.position.set(Math.cos(angle)*235,-6,-75+Math.sin(angle)*205);
-    hill.scale.set(33+i%4*6,14+i%5*4,24+i%3*5);
-    hill.rotation.y=angle;city.add(hill);
-  }
-  // Visible boundary stones mark the coast and recovery area.
-  for (let i = 0; i < 32; i++) {
-    const x = i < 16 ? -134 + i * 17.8 : (i % 2 ? -134 : 134);
-    const z = i < 16 ? (i % 2 ? -194 : 44) : -185 + (i - 16) * 14;
-    const rock = new THREE.Mesh(new THREE.DodecahedronGeometry(3, 0), surfaces.get('earth',2)); rock.position.set(x, -.4, z); rock.scale.y = .55; city.add(rock);
-  }
-  function sign(text, at, color = '#f2559c') {
-    const signGroup = new THREE.Group(); signGroup.position.set(at.x, 0, at.z); signGroup.rotation.y = at.heading || 0;
-    signGroup.scale.setScalar(ROAD_SIGN_SCALE); city.add(signGroup);
-    const canvas = document.createElement('canvas'); canvas.width = 768; canvas.height = 256;
-    const context = canvas.getContext('2d'); context.fillStyle = '#141414'; context.fillRect(0, 0, 768, 256);
-    context.strokeStyle = color; context.lineWidth = 16; context.strokeRect(8, 8, 752, 240);
-    context.fillStyle = '#e2d8c0'; context.font = 'bold 52px monospace'; context.textAlign = 'center';
-    text.split('|').forEach((line, index, lines) => context.fillText(line, 384, lines.length === 1 ? 136 : 92 + index * 66, 700));
-    context.fillStyle = color; context.font = 'bold 20px monospace';
-    context.fillText(eraBillboardCredits.explosao, 384, 224, 700);
-    const texture = new THREE.CanvasTexture(canvas); texture.colorSpace = THREE.SRGBColorSpace; texture.anisotropy = 8;
-    // Chapa com acabamento próprio nas bordas; a arte fica só na frente e no verso, legível dos dois lados.
-    box(signGroup, [8.16, 2.81, .16], [0, 4.1, 0], '#23282b');
-    const art = new THREE.MeshStandardMaterial({ map: texture, roughness: .7 });
-    for (const turn of [0, Math.PI]) {
-      const face = new THREE.Mesh(new THREE.PlaneGeometry(8, 2.65), art);
-      face.position.set(0, 4.1, turn ? -.085 : .085); face.rotation.y = turn; face.receiveShadow = true; signGroup.add(face);
-    }
-    for (const dx of [-2.6, 2.6]) box(signGroup, [.18, 3.5, .18], [dx, 1.5, 0], '#777487');
-    return { canvas, context, texture };
-  }
-  // Palco de rua de cada integrante: muro de concreto com o nome em spray e o retrato colado como
-  // lambe-lambe, tablado de madeira, caixas de som e os objetos de quem toca ali. Fica voltado
-  // para a rua; o integrante se apresenta na frente do próprio muro.
-  const MEMBER_SET = [
-    { name: '2-D', role: 'VOCAL', accent: '#7fa6ff', key: 'twod', tag: 'TOMORROW', credit: eraBillboardCredits['the-now-now'] },
-    { name: 'MURDOC', role: 'BAIXO', accent: '#9dd66b', key: 'murdoc', tag: 'KONG', credit: eraBillboardCredits.gorillaz },
-    { name: 'NOODLE', role: 'GUITARRA', accent: '#f5a9c6', key: 'noodle', tag: 'DARE', credit: eraBillboardCredits['demon-days'] },
-    { name: 'RUSSEL', role: 'BATERIA', accent: '#ffcc4d', key: 'russel', tag: '19-2000', credit: eraBillboardCredits['demon-days'] },
-  ];
-  function concrete(context, width, height, seed) {
-    const noise = n => { const v = Math.sin(n * 127.1 + seed * 311.7) * 43758.5453; return v - Math.floor(v); };
-    context.fillStyle = '#8d908b'; context.fillRect(0, 0, width, height);
-    for (let i = 0; i < 2600; i++) { context.fillStyle = noise(i) < .5 ? 'rgba(0,0,0,.07)' : 'rgba(255,255,255,.06)'; context.fillRect(noise(i + .3) * width, noise(i + .7) * height, 2 + noise(i + .1) * 7, 2 + noise(i + .9) * 5); }
-    for (let x = 0; x < width; x += width / 4) { context.fillStyle = 'rgba(0,0,0,.18)'; context.fillRect(x, 0, 3, height); }
-    const grime = context.createLinearGradient(0, height * .55, 0, height); grime.addColorStop(0, 'rgba(30,34,30,0)'); grime.addColorStop(1, 'rgba(30,34,30,.55)');
-    context.fillStyle = grime; context.fillRect(0, 0, width, height);
-    return noise;
-  }
-  const wallBack = (() => {
-    const canvas = document.createElement('canvas'); canvas.width = 1024; canvas.height = 512; const context = canvas.getContext('2d');
-    concrete(context, 1024, 512, 9);
-    context.save(); context.translate(512, 270); context.rotate(-.05); context.textAlign = 'center';
-    context.font = 'bold 170px Impact, "Arial Black", sans-serif'; context.lineWidth = 16; context.strokeStyle = '#111415'; context.strokeText('KONG', 0, 0); context.fillStyle = '#e2d8c0'; context.fillText('KONG', 0, 0);
-    context.font = 'bold 44px monospace'; context.fillStyle = '#111415'; context.fillText('NO REALITY · JUST NOISE', 0, 90); context.restore();
-    const texture = new THREE.CanvasTexture(canvas); texture.colorSpace = THREE.SRGBColorSpace; texture.anisotropy = 8;
-    return new THREE.MeshStandardMaterial({ map: texture, roughness: .95 });
-  })();
-  const stageSpeakers = [];
-  function memberStage(index, at) {
-    const set = MEMBER_SET[index], stage = new THREE.Group(); stage.position.set(at.x, 0, at.z); stage.rotation.y = at.facing;
-    stage.scale.setScalar(NON_DISCOVERY_PROP_SCALE); city.add(stage);
-    const spkGroup = new THREE.Group(); spkGroup.position.set(at.x, 0, at.z); spkGroup.rotation.y = at.facing;
-    spkGroup.scale.setScalar(NON_DISCOVERY_PROP_SCALE); scene.add(spkGroup);
-    const spkFallback = [];
-    stageSpeakers.push({ group: spkGroup, fallback: spkFallback });
-    const canvas = document.createElement('canvas'); canvas.width = 1024; canvas.height = 512; const context = canvas.getContext('2d');
-    const texture = new THREE.CanvasTexture(canvas); texture.colorSpace = THREE.SRGBColorSpace; texture.anisotropy = 8;
-    function paint(image) {
-      const noise = concrete(context, 1024, 512, index + 1);
-      // Rabiscos e respingos de fundo.
-      context.lineCap = 'round';
-      for (let i = 0; i < 9; i++) { context.strokeStyle = i % 2 ? 'rgba(17,20,21,.55)' : 'rgba(241,236,220,.5)'; context.lineWidth = 5 + noise(i) * 6; context.beginPath(); const x = 380 + noise(i + 2) * 600, y = 330 + noise(i + 5) * 150; context.moveTo(x, y); context.bezierCurveTo(x + 40, y - 50 * noise(i + 1), x + 70, y + 40, x + 110 * noise(i + 4), y - 10); context.stroke(); }
-      for (let i = 0; i < 70; i++) { context.fillStyle = i % 3 ? set.accent : '#111415'; context.globalAlpha = .5; context.beginPath(); context.arc(noise(i + 20) * 1024, noise(i + 40) * 512, 1 + noise(i + 60) * 5, 0, Math.PI * 2); context.fill(); }
-      context.globalAlpha = 1;
-      // Lambe-lambe: papel colado torto com o retrato em close sobre retícula.
-      context.save(); context.translate(190, 262); context.rotate(-.06);
-      context.fillStyle = 'rgba(0,0,0,.35)'; context.fillRect(-148, -212, 310, 440);
-      context.fillStyle = '#ece6d4'; context.fillRect(-155, -220, 310, 440);
-      context.fillStyle = set.accent; context.fillRect(-140, -205, 280, 330);
-      context.fillStyle = 'rgba(17,20,21,.28)'; for (let y = -200; y < 120; y += 14) for (let x = -135 + (y / 14 % 2) * 7; x < 135; x += 14) { context.beginPath(); context.arc(x, y, 2.6 + (y + 200) / 90, 0, Math.PI * 2); context.fill(); }
-      if (image) context.drawImage(image, image.width * .14, image.height * .02, image.width * .72, image.height * .52, -140, -205, 280, 330);
-      context.fillStyle = 'rgba(241,236,220,.92)'; context.font = 'bold 15px monospace'; context.textAlign = 'center'; context.fillText(`PHASE 7 (CC BY 4.0) · ${set.credit.toUpperCase()}`, 512, 500, 960);
-      context.fillStyle = '#111415'; context.font = 'bold 54px Impact, "Arial Black", sans-serif'; context.textAlign = 'center'; context.fillText(set.role.split(' · ')[0], 0, 185, 270);
-      context.font = 'bold 20px monospace'; context.fillText('AO VIVO · KONG STUDIOS', 0, 210, 270);
-      context.fillStyle = 'rgba(214,202,150,.85)'; for (const [x, y, turn] of [[-150, -215, -.6], [150, -215, .6], [-150, 215, .6], [150, 215, -.6]]) { context.save(); context.translate(x, y); context.rotate(turn); context.fillRect(-34, -11, 68, 22); context.restore(); }
-      context.restore();
-      // Nome em spray, com contorno grosso e tinta escorrida.
-      context.save(); context.translate(690, 235); context.rotate(.035); context.textAlign = 'center';
-      context.font = `bold ${set.name.length > 4 ? 190 : 250}px Impact, "Arial Black", sans-serif`; context.lineJoin = 'round';
-      context.shadowColor = set.accent; context.shadowBlur = 38; context.fillStyle = set.accent; context.fillText(set.name, 0, 0, 600); context.shadowBlur = 0;
-      context.lineWidth = 16; context.strokeStyle = '#111415'; context.strokeText(set.name, 0, 0, 600); context.fillStyle = set.accent; context.fillText(set.name, 0, 0, 600);
-      context.fillStyle = '#f1ecdc'; context.fillRect(-250, -30 - (set.name.length > 4 ? 140 : 185), 90, 9);
-      for (let i = 0; i < 8; i++) { const x = -270 + noise(i + 80) * 540, length = 30 + noise(i + 90) * 90; context.fillStyle = set.accent; context.fillRect(x, 0, 7, length); context.beginPath(); context.arc(x + 3.5, length, 6, 0, Math.PI * 2); context.fill(); }
-      context.restore();
-      // Função em estêncil e uma assinatura de canto.
-      context.fillStyle = '#111415'; context.font = 'bold 52px monospace'; context.textAlign = 'left'; context.fillText(set.role, 400, 400, 590);
-      context.fillRect(400, 414, 200, 7);
-      context.save(); context.translate(900, 470); context.rotate(-.1); context.font = 'bold 40px Impact, sans-serif'; context.fillStyle = '#f1ecdc'; context.fillText(set.tag, -90, 0); context.restore();
-      texture.needsUpdate = true;
-    }
-    paint(null);
-    // Retrato do integrante: arte do manifesto (assets/art/member-*.webp), baixada só quando o carro chega perto do palco.
-    const MEMBER_ART = { twod: 'member-2d', murdoc: 'member-murdoc', noodle: 'member-noodle', russel: 'member-russel' };
-    const image = new Image(); let portraitRequested = false;
-    image.onload = () => paint(image);
-    stageLoaders[index] = () => { if (portraitRequested) return; portraitRequested = true; image.src = `./assets/art/${MEMBER_ART[set.key]}.webp`; };
-    // Muro, arte na frente, pichação genérica no verso e um tubo de luz na cor do integrante.
-    box(stage, [8.8, 4.5, .4], [0, 1.95, -3.6], '#7c7f7a');
-    const front = new THREE.Mesh(new THREE.PlaneGeometry(8.6, 4.3), new THREE.MeshStandardMaterial({ map: texture, roughness: .95 })); front.position.set(0, 2, -3.39); front.receiveShadow = true; stage.add(front);
-    const back = new THREE.Mesh(new THREE.PlaneGeometry(8.6, 4.3), wallBack); back.position.set(0, 2, -3.81); back.rotation.y = Math.PI; stage.add(back);
-    box(stage, [8.8, .12, .12], [0, 4.32, -3.3], set.accent, true).castShadow = false;
-    // Tablado de paletes: tampo de madeira e saia escura com frestas.
-    const deck = box(stage, [8, .26, 5.6], [0, -.13, -.4], '#8b6a45'); deck.material = surfaces.get('wood', 4, 3); deck.castShadow = false;
-    for (let i = 0; i < 7; i++) box(stage, [.9, .24, .08], [-3.3 + i * 1.1, -.14, 2.42], '#2a2420').castShadow = false;
-    // Caixas de som empilhadas nos dois lados (substituídas de forma lazy por speaker-01-stack.glb e speaker-02-tower.glb).
-    for (const side of [-1, 1]) for (const [y, size] of [[.75, 1.5], [2.05, 1.05]]) {
-      spkFallback.push(box(spkGroup, [size, size, 1], [side * 3.45, y, -2.6], '#17191b'));
-      const cone = cylinder(spkGroup, size * .33, size * .33, .08, [side * 3.45, y, -2.07], '#2e3236', 20); cone.rotation.x = Math.PI / 2; cone.castShadow = false; spkFallback.push(cone);
-      const cap = cylinder(spkGroup, size * .12, size * .12, .1, [side * 3.45, y, -2.05], set.accent, 12); cap.rotation.x = Math.PI / 2; cap.castShadow = false; spkFallback.push(cap);
-    }
-    // Engradados e um cabo no chão.
-    box(stage, [.8, .6, .8], [-2.5, .3, 1.5], set.accent); box(stage, [.8, .6, .8], [-2.7, .9, 1.45], '#2a3036').rotation.y = .3;
-    box(stage, [2.6, .05, .08], [1.2, .03, 1.2], '#111415').rotation.y = .4;
-    if (index === 0) {
-      // 2-D: equipamento de palco e um retorno.
-      box(stage, [2.4, .5, .8], [2, .25, 1.2], '#17191b').rotation.y = .2; box(stage, [2.2, .08, .08], [2, .52, 1.2], set.accent).rotation.y = .2;
-      box(stage, [1.1, .7, .8], [-1.4, .35, 1.6], '#2a3036').rotation.x = -.35;
-    } else if (index === 1) {
-      // Murdoc: cabeçote de baixo, tambor de óleo e pneus.
-      box(stage, [1.3, .45, .7], [2.2, .23, .2], '#2a3036'); box(stage, [1.1, .1, .05], [2.2, .3, .56], set.accent, true).castShadow = false;
-      cylinder(stage, .55, .55, 1.3, [-2.2, .65, .3], '#6a4632', 16); cylinder(stage, .57, .57, .08, [-2.2, 1.0, .3], '#3a2a20', 16);
-      for (let i = 0; i < 3; i++) { const tyre = new THREE.Mesh(new THREE.TorusGeometry(.5, .2, 8, 18), material('#151618')); tyre.rotation.x = Math.PI / 2; tyre.position.set(2.6, .2 + i * .38, 1.7); tyre.castShadow = true; stage.add(tyre); }
-    } else if (index === 2) {
-      // Noodle: amplificador pequeno, pedaleira e lanternas de papel.
-      box(stage, [1.1, .95, .6], [2.1, .48, .3], '#2a3036'); box(stage, [.95, .6, .04], [2.1, .42, .62], '#c9b98f');
-      box(stage, [1.5, .08, .5], [.4, .04, 1.6], '#17191b'); for (let i = 0; i < 4; i++) box(stage, [.24, .1, .32], [-.1 + i * .34, .11, 1.6], ['#f5a9c6', '#ffcc4d', '#7fa6ff', '#9dd66b'][i]);
-      for (let i = 0; i < 4; i++) { cylinder(stage, .012, .012, .7, [-2.4 + i * 1.6, 3.95, -3.05], '#111415', 5); sphere(stage, .3, [-2.4 + i * 1.6, 3.45, -3.05], i % 2 ? '#f5a9c6' : '#fff4c7', [1, 1.15, 1]).material = material(i % 2 ? '#f5a9c6' : '#fff4c7', true); }
-    } else {
-      // Russel: estojos de bateria empilhados e um toca-fitas.
-      for (const [x, y, r] of [[-1.9, .45, .9], [-1.9, 1.25, .7]]) cylinder(stage, r, r, .7, [x, y, 1.1], '#17191b', 18);
-      box(stage, [1.3, .6, .4], [2.3, .3, 1.3], '#2a3036'); for (const side of [-1, 1]) { const grille = cylinder(stage, .2, .2, .05, [2.3 + side * .38, .3, 1.52], '#9a9d8b', 14); grille.rotation.x = Math.PI / 2; }
-    }
-  }
-  // Modelos densos só entram no mapa de sombras perto do carro; longe, a sombra não seria vista.
-  // Ao longe, viram um cartaz: uma foto do próprio modelo, tirada uma única vez na carga,
-  // substitui dezenas de milhares de triângulos que ocupariam poucos pixels na tela.
+  // Modelos densos viram impostor (cartaz fotografado uma vez) à distância.
   const heavyCasters = [];
   const studioScene = new THREE.Scene(), studioCamera = new THREE.OrthographicCamera();
   studioScene.add(new THREE.HemisphereLight('#ffffff', '#8a8578', 1.9));
@@ -593,170 +398,13 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
     heavyCasters.push({ object, card, meshes, at, casting: true, far: false });
   }
   const cardTint = new THREE.Color();
-  installEnvironment(scene, renderer, surfaces, heavyCaster);
-  installCity(scene, surfaces);
-  const streetProps = installStreetProps(scene, 2026, EASTER_EGG_POSITIONS.filter(p => p.id === 'save'));
-  let lastPropsCull = -Infinity;
-  installEasterEggs(scene);
-  const landmarks = installLandmarks(scene, material, bake);
-  const fauna = installFauna(scene);
-  const arcadeCabinet = installArcadeCabinet(scene);
-  let stageSpeakersLoaded = false;
-  function loadStageSpeakers(loader = new GLTFLoader()) {
-    if (stageSpeakersLoaded) return;
-    stageSpeakersLoaded = true;
-    Promise.all([
-      loadModelSafely(loader, './assets/models/scenery/speaker-01-stack.glb'),
-      loadModelSafely(loader, './assets/models/scenery/speaker-02-tower.glb'),
-    ]).then(([stackGltf, towerGltf]) => {
-      for (const g of [stackGltf, towerGltf]) {
-        repairMaterials(g.scene);
-        g.scene.traverse(o => {
-          if (o.isMesh && o.geometry) {
-            o.castShadow = true; o.receiveShadow = true;
-            o.material = new THREE.MeshStandardMaterial({ color: '#b5b8b1', vertexColors: Boolean(o.geometry.attributes.color), roughness: .76, metalness: .08 });
-          }
-        });
-      }
-      for (const entry of stageSpeakers) {
-        for (const m of entry.fallback) { entry.group.remove(m); m.geometry?.dispose?.(); }
-        entry.fallback.length = 0;
-        const leftTower = towerGltf.scene.clone(true); leftTower.position.set(-3.45, 0, -2.5);
-        const rightTower = towerGltf.scene.clone(true); rightTower.position.set(3.45, 0, -2.5);
-        const sideStack = stackGltf.scene.clone(true); sideStack.position.set(-2.35, 0, -2.35);
-        entry.group.add(leftTower, rightTower, sideStack);
-        entry.group.userData.speakersGlbLoaded = true;
-      }
-    }).catch(err => console.warn('Caixas de som GLB indisponíveis; mantendo procedurais:', err.message));
-  }
-  sign('MURAIS ←|MOINHO →', {x:9.5,z:-40.5,heading:1.2}, '#7fa6ff');
-  const artLoader = new THREE.TextureLoader(), artRequested = new Set();
-  let haloTex = null;
-  function haloTexture() {
-    if (haloTex) return haloTex;
-    const canvasEl = document.createElement('canvas'); canvasEl.width = canvasEl.height = 128; const g = canvasEl.getContext('2d');
-    const grad = g.createRadialGradient(64, 64, 0, 64, 64, 64); grad.addColorStop(0, 'rgba(255,255,255,1)'); grad.addColorStop(.35, 'rgba(255,255,255,.35)'); grad.addColorStop(1, 'rgba(255,255,255,0)');
-    g.fillStyle = grad; g.fillRect(0, 0, 128, 128);
-    haloTex = new THREE.CanvasTexture(canvasEl); haloTex.colorSpace = THREE.SRGBColorSpace; return haloTex;
-  }
-  // Caminhos das artes por descoberta, vindos de assets/art/manifest.json (carregado uma vez, sem bloquear a cena).
-  const artPaths = {};
-  fetch('./assets/art/manifest.json').then(r => r.json()).then(manifest => { for (const point of DISCOVERIES) { const entry = manifest.discoveryMurals?.[point.id]; if (entry) artPaths[point.id] = entry.primary; } }).catch(() => {});
-  const discoveryObjects = DISCOVERIES.map((point, i) => {
-    const group = new THREE.Group(); group.position.set(point.x,0,point.z); group.rotation.y = point.facing; scene.add(group);
-    const paving = cylinder(group,4.5,4.7,.14,[0,-.11,0],'#687463',40);paving.material=surfaces.get('asphalt',3);
-    const glow = new THREE.Mesh(new THREE.TorusGeometry(3.9,.035,6,40),material('#f5a9c6',true));glow.rotation.x=Math.PI/2;glow.position.y=.01;group.add(glow);
-    if(i===0) {
-      const wall=box(group,[9.4,4.8,.35],[0,2.2,-3],'#d5c6a6');wall.material=surfaces.get('plaster',3,2);
-      const canvas=document.createElement('canvas');canvas.width=1536;canvas.height=768;const ctx=canvas.getContext('2d');
-      ctx.fillStyle='#b2ad8d';ctx.fillRect(0,0,1536,768);
-      // Desenho de reserva do mural 1: só ondas sonoras e datas (sem rosto). A arte oficial (WebP) entra por cima quando carrega.
-      ctx.strokeStyle='#dc8e9a';ctx.lineWidth=16;ctx.lineCap='round';
-      for(let j=0;j<5;j++){ctx.beginPath();for(let k=0;k<28;k++){const x=710+k*25,y=245+j*68+Math.sin(k*.7+j)*33;if(k===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);}ctx.stroke();}
-      ctx.fillStyle='#263e42';ctx.font='bold 100px monospace';ctx.fillText('1998',755,165);ctx.font='bold 57px monospace';ctx.fillText('DUAS MENTES.',730,680);ctx.fillText('UM UNIVERSO.',730,735);
-      const texture=new THREE.CanvasTexture(canvas);texture.colorSpace=THREE.SRGBColorSpace;
-      const mural=new THREE.Mesh(new THREE.PlaneGeometry(8.8,4.4),new THREE.MeshStandardMaterial({map:texture,roughness:1,metalness:0,emissive:'#ff9ec4',emissiveMap:texture,emissiveIntensity:.4}));mural.position.set(0,2.2,-2.81);group.add(mural);group.userData.mural=mural;
-    } else if(i===1) {
-      const archive=box(group,[4.9,4,.8],[0,1.9,-2.5],'#596357');archive.material=surfaces.get('wood',2);
-      for(let k=0;k<4;k++){const page=box(group,[1.05,2.9,.04],[-1.8+k*1.2,2,-2.07],'#e2d8c0');page.rotation.z=(k%2?1:-1)*.04;}
-      const heading=new THREE.Mesh(new THREE.PlaneGeometry(4.3,.55),new THREE.MeshStandardMaterial({map:letteringTexture('QUATRO ROSTOS',{height:128}),roughness:1}));heading.position.set(0,3.7,-2.03);group.add(heading);
-    } else if(i===2) {
-      const radio=box(group,[3.5,2.2,1.1],[0,1.4,-2],'#626d60');radio.material=surfaces.get('wood');
-      for(const x of [-1,1]){const speaker=cylinder(group,.55,.55,.12,[x,1.4,-1.38],'#171d20',32);speaker.rotation.x=Math.PI/2;}
-      const display=box(group,[1,.45,.1],[0,1.9,-1.4],'#9bb79b',true);display.castShadow=false;
-      const antenna=cylinder(group,.025,.025,3.7,[1.3,3.5,-2],'#9a9d8b',8);antenna.rotation.z=-.25;
-      box(group,[4,.24,1.8],[0,.18,-2],'#5c5545').material=surfaces.get('wood');
-    } else if(i===3) {
-      for(const x of [-1.7,1.7])box(group,[.15,.9,1.6],[x,.3,-2.1],'#343d35');
-      box(group,[4.6,.18,1.7],[0,.8,-2.1],'#9d9471').material=surfaces.get('wood',3);
-      box(group,[4.6,1,.18],[0,1.35,-2.85],'#9d9471').material=surfaces.get('wood',3);
-      const plaque=new THREE.Mesh(new THREE.PlaneGeometry(3,.7),new THREE.MeshStandardMaterial({map:letteringTexture('DEMON DAYS / 2005',{height:128}),roughness:1}));plaque.position.set(0,.6,-.9);plaque.rotation.x=-.2;group.add(plaque);
-    } else {
-      box(group,[8,.45,4],[0,.1,-1.3],'#76664c').material=surfaces.get('wood',4,2);
-      for(const x of [-2.8,2.8]){box(group,[1.2,2,1],[x,1.3,-2.3],'#252c28');const cone=cylinder(group,.42,.42,.1,[x,1.3,-1.74],'#101916',24);cone.rotation.x=Math.PI/2;}
-      cylinder(group,.045,.045,3.3,[0,1.7,-1.1],'#9d9e8e',10);sphere(group,.18,[0,3.3,-1.1],'#252c28');
-    }
-    const beacon=new THREE.Mesh(new THREE.SphereGeometry(.18,12,8),material('#f5a9c6',true));beacon.position.set(0,i===0?7.4:5.5,i===0?-4.5:-2.8);group.add(beacon); // no mural inicial o farol fica no topo da parede, sem cruzar a arte
-    // Painéis de história ampliados (1,5x): piso, anel e farol ficam como estão (src/discovery-scale.js).
-    const keep = new Set([paving, glow, beacon]);
-    for (const child of [...group.children]) if (!keep.has(child)) { child.position.multiplyScalar(DISCOVERY_PROP_SCALE); child.scale.multiplyScalar(DISCOVERY_PROP_SCALE); }
-    // Feixe vertical sutil (aditivo, sem luz real): guia o olhar de longe.
-    const beam = new THREE.Mesh(new THREE.CylinderGeometry(.35,.9,8,16,1,true), new THREE.MeshBasicMaterial({color:'#f5a9c6',transparent:true,opacity:.22,blending:THREE.AdditiveBlending,depthWrite:false,toneMapped:false}));
-    beam.position.set(0,4,-7); beam.name = 'discovery-beam'; group.add(beam); // atrás da parede (z −7, o bake funde o facho ao grupo): a coluna não cruza a arte oficial
-    // Luz quente de destaque em só dois pontos (limite de PointLights do shader): o mural inicial e o palco ao vivo.
-    if (i === 0 || i === 4) {
-      const glowLight = new THREE.PointLight(i === 0 ? '#f5a9c6' : '#ffcc4d', i === 0 ? 4 : 3, 15, 2);
-      glowLight.position.set(0, 4.4, -1.6); group.add(glowLight);
-    }
-    // Halo aditivo (sprite) no ponto: brilho de longe sem luz real. Não no mural inicial: o disco na frente da arte cobria a foto.
-    if (i !== 0) { const halo = new THREE.Sprite(new THREE.SpriteMaterial({ map: haloTexture(), color: i === 0 ? '#f5a9c6' : '#ffcc4d', transparent: true, opacity: .75, blending: THREE.AdditiveBlending, depthWrite: false, toneMapped: false })); halo.scale.setScalar(7); halo.position.set(0, 3.4, -1); group.add(halo); }
-    // Painel para a arte do manifesto (pontos sem mural próprio): placeholder de papel até a imagem chegar.
-    if (i > 0) {
-      const panel = new THREE.Mesh(new THREE.PlaneGeometry(4.2,2.8), new THREE.MeshStandardMaterial({color:'#d8d0aa',roughness:1,metalness:0}));
-      panel.position.set(0,2.5,-3.7); group.add(panel); group.userData.artPanel = panel;
-    }
-    bake(group,[glow,beacon]);
-    return {group,glow,beacon};
-  });
-  const island=new THREE.Group();scene.add(island);
-  const satellites=new THREE.Group();island.add(satellites);
-  const portal=new THREE.Group();island.add(portal);
-  const dustGeometry = new THREE.BufferGeometry();
-  const dustPositions = new Float32Array(360 * 3);
-  for (let i = 0; i < 360; i++) {
-    dustPositions[i * 3] = Math.sin(i * 43.17) * 95;
-    dustPositions[i * 3 + 1] = 3 + (i * 17 % 70);
-    dustPositions[i * 3 + 2] = Math.cos(i * 12.79) * 160;
-  }
-  dustGeometry.setAttribute('position', new THREE.BufferAttribute(dustPositions, 3));
-  const dust = new THREE.Points(dustGeometry, new THREE.PointsMaterial({color:'#e2d8c0',size:.12,transparent:true,opacity:.45,depthWrite:false}));
-  scene.add(dust);
-  // Feedback de jogo: partículas instanciadas leves (1 draw call) de poeira/faísca neon ao frear e ao passar perto dos pontos.
-  const FX_COUNT = 36;
-  const fxMesh = new THREE.InstancedMesh(
-    new THREE.OctahedronGeometry(.07, 0),
-    new THREE.MeshBasicMaterial({ color: '#ffffff', transparent: true, opacity: .4, depthWrite: false }),
-    FX_COUNT
-  );
-  fxMesh.name = 'drive-fx-particles'; fxMesh.frustumCulled = false;
-  const fxPool = Array.from({ length: FX_COUNT }, () => ({ life: 0, maxLife: .5, x: 0, y: -20, z: 0, vx: 0, vy: 0, vz: 0, scale: 0 }));
-  const fxDummy = new THREE.Object3D(), fxColor = new THREE.Color();
-  let fxCursor = 0;
-  for (let i = 0; i < FX_COUNT; i++) { fxDummy.position.set(0, -20, 0); fxDummy.scale.setScalar(0); fxDummy.updateMatrix(); fxMesh.setMatrixAt(i, fxDummy.matrix); fxMesh.setColorAt(i, fxColor.set('#ffcc4d')); }
-  scene.add(fxMesh);
-  function spawnFx(x, y, z, vx, vy, vz, colorHex, scale = 1, maxLife = .55) {
-    const p = fxPool[fxCursor];
-    p.x = x; p.y = y; p.z = z; p.vx = vx; p.vy = vy; p.vz = vz; p.scale = scale; p.life = p.maxLife = maxLife;
-    fxMesh.setColorAt(fxCursor, fxColor.set(colorHex));
-    if (fxMesh.instanceColor) fxMesh.instanceColor.needsUpdate = true;
-    fxCursor = (fxCursor + 1) % FX_COUNT;
-  }
-  // Original provisional landmark, not the non-downloadable Sketchfab asset.
-  const windmill = new THREE.Group(); windmill.position.set(80, 15, -163); scene.add(windmill);
-  const floatingRock = new THREE.Mesh(new THREE.DodecahedronGeometry(1, 0), surfaces.get('earth',3));
-  floatingRock.scale.set(17, 6, 14); floatingRock.position.y = -3; floatingRock.rotation.z = .12; windmill.add(floatingRock);
-  cylinder(windmill, 14, 15, 1.4, [0, 0, 0], '#68806a', 12);
-  cylinder(windmill, 3, 4.7, 17, [0, 9, 0], '#a28c73', 32).material=surfaces.get('plaster',3,5);
-  cylinder(windmill, 0, 5.4, 5.5, [0, 20.1, 0], '#485e64', 32).material=surfaces.get('roof',3);
-  box(windmill, [1.7, 3.4, .15], [0, 3, 4.25], '#202b2e');
-  for (const x of [-1.5, 1.5]) box(windmill, [1.1, 1.6, .15], [x, 9, 3.5], '#d2e2a8', true);
-  const rotor = new THREE.Group(); rotor.position.set(0, 15, 4.8); windmill.add(rotor);
-  const hub = cylinder(rotor, .7, .7, .9, [0, 0, .1], '#d2e2a8'); hub.rotation.x = Math.PI / 2;
-  for (let i = 0; i < 4; i++) {
-    const blade = new THREE.Group(); blade.rotation.z = i * Math.PI / 2; rotor.add(blade);
-    box(blade, [.2, 12, .25], [0, 5.7, 0], '#303d39');
-    box(blade, [2.6, 7.5, .12], [1.1, 7.6, 0], '#c5bd9c').material=surfaces.get('wood',1,3);
-    for (let j = 0; j < 6; j++) box(blade, [2.7, .09, .2], [1.1, 4.2 + j * 1.3, .1], '#48584a');
-  }
-  for (let i = 0; i < 5; i++) {
-    const tuft = new THREE.Mesh(new THREE.ConeGeometry(1.5, 4 + i % 2, 5), material('#4c6d5b'));
-    tuft.position.set(Math.cos(i * 1.3) * 10, 2, Math.sin(i * 1.3) * 9); windmill.add(tuft);
-  }
-  bake(rotor); bake(windmill, [rotor]);
-  const districtLights = CITY_ERAS.map(({light}) => ({
-    sun: new THREE.Color(light.sun), sky: new THREE.Color(light.sky), haze: new THREE.Color(light.haze),
-  }));
-  const groundColors = ['#34433f','#423b4f','#365b57','#5b4940','#443d57','#44586a','#3b5b50','#50414c'].map(color => new THREE.Color(color));
+
+  const { city } = installTerrainAndRoads({ scene, surfaces, material, box });
+  const props = installWorldProps({ scene, renderer, surfaces, material, box, sphere, cylinder, bake, heavyCaster });
+  const stages = installStagesAndBand({ scene, city, surfaces, material, box, sphere, cylinder, bake, heavyCaster });
+  bake(city);
+  installEraGroundWash(scene);
+
   const cabin = createCabin();
   const vehicleMotion = createVehicleMotion();
   let steeringPivot = null, steeringSign = 1; const steeringRest = new THREE.Quaternion(), steeringTurn = new THREE.Quaternion(), cabinFrame = new THREE.Quaternion(), cabinEuler = new THREE.Euler();
@@ -882,213 +530,8 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
     }
   }
   loadVehicle();
-  function person(index) {
-    const g = new THREE.Group();
-    const skin = ['#e2d8c0', '#91a568', '#e2d8c0', '#986b50'][index];
-    const shirt = ['#f2559c', '#24242c', '#3a68d8', '#e2d8c0'][index];
-    const wide = index === 3 ? 1.3 : 1;
-    for (const x of [-.43, .43]) {
-      box(g, [.48, 1.5, .55], [x, 1.05, 0], '#252333'); box(g, [.58, .3, .9], [x, .23, -.12], '#11131c');
-    }
-    box(g, [1.5 * wide, 1.8, .8], [0, 2.65, 0], shirt);
-    const arms = [];
-    for (const side of [-1, 1]) {
-      const arm = new THREE.Group(); arm.position.set(side * (.95 * wide), 3.25, 0);
-      box(arm, [.38, 1.6, .42], [0, -.65, 0], skin); g.add(arm); arms.push(arm);
-    }
-    sphere(g, .85, [0, 4.35, 0], skin, [wide, 1.18, .9]);
-    for (const x of [-.3, .3]) sphere(g, .15, [x, 4.45, -.69], '#141414', [1, 1.25, .5]);
-    box(g, [.45, .06, .05], [0, 3.99, -.75], '#141414');
-    const hair = index === 0 ? '#3a68d8' : '#141414';
-    sphere(g, .86, [0, 4.96, .02], hair, [wide, .48, .95]);
-    if (index !== 3) for (let i = 0; i < 5; i++) {
-      const tuft = box(g, [.36, .65, .6], [-.65 + i * .32, 5.05 + i % 2 * .2, -.12], hair); tuft.rotation.z = (i - 2) * .18;
-    }
-    if (index === 2) { sphere(g, .5, [-.75, 4.4, 0], '#141414', [.5, 1.4, 1]); sphere(g, .5, [.75, 4.4, 0], '#141414', [.5, 1.4, 1]); }
-    if (index === 1 || index === 2) {
-      const guitar = sphere(g, .7, [.7, 2.4, -.6], index === 1 ? '#f2559c' : '#e2d8c0', [.7, 1, .22]); guitar.rotation.z = -.5;
-      const neck = box(g, [.16, 2.2, .14], [1.18, 3.3, -.65], '#b89a72'); neck.rotation.z = -.4;
-    }
-    if (index === 3) { const drum = cylinder(g, .9, .9, .65, [0, 2.1, -1.05], '#3a68d8'); drum.rotation.x = Math.PI / 2; }
-    return { group: g, arms };
-  }
-  const stageLoaders = [];
-  const people = MEMBER_LOCATIONS.map((at, index) => {
-    const actor = person(index); actor.group.position.set(at.x, 0, at.z); actor.group.rotation.y = at.heading + Math.PI;
-    actor.group.userData.member = index; actor.group.traverse(object => { object.userData.member = index; }); scene.add(actor.group);
-    memberStage(index, at);
-    return actor;
-  });
-  bake(city);
-  // Cor de bairro no chão: cada época tinge o terreno do seu território com a cor que já usa
-  // no portal e no minimapa, com transição suave nas divisas.
-  {
-    const size = 96, tint = document.createElement('canvas'); tint.width = tint.height = size;
-    const context = tint.getContext('2d');
-    for (let j = 0; j < size; j++) for (let i = 0; i < size; i++) {
-      context.fillStyle = CITY_ERAS[eraAt({ x: -140 + i / (size - 1) * 280, z: -200 + j / (size - 1) * 250 })].color; context.fillRect(i, j, 1, 1);
-    }
-    const soft = document.createElement('canvas'); soft.width = soft.height = size * 2;
-    const blur = soft.getContext('2d'); blur.filter = 'blur(7px) saturate(45%)'; blur.drawImage(tint, 0, 0, size * 2, size * 2); blur.filter = 'none'; // lavagem por era dessaturada: não vira laranja/rosa chapado
-    blur.globalAlpha = .5; blur.drawImage(tint, 0, 0, size * 2, size * 2);
-    const map = new THREE.CanvasTexture(soft); map.colorSpace = THREE.SRGBColorSpace;
-    const wash = new THREE.Mesh(new THREE.PlaneGeometry(280, 250), new THREE.MeshStandardMaterial({ map, transparent: true, opacity: .22, roughness: 1, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -1, polygonOffsetUnits: -1 }));
-    wash.rotation.x = -Math.PI / 2; wash.position.set(0, -.295, -75); wash.receiveShadow = true; wash.renderOrder = 1; scene.add(wash);
-  }
-  // Pontos de valor: um facho de luz e uma etiqueta acima de cada história e de cada integrante,
-  // visíveis de longe. Rosa = história a encontrar, verde = já no diário, cor própria = integrante.
-  const MEMBER_ACCENTS = ['#7fa6ff', '#9dd66b', '#f5a9c6', '#ffcc4d'];
-  function valueMarker(at, text, color) {
-    const group = new THREE.Group(); group.position.set(at.x, 0, at.z); scene.add(group);
-    const beamMaterial = new THREE.MeshBasicMaterial({ color, transparent: true, opacity: .2, depthWrite: false, side: THREE.DoubleSide });
-    const beam = new THREE.Mesh(new THREE.CylinderGeometry(.25, .8, 30, 12, 1, true), beamMaterial); beam.position.y = 21; group.add(beam);
-    const canvas = document.createElement('canvas'); canvas.width = 512; canvas.height = 128;
-    const texture = new THREE.CanvasTexture(canvas); texture.colorSpace = THREE.SRGBColorSpace;
-    const label = new THREE.Mesh(new THREE.PlaneGeometry(6, 1.5), new THREE.MeshBasicMaterial({ map: texture, transparent: true, depthWrite: false })); label.position.y = 9.2; group.add(label);
-    const context = canvas.getContext('2d');
-    function paint(line, accent) {
-      context.clearRect(0, 0, 512, 128); context.fillStyle = '#111415e6'; context.beginPath(); context.roundRect(4, 14, 504, 100, 18); context.fill();
-      context.strokeStyle = accent; context.lineWidth = 6; context.stroke();
-      context.fillStyle = accent; context.beginPath(); context.arc(52, 64, 16, 0, Math.PI * 2); context.fill();
-      context.fillStyle = '#f1ecdc'; context.font = 'bold 44px Arial, sans-serif'; context.textBaseline = 'middle'; context.fillText(line, 86, 66, 410);
-      texture.needsUpdate = true; beamMaterial.color.set(accent);
-    }
-    paint(text, color);
-    return { group, label, paint, state: null };
-  }
-  // Mural 1: o facho e a etiqueta ficam atrás da parede (x−5,5), para não cruzar a arte oficial.
-  const storyMarkers = DISCOVERIES.map((point, i) => valueMarker(i === 0 ? { x: point.x - 5.5, z: point.z } : behind(point, 3), `HISTÓRIA ${i + 1} · ${point.kind}`, '#f5a9c6'));
-  const memberMarkers = MEMBER_LOCATIONS.map((at, i) => valueMarker(at, ['2-D', 'MURDOC', 'NOODLE', 'RUSSEL'][i], MEMBER_ACCENTS[i]));
-  const bandStatus = document.querySelector('#band-status');
-  let lunarMurdoc = null;
-  async function loadBand() {
-    try {
-    // Versão para a cena: texturas WebP de 1024 px e malha simplificada. O GLB original segue disponível para download.
-    const bandLoader = new GLTFLoader();
-    // Ordem: v3 (A-pose relaxada, mãos suavizadas) → web (fallback leve). Os antigos phase7 v2/original (9 MB cada) saíram da cadeia.
-    const gltf = await loadModelSafely(bandLoader, './assets/models/gorillaz-phase7-web-v3.glb')
-      .catch(() => loadModelSafely(bandLoader, './assets/models/gorillaz-phase7-web.glb'));
-    repairMaterials(gltf.scene);
-    const roots = Array(4).fill(null);
-    gltf.scene.traverse(object => { if (Number.isInteger(object.userData.memberIndex) && object.userData.memberIndex >= 0 && object.userData.memberIndex < 4) roots[object.userData.memberIndex] = object; });
-    if (roots.length !== 4 || roots.some(root => !root)) throw new Error('O pacote precisa conter os quatro integrantes identificados');
-    gltf.scene.updateWorldMatrix(true, true);
-    const bounds = roots.map(root => new THREE.Box3().setFromObject(root));
-    const scale = 6.2 / Math.max(...bounds.map(box => box.max.y - box.min.y));
-    {
-      const giant = roots[1].clone(true);
-      const discard = [];
-      giant.traverse(object => { if (object.isMesh && /(?:Body|Pants|Shoes)/i.test(object.name)) discard.push(object); });
-      discard.forEach(object => object.removeFromParent());
-      giant.traverse(object => {
-        if (!object.isMesh) return;
-        object.geometry = object.geometry.clone();
-        object.geometry.computeVertexNormals();
-        object.material = object.material.clone();
-        object.material.color.multiplyScalar(.68);
-        object.material.roughness = .92;
-        object.material.metalness = 0;
-        if (object.material.map) {
-          object.material.emissiveMap = object.material.map;
-          object.material.emissive = new THREE.Color('#7a7488');
-          object.material.emissiveIntensity = .58;
-        }
-        configureLunarMaterial(object.material);
-        // Auto-oclusão 3D limpa no busto lunar (sem backfaces nem boca/nuca atravessando o rosto);
-        // o depth buffer é limpo logo após em renderOrder -0.45 para a cidade continuar sempre à frente.
-        object.material.side = THREE.FrontSide;
-        object.material.depthTest = true;
-        object.material.depthWrite = true;
-        object.material.onBeforeCompile = shader => {
-          shader.vertexShader = shader.vertexShader.replace('#include <common>', '#include <common>\nvarying vec3 lunarNormal;')
-            .replace('#include <beginnormal_vertex>', '#include <beginnormal_vertex>\nlunarNormal = normalize(normalMatrix * objectNormal);');
-          shader.fragmentShader = shader.fragmentShader.replace('#include <common>', '#include <common>\nvarying vec3 lunarNormal;')
-            .replace('#include <color_fragment>', '#include <color_fragment>\ndiffuseColor.rgb += vec3(.14, .09, .22) * pow(1.0 - max(0.0, normalize(lunarNormal).z), 2.6);');
-        };
-        object.material.transparent = false; object.renderOrder = -.5;
-        object.castShadow = object.receiveShadow = false;
-        object.frustumCulled = true;
-      });
-      const bustBounds = new THREE.Box3().setFromObject(giant), center = bustBounds.getCenter(new THREE.Vector3());
-      const centered = new THREE.Group(); centered.add(giant); centered.position.set(-center.x, -center.y, -center.z);
-      const bust = new THREE.Group(); bust.add(centered); bust.scale.setScalar(LUNAR_MURDOC.height / (bustBounds.max.y - bustBounds.min.y));
-      bust.position.set(LUNAR_MURDOC.x, LUNAR_MURDOC.y, LUNAR_MURDOC.z);
-      bust.rotation.y = Math.atan2(-LUNAR_MURDOC.x, -LUNAR_MURDOC.z);
-      const haloMaterial = new THREE.ShaderMaterial({ depthWrite: false, depthTest: false, fog: false,
-        uniforms: {}, vertexShader: 'varying vec2 vUv; void main(){vUv=uv;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}',
-        fragmentShader: 'varying vec2 vUv; void main(){float d=length(vUv-vec2(.5))*2.;if(d>1.)discard;vec3 c=mix(vec3(.07,.06,.11),vec3(.24,.18,.32),smoothstep(.55,1.,d));gl_FragColor=vec4(c,1.);}' });
-      const halo = new THREE.Mesh(new THREE.PlaneGeometry(LUNAR_MURDOC.disk, LUNAR_MURDOC.disk), haloMaterial); halo.name = 'murdoc-lunar-halo'; halo.renderOrder = -.6;
-      halo.position.set(LUNAR_MURDOC.x * 1.01, LUNAR_MURDOC.y * 1.01, LUNAR_MURDOC.z * 1.01);
-      halo.lookAt(0, 0, 0);
-      const depthReset = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), new THREE.MeshBasicMaterial({ colorWrite: false, depthWrite: true, depthTest: false }));
-      depthReset.name = 'murdoc-lunar-depth-reset'; depthReset.renderOrder = -.45; depthReset.frustumCulled = false;
-      depthReset.onAfterRender = r => { r.state.buffers.depth.setMask(true); r.clearDepth(); };
-      lunarMurdoc = new THREE.Group(); lunarMurdoc.name = 'murdoc-lunar'; lunarMurdoc.add(bust, halo, depthReset); scene.add(lunarMurdoc);
-    }
-    roots.forEach((model, index) => {
-      const center = bounds[index].getCenter(new THREE.Vector3());
-      const centered = new THREE.Group(); centered.add(model); centered.position.set(-center.x, -bounds[index].min.y, -center.z);
-      const visual = new THREE.Group(); visual.add(centered); visual.scale.setScalar(scale); visual.rotation.y = Math.PI;
-      visual.position.y = .03;
-      visual.traverse(object => {
-        object.userData.member = index;
-        if (object.isMesh) { object.castShadow = true; object.receiveShadow = true; }
-      });
-      // Cada integrante chega em várias malhas com o mesmo material: fundidas, viram uma chamada.
-      bake(visual);
-      // Braços em pose de tocar e instrumento na escala do corpo (band-pose.js); as baquetas ficam soltas para acompanhar as mãos.
-      const rig = rigBand(visual, index, material); bake(rig.kit, [...rig.sticks, ...(rig.guitar ? [rig.guitar] : [])]);
-      loadMemberInstrument(rig, index, bandLoader);
-      if (index === 2) loadNoodleExtras(rig, bandLoader);
-      visual.traverse(object => { object.userData.member = index; });
-      const actor = people[index]; actor.rig = rig;
-      heavyCaster(visual, actor.group.position, -1);
-      actor.group.traverse(object => { if (object.isMesh) object.geometry.dispose(); });
-      actor.group.clear(); actor.group.add(visual); actor.arms = [];
-    });
-    bandStatus.textContent = 'PHASE 7 / QUATRO INTEGRANTES NO CIRCUITO';
-    bandStatus.dataset.loaded = 'true'; bandStatus.dataset.count = '4';
-    } catch (error) {
-    console.warn('Banda Phase 7 indisponível; personagens geométricos mantidos:', error.message);
-    bandStatus.textContent = 'PERSONAGENS GEOMÉTRICOS / MODO ALTERNATIVO'; bandStatus.dataset.loaded = 'false';
-    }
-  }
-  // Instrumentos GLB em espaço local normalizado dos personagens (2-D: teclado instrument-03-keyboard.glb, Murdoc: baixo instrument-04-bass-v2.glb, Russel: bateria instrument-02-drums.glb com baquetas dinâmicas, Noodle: guitarra instrument-05-guitar-v2.glb).
-  function loadMemberInstrument(rig, index, loader) {
-    const urls = {
-      0: './assets/models/scenery/instrument-03-keyboard.glb',
-      1: './assets/models/scenery/instrument-04-bass-v2.glb', // Murdoc: baixo v2 (mesmos encaixes neck/strum do baixo atual)
-      3: './assets/models/scenery/instrument-02-drums.glb',
-    };
-    const url = urls[index];
-    if (!url) return;
-    loadModelSafely(loader, url).then(gltf => {
-      repairMaterials(gltf.scene);
-      gltf.scene.traverse(obj => {
-        if (obj.isMesh && obj.geometry) {
-          obj.castShadow = true; obj.receiveShadow = true;
-          obj.material = new THREE.MeshStandardMaterial({ color: '#d0d4cc', vertexColors: Boolean(obj.geometry.attributes.color), roughness: .72, metalness: .10 });
-        }
-      });
-      if (rig.guitar) rig.guitar.visible = false;
-      rig.kit.add(gltf.scene);
-      rig.kit.userData.instrumentGlbLoaded = true;
-    }).catch(err => console.warn(`Instrumento GLB do integrante ${index} indisponível; mantendo procedural:`, err.message));
-  }
-  // Noodle: guitarra e alça em GLB (v2/v3) e props de palco (amplificador e pedaleira). Se a guitarra v2 não carregar, a procedural segue visível.
-  function loadNoodleExtras(rig, loader) {
-    const prepare = gltf => { gltf.scene.traverse(object => { if (object.isMesh) { object.castShadow = true; object.receiveShadow = true; } }); repairMaterials(gltf.scene); };
-    // Cadeia: guitarra v2 do pacote de instrumentos (instrument-05), depois a v3 e a v2 antigas; se nada carregar, a procedural segue.
-    loadModelSafely(loader, './assets/models/scenery/instrument-05-guitar-v2.glb')
-      .catch(() => loadModelSafely(loader, './assets/models/noodle-guitar-v3.glb'))
-      .then(gltf => {
-      prepare(gltf); if (rig.guitar) rig.guitar.visible = false; rig.kit.add(gltf.scene);
-    }).catch(error => console.warn('Guitarra v2 da Noodle indisponível; mantendo a procedural:', error.message));
-    loadModelSafely(loader, './assets/models/noodle-stage-props-v2.glb').then(gltf => {
-      prepare(gltf); rig.kit.add(gltf.scene);
-    }).catch(error => console.warn('Props de palco da Noodle indisponíveis:', error.message));
-  }
-  loadBand();
+  const { people, stageSpeakers } = stages;
+  const { discoveryObjects, streetProps, fauna, arcadeCabinet } = props;
   const raycaster = new THREE.Raycaster(); const pointer = new THREE.Vector2();
   let dragging = null; let dragAngle = 0; let dragElevation = 0; let zoom = 1; let moved = false;
   renderer.domElement.style.cursor = 'grab';
@@ -1185,7 +628,7 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
     renderer.setSize(width, height, false); camera.aspect = width / height; camera.updateProjectionMatrix();
   }
   const observer = new ResizeObserver(resize); observer.observe(container); resize();
-  let previousDistance = 0; let lightingReady = false;
+  let previousDistance = 0;
   let headYaw = 0; // giro de cabeça em 1ª pessoa (rad), controlado pelo passeio guiado
   const look = new THREE.Vector3();
   const cameraTarget = new THREE.Vector3();
@@ -1193,15 +636,12 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
   let poseView = null; // depuração de pose: null no uso normal
   let previousTime = null; let initialized = false;
   const skyLook = { stopped: 0, amount: 0 }; let skyLookHeld = false;
-  let impact = 0, intro = false; const tumbleYaw = new THREE.Quaternion(), upAxis = new THREE.Vector3(0, 1, 0);
+  let impact = 0, intro = false; const upAxis = new THREE.Vector3(0, 1, 0);
   const travelCamera = createTravelCamera(DEFAULT_BLOCKERS);
-  // Resolução adaptativa: mede o intervalo real entre quadros e ajusta a densidade de pixels.
-  // A aplicação não chama update com a aba oculta, então todo intervalo recebido é desempenho real.
   let pace = 0, paceCheck = null, raiseAfter = 0, raiseBackoff = 4, lastRaise = -Infinity, slowAtFloor = 0, slowWindows = 0, fastWindows = 0;
   function adapt(dt, t) {
     if (qualityMode !== 'auto') return;
     if (dt <= 0) return;
-    // Os primeiros segundos têm travadas de carga (modelos, texturas, shaders) que não representam o ritmo normal.
     if (paceCheck === null) paceCheck = t + 4;
     if (t < paceCheck) return;
     const budget = compact ? 1 / 30 : 1 / 60;
@@ -1215,9 +655,8 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
       next = Math.max(minRatio, pixelRatio * .85);
       if (t - lastRaise < 4) raiseBackoff = Math.min(60, raiseBackoff * 2);
       raiseAfter = t + raiseBackoff;
-      // Três segundos no piso de resolução e ainda lento: o bloom é o próximo a sair.
       slowAtFloor = next === pixelRatio ? slowAtFloor + 1 : 0;
-      if (slowAtFloor >= 3 && postfx) { postfx.dispose(); postfx = null; renderer.domElement.dataset.quality = 'padrao'; }
+      if (slowAtFloor >= 3 && lighting.hasPostFX()) lighting.disablePostFX();
     } else if (fastWindows >= 3 && pixelRatio < maxRatio && t > raiseAfter) { next = Math.min(maxRatio, pixelRatio * 1.1); lastRaise = t; slowAtFloor = 0; fastWindows = 0; }
     if (next !== pixelRatio) { pixelRatio = next; renderer.setPixelRatio(pixelRatio); pace = 0; renderer.domElement.dataset.pixelRatio = pixelRatio.toFixed(2); }
   }
@@ -1225,12 +664,9 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
     setQuality(mode) {
       const config = qualitySettings(mode, devicePixelRatio, fauna.flock.length, FX_COUNT);
       qualityMode = config.name; pixelRatio = config.pixelRatio;
-      const r = qualityMode === 'performance' ? 85 : Infinity;
-      streetProps.setCullState?.(live.vehicle?.x ?? 0, live.vehicle?.z ?? 0, r);
-      limitStreetProps(streetProps.group, live.vehicle?.x ?? 0, live.vehicle?.z ?? 0, r); lastPropsCull = -Infinity;
+      props.applyQuality(config, live.vehicle?.x ?? 0, live.vehicle?.z ?? 0);
       renderer.setPixelRatio(pixelRatio);
       renderer.shadowMap.enabled = config.shadows;
-      fxMesh.count = config.particles; fauna.bodies.count = fauna.wings.count = config.birds; dust.visible = config.dust;
       camera.far = config.far; camera.updateProjectionMatrix();
       renderer.domElement.dataset.pixelRatio = pixelRatio.toFixed(2);
       pace = 0; paceCheck = null; slowWindows = fastWindows = 0;
@@ -1261,10 +697,8 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
     setIntro(value) {
       intro = value;
       if (!value) {
-        streetProps.loadSceneryModels?.();
-        fauna.loadPigeonModel?.();
-        arcadeCabinet.userData?.loadArcadeModel?.();
-        loadStageSpeakers();
+        props.loadSceneryLazy();
+        stages.loadStageSpeakers();
       }
     },
     captureView() { return { camera: cameraState.save(), firstPerson: cameraState.firstPerson, overview: cameraState.overview, landmarkView: cameraState.landmarkView, yaw, pitch, smoothYaw, smoothPitch, dragAngle, dragElevation, zoom, skyStopped: skyLook.stopped, skyAmount: skyLook.amount }; },
@@ -1288,70 +722,18 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
     resetCamera() { dragAngle = 0; dragElevation = 0; zoom = 1; cameraState.reset(); travelCamera.resync(); },
     update(vehicle, time, orbit, reduced, showcase, known, nearby) {
       const firstPerson = cameraState.firstPerson, overview = cameraState.overview, landmarkView = cameraState.landmarkView;
-      live.vehicle = vehicle; live.showcase = showcase; live.nearby = nearby; live.reduced=reduced;
-      const {x,z,heading} = vehicle; const t = time / 1000;
+      live.vehicle = vehicle; live.showcase = showcase; live.nearby = nearby; live.reduced = reduced;
+      const { x, z, heading } = vehicle; const t = time / 1000;
       const dt = previousTime === null ? .016 : clampFrameDelta((time - previousTime) / 1000); previousTime = time;
       const blend = reduced ? 1 : 1 - Math.exp(-dt * 4);
-      const light = districtLights[eraAt(vehicle)];
-      const fade = lightingReady ? 1 - Math.exp(-dt * 1.6) : 1;
-      sunlight.color.lerp(light.sun, fade);
-      skylight.color.lerp(light.sky, fade);
-      scene.fog.color.lerp(light.haze, fade);
-      scene.background.copy(scene.fog.color);
-      atmosphere.update(sunlight.color, skylight.color, scene.fog.color, t, reduced); atmosphere.follow(x, z); ambient.update(t, reduced);
+      lighting.update(vehicle, dt, t, blend, reduced, { overview, landmarkView });
       adapt(dt, t);
-      if (qualityMode === 'performance' && t-lastPropsCull >= 1) { streetProps.setCullState?.(x, z, 85); limitStreetProps(streetProps.group, x, z, 85); lastPropsCull = t; }
-      landmarks.update(t, reduced, dt); fauna.update(vehicle, camera.position, dt, t, reduced);
-      lightingReady = true;
-      scene.fog.density = THREE.MathUtils.lerp(scene.fog.density, overview ? .001 : landmarkView ? .002 : .003, blend);
-      island.visible = showcase; island.position.set(x,0,z);
-      dust.position.set(x, 0, z);
-      if (!reduced) { rotor.rotation.z = -t * .3; windmill.position.y = 15 + Math.sin(t * .65) * .5; dust.rotation.y = Math.sin(t * .025) * .15; satellites.rotation.y = Math.sin(t * .1) * .12; portal.rotation.z = Math.sin(t * .07) * .04; }
       updateVehicleMotion(vehicleMotion, vehicle, dt, reduced);
       car.position.set(x, vehicleMotion.height, z);
       car.rotation.y = heading;
       car.rotation.z = vehicleMotion.roll;
       car.rotation.x = vehicleMotion.pitch;
-      // Partículas leves ao frear (poeira/faísca nas rodas traseiras) e ao passar perto dos pontos de interesse.
-      if (!reduced) {
-        if ((vehicle.braking || vehicle.drifting) && Math.abs(vehicle.speed) > 1.2) {
-          const sinH = Math.sin(heading), cosH = Math.cos(heading);
-          for (const side of [-1, 1]) {
-            const wx = x + sinH * 2.9 + cosH * side * 1.35 + (Math.sin(t * 37 + side) * .18);
-            const wz = z + cosH * 2.9 - sinH * side * 1.35 + (Math.cos(t * 29 + side) * .18);
-            const spark = vehicle.drifting || vehicle.surface === 'terra' ? '#b7b8b0' : (frameCount + (side > 0 ? 1 : 0)) % 2 ? '#ff8a5c' : '#ffcc4d';
-            spawnFx(wx, .22, wz, sinH * 2.4 + side * .6, 1.4 + (frameCount % 3) * .35, cosH * 2.4, spark, 1.15, .48);
-          }
-        }
-        if (frameCount % 2 === 0) {
-          for (const [pi, pt] of DISCOVERIES.entries()) {
-            const d = Math.hypot(x - pt.x, z - pt.z);
-            if (d < 15) {
-              const ang = t * 2.4 + pi * 1.7 + (frameCount % 7) * .9, rad = 2.8 + (frameCount % 5) * .35;
-              spawnFx(pt.x + Math.cos(ang) * rad, .35 + (frameCount % 4) * .25, pt.z + Math.sin(ang) * rad, Math.cos(ang) * .35, 1.65, Math.sin(ang) * .35, known.has(pt.id) ? '#d2e2a8' : '#f5a9c6', 1.1, .65);
-              break;
-            }
-          }
-        }
-        let fxDirty = false;
-        for (let i = 0; i < FX_COUNT; i++) {
-          const p = fxPool[i];
-          if (p.life > 0) {
-            p.life = Math.max(0, p.life - dt);
-            p.x += p.vx * dt; p.y += p.vy * dt; p.z += p.vz * dt; p.vy -= 1.8 * dt;
-            const s = p.scale * Math.sin((p.life / p.maxLife) * Math.PI);
-            fxDummy.position.set(p.x, Math.max(.05, p.y), p.z);
-            fxDummy.rotation.set(t * 3 + i, t * 2 + i, 0);
-            fxDummy.scale.setScalar(s);
-            fxDummy.updateMatrix();
-            fxMesh.setMatrixAt(i, fxDummy.matrix);
-            fxDirty = true;
-          }
-        }
-        if (fxDirty) fxMesh.instanceMatrix.needsUpdate = true;
-      }
       const travelled = vehicle.distanceTravelled - previousDistance;
-      // Suspensão independente por roda: compensa roll e pitch da carroceria para os pneus apoiarem no asfalto sem afundar nem flutuar.
       modelWheels.forEach(wheel => {
         wheel.userData.rolling.rotation.x -= travelled / wheel.userData.radius;
         wheel.rotation.y = wheel.position.z < 0 ? vehicle.steering : 0;
@@ -1359,23 +741,18 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
       });
       if (!modelWheels.length) wheels.forEach(wheel => { wheel.rotation.x -= travelled / .75; });
       previousDistance = vehicle.distanceTravelled;
-      // O motorista gira os braços com o volante e olha para dentro da curva.
-      driverYaw=THREE.MathUtils.lerp(driverYaw,vehicle.steering*.9,blend);
+      driverYaw = THREE.MathUtils.lerp(driverYaw, vehicle.steering * .9, blend);
       if (dragging) driverReaction.cancel();
-      const greeting=driverReaction.sample(time/1000,vehicle.speed,reduced);
+      const greeting = driverReaction.sample(time / 1000, vehicle.speed, reduced);
       if (pilotRig) pilotRig.update(reduced ? 0 : dt, { yaw: driverYaw, steering: vehicle.steering, greeting });
       else {
         upperArmL.rotation.z = upperArmR.rotation.z = vehicle.steering * 1.1;
-        driverHead.rotation.set(-.12*greeting,driverYaw+.24*greeting,0);
+        driverHead.rotation.set(-.12 * greeting, driverYaw + .24 * greeting, 0);
       }
       const mobile = container.clientWidth < 700;
       travelCamera.compute(vehicle, { dt, t, zoom, dragAngle, dragElevation, orbit, reduced, showcase, mobile, intro, overview, landmarkView, desiredCamera, look });
       const skyAmount = advanceSkyLook(skyLook, dt, vehicle.speed, skyLookHeld, !firstPerson && !overview && !landmarkView && !showcase && !intro);
-      if (skyAmount > 0) look.y += Math.hypot(look.x-desiredCamera.x, look.z-desiredCamera.z) * Math.tan(10*Math.PI/180) * skyAmount;
-      // Primeira pessoa: o mesmo Geep continua visível; some apenas o boneco, e os olhos ficam
-      // no banco do motorista. Não há segundo modelo de cabine para divergir do carro de fora.
-      // Com o piloto GLB, ele continua na cena em primeira pessoa: some o rosto/corpo base e ficam jaqueta e luvas
-      // (pilot-rig.js) levadas ao volante por IK; os braços de bloco do protótipo só servem de reserva.
+      if (skyAmount > 0) look.y += Math.hypot(look.x - desiredCamera.x, look.z - desiredCamera.z) * Math.tan(10 * Math.PI / 180) * skyAmount;
       cabin.root.visible = firstPerson; driver.visible = pilotRig ? true : !firstPerson;
       if (pilotRig) { pilotRig.setFirstPerson(firstPerson); cabin.setBoxArmsVisible(!firstPerson); }
       if (steeringPivot) steeringPivot.quaternion.copy(steeringRest).multiply(steeringTurn.setFromAxisAngle(upAxis, vehicleMotion.wheel * steeringSign));
@@ -1383,76 +760,34 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
         car.updateMatrixWorld(true);
         desiredCamera.copy(cabin.eye).applyMatrix4(car.matrixWorld);
         cabinFrame.setFromEuler(cabinEuler.set(car.rotation.x * motion, heading, car.rotation.z * motion, car.rotation.order));
-        smoothYaw = THREE.MathUtils.lerp(smoothYaw,interacting ? -.63 : yaw + headYaw,blend); // headYaw: giro de cabeça do passeio (±35°), volta suave a zero
-        smoothPitch = THREE.MathUtils.lerp(smoothPitch,interacting ? -.54 : pitch-.33,blend);
-        look.set(-Math.sin(smoothYaw)*Math.cos(smoothPitch), Math.sin(smoothPitch), -Math.cos(smoothYaw)*Math.cos(smoothPitch)).applyQuaternion(cabinFrame).add(desiredCamera);
-        cabin.update(vehicle,radio.read(),{interacting,dt,t,reduced,turn:vehicleMotion.wheel});
+        smoothYaw = THREE.MathUtils.lerp(smoothYaw, interacting ? -.63 : yaw + headYaw, blend);
+        smoothPitch = THREE.MathUtils.lerp(smoothPitch, interacting ? -.54 : pitch - .33, blend);
+        look.set(-Math.sin(smoothYaw) * Math.cos(smoothPitch), Math.sin(smoothPitch), -Math.cos(smoothYaw) * Math.cos(smoothPitch)).applyQuaternion(cabinFrame).add(desiredCamera);
+        cabin.update(vehicle, radio.read(), { interacting, dt, t, reduced, turn: vehicleMotion.wheel });
         if (pilotRig) pilotRig.reach(cabin.hands, car);
       }
       const targetFov = firstPerson ? (camera.aspect < 1 ? 88 : 75) : overview || landmarkView ? 46 : TRAVEL_FOV;
       camera.near = firstPerson ? .08 : overview ? Math.max(.5, Math.min(20, (camera.position.y - 50) * .1)) : .5;
-      camera.fov = THREE.MathUtils.lerp(camera.fov,targetFov,blend); camera.updateProjectionMatrix();
-      // Outdoors de era: arte WebP entra quando o carro chega a ~80 m da era (carga lazy).
+      camera.fov = THREE.MathUtils.lerp(camera.fov, targetFov, blend); camera.updateProjectionMatrix();
       updateEraArt(vehicle);
-      // Palcos dos integrantes: a arte entra só quando o carro se aproxima (carga lazy).
-      MEMBER_LOCATIONS.forEach((at, i) => { if (stageLoaders[i] && Math.hypot(vehicle.x - at.x, vehicle.z - at.z) < 60) stageLoaders[i](); });
-      for (const [i, object] of discoveryObjects.entries()) {
-        // Arte real do mural (assets/art, WebP): baixa sob demanda, perto do carro; se falhar, fica o desenho em canvas.
-        if (i === 0 && object.group.userData.mural && !artRequested.has('mural-0') && Math.hypot(vehicle.x - DISCOVERIES[0].x, vehicle.z - DISCOVERIES[0].z) < 25) {
-          artRequested.add('mural-0');
-          artLoader.load('./assets/art/press-creators-band.webp', tex => {
-            tex.colorSpace = THREE.SRGBColorSpace; tex.anisotropy = Math.min(8, renderer.capabilities.getMaxAnisotropy());
-            const mural = object.group.userData.mural; mural.material.emissiveMap = null; mural.material.emissive.set('#000000'); // arte oficial limpa: sem brilho do desenho de reserva
-            // A foto entra centralizada numa moldura creme de proporção 2:1 (a malha do mural já foi fundida pelo bake): sem esticar.
-            const frame = document.createElement('canvas'); frame.width = 1024; frame.height = 512; const fx = frame.getContext('2d');
-            fx.fillStyle = '#d9cdb0'; fx.fillRect(0, 0, 1024, 512);
-            const k = Math.min(1024 / tex.image.width, 512 / tex.image.height), dw = tex.image.width * k, dh = tex.image.height * k;
-            fx.drawImage(tex.image, (1024 - dw) / 2, (512 - dh) / 2, dw, dh);
-            const framed = new THREE.CanvasTexture(frame); framed.colorSpace = THREE.SRGBColorSpace; framed.anisotropy = tex.anisotropy;
-            mural.material.map = framed; mural.material.needsUpdate = true;
-          }, undefined, () => { console.warn('[arte] mural: mantendo o desenho em canvas'); });
-        }
-        if (i > 0 && object.group.userData.artPanel && shouldLoadArt(vehicle, DISCOVERIES[i], artRequested.has(`art-${i}`))) {
-          artRequested.add(`art-${i}`);
-          const panel = object.group.userData.artPanel; const path = artPaths[DISCOVERIES[i].id];
-          if (path) artLoader.load(path, tex => { tex.colorSpace = THREE.SRGBColorSpace; tex.anisotropy = Math.min(8, renderer.capabilities.getMaxAnisotropy()); panel.material.map = tex; panel.material.color.set('#ffffff'); panel.material.needsUpdate = true; }, undefined, () => { console.warn('[arte] painel: mantendo o placeholder'); });
-        }
-        // Anel do ponto de história pulsa de leve (desligado com movimento reduzido).
-        if (!reduced) object.glow.scale.setScalar(1 + .035 * Math.sin(t * 2.2 + i));
-        const found = known.has(DISCOVERIES[i].id); object.glow.material = material(found?'#d2e2a8':'#f5a9c6',true); object.beacon.material = material(found?'#d2e2a8':'#f5a9c6',true);
-        object.beacon.position.y = 5.5 + (reduced ? 0 : Math.sin(t*2+i)*.35); object.beacon.rotation.y = reduced ? 0 : t*.7;
-        const selected = nearby?.type === 'discovery' && nearby.index === i; object.beacon.scale.setScalar(selected?2.2:1);
-        const marker = storyMarkers[i];
-        if (marker.state !== found) { marker.state = found; marker.paint(found ? `✓ ${DISCOVERIES[i].kind} NO DIÁRIO` : `HISTÓRIA ${i + 1} · ${DISCOVERIES[i].kind}`, found ? '#d2e2a8' : '#f5a9c6'); }
-      }
-      // Etiquetas viradas para a câmera; somem na cabine de perto e com a banda reunida.
-      for (const marker of [...storyMarkers, ...memberMarkers]) {
-        marker.group.visible = !(showcase && memberMarkers.includes(marker)) && Math.hypot(marker.group.position.x - camera.position.x, marker.group.position.z - camera.position.z) > 9;
-        marker.label.rotation.y = Math.atan2(camera.position.x - marker.group.position.x, camera.position.z - marker.group.position.z);
-      }
-      // Câmera de viagem: follow() suaviza a posição e recua com segurança diante de prédios, sem
-      // atravessar o carro. Primeira pessoa, vista aérea e mirante usam as posições diretas.
+      stages.updateStageArt(vehicle);
+      props.updateFrame({ vehicle, camera, dt, t, reduced, showcase, known, nearby, qualityMode, frameCount });
       if (!firstPerson && !overview && !landmarkView) { travelCamera.follow(camera.position, cameraTarget, { desiredCamera, look, pivot: vehicle, dt, blend, snap: !initialized || reduced }); initialized = true; }
       else if (!initialized || reduced || firstPerson) { camera.position.copy(desiredCamera); cameraTarget.copy(look); initialized = true; }
       else { camera.position.lerp(desiredCamera, blend); cameraTarget.lerp(look, blend); }
       camera.lookAt(cameraTarget);
-      // Depuração de pose (?perf): câmera presa ao integrante escolhido; sem efeito no uso normal.
       if (poseView) {
         const alpha = poseView.alpha ?? 1;
         if (alpha >= 1) { camera.position.copy(poseView.eye); camera.lookAt(poseView.target); }
         else { camera.position.lerp(poseView.eye, alpha); cameraTarget.lerp(poseView.target, alpha); camera.lookAt(cameraTarget); }
       }
-      // Tranco de câmera no impacto: curto, proporcional à velocidade, sem acumular no estado da câmera.
       if (impact > .01) { camera.rotateZ(Math.sin(t * 58) * impact * .022); camera.rotateX(Math.sin(t * 47) * impact * .012); impact *= Math.exp(-5 * dt); }
-      if (lunarMurdoc) followLunarCamera(lunarMurdoc, camera);
-      // Perfil leve na vista aérea: a sombra cobre só 90 m ao redor do jipe, então atualiza a cada 4 quadros.
-      if (frameCount++ % (lightProfile && overview ? 4 : 2) === 0) aimSun(x, z);
-      cardTint.copy(sunlight.color).lerp(skylight.color, .45);
+      stages.updateLunar(camera);
+      if (frameCount++ % (lighting.lightProfile && overview ? 4 : 2) === 0) lighting.aimSun(x, z);
+      cardTint.copy(lighting.sunlight.color).lerp(lighting.skylight.color, .45);
       for (const entry of heavyCasters) {
-        // Perfil leve na vista aérea: modelos densos (banda, escultura) não projetam sombra; a 290 m ela ocupa poucos pixels.
-        const casting = Math.hypot(entry.at.x - x, entry.at.z - z) < 55 && !(lightProfile && overview);
+        const casting = Math.hypot(entry.at.x - x, entry.at.z - z) < 55 && !(lighting.lightProfile && overview);
         if (casting !== entry.casting) { entry.casting = casting; for (const mesh of entry.meshes) mesh.castShadow = casting; }
-        // Histerese de 10 m evita alternar entre modelo e cartaz na fronteira.
         const range = Math.hypot(entry.at.x - camera.position.x, entry.at.z - camera.position.z);
         const far = !overview && range > (entry.far ? 78 : 88);
         if (far !== entry.far) { entry.far = far; entry.object.visible = !far; entry.card.visible = far; }
@@ -1462,83 +797,12 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
           entry.card.material.color.copy(cardTint);
         }
       }
-      for (const [i, actor] of people.entries()) {
-        const localSide = i % 2 ? 5.5 : -5.5; const localAlong = i < 2 ? -5 : 3;
-        const fixed = MEMBER_LOCATIONS[i];
-        const homeYaw = (showcase ? heading : fixed.heading) + Math.PI, place = actor.group.position;
-        if (showcase) actor.knock = null;
-        const hitDistance = Math.hypot(place.x - x, place.z - z), speed = Math.abs(vehicle.speed);
-        const exposed = !actor.knock || actor.knock.phase === 'return' || actor.knock.phase === 'dizzy';
-        if (!showcase && exposed && hitDistance < 3.2 && speed > 3) {
-          // Atropelamento: o carro varre as pernas, o corpo é lançado na direção da viagem e gira para trás.
-          const way = Math.sign(vehicle.speed), fx = -Math.sin(heading) * way, fz = -Math.cos(heading) * way;
-          const ax = (place.x - x) / (hitDistance || 1), az = (place.z - z) / (hitDistance || 1);
-          if (reduced) actor.knock = { phase: 'return', x: fixed.x + ax * 3, z: fixed.z + az * 3, y: 0, angle: 0, timer: 0, axis: new THREE.Vector3(1, 0, 0), yaw: homeYaw };
-          else {
-            const push = Math.min(9, speed * .7), vx = fx * push + ax * 2.5, vz = fz * push + az * 2.5, length = Math.hypot(vx, vz) || 1;
-            actor.knock = { phase: 'air', x: place.x, z: place.z, y: Math.max(place.y, .05), vx, vz, vy: Math.min(9, 4.2 + speed * .22), angle: 0, spin: 3.5 + speed * .3,
-              axis: new THREE.Vector3(-vz / length, 0, vx / length), bounced: false, timer: 0, yaw: homeYaw };
-            impact = Math.min(1, speed / 18);
-          }
-        }
-        const knock = actor.knock;
-        if (!knock) {
-          place.x = showcase ? x + localSide * Math.cos(heading) + localAlong * Math.sin(heading) : fixed.x;
-          place.z = showcase ? z - localSide * Math.sin(heading) + localAlong * Math.cos(heading) : fixed.z;
-          place.y = reduced ? 0 : Math.sin(t * 2 + i) * .07;
-          // Quem vê o carro chegando rápido se inclina para longe antes do impacto.
-          const wary = !showcase && !reduced && hitDistance < 11 && speed > 6 ? (1 - hitDistance / 11) * .16 : 0;
-          actor.group.rotation.set(wary, homeYaw, 0, 'YXZ');
-        } else {
-          knock.timer += dt;
-          if (knock.phase === 'air') {
-            knock.vy -= 24 * dt; knock.x += knock.vx * dt; knock.z += knock.vz * dt; knock.y += knock.vy * dt; knock.angle += knock.spin * dt;
-            if (knock.y <= .3 && knock.vy < 0) {
-              knock.y = .3; knock.vx *= .5; knock.vz *= .5; knock.spin *= .45;
-              if (knock.bounced || knock.vy > -4) { knock.phase = 'slide'; knock.timer = 0; knock.rest = (Math.round(knock.angle / Math.PI - .5) + .5) * Math.PI; }
-              else { knock.bounced = true; knock.vy *= -.34; }
-            }
-          } else if (knock.phase === 'slide') {
-            // Deitado: escorrega até parar e assenta de costas ou de bruços, o que estiver mais perto.
-            const drag = Math.exp(-4.5 * dt); knock.vx *= drag; knock.vz *= drag; knock.x += knock.vx * dt; knock.z += knock.vz * dt;
-            knock.angle += (knock.rest - knock.angle) * (1 - Math.exp(-12 * dt)); knock.y += (.3 - knock.y) * .3;
-            if (knock.timer > 1.1 && Math.hypot(knock.vx, knock.vz) < .4) { knock.phase = 'rise'; knock.timer = 0; knock.from = knock.angle; knock.upright = Math.round(knock.angle / (Math.PI * 2)) * Math.PI * 2; }
-          } else if (knock.phase === 'rise') {
-            const k = Math.min(1, knock.timer / .9), ease = k * k * (3 - 2 * k);
-            knock.angle = knock.from + (knock.upright - knock.from) * ease; knock.y = .3 * (1 - ease) + Math.sin(k * Math.PI) * .25;
-            if (k >= 1) { knock.phase = 'dizzy'; knock.timer = 0; knock.angle = 0; }
-          } else if (knock.phase === 'dizzy') {
-            // Em pé, ainda tonto: balança, olha para o carro e só então volta.
-            knock.y = 0; knock.sway = Math.sin(knock.timer * 9) * .2 * Math.max(0, 1 - knock.timer / 1.1);
-            const toCar = Math.atan2(x - knock.x, z - knock.z) + Math.PI, turn = Math.atan2(Math.sin(toCar - knock.yaw), Math.cos(toCar - knock.yaw));
-            knock.yaw += turn * (1 - Math.exp(-6 * dt));
-            if (knock.timer > 1.2) { knock.phase = 'return'; knock.timer = 0; knock.sway = 0; }
-          } else {
-            const dx = fixed.x - knock.x, dz = fixed.z - knock.z, left = Math.hypot(dx, dz), step = Math.min(left, 4.2 * dt);
-            if (left < .05) actor.knock = null;
-            else {
-              knock.x += dx / left * step; knock.z += dz / left * step; knock.y = reduced ? 0 : Math.abs(Math.sin(knock.timer * 9)) * .14;
-              const walk = left > 1.2 ? Math.atan2(dx, dz) + Math.PI : homeYaw, turn = Math.atan2(Math.sin(walk - knock.yaw), Math.cos(walk - knock.yaw));
-              knock.yaw += turn * (1 - Math.exp(-8 * dt));
-            }
-          }
-          place.set(knock.x, knock.y, knock.z);
-          actor.group.quaternion.setFromAxisAngle(knock.axis, knock.angle).multiply(tumbleYaw.setFromAxisAngle(upAxis, knock.yaw));
-          if (knock.sway) actor.group.rotateZ(knock.sway);
-        }
-        // Só anima os braços de quem está perto o bastante para ser visto como malha.
-        if (actor.rig && place.distanceTo(camera.position) < 85) actor.rig.pose(t + i, reduced || Boolean(actor.knock));
-        if (actor.arms.length) {
-          actor.arms[0].rotation.z = i === 1 || i === 2 ? -.55 + Math.sin(t * 8) * .16 : i === 3 ? -.25 + Math.sin(t * 10) * .35 : -.1;
-          actor.arms[1].rotation.z = i === 1 || i === 2 ? .45 + Math.cos(t * 8) * .13 : i === 3 ? .25 + Math.cos(t * 10) * .35 : .1;
-        }
-
-      }
+      stages.updatePeople({ vehicle, camera, dt, t, reduced, showcase, onImpact: v => { impact = v; } });
       renderer.info.reset();
       if (firstPerson) { const showDriver = driver.visible; driver.visible = false; cabin.renderMirror(renderer, scene); driver.visible = showDriver; }
-      if (postfx) postfx.render(scene, camera); else { renderer.setRenderTarget(null); renderer.render(scene, camera); }
-      renderer.domElement.dataset.triangles=String(renderer.info.render.triangles);
-      renderer.domElement.dataset.drawCalls=String(renderer.info.render.calls);
+      lighting.renderFrame(camera);
+      renderer.domElement.dataset.triangles = String(renderer.info.render.triangles);
+      renderer.domElement.dataset.drawCalls = String(renderer.info.render.calls);
     },
   };
 }

@@ -6,7 +6,7 @@ const read = name => readFile(new URL(`../${name}`, import.meta.url), 'utf8');
 const exists = async name => { try { return (await stat(new URL(`../${name}`, import.meta.url))).size > 0; } catch { return false; } };
 
 test('cadeias dos modelos novos: v3 primeiro, depois o anterior (banda, cards, guitarra) e o piloto em v5', async () => {
-  const scene = await read('src/scene.js');
+  const scene = (await read('src/scene.js')) + '\n' + (await read('src/world/stages.js'));
   const cards = await read('src/member-viewer.js');
   const pilot = await read('src/pilot-rig.js');
   const bandOrder = ['gorillaz-phase7-web-v3', 'gorillaz-phase7-web.glb'];
@@ -20,7 +20,7 @@ test('cadeias dos modelos novos: v3 primeiro, depois o anterior (banda, cards, g
 
 test('cada GLB usado pelo app existe no repositório e tem rota no servidor', async () => {
   const server = await read('server.mjs');
-  const sources = (await Promise.all(['src/scene.js', 'src/member-viewer.js', 'src/pilot-rig.js'].map(read))).join('\n');
+  const sources = (await Promise.all(['src/scene.js', 'src/world/stages.js', 'src/member-viewer.js', 'src/pilot-rig.js'].map(read))).join('\n');
   const used = [...new Set([...sources.matchAll(/assets\/models\/([\w.-]+\.glb)/g)].map(m => m[1]))];
   assert.ok(used.includes('gorillaz-phase7-web-v3.glb') && used.includes('driver-pilot-v5.glb') && used.includes('noodle-guitar-v3.glb'), 'modelos novos referenciados');
   for (const name of used) {

@@ -16,7 +16,7 @@ test('instrumentos novos (baixo do Murdoc e guitarra da Noodle) existem em disco
 });
 
 test('Murdoc troca o baixo pelo v2 com fallback para o procedural; Noodle tenta a guitarra v2 antes da v3', async () => {
-  const scene = await read('src/scene.js');
+  const scene = await read('src/world/stages.js');
   assert.match(scene, /1: '\.\/assets\/models\/scenery\/instrument-04-bass-v2\.glb'/, 'baixo v2 mapeado para o índice 1 (Murdoc)');
   assert.match(scene, /catch\(err => console\.warn\(`Instrumento GLB do integrante/, 'falha do GLB mantém o procedural');
   const i5 = scene.indexOf('instrument-05-guitar-v2'), i3 = scene.indexOf("noodle-guitar-v3.glb'");
