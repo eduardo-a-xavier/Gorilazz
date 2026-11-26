@@ -316,16 +316,18 @@ export function installStagesAndBand({ scene, city, surfaces, material, box, sph
     if (lunarMurdoc) followLunarCamera(lunarMurdoc, camera);
   }
 
-  function updatePeople({ vehicle, camera, dt, t, reduced, showcase, onImpact }) {
+  function updatePeople({ vehicle, camera, dt, t, reduced, showcase, bandFinale = false, onImpact }) {
     const { x, z, heading } = vehicle;
+    const grouped = showcase || bandFinale;
     for (const [i, actor] of people.entries()) {
-      const localSide = i % 2 ? 5.5 : -5.5; const localAlong = i < 2 ? -5 : 3;
+      const localSide = bandFinale ? [-4.2, -1.4, 1.4, 4.2][i] : (i % 2 ? 5.5 : -5.5);
+      const localAlong = bandFinale ? [-7.8, -8.8, -8.8, -7.8][i] : (i < 2 ? -5 : 3);
       const fixed = MEMBER_LOCATIONS[i];
-      const homeYaw = (showcase ? heading : fixed.heading) + Math.PI, place = actor.group.position;
-      if (showcase) actor.knock = null;
+      const homeYaw = (grouped ? heading : fixed.heading) + Math.PI, place = actor.group.position;
+      if (grouped) actor.knock = null;
       const hitDistance = Math.hypot(place.x - x, place.z - z), speed = Math.abs(vehicle.speed);
       const exposed = !actor.knock || actor.knock.phase === 'return' || actor.knock.phase === 'dizzy';
-      if (!showcase && exposed && hitDistance < 3.2 && speed > 3) {
+      if (!grouped && exposed && hitDistance < 3.2 && speed > 3) {
         const way = Math.sign(vehicle.speed), fx = -Math.sin(heading) * way, fz = -Math.cos(heading) * way;
         const ax = (place.x - x) / (hitDistance || 1), az = (place.z - z) / (hitDistance || 1);
         if (reduced) actor.knock = { phase: 'return', x: fixed.x + ax * 3, z: fixed.z + az * 3, y: 0, angle: 0, timer: 0, axis: new THREE.Vector3(1, 0, 0), yaw: homeYaw };
@@ -338,10 +340,10 @@ export function installStagesAndBand({ scene, city, surfaces, material, box, sph
       }
       const knock = actor.knock;
       if (!knock) {
-        place.x = showcase ? x + localSide * Math.cos(heading) + localAlong * Math.sin(heading) : fixed.x;
-        place.z = showcase ? z - localSide * Math.sin(heading) + localAlong * Math.cos(heading) : fixed.z;
+        place.x = grouped ? x + localSide * Math.cos(heading) + localAlong * Math.sin(heading) : fixed.x;
+        place.z = grouped ? z - localSide * Math.sin(heading) + localAlong * Math.cos(heading) : fixed.z;
         place.y = reduced ? 0 : Math.sin(t * 2 + i) * .07;
-        const wary = !showcase && !reduced && hitDistance < 11 && speed > 6 ? (1 - hitDistance / 11) * .16 : 0;
+        const wary = !grouped && !reduced && hitDistance < 11 && speed > 6 ? (1 - hitDistance / 11) * .16 : 0;
         actor.group.rotation.set(wary, homeYaw, 0, 'YXZ');
       } else {
         knock.timer += dt;

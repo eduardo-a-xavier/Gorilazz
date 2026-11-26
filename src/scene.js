@@ -634,6 +634,7 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
   const cameraTarget = new THREE.Vector3();
   const desiredCamera = new THREE.Vector3();
   let poseView = null; // depuração de pose: null no uso normal
+  let bandFinale = false; // encerramento do passeio com os 4 integrantes reunidos
   let previousTime = null; let initialized = false;
   const skyLook = { stopped: 0, amount: 0 }; let skyLookHeld = false;
   let impact = 0, intro = false; const upAxis = new THREE.Vector3(0, 1, 0);
@@ -687,6 +688,7 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
     // Depuração: câmera em coordenadas explícitas (olho e alvo).
     frameAt(eye, target) { poseView = { eye: new THREE.Vector3(...eye), target: new THREE.Vector3(...target) }; },
     clearPose() { poseView = null; },
+    setBandFinale(value) { bandFinale = Boolean(value); },
     // Depuração: câmera presa a um ponto do mundo, a `distance` na direção `dir` (x, z), olhando para ele.
     frameSpot({ x, z, dirX = 1, dirZ = 0, distance = 4, height = 2, target = 2, alpha = 1 }) { poseView = { eye: new THREE.Vector3(x + dirX * distance, height, z + dirZ * distance), target: new THREE.Vector3(x, target, z), alpha }; },
     // Mãos de um integrante em coordenadas de mundo (depuração de pose).
@@ -797,7 +799,7 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
           entry.card.material.color.copy(cardTint);
         }
       }
-      stages.updatePeople({ vehicle, camera, dt, t, reduced, showcase, onImpact: v => { impact = v; } });
+      stages.updatePeople({ vehicle, camera, dt, t, reduced, showcase, bandFinale, onImpact: v => { impact = v; } });
       renderer.info.reset();
       if (firstPerson) { const showDriver = driver.visible; driver.visible = false; cabin.renderMirror(renderer, scene); driver.visible = showDriver; }
       lighting.renderFrame(camera);

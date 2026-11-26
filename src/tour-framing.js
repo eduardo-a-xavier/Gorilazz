@@ -4,11 +4,14 @@
 export const ERA_STOP_FRAME = Object.freeze({ distance: 26, height: 4, target: 5.25 });
 // Descobertas (murais, palcos, mirante, rádio): objetos baixos e largos, um pouco mais de recuo que a pose antiga (9 m).
 export const HISTORY_STOP_FRAME = Object.freeze({ distance: 11, height: 3.4, target: 2.2 });
+// Encerramento com a banda reunida (4 integrantes Phase 7 com ~6,2 m de altura em semicírculo frontal).
+export const BAND_FINALE_FRAME = Object.freeze({ distance: 15.5, height: 3.6, target: 3.1 });
 // Ajuste fino por parada, se a geometria real pedir. Vazio por padrão.
 export const STOP_FRAME_BY_ID = Object.freeze({});
 export const VERTICAL_FOV_DEG = 46;
 
 export function stopFrame(stopItem) {
+  if (stopItem?.kind === 'banda') return BAND_FINALE_FRAME;
   return STOP_FRAME_BY_ID[stopItem.id] ?? (stopItem.kind === 'era' ? ERA_STOP_FRAME : HISTORY_STOP_FRAME);
 }
 

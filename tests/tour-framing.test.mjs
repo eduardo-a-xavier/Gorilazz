@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { stopFrame, screenFractionFromTop, ERA_STOP_FRAME, HISTORY_STOP_FRAME } from '../src/tour-framing.js';
+import { stopFrame, screenFractionFromTop, ERA_STOP_FRAME, HISTORY_STOP_FRAME, BAND_FINALE_FRAME } from '../src/tour-framing.js';
 import { TOUR_ORDER } from '../src/guided-tour.js';
 
 const PORTAL_TOP_M = 11.6; // totem do pórtico de era
@@ -44,4 +44,13 @@ test('enquadramento de era é mais alto que o de descoberta e a fração do topo
   const f = ERA_STOP_FRAME;
   assert.ok(screenFractionFromTop(f, 0) > screenFractionFromTop(f, 5), 'base mais embaixo que o meio');
   assert.ok(screenFractionFromTop(f, 5) > screenFractionFromTop(f, PORTAL_TOP_M), 'meio mais embaixo que o topo');
+});
+
+test('encerramento da banda reunida: os 4 integrantes (6,2 m) cabem inteiros entre o HUD superior e o cartão inferior', () => {
+  const frame = stopFrame({ id: 'band-finale', kind: 'banda' });
+  assert.equal(frame, BAND_FINALE_FRAME);
+  const top = screenFractionFromTop(frame, 6.2);
+  const base = screenFractionFromTop(frame, 0);
+  assert.ok(top >= TOP_HUD, `topo da banda (${top.toFixed(2)}) abaixo do HUD superior`);
+  assert.ok(base <= BOTTOM_CARD, `base da banda (${base.toFixed(2)}) acima do cartão inferior`);
 });

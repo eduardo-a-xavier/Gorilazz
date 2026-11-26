@@ -5,8 +5,21 @@ export const TOUR_TOTAL = 9;
 export const PROGRESS_KEY = 'gorilazz.stops.v1';
 export const SLOW_ZONE_M = 24;    // zona curta de aproximação final antes da parada
 export const STOP_HOLD_MS = 4500; // tempo parado em cada parada, com o card
+export const FINALE_HOLD_MS = 7500; // duração do encerramento com a banda reunida após a 9ª parada
 export const ARRIVE_M = 12;       // distância para contar a parada como visitada
 export const TOAST_MS = 2500;     // toasts e dicas somem sozinhos depois de 2,5 s
+
+export const BAND_FINALE_STOP = Object.freeze({
+  id: 'band-finale',
+  kind: 'banda',
+  title: 'Gorillaz — A Banda Reunida',
+  year: '2-D · Murdoc · Noodle · Russel',
+  summary: 'Os quatro integrantes reunidos para encerrar o passeio pelas 9 paradas.',
+});
+
+export function shouldStartFinale(guided) {
+  return Boolean(guided && !guided.finale && guided.order && guided.index + 1 >= guided.order.length);
+}
 
 // Monta as paradas com os dados existentes. gates: ERA_GATES; cityEras: CITY_ERAS; eraTrackIds: track de cada era;
 // discoveries: DISCOVERIES; tracks: lista de faixas (com id). Retorna paradas na ordem de dados (antes de ordenar).
@@ -82,9 +95,11 @@ export function speedCap(distance) {
 
 // Assumir o volante: qualquer tecla de direção encerra o passeio automático, sem zerar o progresso.
 export const DRIVE_KEYS = ['w', 'a', 's', 'd', 'arrowup', 'arrowdown', 'arrowleft', 'arrowright'];
+export const EXIT_FINALE_KEYS = [...DRIVE_KEYS, 'escape'];
 export function takeOver(tour, key) {
-  if (!tour?.active || !DRIVE_KEYS.includes(String(key).toLowerCase())) return tour;
-  return { ...tour, active: false, takenOverAt: tour.index };
+  const keys = tour?.finale ? EXIT_FINALE_KEYS : DRIVE_KEYS;
+  if (!tour?.active || !keys.includes(String(key).toLowerCase())) return tour;
+  return { ...tour, active: false, finale: false, takenOverAt: tour.index };
 }
 
 // Ducking do Kong FM perto dos palcos: o rádio abaixa para destacar o áudio espacial das caixas e o ambiente.

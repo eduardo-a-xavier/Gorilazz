@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { buildStops, orderTour, createStopProgress, speedCap, takeOver, TOUR_TOTAL, TOUR_ORDER, PROGRESS_KEY, SLOW_ZONE_M, ARRIVE_M } from '../src/guided-tour.js';
+import { buildStops, orderTour, createStopProgress, speedCap, takeOver, shouldStartFinale, BAND_FINALE_STOP, FINALE_HOLD_MS, TOUR_TOTAL, TOUR_ORDER, PROGRESS_KEY, SLOW_ZONE_M, ARRIVE_M } from '../src/guided-tour.js';
 import { ERA_GATES, CITY_ERAS, DISCOVERIES, roadGap, nearestRoad, WORLD_BOUNDS } from '../src/world-data.js';
 import { tracks } from '../src/content.js';
 import { planPath, navigationInput, CRUISE_SPEED_MS, UNSTICK_DELAY_TICKS, LAUNCH_RAMP_S } from '../src/navigation.js';
@@ -202,6 +202,24 @@ test('assumir o volante: WASD e setas encerram o passeio sem apagar o progresso;
   }
   assert.equal(takeOver(tour, 'Enter').active, true, 'Enter não assume o volante');
   assert.equal(takeOver({ active: false, index: 1 }, 'w').active, false, 'sem passeio, nada muda');
+});
+
+test('encerramento com a banda reunida: dispara após a 9ª parada, mantém X/9 e aceita WASD, setas e Esc para sair', () => {
+  const order = orderTour(stops);
+  assert.equal(shouldStartFinale({ order, index: 7, finale: false }), false, 'não dispara antes da 9ª parada');
+  assert.equal(shouldStartFinale({ order, index: 8, finale: false }), true, 'dispara ao concluir a 9ª parada');
+  assert.equal(shouldStartFinale({ order, index: 8, finale: true }), false, 'não dispara duas vezes');
+  assert.equal(TOUR_TOTAL, 9, 'contador X/9 preservado');
+  assert.ok(FINALE_HOLD_MS >= 5000, 'duração suficiente para apresentar a banda');
+  for (const name of ['2-D', 'Murdoc', 'Noodle', 'Russel']) {
+    assert.ok(BAND_FINALE_STOP.year.includes(name), `cartão final cita ${name}`);
+  }
+  const finaleTour = { active: true, index: 8, finale: true };
+  for (const key of ['w', 'ArrowUp', 'Escape']) {
+    const exited = takeOver(finaleTour, key);
+    assert.equal(exited.active, false, `${key} sai do encerramento`);
+    assert.equal(exited.finale, false, `${key} desativa o estado finale`);
+  }
 });
 
 import { stopIdFor } from '../src/guided-tour.js';

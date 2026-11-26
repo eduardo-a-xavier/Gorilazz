@@ -146,6 +146,7 @@ navUI = createNavigationUI({
   playDiscoverySound: () => audio.playDiscoverySound(),
   interact, modalOpen,
   toggleFullMap: force => mapUI?.toggleFullMap(force),
+  isReducedMotion: () => reducedMotion.matches,
 });
 
 hud = createHudController({

@@ -5,8 +5,8 @@ import { planPath, navigationInput } from './navigation.js';
 import { createJourneyGuide } from './journey-guide.js';
 import { createDiscoveriesDrawer } from './discoveries-drawer.js';
 import { DISCOVERY_LORE } from './discoveries-lore.js';
-import { stopFrame } from './tour-framing.js';
-import { buildStops, orderTour, createStopProgress, speedCap, localTrackFor, ARRIVE_M, STOP_HOLD_MS, TOAST_MS } from './guided-tour.js';
+import { stopFrame, BAND_FINALE_FRAME } from './tour-framing.js';
+import { buildStops, orderTour, createStopProgress, speedCap, localTrackFor, shouldStartFinale, BAND_FINALE_STOP, ARRIVE_M, STOP_HOLD_MS, FINALE_HOLD_MS, TOAST_MS } from './guided-tour.js';
 
 const HEAD_LIMIT = 35 * Math.PI / 180;
 const smooth01 = t => t * t * (3 - 2 * t);
@@ -35,6 +35,7 @@ export function createNavigationUI({
   interact,
   modalOpen,
   toggleFullMap,
+  isReducedMotion = () => false,
 }) {
   const eraTracks = ['clint', 'melancholy', 'revolving', 'saturnz'];
   const tourStops = buildStops({ gates: ERA_GATES, cityEras: CITY_ERAS, eraTracks, discoveries: DISCOVERIES, tracks });
@@ -50,7 +51,10 @@ export function createNavigationUI({
   function showGuidedCard(stopItem, position = 0, total = 0) {
     clearTimeout(cardTimer);
     const card = document.querySelector('#guided-card'); card.classList.remove('is-leaving');
-    document.querySelector('#guided-kicker').textContent = (stopItem.kind === 'era' ? 'ERA NA ESTRADA' : 'HISTÓRIA') + (position ? ` · PONTO ${position} / ${total}` : '');
+    const kicker = stopItem.kind === 'banda'
+      ? 'ENCERRAMENTO · A BANDA REUNIDA'
+      : (stopItem.kind === 'era' ? 'ERA NA ESTRADA' : 'HISTÓRIA') + (position ? ` · PONTO ${position} / ${total}` : '');
+    document.querySelector('#guided-kicker').textContent = kicker;
     document.querySelector('#guided-title').textContent = stopItem.title;
     document.querySelector('#guided-year').textContent = stopItem.year;
     document.querySelector('#guided-summary').textContent = stopItem.summary;
@@ -91,7 +95,12 @@ export function createNavigationUI({
     document.querySelector('#stops-count').textContent = `DESCOBERTAS: ${count} / ${total}`;
     document.querySelector('#stops-bar-fill').style.width = `${count / total * 100}%`;
     const text = document.querySelector('#guided-text'), toggle = document.querySelector('#guided-toggle');
-    if (guided && !guided.paused) { text.textContent = 'Modo Passeio Guiado · Pressione WASD para assumir o volante'; toggle.textContent = '⏸ Pausar'; }
+    if (guided && !guided.paused) {
+      text.textContent = guided.finale
+        ? 'Encerramento: a banda reunida · Pressione WASD ou Esc para assumir o volante'
+        : 'Modo Passeio Guiado · Pressione WASD para assumir o volante';
+      toggle.textContent = '⏸ Pausar';
+    }
     else if (guided) { text.textContent = 'Passeio guiado pausado'; toggle.textContent = '▶ Retomar'; }
     else { text.textContent = count >= total ? 'Universo explorado: refazer o passeio guiado' : `Passeio guiado pelas ${total} paradas · ${total - count} para descobrir`; toggle.textContent = '▶ Passeio Guiado'; }
     renderTourMapStops();
@@ -147,9 +156,38 @@ export function createNavigationUI({
     setTour(true); syncGuidedHud();
   }
 
+  function cinematicFinale() {
+    const world = getWorld();
+    const h = vehicle.heading;
+    const cx = vehicle.x - 8.3 * Math.sin(h), cz = vehicle.z - 8.3 * Math.cos(h);
+    if (cameraState.firstPerson) {
+      world?.setHeadYaw(0);
+      return;
+    }
+    cameraState.enterTourOrbit();
+    const reduced = isReducedMotion();
+    const now = performance.now(), t = now / 1000;
+    const start = guided.holdUntil - FINALE_HOLD_MS;
+    const fadeIn = reduced ? 1 : smooth01(Math.max(0, Math.min(1, (now - start) / 700)));
+    const fadeOut = reduced ? 1 : smooth01(Math.max(0, Math.min(1, (guided.holdUntil - now) / 600)));
+    const alpha = fadeIn * fadeOut;
+    const base = h;
+    const a = reduced ? base : base + .28 * Math.sin(t * .45);
+    world?.frameSpot({ x: cx, z: cz, dirX: Math.sin(a), dirZ: Math.cos(a), ...BAND_FINALE_FRAME, alpha });
+  }
+
+  function startBandFinale() {
+    guided.finale = true;
+    guided.holdUntil = performance.now() + FINALE_HOLD_MS;
+    getWorld()?.setBandFinale?.(true);
+    showGuidedCard(BAND_FINALE_STOP, 0, 0);
+    announce('Passeio pelas 9 paradas concluído. A banda está reunida: 2-D, Murdoc, Noodle e Russel.');
+    syncGuidedHud();
+  }
+
   function finishGuided() {
     guided = null; setDestination(null); hideGuidedCard(); setTour(false);
-    cameraState.exitTourOrbit(); getWorld()?.clearPose(); getWorld()?.setHeadYaw(0);
+    cameraState.exitTourOrbit(); getWorld()?.setBandFinale?.(false); getWorld()?.clearPose(); getWorld()?.setHeadYaw(0);
     announce('Passeio guiado concluído. Você pode continuar explorando.');
     syncGuidedHud();
   }
@@ -157,18 +195,24 @@ export function createNavigationUI({
   function endGuided() {
     if (!guided) return;
     guided = null; setDestination(null); hideGuidedCard(); setTour(false);
-    cameraState.exitTourOrbit(); getWorld()?.clearPose(); getWorld()?.setHeadYaw(0);
+    cameraState.exitTourOrbit(); getWorld()?.setBandFinale?.(false); getWorld()?.clearPose(); getWorld()?.setHeadYaw(0);
     syncGuidedHud();
   }
 
   function pauseIfActive() {
-    if (guided) { guided.paused = true; syncGuidedHud(); }
+    if (!guided) return;
+    if (guided.finale) { endGuided(); return; }
+    guided.paused = true; syncGuidedHud();
   }
 
   function guidedControls() {
     if (guided.holdUntil) {
-      if (performance.now() < guided.holdUntil) { cinematicHold(guided.order[guided.index]); return brakeControls; }
-      if (guided.index + 1 >= guided.order.length) { finishGuided(); return brakeControls; }
+      if (performance.now() < guided.holdUntil) {
+        if (guided.finale) cinematicFinale(); else cinematicHold(guided.order[guided.index]);
+        return brakeControls;
+      }
+      if (shouldStartFinale(guided)) { startBandFinale(); return brakeControls; }
+      if (guided.finale || guided.index + 1 >= guided.order.length) { finishGuided(); return brakeControls; }
       legTo(guided.index + 1);
     }
     if (guided.align !== null && guided.align !== undefined) {
@@ -209,6 +253,7 @@ export function createNavigationUI({
 
   document.querySelector('#guided-toggle').addEventListener('click', () => { if (guided && !guided.paused) stop(); else startGuided(); });
   document.querySelector('#start-guided').addEventListener('click', () => { startGuided(); });
+  document.addEventListener('keydown', event => { if (event.key === 'Escape' && guided?.finale) endGuided(); });
   tourButton.addEventListener('click', () => {
     if (isTouring() || getDestination()) { stop(); return; }
     startGuided();
