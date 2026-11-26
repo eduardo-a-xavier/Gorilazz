@@ -2,8 +2,8 @@
 // Lógica pura, sem DOM nem Three.js, para ser testada em Node. Desenho e teclado ficam em arcade-screen.js.
 // Labirinto, regras e personagens são originais; não usam sprites ou mapas do jogo clássico.
 
-// Máquina na calçada, recuada da via para a base de destaque (raio 4,7 m) ficar a ≥ 0,90 m do asfalto (ver tests/arcade.test.mjs).
-export const ARCADE_SPOT = { x: -13.5, z: -10 }; // mesmo ponto da máquina 3D (arcade-cabinet.js), perto de Kong Studios, fora da estrada
+// Máquina na calçada leste da Av. Kong Studios, separada do Jardim/Ecos e do Mural 1, com folga >= 0,90 m do asfalto.
+export const ARCADE_SPOT = { x: 13.5, z: -18 }; // mesmo ponto da máquina 3D (arcade-cabinet.js), perto de Kong Studios, fora da estrada
 export const ARCADE_PAD_RADIUS = 4.7; // base de piso, igual à dos pontos de história (scene.js)
 export const ARCADE_ROAD_CLEARANCE = .9; // m: folga mínima entre a base e o asfalto
 export const DIRS = { up: { x: 0, y: -1 }, down: { x: 0, y: 1 }, left: { x: -1, y: 0 }, right: { x: 1, y: 0 } };

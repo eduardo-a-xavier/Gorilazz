@@ -26,10 +26,10 @@ export function catmullRomSpline(points, subdivisions = 8) {
       const z = .5 * ((2 * p1.z) + (-p0.z + p2.z) * u + (2 * p0.z - 5 * p1.z + 4 * p2.z - p3.z) * u2 + (-p0.z + 3 * p1.z - 3 * p2.z + p3.z) * u3);
       const candidate = { x, z };
       // Garante que a curva Catmull-Rom nos cruzamentos nunca saia do asfalto; se cortar esquina além da pista, interpola linearmente ou projeta no eixo da via.
-      if (roadGap(candidate) <= .2) out.push(candidate);
+      if (roadGap(candidate) <= -.5) out.push(candidate);
       else {
         const linear = { x: p1.x + (p2.x - p1.x) * u, z: p1.z + (p2.z - p1.z) * u };
-        if (roadGap(linear) <= .2) out.push(linear);
+        if (roadGap(linear) <= -.5) out.push(linear);
       }
     }
   }
@@ -49,18 +49,39 @@ export function planPath(start, target) {
     const cost = points.slice(1).reduce((sum,p,i) => sum + distance(points[i],p),0);
     graph[from].push({ to, points, cost });
   }
-  for (const road of ROADS) {
-    edge(road.from, road.to, road.samples);
-    edge(road.to, road.from, road.samples.slice().reverse());
+  const hasHeading = Number.isFinite(start?.heading);
+  const fx = hasHeading ? -Math.sin(start.heading) : 0;
+  const fz = hasHeading ? -Math.cos(start.heading) : 0;
+  const initialDot = points => {
+    if (!hasHeading || !points || points.length < 2) return 1;
+    const p0 = points[0];
+    const p1 = points[Math.min(points.length - 1, 3)];
+    const dx = p1.x - p0.x, dz = p1.z - p0.z, len = Math.hypot(dx, dz);
+    return len > 1e-4 ? (dx * fx + dz * fz) / len : 1;
+  };
+  const originCandidates = [
+    { to: startRoad.from, opp: startRoad.to, points: startRoad.samples.slice(0, startIndex + 1).reverse() },
+    { to: startRoad.to, opp: startRoad.from, points: startRoad.samples.slice(startIndex) },
+  ];
+  if (startRoad === endRoad) {
+    const segment = startRoad.samples.slice(Math.min(startIndex, endIndex), Math.max(startIndex, endIndex) + 1);
+    originCandidates.push({ to: goal, opp: -1, points: startIndex <= endIndex ? segment : segment.reverse() });
   }
-  edge(origin,startRoad.from,startRoad.samples.slice(0,startIndex+1).reverse());
-  edge(origin,startRoad.to,startRoad.samples.slice(startIndex));
+  // Proíbe retorno/U-turn fechado na mesma rua quando o alvo está atrás do carro em distância curta: força seguir em frente e contornar pelo quarteirão.
+  const midRoad = startIndex > 4 && startIndex < startRoad.samples.length - 5;
+  const shortBehind = hasHeading && midRoad && (startRoad === endRoad || distance(start, target) < 45);
+  const forwardCandidates = shortBehind ? originCandidates.filter(c => initialDot(c.points) >= 0) : originCandidates;
+  const chosenOrigin = forwardCandidates.length ? forwardCandidates : originCandidates;
+  // Se uma direção da rua inicial foi bloqueada por exigir meia-volta, também bloqueia voltar por essa mesma rua no primeiro cruzamento.
+  const blockedBackFrom = chosenOrigin.length === 1 && chosenOrigin[0].opp >= 0 ? chosenOrigin[0].to : -1;
+  const blockedBackTo = chosenOrigin.length === 1 && chosenOrigin[0].opp >= 0 ? chosenOrigin[0].opp : -1;
+  for (const road of ROADS) {
+    if (!(road === startRoad && road.from === blockedBackFrom && road.to === blockedBackTo)) edge(road.from, road.to, road.samples);
+    if (!(road === startRoad && road.to === blockedBackFrom && road.from === blockedBackTo)) edge(road.to, road.from, road.samples.slice().reverse());
+  }
+  for (const c of chosenOrigin) edge(origin, c.to, c.points);
   edge(endRoad.from,goal,endRoad.samples.slice(0,endIndex+1));
   edge(endRoad.to,goal,endRoad.samples.slice(endIndex).reverse());
-  if (startRoad === endRoad) {
-    const segment = startRoad.samples.slice(Math.min(startIndex,endIndex),Math.max(startIndex,endIndex)+1);
-    edge(origin,goal,startIndex <= endIndex ? segment : segment.reverse());
-  }
   const costs = graph.map(() => Infinity), paths = graph.map(() => []), remaining = new Set(graph.keys());
   costs[origin] = 0;
   while (remaining.size) {
@@ -99,10 +120,10 @@ export function sampleLookAhead(vehicle, points, startIndex, lookAhead = LOOK_AH
     k++;
     aim = points[k];
   }
-  // Mede a mudança de direção nos próximos ~24 m da spline para antecipar frenagem antes de curvas fechadas.
+  // Mede a mudança de direção nos próximos ~34 m da spline para antecipar frenagem antes de curvas fechadas.
   let maxCurve = 0, curveDist = 0;
   let baseHeading = Math.atan2(-(aim.x - vehicle.x), -(aim.z - vehicle.z));
-  for (let m = idx; m < points.length - 2 && curveDist < 24; m++) {
+  for (let m = idx; m < points.length - 2 && curveDist < 34; m++) {
     const a = points[m], b = points[m + 1], d = distance(a, b);
     if (d < .2) continue;
     curveDist += d;
@@ -117,16 +138,45 @@ export function sampleLookAhead(vehicle, points, startIndex, lookAhead = LOOK_AH
 export const UNSTICK_DELAY_TICKS = 180;
 // Rampa de saída da parada: o carro parte de ~4 m/s e chega ao cruzeiro em ~1,2 s.
 export const LAUNCH_RAMP_S = 1.2;
+// Limite de giro acumulado sem avanço (~315°) para acionar recálculo anti-looping pelo quarteirão.
+export const LOOP_TURN_LIMIT_RAD = 5.5;
 
 export function navigationInput(vehicle, navigation, { sinceStop = Infinity } = {}) {
   navigation.reversing ??= false;
   const points = navigation.points;
   const remaining = distance(vehicle, navigation.target);
-  const dynamicLookAhead = clamp(6.5 + Math.abs(vehicle.speed) * .34, 6.5, 11.5);
+  const dynamicLookAhead = clamp(5.2 + Math.abs(vehicle.speed) * .28, 5.2, 10.5);
   const { index, aim, maxCurve } = sampleLookAhead(vehicle, points, navigation.index, dynamicLookAhead);
+  const prevIndex = navigation.index;
   navigation.index = index;
-  if ((navigation.index >= points.length - 1 || remaining < 6) && remaining < 8 && Math.abs(vehicle.speed) < 1) return { arrived: true, throttle: false, brake: true, steer: 0, drift: false };
-  const target = navigation.index >= points.length - 1 ? points[navigation.index] : aim;
+  // Guarda anti-looping: se o carro acumular >= 315° de giro sem avançar nos waypoints nem se aproximar do alvo, recalcula a rota contornando pela frente.
+  if (Number.isFinite(navigation.prevHeading)) {
+    const dh = Math.abs(Math.atan2(Math.sin(vehicle.heading - navigation.prevHeading), Math.cos(vehicle.heading - navigation.prevHeading)));
+    if (navigation.index > prevIndex || remaining < (navigation.progressRef ?? remaining) - 2) {
+      navigation.progressRef = remaining;
+      navigation.turnAccum = 0;
+    } else if (!navigation.reversing) {
+      navigation.turnAccum = (navigation.turnAccum ?? 0) + dh;
+    }
+    if (navigation.turnAccum >= LOOP_TURN_LIMIT_RAD && remaining > 10 && navigation.target) {
+      const replanned = planPath(vehicle, navigation.target);
+      while (replanned.index < replanned.points.length - 1 && distance(vehicle, replanned.points[replanned.index]) < 6) replanned.index++;
+      navigation.points = replanned.points;
+      navigation.index = replanned.index;
+      navigation.turnAccum = 0;
+      navigation.progressRef = remaining;
+      navigation.reversing = false;
+      navigation.loopRecoveries = (navigation.loopRecoveries ?? 0) + 1;
+    }
+  } else {
+    navigation.progressRef = remaining;
+    navigation.turnAccum = 0;
+  }
+  navigation.prevHeading = vehicle.heading;
+  const activePoints = navigation.points;
+  const activeAim = navigation.index >= activePoints.length - 1 ? activePoints[activePoints.length - 1] : (activePoints === points ? aim : activePoints[navigation.index]);
+  if ((navigation.index >= activePoints.length - 1 || remaining < 6) && remaining < 8 && Math.abs(vehicle.speed) < 1) return { arrived: true, throttle: false, brake: true, steer: 0, drift: false };
+  const target = activeAim;
   const angle = Math.atan2(-(target.x - vehicle.x), -(target.z - vehicle.z));
   const turn = Math.atan2(Math.sin(angle - vehicle.heading), Math.cos(angle - vehicle.heading));
   if (!navigation.reversing) {
@@ -154,18 +204,18 @@ export function navigationInput(vehicle, navigation, { sinceStop = Infinity } = 
   // Velocidade de cruzeiro viva nas retas (~63 km/h), mantendo fluidez em curvas médias e desacelerando só em curvas fechadas ou aproximação final.
   const absTurn = Math.abs(turn);
   const cornerSeverity = Math.max(Math.max(0, absTurn - .12) * 1.2, Math.max(0, maxCurve - .22) * .78);
-  const curveCap = CRUISE_SPEED_MS / (1 + cornerSeverity * 2.1);
-  const minCornerSpeed = absTurn > 1.0 ? 2.0 : 5.2;
+  const curveCap = CRUISE_SPEED_MS / (1 + cornerSeverity * 3.4);
+  const minCornerSpeed = absTurn > 0.55 ? 1.8 : 2.8;
   const arrivalCap = Math.sqrt(Math.max(0, remaining - 5) * 7);
   // Rampa de saída progressiva e ágil.
   const launch = clamp(sinceStop / LAUNCH_RAMP_S, 0, 1);
   const launchCap = 4.0 + (CRUISE_SPEED_MS - 4.0) * (launch * (2 - launch));
   const desiredSpeed = Math.min(CRUISE_SPEED_MS, Math.max(minCornerSpeed, curveCap), arrivalCap, launchCap);
-  const rawSteer = clamp(turn * 2.25, -1, 1);
+  const rawSteer = clamp(turn * 2.6, -1, 1);
   const prevSteer = navigation.smoothSteer ?? rawSteer;
   navigation.smoothSteer = prevSteer + (rawSteer - prevSteer) * .42;
-  // Drift / escorregada controlada orgânica em curvas moderadas/fechadas com velocidade firme, mantendo margem de segurança no asfalto.
-  const safeOnRoad = roadGap(vehicle) <= 0.01 && remaining > 18;
+  // Drift / escorregada controlada orgânica em curvas moderadas/fechadas com velocidade firme, mantendo margem ampla no asfalto (avenidas largas).
+  const safeOnRoad = roadGap(vehicle) <= -2.5 && remaining > 18;
   const drift = safeOnRoad && vehicle.speed > 9.5 && absTurn <= .95 && (absTurn > .22 || maxCurve > .48) && Math.abs(navigation.smoothSteer) > .22;
   return {
     throttle: vehicle.speed < desiredSpeed - .4,

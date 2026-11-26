@@ -1,9 +1,10 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { buildStops, orderTour, createStopProgress, speedCap, takeOver, shouldStartFinale, BAND_FINALE_STOP, FINALE_HOLD_MS, TOUR_TOTAL, TOUR_ORDER, PROGRESS_KEY, SLOW_ZONE_M, ARRIVE_M } from '../src/guided-tour.js';
-import { ERA_GATES, CITY_ERAS, DISCOVERIES, roadGap, nearestRoad, WORLD_BOUNDS } from '../src/world-data.js';
+import { ERA_GATES, CITY_ERAS, DISCOVERIES, VISUAL_LANDMARKS, roadGap, nearestRoad, WORLD_BOUNDS } from '../src/world-data.js';
+import { ARCADE_SPOT } from '../src/arcade.js';
 import { tracks } from '../src/content.js';
-import { planPath, navigationInput, CRUISE_SPEED_MS, UNSTICK_DELAY_TICKS, LAUNCH_RAMP_S } from '../src/navigation.js';
+import { planPath, navigationInput, CRUISE_SPEED_MS, UNSTICK_DELAY_TICKS, LAUNCH_RAMP_S, LOOP_TURN_LIMIT_RAD } from '../src/navigation.js';
 import { createVehicle, stepVehicle, haltVehicle } from '../src/driving.js';
 import { distance } from '../src/world-data.js';
 
@@ -191,6 +192,38 @@ test('rampa de saída: o carro não exige o cruzeiro inteiro ao sair da parada',
   assert.equal(early.brake, true, 'a 10 m/s logo na saída, freia para a rampa');
   const late = navigationInput(vehicle, nav, { sinceStop: LAUNCH_RAMP_S * 2 });
   assert.equal(late.throttle, true, 'passada a rampa, acelera até o cruzeiro');
+});
+
+test('esquina de Kong Studios: Jardim/Ecos, Fliperama KONG e Mural 1 ficam espaçados (>= 20 m entre si)', () => {
+  const beginning = DISCOVERIES.find(d => d.id === 'beginning');
+  const sculpture = VISUAL_LANDMARKS.sculpture;
+  assert.ok(distance(ARCADE_SPOT, beginning) >= 20, 'Fliperama longe do Mural 1');
+  assert.ok(distance(ARCADE_SPOT, sculpture) >= 20, 'Fliperama longe do Jardim/Ecos');
+  assert.ok(distance(beginning, sculpture) >= 20, 'Mural 1 longe do Jardim/Ecos');
+});
+
+test('planPath proíbe U-turn na mesma rua quando o alvo está atrás do carro e contorna pelo quarteirão', () => {
+  // Carro na Av. Kong Studios indo para o norte (heading = 0, vetor frente = (0, -1)), alvo atrás dele em (0, -2)
+  const vehicle = { x: -1.5, z: -30, heading: 0 };
+  const target = { x: 0, z: -2, title: 'Atrás' };
+  const path = planPath(vehicle, target);
+  const firstStep = path.points[Math.min(3, path.points.length - 1)];
+  assert.ok(firstStep.z < vehicle.z, 'primeiro passo segue em frente (z menor) em vez de voltar na mesma rua');
+  assert.ok(path.points.length > 20, 'rota contorna pelo quarteirão');
+});
+
+test('guarda anti-looping: recalcula a rota contornando pela frente ao acumular >= 270° sem avanço', () => {
+  const vehicle = createVehicle();
+  vehicle.x = -1.5; vehicle.z = -30; vehicle.heading = 0;
+  const nav = { points: [{ x: -1.5, z: -30 }, { x: 0, z: -2 }], index: 0, target: { x: 0, z: -2 } };
+  navigationInput(vehicle, nav);
+  // Simula 7 passos de giro de 0.9 rad cada (~361° > 315°) sem sair do lugar
+  for (let i = 0; i < 7; i++) {
+    vehicle.heading += 0.9;
+    navigationInput(vehicle, nav);
+  }
+  assert.ok(LOOP_TURN_LIMIT_RAD >= 4.5, 'limite anti-looping (>= 270°)');
+  assert.ok((nav.loopRecoveries ?? 0) >= 1, 'acionou recálculo anti-looping');
 });
 
 test('assumir o volante: WASD e setas encerram o passeio sem apagar o progresso; outras teclas não', () => {

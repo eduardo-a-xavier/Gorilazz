@@ -60,7 +60,7 @@ export const MEMBER_LOCATIONS = [
   { x: 42, z: -110, heading: -1 }, { x: 62, z: -98, heading: .5 },
 ].map(point => { const placed = settle(point, 8.5); return { ...placed, heading: placed.facing }; /* o grupo do integrante gira heading + π e a frente do modelo é −z */ });
 export const DISCOVERIES = [
-  { id: 'beginning', x: -16, z: -25, title: 'Duas mentes, um universo', label: 'O COMEÇO / 1998', kind: 'MURAL', region: 0, track: 0, chapter: 1,
+  { id: 'beginning', x: -18, z: -34, title: 'Duas mentes, um universo', label: 'O COMEÇO / 1998', kind: 'MURAL', region: 0, track: 0, chapter: 1,
     text: 'Segundo Jamie Hewlett, Gorillaz surgiu em 1998, a partir de uma ideia apresentada por Damon Albarn. Música e desenho passaram a contar uma história juntos: uma banda virtual com integrantes, personalidades e um mundo próprio.',
     detail: 'O álbum de estreia Gorillaz foi lançado em 26 de março de 2001. Clint Eastwood e Tomorrow Comes Today apresentam o encontro entre hip-hop, dub, rock e animação.', source: 'https://www.vice.com/en/article/gorillaz-co-creator-jamie-hewlett-just-wanted-to-draw-comics/' },
   { id: 'voices', x: -105, z: -85, title: 'Quatro rostos. Muitas histórias.', label: 'BAIRRO DOS MURAIS', kind: 'ARQUIVO', region: 1, track: 1, chapter: 2,

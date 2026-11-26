@@ -163,7 +163,7 @@ test('velocidade: passo do jogador ~30% mais lento que antes (170 ms) e fantasma
 
 test('o raio do fliperama é de 4 m a partir da máquina', () => {
   assert.equal(ARCADE_RADIUS, 4);
-  assert.deepEqual(ARCADE_SPOT, { x: -13.5, z: -10 });
+  assert.deepEqual(ARCADE_SPOT, { x: 13.5, z: -18 });
 });
 
 test('a base do fliperama fica a pelo menos 0,90 m do asfalto e longe de prédios e árvores', async () => {
