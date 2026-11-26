@@ -34,3 +34,29 @@ jobs:
 
       - name: Executar suíte de testes (node --test)
         run: npm test
+
+  # Job separado de smoke em Chromium headless (SwiftShader) sob /Gorilazz/:
+  # valida 0 erros de console/página, 0 HTTP >= 400, mundo 3D carregado e Passeio Guiado
+  # com TOUR_ORDER fixa de 9 paradas. Separado do job `test` para não atrasar os testes
+  # unitários em Node e com timeout generoso devido ao WebGL em software (SwiftShader).
+  browser-smoke:
+    name: Chromium Headless — Smoke /Gorilazz/
+    runs-on: ubuntu-latest
+    needs: test
+    timeout-minutes: 10
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Instalar Playwright e Chromium
+        run: |
+          python -m pip install --upgrade pip playwright
+          python -m playwright install chromium --with-deps
+
+      - name: Executar smoke E2E sob /Gorilazz/
+        run: python scripts/ci-smoke-subpath.py
