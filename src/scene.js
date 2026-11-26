@@ -354,7 +354,7 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
   const materials = new Map();
   function material(color, glow = false) {
     const key = color + glow;
-    if (!materials.has(key)) materials.set(key, new THREE.MeshStandardMaterial({ color, roughness: .88, metalness: 0, ...(glow ? { emissive: color, emissiveIntensity: 1.6 } : {}) }));
+    if (!materials.has(key)) materials.set(key, new THREE.MeshStandardMaterial({ color, roughness: .88, metalness: 0, ...(glow ? { emissive: color, emissiveIntensity: 1.85 } : {}) }));
     return materials.get(key);
   }
   function box(parent, size, at, color, glow = false) {
@@ -420,10 +420,16 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
   }
   box(car, [3.65, .22, .3], [0, .9, 3.4], '#141414');
   box(car, [3.65, .22, .3], [0, .9, -3.4], '#141414');
+  const taillightMat = new THREE.MeshStandardMaterial({ color: '#ff2f55', emissive: '#ff1f44', emissiveIntensity: 1.7, roughness: .35, metalness: .1 });
+  const headlightMat = new THREE.MeshStandardMaterial({ color: '#fff6d6', emissive: '#ffefc2', emissiveIntensity: 2.35, roughness: .25, metalness: .1 });
+  const carLights = new THREE.Group(); carLights.name = 'car-lights';
   for (const x of [-1.15, 1.15]) {
-    box(car, [.7, .28, .1], [x, 1.4, 3.45], '#f2559c', true);
-    box(car, [.7, .28, .1], [x, 1.4, -3.45], '#fff4c7', true);
+    const tail = new THREE.Mesh(new THREE.BoxGeometry(.68, .24, .1), taillightMat);
+    tail.position.set(x, 1.38, 3.34); carLights.add(tail);
+    const head = new THREE.Mesh(new THREE.BoxGeometry(.68, .24, .1), headlightMat);
+    head.position.set(x, 1.38, -3.34); carLights.add(head);
   }
+  car.add(carLights);
   box(car, [1.1, .25, .1], [0, 1.05, 3.57], '#7fa6ff');
   const wheels = [];
   for (const x of [-1.77, 1.77]) for (const z of [-2.1, 2.15]) {
@@ -483,6 +489,7 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
     // Normalize and reparent each wheel around its geometric axle, preserving
     // the imported model's transforms. Rim details follow the closest wheel.
     car.remove(driver, cabin.root);
+    car.remove(carLights);
     car.traverse(object => { if (object.isMesh) object.geometry.dispose(); });
     car.clear(); car.add(vehicle); car.updateWorldMatrix(true, true); modelWheels = [];
     const wheelGroups = wheelMeshes.map(mesh => {
@@ -512,7 +519,7 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
       cabin.attach({ centre, normal, radius: Math.max(extent.x, extent.y, extent.z) / 2 - .02, seatTop: seat ? car.worldToLocal(new THREE.Vector3(seat.min.x, seat.max.y, seat.min.z)).y : undefined });
       if (!pilotRig) driver.position.set(cabin.eye.x, cabin.eye.y - 2.35 * driver.scale.y, cabin.eye.z - .02);
     }
-    bake(vehicle); car.add(driver, cabin.root);
+    bake(vehicle); car.add(driver, cabin.root, carLights);
     vehicleStatus.textContent = kind === 'geep' ? 'GEEP / SHABAEV / CC BY 4.0' : 'SUV KENNEY / CC0 · VEÍCULO ALTERNATIVO';
     vehicleStatus.dataset.loaded = 'true'; vehicleStatus.dataset.model = kind; vehicleStatus.dataset.wheels = String(modelWheels.length);
   }
@@ -782,6 +789,14 @@ export function createWorld(container, onMember, {onLost = () => {}, onRestored 
         const alpha = poseView.alpha ?? 1;
         if (alpha >= 1) { camera.position.copy(poseView.eye); camera.lookAt(poseView.target); }
         else { camera.position.lerp(poseView.eye, alpha); cameraTarget.lerp(poseView.target, alpha); camera.lookAt(cameraTarget); }
+      }
+      const driftActive = Boolean(vehicle.drifting || vehicle.burnout);
+      const tailTarget = driftActive ? 3.2 + Math.min(1, vehicle.tireIntensity || 0) * 1.1 : vehicle.braking ? 2.8 : 1.7;
+      taillightMat.emissiveIntensity = THREE.MathUtils.lerp(taillightMat.emissiveIntensity, tailTarget, reduced ? 1 : Math.min(1, dt * 14));
+      if (!reduced && !firstPerson && !overview && !landmarkView && !poseView && driftActive) {
+        const ti = Math.max(.25, vehicle.tireIntensity || 0);
+        camera.rotateZ(Math.sin(t * 42) * ti * .0038);
+        camera.rotateX(Math.cos(t * 35) * ti * .0024);
       }
       if (impact > .01) { camera.rotateZ(Math.sin(t * 58) * impact * .022); camera.rotateX(Math.sin(t * 47) * impact * .012); impact *= Math.exp(-5 * dt); }
       stages.updateLunar(camera);

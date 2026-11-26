@@ -366,14 +366,14 @@ export function installCity(scene, surfaces) {
     steel: new THREE.MeshStandardMaterial({ color: '#9aa3a6', roughness: .45, metalness: .5 }),
     door: new THREE.MeshStandardMaterial({ color: '#4a2f24', roughness: .8 }),
     plank: new THREE.MeshStandardMaterial({ color: '#8b6a45', roughness: 1 }),
-    glow: glowing('#ffd27a', 2.6), dead: new THREE.MeshStandardMaterial({ color: '#3a3d3c', roughness: .6 }),
-    red: glowing('#ff2a2a', 2), neonPink: glowing('#ff4fa0', 2.4), neonCyan: glowing('#3fe0ff', 2.4),
+    glow: glowing('#ffd27a', 2.8), dead: new THREE.MeshStandardMaterial({ color: '#3a3d3c', roughness: .6 }),
+    red: glowing('#ff2a2a', 2.2), neonPink: glowing('#ff4fa0', 2.85), neonCyan: glowing('#3fe0ff', 2.85),
     wood: surfaces.get('wood', 2, 1), murals: muralAtlas(), storefront: storefrontMaterial(), shutter: shutterMaterial(),
-    signs: new THREE.MeshStandardMaterial({ map: signs, emissiveMap: signs, emissive: '#ffffff', emissiveIntensity: 1.35, roughness: .6 }),
+    signs: new THREE.MeshStandardMaterial({ map: signs, emissiveMap: signs, emissive: '#ffffff', emissiveIntensity: 1.6, roughness: .6 }),
     signsFlat: new THREE.MeshStandardMaterial({ map: signs, roughness: .8 }),
     billboard: new THREE.MeshStandardMaterial({ map: ads, emissiveMap: ads, emissive: '#ffffff', emissiveIntensity: .45, roughness: .65 }),
     billboardFaded: new THREE.MeshStandardMaterial({ map: ads, roughness: .95 }),
-    screen: new THREE.MeshStandardMaterial({ map: ads, emissiveMap: ads, emissive: '#ffffff', emissiveIntensity: 1.45, roughness: .3 }),
+    screen: new THREE.MeshStandardMaterial({ map: ads, emissiveMap: ads, emissive: '#ffffff', emissiveIntensity: 1.65, roughness: .3 }),
     gate: (() => { const t = gateTexture(); return new THREE.MeshStandardMaterial({ map: t, emissiveMap: t, emissive: '#ffffff', emissiveIntensity: .85, roughness: .6, side: THREE.DoubleSide }); })(),
   };
   // Pavimento de lote dessaturado (antes '#d9c9a3' ficava laranja forte no entardecer): mesma família do concreto da calçada.

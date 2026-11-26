@@ -59,12 +59,12 @@ export function installArcadeCabinet(scene) {
   add(new THREE.BoxGeometry(1.6, .4, .62), trim, [0, 1.9, .82], [.42, 0, 0]);                     // painel de controle
   add(new THREE.BoxGeometry(2.0, .2, 1.5), body, [0, .1, 0]);                                    // base
   // Feixe de luz e anel no chão: destaque visível de longe, sem sombra e sem custo de luz.
-  const beam = new THREE.Mesh(new THREE.CylinderGeometry(.9, .9, 16, 20, 1, true), new THREE.MeshBasicMaterial({ color: '#ffcc4d', transparent: true, opacity: .16, blending: THREE.AdditiveBlending, depthWrite: false, toneMapped: false }));
+  const beam = new THREE.Mesh(new THREE.CylinderGeometry(.9, .9, 16, 20, 1, true), new THREE.MeshBasicMaterial({ color: '#ffcc4d', transparent: true, opacity: .22, blending: THREE.AdditiveBlending, depthWrite: false, toneMapped: false }));
   beam.position.y = 8; beam.name = 'arcade-beam'; group.add(beam);
   // Base de piso e anel rosa iguais aos dos pontos de história (scene.js): ficam em escala de mundo, fora do grupo escalado.
   const pad = new THREE.Mesh(new THREE.CylinderGeometry(ARCADE_PAD_RADIUS, ARCADE_PAD_RADIUS + .2, .14, 40), new THREE.MeshStandardMaterial({ color: '#687463', roughness: 1 }));
   pad.position.set(ARCADE_SPOT.x, -.11, ARCADE_SPOT.z); pad.receiveShadow = true; pad.name = 'arcade-pad'; scene.add(pad);
-  const ring = new THREE.Mesh(new THREE.TorusGeometry(ARCADE_PAD_RADIUS - .8, .035, 6, 40), new THREE.MeshBasicMaterial({ color: '#f5a9c6', transparent: true, opacity: .9, depthWrite: false, toneMapped: false }));
+  const ring = new THREE.Mesh(new THREE.TorusGeometry(ARCADE_PAD_RADIUS - .8, .035, 6, 40), new THREE.MeshBasicMaterial({ color: '#f5a9c6', transparent: true, opacity: .95, depthWrite: false, toneMapped: false }));
   ring.rotation.x = Math.PI / 2; ring.position.set(ARCADE_SPOT.x, .01, ARCADE_SPOT.z); ring.name = 'arcade-ring'; scene.add(ring);
   group.traverse(node => { if (node.isMesh && node !== beam) { node.castShadow = true; node.receiveShadow = true; } });
   scene.add(group);
