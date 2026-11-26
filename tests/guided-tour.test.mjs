@@ -41,11 +41,12 @@ test('título, ano e resumo vêm do conteúdo existente (nenhum texto novo)', ()
   }
 });
 
-test('a ordem do passeio é fixa: as 9 paradas uma única vez, na mesma sequência de qualquer ponto de partida', () => {
+test('a ordem do passeio é fixa e cronológica (Ato 1 -> 2 -> 3 -> 4): as 9 paradas uma única vez, independente do ponto de partida', () => {
   const order = orderTour(stops);
   assert.equal(order.length, 9);
   assert.equal(new Set(order.map(stop => stop.id)).size, 9);
   assert.deepEqual(order.map(stop => stop.id), TOUR_ORDER);
+  assert.deepEqual(order.filter(stop => stop.kind === 'era').map(stop => stop.id), ['era-explosao', 'era-plastic', 'era-hiato', 'era-reinvencao'], 'portais em ordem cronológica dos Atos 1 -> 2 -> 3 -> 4');
   assert.deepEqual(orderTour(stops, { x: 120, z: -180 }).map(stop => stop.id), TOUR_ORDER, 'não depende de onde o carro está');
   assert.deepEqual(orderTour(stops, { x: -18, z: -25 }).map(stop => stop.id), TOUR_ORDER, 'não depende de onde o carro está');
 });

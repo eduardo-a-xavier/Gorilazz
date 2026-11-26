@@ -14,13 +14,13 @@ ROOT = Path(__file__).resolve().parent.parent
 EXPECTED_TOUR_ORDER = [
     "era-explosao",
     "beginning",
-    "era-reinvencao",
-    "voices",
-    "genres",
-    "live",
-    "era-hiato",
     "demon-days",
     "era-plastic",
+    "era-hiato",
+    "live",
+    "genres",
+    "era-reinvencao",
+    "voices",
 ]
 
 

@@ -20,12 +20,16 @@ export function buildStops({ gates, cityEras, eraTracks, discoveries, tracks }) 
   return [...eraStops, ...historyStops];
 }
 
-// Ordem fixa e curada do circuito: menor caminho real entre as 9 paradas sobre a malha viária
-// (portais de era + pontos de história), em sentido contínuo pela ilha. Não depende de onde o carro está:
-// quem começa em qualquer ponto entra na rua mais próxima e segue até a Parada 1 desta lista.
+// Ordem fixa e cronológica do circuito pelos 4 Atos (1 -> 2 -> 3 -> 4):
+// Ato 1 (2000–2006): era-explosao -> beginning -> demon-days
+// Ato 2 (2007–2011): era-plastic
+// Ato 3 (2012–2016): era-hiato -> live -> genres
+// Ato 4 (2017–2026): era-reinvencao -> voices
 export const TOUR_ORDER = Object.freeze([
-  'era-explosao', 'beginning', 'era-reinvencao', 'voices', 'genres',
-  'live', 'era-hiato', 'demon-days', 'era-plastic',
+  'era-explosao', 'beginning', 'demon-days',
+  'era-plastic',
+  'era-hiato', 'live', 'genres',
+  'era-reinvencao', 'voices',
 ]);
 
 export function orderTour(stops) {
