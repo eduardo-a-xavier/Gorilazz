@@ -109,9 +109,25 @@ export function createEngineSound(context, { plazas = [], stages = [] } = {}) {
     birdOsc.start();
   }
 
+  // Som procedural de cantar pneu / drift: ruído branco filtrado (bandpass ressonante) proporcional à intensidade do slip.
+  let tireSource = null, tireFilter = null, tireGain = null;
+  if (layered && typeof context.createBuffer === 'function' && typeof context.createBufferSource === 'function') {
+    const rate = context.sampleRate || 44100;
+    const buf = context.createBuffer(1, rate, rate);
+    const ch = buf.getChannelData(0);
+    for (let i = 0; i < ch.length; i++) ch[i] = Math.random() * 2 - 1;
+    tireSource = context.createBufferSource();
+    tireSource.buffer = buf; tireSource.loop = true;
+    tireFilter = context.createBiquadFilter();
+    tireFilter.type = 'bandpass'; tireFilter.frequency.value = 1150; tireFilter.Q.value = 5.5;
+    tireGain = context.createGain(); tireGain.gain.value = 0;
+    tireSource.connect(tireFilter); tireFilter.connect(tireGain); tireGain.connect(context.destination);
+    tireSource.start();
+  }
+
   let previousActive = null;
   return {
-    update(speed, active, { x = 0, z = 0, radioPlaying = false } = {}) {
+    update(speed, active, { x = 0, z = 0, radioPlaying = false, tireIntensity = 0 } = {}) {
       const t = context.currentTime, kph = Math.min(Math.abs(Number(speed) || 0) * 3.6, 110);
       const { fundamentalHz, rpm } = engineRpmForSpeed(kph);
       oscillator.frequency.setTargetAtTime(fundamentalHz, t, .11);
@@ -149,6 +165,12 @@ export function createEngineSound(context, { plazas = [], stages = [] } = {}) {
         birdOsc.frequency.setTargetAtTime(cooFreq, t, .06);
         birdGain.gain.setTargetAtTime(isOn ? maxPlaza * cooGate * .011 * duck : 0, t, .08);
       }
+      if (tireFilter && tireGain) {
+        const ti = isOn ? Math.max(0, Math.min(1, Number(tireIntensity) || 0)) : 0;
+        const pitch = 920 + ti * 680 + Math.sin(t * 23) * 65;
+        tireFilter.frequency.setTargetAtTime(pitch, t, .05);
+        tireGain.gain.setTargetAtTime(ti * .055 * duck, t, .05);
+      }
     },
     gainValue: () => gain.gain.value, // medição em navegador real (ganho atual do motor)
     stateOf: () => context.state,
@@ -158,6 +180,7 @@ export function createEngineSound(context, { plazas = [], stages = [] } = {}) {
         for (const n of [subOsc, harmOsc, stageOsc, birdOsc]) { try { n.stop(); n.disconnect(); } catch {} }
         for (const g of [subGain, harmGain, stageFilter, stageGain, birdGain]) { try { g.disconnect(); } catch {} }
       }
+      if (tireSource) { try { tireSource.stop(); tireSource.disconnect(); tireFilter.disconnect(); tireGain.disconnect(); } catch {} }
     },
   };
 }

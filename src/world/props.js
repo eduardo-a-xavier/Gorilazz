@@ -130,6 +130,30 @@ export function installWorldProps({ scene, renderer, surfaces, material, box, sp
     fxCursor = (fxCursor + 1) % FX_COUNT;
   }
 
+  // Marcas de pneu (skidmarks) recicladas no asfalto (1 único draw call, pool limitado para manter 60 FPS).
+  const SKID_COUNT = 64;
+  const skidGeo = new THREE.PlaneGeometry(.34, .95);
+  skidGeo.rotateX(-Math.PI / 2);
+  const skidMesh = new THREE.InstancedMesh(
+    skidGeo,
+    new THREE.MeshBasicMaterial({ color: '#161614', transparent: true, opacity: .42, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -1 }),
+    SKID_COUNT,
+  );
+  skidMesh.name = 'drive-skidmarks'; skidMesh.frustumCulled = false;
+  const skidDummy = new THREE.Object3D();
+  let skidCursor = 0;
+  for (let i = 0; i < SKID_COUNT; i++) { skidDummy.position.set(0, -20, 0); skidDummy.scale.setScalar(0); skidDummy.updateMatrix(); skidMesh.setMatrixAt(i, skidDummy.matrix); }
+  scene.add(skidMesh);
+  function spawnSkid(x, z, rotY) {
+    skidDummy.position.set(x, -.076, z);
+    skidDummy.rotation.set(0, rotY, 0);
+    skidDummy.scale.set(1, 1, 1);
+    skidDummy.updateMatrix();
+    skidMesh.setMatrixAt(skidCursor, skidDummy.matrix);
+    skidMesh.instanceMatrix.needsUpdate = true;
+    skidCursor = (skidCursor + 1) % SKID_COUNT;
+  }
+
   // Original provisional landmark (Moinho).
   const windmill = new THREE.Group(); windmill.position.set(80, 15, -163); scene.add(windmill);
   const floatingRock = new THREE.Mesh(new THREE.DodecahedronGeometry(1, 0), surfaces.get('earth', 3));
@@ -208,13 +232,19 @@ export function installWorldProps({ scene, renderer, surfaces, material, box, sp
       dust.rotation.y = Math.sin(t * .025) * .15;
       satellites.rotation.y = Math.sin(t * .1) * .12;
       portal.rotation.z = Math.sin(t * .07) * .04;
-      if ((vehicle.braking || vehicle.drifting) && Math.abs(vehicle.speed) > 1.2) {
+      const tireActive = Boolean(vehicle.drifting || vehicle.burnout);
+      if (tireActive || (vehicle.braking && Math.abs(vehicle.speed) > 1.2)) {
         const sinH = Math.sin(heading), cosH = Math.cos(heading);
         for (const side of [-1, 1]) {
           const wx = x + sinH * 2.9 + cosH * side * 1.35 + (Math.sin(t * 37 + side) * .18);
           const wz = z + cosH * 2.9 - sinH * side * 1.35 + (Math.cos(t * 29 + side) * .18);
-          const spark = vehicle.drifting || vehicle.surface === 'terra' ? '#b7b8b0' : (frameCount + (side > 0 ? 1 : 0)) % 2 ? '#ff8a5c' : '#ffcc4d';
-          spawnFx(wx, .22, wz, sinH * 2.4 + side * .6, 1.4 + (frameCount % 3) * .35, cosH * 2.4, spark, 1.15, .48);
+          const color = tireActive
+            ? ((frameCount + (side > 0 ? 1 : 0)) % 2 ? '#e6e8e4' : '#cfd2cc')
+            : vehicle.surface === 'terra' ? '#b7b8b0' : (frameCount + (side > 0 ? 1 : 0)) % 2 ? '#ff8a5c' : '#ffcc4d';
+          const scale = tireActive ? (vehicle.burnout ? 2.1 : 1.75) : 1.15;
+          const life = tireActive ? .68 : .48;
+          spawnFx(wx, .24, wz, sinH * (vehicle.burnout ? 1.4 : 2.2) + side * .5, 1.55 + (frameCount % 3) * .35, cosH * (vehicle.burnout ? 1.4 : 2.2), color, scale, life);
+          if (tireActive && vehicle.surface === 'asfalto' && frameCount % 2 === 0) spawnSkid(wx, wz, heading - (vehicle.slip || 0));
         }
       }
       if (frameCount % 2 === 0) {

@@ -168,7 +168,7 @@ Não há banco de dados: o progresso fica em três chaves de `localStorage` (`go
 
 No rádio da estrada, **Carregar músicas** aceita arquivos de áudio do computador. Depois da escolha, ▶ toca ou pausa, ←/→ mudam a faixa e a lista continua automaticamente ao terminar uma música. Os arquivos ficam só nesta aba e precisam ser selecionados novamente após recarregar. Os títulos editoriais do Gorillaz continuam com links para clipes. O repositório inclui 3 MP3s comerciais em `assets/audio/` (`clint-eastwood.mp3`, `feel-good-inc.mp3`, `on-melancholy-hill.mp3`), carregados sob demanda (`preload="none"` em `src/local-radio.js` e `src/piano-screen.js`), estritamente para fins acadêmicos ilustrativos e sem redistribuição comercial; a procedência da cópia e as permissões de distribuição não foram verificadas (ver [REFERENCES.md](REFERENCES.md#gravações-usadas-na-kong-fm-e-no-piano)).
 
-O botão ⛶ abre a experiência em tela cheia. Em **1ª pessoa**, arraste o volante ou use ←/→ para virar, mantendo W/S ou os pedais para acelerar e frear. Veja [o roteiro da experiência](docs/ROTEIRO-DA-EXPERIENCIA.md) para a relação entre mundo, histórias e próximas etapas.
+O botão ⛶ abre a experiência em tela cheia. Em **1ª pessoa**, arraste o volante ou use ←/→ para virar, mantendo W/S ou os pedais para acelerar e frear. Segure **Shift** (ou Espaço) para fazer **drift / cantar pneu** com fumaça, marcas no asfalto e som procedural. Veja [o roteiro da experiência](docs/ROTEIRO-DA-EXPERIENCIA.md) para a relação entre mundo, histórias e próximas etapas.
 
 
 ## Cidade das épocas e cabine do Geep

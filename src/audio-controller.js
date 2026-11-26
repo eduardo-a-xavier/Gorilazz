@@ -83,8 +83,8 @@ export function createAudioController({
     const entered = isEntered();
     engine?.update(
       vehicle.speed,
-      engineOn && entered && !paused && document.documentElement.classList.contains('mode-3d') && !isGuidedPaused(),
-      { x: vehicle.x, z: vehicle.z, radioPlaying: Boolean(localRadio?.isPlaying?.()) },
+      engineOn && !masterMuted && entered && !paused && document.documentElement.classList.contains('mode-3d') && !isGuidedPaused(),
+      { x: vehicle.x, z: vehicle.z, radioPlaying: Boolean(localRadio?.isPlaying?.()), tireIntensity: vehicle.tireIntensity ?? 0 },
     );
     // Ducking do Kong FM perto dos palcos: suave por quadro, restaura ao sair (guided-tour.js: duckTarget/easeDuck).
     if (localRadio && entered && !paused) {

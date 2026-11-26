@@ -4,19 +4,24 @@ const MAX_REVERSE_SPEED = MAX_REVERSE_SPEED_KMH / 3.6;
 const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
 const approach = (n, target, delta) => n < target ? Math.min(target, n + delta) : Math.max(target, n - delta);
 export function createVehicle() {
-  return { x: 0, z: 0, heading: 0, speed: 0, steering: 0, acceleration: 0, distanceTravelled: 0, brakeWasDown: false, reverseReady: false, surface: 'asfalto', braking: false, blocked: false, slip: 0, drifting: false };
+  return { x: 0, z: 0, heading: 0, speed: 0, steering: 0, acceleration: 0, distanceTravelled: 0, brakeWasDown: false, reverseReady: false, surface: 'asfalto', braking: false, blocked: false, slip: 0, drifting: false, burnout: false, tireIntensity: 0 };
 }
 export function stepVehicle(state, input, dt) {
   const oldSpeed = state.speed;
-  const brake = Boolean(input.brake), throttle = Boolean(input.throttle);
+  const brake = Boolean(input.brake), throttle = Boolean(input.throttle), wantDrift = Boolean(input.drift);
   if (!brake && state.brakeWasDown && Math.abs(state.speed) < .05) state.reverseReady = true;
   if (throttle) state.reverseReady = false;
   const road = nearestRoad(state);
   state.surface = road.distance <= ROADS[road.road].width / 2 ? 'asfalto' : 'terra';
   const rough = state.surface === 'terra';
+  const burnout = Boolean(wantDrift && throttle && !brake && !rough && state.speed >= -.2 && state.speed < 6.5);
+  state.burnout = burnout;
   if (brake) {
     if (state.reverseReady && state.speed <= .05) state.speed = Math.max(-MAX_REVERSE_SPEED, state.speed - 4 * dt);
     else state.speed = approach(state.speed, 0, 12 * dt);
+  } else if (burnout) {
+    // Burnout / arrancada cantando pneu: segura a saída inicial com tração progressiva.
+    state.speed = Math.min(6.4, Math.max(0, state.speed) + (2.6 + Math.max(0, state.speed) * .35) * dt);
   } else if (throttle) {
     state.speed = state.speed < 0 ? Math.min(0, state.speed + 12 * dt) : Math.min(30, state.speed + (8.8 - .13 * Math.max(0, state.speed)) * dt);
   } else state.speed = approach(state.speed, 0, ((rough ? 2 : .65) + state.speed ** 2 * (rough ? .025 : .008)) * dt);
@@ -25,9 +30,12 @@ export function stepVehicle(state, input, dt) {
   state.steering = approach(state.steering, clamp(input.steer || 0, -1, 1) * maxSteer, dt * (input.steer ? 1.9 : 2.7));
   state.heading += state.speed / 4 * Math.tan(state.steering) * dt;
   state.heading = Math.atan2(Math.sin(state.heading), Math.cos(state.heading));
-  state.drifting = Boolean(input.drift && Math.abs(state.speed) > 8 && Math.abs(state.steering) > .04 && state.surface === 'asfalto');
-  const slipTarget = state.drifting ? clamp(state.steering * .8, -Math.PI / 12, Math.PI / 12) : 0;
-  state.slip += (slipTarget - state.slip) * (1 - Math.exp(-(state.drifting ? 3 : 6) * dt));
+  // Drift controlado em movimento (> ~15 km/h = 4.2 m/s) com esterço no asfalto.
+  state.drifting = Boolean(wantDrift && Math.abs(state.speed) > 4.2 && Math.abs(state.steering) > .04 && !rough);
+  const slipTarget = state.drifting ? clamp(state.steering * 1.0, -Math.PI / 12, Math.PI / 12) : 0;
+  state.slip += (slipTarget - state.slip) * (1 - Math.exp(-(state.drifting ? 3.4 : 6.2) * dt));
+  const rawIntensity = burnout ? .85 : state.drifting ? clamp(Math.abs(state.slip) / (Math.PI / 10), .35, 1) : 0;
+  state.tireIntensity = approach(state.tireIntensity || 0, rawIntensity, dt * (rawIntensity > (state.tireIntensity || 0) ? 5 : 4));
   const travel = state.speed * dt, direction = state.heading - state.slip;
   const x = state.x - Math.sin(direction) * travel, z = state.z - Math.cos(direction) * travel;
   const blocked = x < WORLD_BOUNDS.minX + 3 || x > WORLD_BOUNDS.maxX - 3 || z < WORLD_BOUNDS.minZ + 3 || z > WORLD_BOUNDS.maxZ - 3 || OBSTACLES.some(o => Math.hypot(x - o.x, z - o.z) < o.radius + 2.3);
@@ -39,7 +47,7 @@ export function stepVehicle(state, input, dt) {
   return state;
 }
 export function haltVehicle(state) {
-  state.speed = 0; state.acceleration = 0; state.steering = 0; state.slip = 0; state.drifting = false; state.braking = false; state.brakeWasDown = false; state.reverseReady = false; state.blocked = false;
+  state.speed = 0; state.acceleration = 0; state.steering = 0; state.slip = 0; state.drifting = false; state.burnout = false; state.tireIntensity = 0; state.braking = false; state.brakeWasDown = false; state.reverseReady = false; state.blocked = false;
 }
 export function recoverVehicle(state) {
   const road = nearestRoad(state); state.x = road.x; state.z = road.z; state.heading = road.heading; haltVehicle(state);
