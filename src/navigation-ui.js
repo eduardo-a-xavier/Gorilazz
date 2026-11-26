@@ -5,6 +5,7 @@ import { planPath, navigationInput } from './navigation.js';
 import { createJourneyGuide } from './journey-guide.js';
 import { createDiscoveriesDrawer } from './discoveries-drawer.js';
 import { DISCOVERY_LORE } from './discoveries-lore.js';
+import { stopFrame } from './tour-framing.js';
 import { buildStops, orderTour, createStopProgress, speedCap, localTrackFor, ARRIVE_M, STOP_HOLD_MS, TOAST_MS } from './guided-tour.js';
 
 const HEAD_LIMIT = 35 * Math.PI / 180;
@@ -133,7 +134,7 @@ export function createNavigationUI({
     const fadeOut = smooth01(Math.max(0, Math.min(1, (guided.holdUntil - now) / 600)));
     const alpha = fadeIn * fadeOut;
     const base = Math.atan2(vehicle.x - stopItem.x, vehicle.z - stopItem.z), a = base + .45 * Math.sin(t * .6);
-    world?.frameSpot({ x: stopItem.x, z: stopItem.z, dirX: Math.sin(a), dirZ: Math.cos(a), distance: 9, height: 3.2, target: 2, alpha });
+    world?.frameSpot({ x: stopItem.x, z: stopItem.z, dirX: Math.sin(a), dirZ: Math.cos(a), ...stopFrame(stopItem), alpha });
   }
 
   function legTo(index) {

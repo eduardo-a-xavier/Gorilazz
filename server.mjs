@@ -41,6 +41,7 @@ const routes = new Map([
   ['/src/piano-screen.js', ['src/piano-screen.js', 'text/javascript; charset=utf-8']],
   ['/src/member-viewer.js', ['src/member-viewer.js', 'text/javascript; charset=utf-8']],
   ['/src/guided-tour.js', ['src/guided-tour.js', 'text/javascript; charset=utf-8']],
+  ['/src/tour-framing.js', ['src/tour-framing.js', 'text/javascript; charset=utf-8']],
   ['/src/frame-timing.js', ['src/frame-timing.js', 'text/javascript; charset=utf-8']],
   ['/src/radio-duck.js', ['src/radio-duck.js', 'text/javascript; charset=utf-8']],
   ['/src/sign-style.js', ['src/sign-style.js', 'text/javascript; charset=utf-8']],

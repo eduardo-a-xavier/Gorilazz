@@ -1,9 +1,10 @@
 artifacts/
 __pycache__/
+.agents/
 .claude/
-
-# Keep the requested project-local Blender skill pack trackable; other Claude config stays ignored.
-!/.claude/
-.claude/*
-!/.claude/skills/
-!/.claude/skills/**
+.superpowers/
+*.exe
+*.pdf
+*.log
+*.tmp
+6713

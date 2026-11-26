@@ -3,9 +3,12 @@ GORILAZZ — CENÁRIO E PEÇAS DA EXPOSIÇÃO
 KONG STUDIOS / VEGETAÇÃO / MATERIAIS
 Fachada, árvore, texturas de superfícies, céu e mural produzidos para este projeto.
 Geração reproduzível: scripts/build-visual-environment.py (Blender 4.3.2).
-As texturas de superfícies são autorais e geradas localmente. Não são downloads
-da Poly Haven, ambientCG ou Quaternius. O acesso de download à Poly Haven foi
-bloqueado pela rede desta execução; nenhum material foi atribuído a esses sites.
+As texturas de fachadas, vegetação, grama, madeira, telhado e tijolo (brick, foliage,
+grass, plaster, roof, wood e seus mapas normais em assets/materials/) são autorais e
+geradas localmente no Blender. As texturas de chão (asphalt, paving, earth e seus
+mapas normais em assets/materials/) usam mapas CC0 1.0 da ambientCG (Asphalt012,
+PavingStones130 e Ground037, convertidos para WebP 512 px; URLs e SHA-256 em
+REFERENCES.md). Nenhum material é atribuído à Poly Haven ou Quaternius.
 Os pôsteres usam os retratos existentes derivados dos modelos Phase 7;
 os créditos de Redtricity/Gorillaz permanecem em PHASE7-CREDITS.txt.
 O cenário é uma interpretação acadêmica independente, não um cenário oficial.
